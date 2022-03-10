@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Jorels S.A.S. - Copyright (2019-2021)-->
+
+<!--This file is part of l10n_co_edi_jorels.-->
+
+<!--l10n_co_edi_jorels is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--l10n_co_edi_jorels is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with l10n_co_edi_jorels.  If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<odoo>
+    <data noupdate="1">
+        <record id="account.email_template_edi_invoice" model="mail.template">
+            <field name="name">Invoice: Send by email</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="email_from">${object.company_id.email_edi_formatted |safe}</field>
+            <field name="email_to">${object.partner_id.email_edi}</field>
+            <field name="partner_to">${object.partner_id.id}</field>
+            <field name="subject">${object.company_id.vat_formatted or ''};${object.company_id.business_name or object.company_id.name or ''};${object.number_formatted or ''};${object.ei_type_document_id.code or ''};${object.company_id.trade_name or object.company_id.business_name or object.company_id.name or ''};</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear ${object.partner_id.name}
+                        % if object.partner_id.parent_id:
+                            (${object.partner_id.parent_id.name})
+                        % endif
+                        <br /><br />
+                        Here is your
+                        % if object.number:
+                            invoice <strong>${object.number}</strong>
+                        % else:
+                            invoice
+                        %endif
+                        % if object.origin:
+                            (with reference: ${object.origin})
+                        % endif
+                        amounting in <strong>${format_amount(object.amount_total, object.currency_id)}</strong>
+                        from ${object.company_id.name}.
+                        % if object.state=='paid':
+                            This invoice is already paid.
+                        % else:
+                            Please remit payment at your earliest convenience.
+                        % endif
+                        <br /><br />
+                        Do not hesitate to contact us if you have any question.
+                    </p>
+                </div>
+            </field>
+            <field name="report_template" ref="account.account_invoices"/>
+            <field name="report_name">Invoice_${(object.number or '').replace('/','_')}${object.state == 'draft' and '_draft' or ''}</field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="user_signature" eval="False"/>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+</odoo>

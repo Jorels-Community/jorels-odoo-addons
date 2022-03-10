@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Jorels S.A.S. - Copyright (2019-2022)-->
+
+<!--This file is part of l10n_co_edi_jorels.-->
+
+<!--l10n_co_edi_jorels is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--l10n_co_edi_jorels is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with l10n_co_edi_jorels.  If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<odoo>
+    <data>
+        <template id="report_invoice_document_custom" inherit_id="account.report_invoice_document">
+            <xpath expr="//t[@t-set='address']" position="replace">
+                <t t-set="address" t-if="not o.env.user.company_id.ei_enable">
+                    <address t-field="o.partner_id"
+                             t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                    <div t-if="o.partner_id.vat" class="mt16">
+                        <t t-esc="o.company_id.country_id.vat_label or 'Tax ID'"/>
+                        :
+                        <span t-field="o.partner_id.vat"/>
+                    </div>
+                </t>
+                <div class="container" t-if="o.env.user.company_id.ei_enable">
+                    <div class="row">
+                        <div t-if="o.ei_is_not_test and o.ei_qr_data" class="col-3">
+                            <!-- With OCA -->
+                            <!-- <img t-att-src="'/report/qr/?value=%s&amp;error_correction=%s' % (o.ei_qr_data, 1)" style="width:100;height:100"/>-->
+
+                            <!-- With Odoo-->
+                            <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', o.ei_qr_data, 192, 192)"/>
+
+                            <!-- With image -->
+                            <!-- <span t-field="o.ei_qr_image" t-options="{'widget':'image'}"/>-->
+                        </div>
+                        <div class="col-5">
+                            <div class="mt16">
+                                <h4>NIT:
+                                    <span t-field="o.company_id.vat"/>
+                                </h4>
+                                <strong>Organization type:</strong>
+                                <span t-field="o.company_id.type_organization_id"/>
+                                <br/>
+                                <strong>Regime type:</strong>
+                                <span t-field="o.company_id.type_regime_id"/>
+                                <br/>
+                                <strong>Liability type:</strong>
+                                <span t-field="o.company_id.type_liability_id"/>
+                                <br/>
+                                <br/>
+                                <span t-field="o.company_id.report_custom_text"/>
+                            </div>
+                        </div>
+                        <div t-if="not o.ei_is_not_test or not o.ei_qr_image" class="col-3"/>
+                        <div class="col-4">
+                            <h4 t-if="o.type == 'out_invoice' or o.type == 'out_refund'">Customer</h4>
+                            <h4 t-if="o.type == 'in_invoice' or o.type == 'in_refund'">Supplier</h4>
+                            <div t-if="o.partner_id.vat" class="mt16">
+                                <span t-if="o.partner_id.l10n_co_document_type == 'civil_registration'">R.C.:</span>
+                                <span t-if="o.partner_id.l10n_co_document_type == 'id_card'">T.I.:</span>
+                                <span t-if="o.partner_id.l10n_co_document_type == 'id_document'">C.C.:</span>
+                                <span t-if="o.partner_id.l10n_co_document_type == 'national_citizen_id'">C.C.:</span>
+                                <span t-if="o.partner_id.l10n_co_document_type == 'residence_document'">T.E.:</span>
+                                <span t-if="o.partner_id.l10n_co_document_type == 'foreign_id_card'">C.E.:</span>
+                                <span t-if="o.partner_id.l10n_co_document_type == 'rut'">NIT:</span>
+                                <span t-if="o.partner_id.l10n_co_document_type == 'passport'">PAS:</span>
+                                <span t-if="o.partner_id.l10n_co_document_type == 'external_id'">D.I.E.:</span>
+                                <span t-if="o.partner_id.l10n_co_document_type == 'diplomatic_card'">Tax ID:</span>
+                                <span t-field="o.partner_id.vat"/>
+                            </div>
+                            <address t-field="o.partner_id"
+                                     t-options='{"widget": "contact", "fields": ["address", "name", "phone", "email"], "no_marker": True}'/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//div[@class='page']/h2/span[1]" position="replace">
+                <span t-if="o.env.user.company_id.ei_enable and o.ei_is_not_test and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
+                    Electronic Sale Invoice
+                </span>
+                <span t-if="o.env.user.company_id.ei_enable and not o.ei_is_not_test and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
+                    Sale Invoice
+                </span>
+                <span t-if="not o.env.user.company_id.ei_enable and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
+                    Invoice
+                </span>
+            </xpath>
+            <xpath expr="//div[@id='informations']" position="inside">
+                <div name="Invoicing period" class="col-auto mw-100 mb-2" t-if="o.date_start and o.date_end">
+                    <strong>Invoicing period:</strong>
+                    <p class="m-0">
+                        <span t-field="o.date_start"/>
+                        <span>to</span>
+                        <span t-field="o.date_end"/>
+                    </p>
+                </div>
+            </xpath>
+            <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[1]" position="before">
+                <th class="text-center">
+                    <span>#</span>
+                </th>
+                <t t-set="num_item" t-value="0"/>
+            </xpath>
+            <xpath expr="//t[@name='account_invoice_line_accountable']/td[1]" position="before">
+                <t t-set="num_item" t-value="num_item + 1"/>
+                <td class="text-center">
+                    <span t-esc="num_item"/>
+                </td>
+            </xpath>
+            <xpath expr="//div[@id='total']/div" position="attributes">
+                <attribute name="t-attf-class">#{'col-5' if report_type != 'html' else 'col-sm-7 col-md-5'} ml-auto
+                </attribute>
+            </xpath>
+            <xpath expr="//div[@id='total']/div/table/tr[1]" position="before">
+                <tr class="border-black o_total" style="">
+                    <td>
+                        <strong>Currency</strong>
+                    </td>
+                    <td class="text-right">
+                        <span t-field="o.currency_id"/>
+                    </td>
+                </tr>
+            </xpath>
+            <xpath expr="//div[@id='total']/div/table/tr[last()]" position="before">
+                <tr class="border-black" style="" t-if="o.env.user.company_id.ei_enable">
+                    <td>
+                        <strong>Total without withholdings</strong>
+                    </td>
+                    <td class="text-right">
+                        <span t-field="o.ei_amount_total_no_withholding"/>
+                    </td>
+                </tr>
+            </xpath>
+            <xpath expr="//div[@class='page']" position="inside">
+                <div t-if="o.value_letters">
+                    <strong>Value in letters:</strong>
+                    <span t-field="o.value_letters"/>
+                </div>
+                <div>
+                    <br/>
+                    <span t-field="o.company_id.footer_custom_text"/>
+                </div>
+                <div t-if="o.env.user.company_id.ei_enable and o.ei_is_not_test" class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mt16 text-center">
+                                <div t-if="o.ei_is_valid">
+                                    <strong t-if="o.type == 'out_invoice' and not o.debit_invoice_id.id">CUFE:</strong>
+                                    <strong t-if="o.type == 'out_invoice' and o.debit_invoice_id.id">CUDE:</strong>
+                                    <strong t-if="o.type == 'out_refund'">CUDE:</strong>
+                                    <span t-field="o.ei_uuid"/>
+                                </div>
+                                <div t-else="">
+                                    <span>This document has not been validated in the DIAN</span>
+                                </div>
+                                <div t-if="o.ei_signature">
+                                    <strong>Signature:</strong>
+                                    <span t-field="o.ei_signature"/>
+                                </div>
+                                <strong>Invoicing authorization number:</strong>
+                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_resolution"/>
+                                <strong>Date:</strong>
+                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_resolution_date"/>
+                                <br/>
+                                <strong>Authorized range from:</strong>
+                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_prefix"/>
+                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_from"/>
+                                <strong>to</strong>
+                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_prefix"/>
+                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_to"/>
+                                <strong>Valid from:</strong>
+                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_date_from"/>
+                                <strong>to</strong>
+                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_date_to"/>
+                                <br/>
+                                <strong>Graphic representation of electronic invoicing printed by computer with own
+                                    software by
+                                </strong>
+                                <strong t-field="o.company_id.business_name"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+    </data>
+</odoo>

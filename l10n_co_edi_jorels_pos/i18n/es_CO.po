@@ -1,0 +1,263 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* l10n_co_edi_jorels_pos
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-01-06 19:54+0000\n"
+"PO-Revision-Date: 2021-01-06 14:58-0500\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es_CO\n"
+"X-Generator: Poedit 2.2.1\n"
+
+#. module: l10n_co_edi_jorels_pos
+#: model:ir.model.fields,help:l10n_co_edi_jorels_pos.field_pos_config__electronic_invoice_journal_id
+msgid "Accounting journal used to create electronic invoices."
+msgstr "Diario contable usado para crear facturación electrónica"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:42
+#, python-format
+msgid "CUFE:"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:165
+#, python-format
+msgid "Carné Diplomatico"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:36
+#, python-format
+msgid "Customer:"
+msgstr "Cliente:"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:155
+#, python-format
+msgid "Cédula"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:161
+#, python-format
+msgid "Cédula Extranjera"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:171
+#, python-format
+msgid "Cédula de ciudadanía"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:48
+#, python-format
+msgid "De:"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:104
+#, python-format
+msgid "Departamento"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:94
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:175
+#, python-format
+msgid "E-mail facturación"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_pos.field_pos_config__electronic_invoice_journal_id
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels_pos.pos_config_view_form_l10n_co_edi_jorels_pos
+msgid "Electronic Invoice Journal"
+msgstr "Diario de facturación electrónica"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:187
+#, python-format
+msgid "Electronic invoice"
+msgstr "Factura electrónica"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:19
+#, python-format
+msgid "Email:"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:64
+#, python-format
+msgid "Factura de venta:"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:40
+#, python-format
+msgid "Factura electrónica de venta:"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:58
+#, python-format
+msgid "Fecha desde:"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:54
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:60
+#, python-format
+msgid "Hasta:"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:163
+#, python-format
+msgid "ID del Exterior"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:137
+#, python-format
+msgid "Municipalidad"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:153
+#, python-format
+msgid "Nit"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:51
+#, python-format
+msgid "Numeración desde:"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/js/pos.js:231
+#, python-format
+msgid "Order "
+msgstr "Orden"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:159
+#, python-format
+msgid "Pasaporte"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:14
+#, python-format
+msgid "Phone:"
+msgstr "Teléfono:"
+
+#. module: l10n_co_edi_jorels_pos
+#: model:ir.model,name:l10n_co_edi_jorels_pos.model_pos_config
+msgid "Point of Sale Configuration"
+msgstr "Configuración del Punto de Venta"
+
+#. module: l10n_co_edi_jorels_pos
+#: model:ir.model,name:l10n_co_edi_jorels_pos.model_pos_order
+msgid "Point of Sale Orders"
+msgstr "Órdenes del Punto de Venta"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:115
+#, python-format
+msgid "Regimen"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:169
+#, python-format
+msgid "Registro civil"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:126
+#, python-format
+msgid "Responsabilidad"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:167
+#, python-format
+msgid "Salvoconducto de Permanencia"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:157
+#, python-format
+msgid "Tarjeta de identidad"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:150
+#, python-format
+msgid "Tipo documento"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:30
+#, python-format
+msgid "User:"
+msgstr "Usuario:"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:8
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:37
+#, python-format
+msgid "VAT:"
+msgstr "NIF:"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:24
+#, python-format
+msgid "Website:"
+msgstr "Web:"
+
+#. module: l10n_co_edi_jorels_pos
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_pos.field_pos_order__ei_is_dian_document
+msgid "¿Es un documento electrónico DIAN?"
+msgstr ""
