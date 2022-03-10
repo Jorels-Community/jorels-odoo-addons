@@ -1,7 +1,7 @@
 l10n_co_ciius
 ------------------
 
-Copyright (2019-2021) - Jorels SAS
+Copyright (2019-2022) - Jorels SAS
 
 [info@jorels.com](mailto:info@jorels.com)
 
