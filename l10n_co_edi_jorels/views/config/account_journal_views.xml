@@ -21,11 +21,18 @@
 
 <odoo>
     <data>
-        <record id="account_journal_form_inherit_l10n_co_edi_jorels" model="ir.ui.view">
-            <field name="name">account.journal.form.inherit.l10n_co_edi_jorels</field>
+        <record id="view_account_journal_form_inherit_l10n_co_edi_jorels" model="ir.ui.view">
+            <field name="name">account.journal.form.l10n_co_edi_jorels</field>
             <field name="model">account.journal</field>
             <field name="inherit_id" ref="account.view_account_journal_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//group[@name='group_alias_edit']" position="after">
+                    <group string="Electronic invoicing" attrs="{'invisible': [('type', '!=', 'sale')]}">
+                        <field name="resolution_invoice_id"/>
+                        <field name="resolution_credit_note_id"/>
+                        <field name="resolution_debit_note_id"/>
+                    </group>
+                </xpath>
                 <xpath expr="//field[@name='type']" position="after">
                     <field name="is_out_country" attrs="{'invisible': [('type', 'not in', ['sale', 'purchase'])]}"/>
                 </xpath>

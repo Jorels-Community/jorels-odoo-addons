@@ -61,13 +61,13 @@ class ResPartner(models.Model):
     postal_municipality_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.municipalities', copy=True,
                                              string="Postal municipality", compute="_compute_postal_id", store=True)
 
-    @api.depends('l10n_co_document_type')
+    @api.depends('l10n_latam_identification_type_id')
     def _compute_type_document_identification_id(self):
         if not self.env['l10n_co_edi_jorels.type_document_identifications'].search([]):
             self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.type_document_identifications')
 
         for rec in self:
-            if rec.l10n_co_document_type:
+            if rec.l10n_latam_identification_type_id.l10n_co_document_code:
                 values = {
                     'civil_registration': 1,
                     'id_card': 2,
@@ -83,7 +83,8 @@ class ResPartner(models.Model):
                     'residence_document': None,
                     'diplomatic_card': None,
                 }
-                rec.type_document_identification_id = values[rec.l10n_co_document_type]
+                rec.type_document_identification_id = values[
+                    rec.l10n_latam_identification_type_id.l10n_co_document_code]
             else:
                 rec.type_document_identification_id = None
 

@@ -20,7 +20,7 @@
 #
 
 
-from odoo import fields, models
+from odoo import fields, models, api
 
 
 class ResConfigSettings(models.TransientModel):
@@ -89,3 +89,10 @@ class ResConfigSettings(models.TransientModel):
     # Software ID and pin
     edi_payroll_id = fields.Char(related="company_id.edi_payroll_id", string="Software ID", readonly=False)
     edi_payroll_pin = fields.Char(related="company_id.edi_payroll_pin", string="Software PIN", readonly=False)
+
+    @api.model
+    def get_values(self):
+        res = super(ResConfigSettings, self).get_values()
+        res['edi_payroll_is_not_test'] = self.env.company.edi_payroll_is_not_test
+        res['edi_payroll_enable'] = self.env.company.edi_payroll_enable
+        return res

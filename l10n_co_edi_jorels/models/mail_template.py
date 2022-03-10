@@ -25,70 +25,67 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-from odoo import models, api
-from odoo.tools import pycompat
+from odoo import models
 
 
 class MailTemplate(models.Model):
     _inherit = 'mail.template'
 
     def generate_email(self, res_ids, fields=None):
-        res = super(MailTemplate, self).generate_email(res_ids, fields)
+        res = super().generate_email(res_ids, fields)
 
-        if not self.env.user.company_id.ei_enable:
+        if not self.env.company.ei_enable:
             return res
-
-        self.ensure_one()
 
         multi_mode = True
         if isinstance(res_ids, int):
             res_ids = [res_ids]
             multi_mode = False
 
-        if self.env.context.get('active_model') != 'account.move':
+        if self.model not in ['account.move']:
             return res
 
-        for res_id, template in self.get_email_template(res_ids).items():
-            invoice = self.env["account.move"].browse(res_id)
-            attachments = res[res_id]["attachments"] if self.env.user.company_id.ei_include_pdf_attachment else []
+        records = self.env[self.model].browse(res_ids)
+        for record in records:
+            record_data = (res[record.id] if multi_mode else res)
 
-            if invoice.ei_is_valid \
-                    and invoice.type in ('out_invoice', 'out_refund') \
-                    and invoice.state == 'posted':
+            if record.ei_is_valid \
+                    and record.move_type in ('out_invoice', 'out_refund') \
+                    and record.state == 'posted':
 
-                pdf_name = invoice.ei_uuid + '.pdf'
+                pdf_name = record.ei_uuid + '.pdf'
                 pdf_path = Path(tempfile.gettempdir()) / pdf_name
 
-                xml_name = invoice.ei_uuid + '.xml'
+                xml_name = record.ei_uuid + '.xml'
                 xml_path = Path(tempfile.gettempdir()) / xml_name
 
-                zip_name = invoice.ei_uuid + '.zip'
+                zip_name = record.ei_uuid + '.zip'
                 zip_path = Path(tempfile.gettempdir()) / zip_name
 
                 zip_archive = zipfile.ZipFile(zip_path, 'w')
 
                 pdf_handle = open(pdf_path, 'wb')
-                pdf_handle.write(base64.decodebytes(res[res_id]["attachments"][0][1]))
+                pdf_handle.write(base64.decodebytes(record_data["attachments"][0][1]))
                 pdf_handle.close()
                 zip_archive.write(pdf_path, arcname=pdf_name)
 
-                if invoice.ei_attached_document_base64_bytes:
+                if record.ei_attached_document_base64_bytes:
                     xml_handle = open(xml_path, 'wb')
-                    xml_handle.write(base64.decodebytes(invoice.ei_attached_document_base64_bytes))
+                    xml_handle.write(base64.decodebytes(record.ei_attached_document_base64_bytes))
                     xml_handle.close()
                     zip_archive.write(xml_path, arcname=xml_name)
 
                 zip_archive.close()
 
-                if invoice.ei_attached_document_base64_bytes:
+                if record.ei_attached_document_base64_bytes:
                     with open(zip_path, 'rb') as f:
                         attached_zip = f.read()
                         ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
-                        attachments += [(zip_name, ei_attached_zip_base64_bytes)]
-                        invoice.write({
+                        record_data.setdefault('attachments', [])
+                        if not self.env.company.ei_include_pdf_attachment:
+                            record_data['attachments'] = []
+                        record_data['attachments'].append((zip_name, ei_attached_zip_base64_bytes))
+                        record.write({
                             'ei_attached_zip_base64_bytes': ei_attached_zip_base64_bytes
                         })
-
-            res[res_id]["attachments"] = attachments
-
-        return multi_mode and res or res[res_ids[0]]
+        return res

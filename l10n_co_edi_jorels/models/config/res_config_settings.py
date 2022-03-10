@@ -25,7 +25,7 @@ import logging
 
 import requests
 from odoo import api, fields, models, _
-from odoo.exceptions import Warning
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ class ResConfigSettings(models.TransientModel):
     # Update resolutions on Odoo database
     @api.model
     def action_update_resolutions(self):
-        if not self.env.user.company_id.ei_enable:
+        if not self.env.company.ei_enable:
             return {
                 "name": _("Resolutions"),
                 "type": "ir.actions.act_window",
@@ -71,7 +71,7 @@ class ResConfigSettings(models.TransientModel):
             }
 
         try:
-            token = str(self.env.user.company_id.api_key)
+            token = str(self.env.company.api_key)
             api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
                                                                        'https://edipo.jorels.com')
             params = {'token': token}
@@ -83,12 +83,12 @@ class ResConfigSettings(models.TransientModel):
             _logger.debug('API Response: %s', response)
 
             if 'detail' in response:
-                raise Warning(response['detail'])
+                raise UserError(response['detail'])
             if 'message' in response:
                 if response['message'] == 'Unauthenticated.' or response['message'] == '':
-                    raise Warning(_('Unable to authenticate with the API. Please check your API key and try again.'))
+                    raise UserError(_('Unable to authenticate with the API. Please check your API key and try again.'))
                 else:
-                    raise Warning(response['message'])
+                    raise UserError(response['message'])
             else:
                 # Now create new resolutions
                 for resolution in response:
@@ -163,7 +163,7 @@ class ResConfigSettings(models.TransientModel):
                             )
                         )
         except Exception as e:
-            raise Warning(e)
+            raise UserError(e)
 
         # To update or redirect to the resolutions views
         return {
@@ -175,7 +175,7 @@ class ResConfigSettings(models.TransientModel):
 
     # Environment update
     def button_put_environment(self):
-        if not self.env.user.company_id.ei_enable:
+        if not self.env.company.ei_enable:
             return
 
         try:
@@ -198,10 +198,20 @@ class ResConfigSettings(models.TransientModel):
                 _logger.debug('API Response PUT environment: %s', response)
 
                 if 'detail' in response:
-                    raise Warning(response['detail'])
+                    raise UserError(response['detail'])
                 if 'message' in response:
                     rec.env.user.notify_info(message=response['message'])
                 else:
                     rec.env.user.notify_info(message=_("Now sync the resolutions"))
         except Exception as e:
             _logger.debug("Communication error: %s", e)
+
+    @api.model
+    def get_values(self):
+        res = super(ResConfigSettings, self).get_values()
+        res['is_not_test'] = self.env.company.is_not_test
+        res['enable_validate_state'] = self.env.company.enable_validate_state
+        res['enable_mass_send_print'] = self.env.company.enable_mass_send_print
+        res['ei_include_pdf_attachment'] = self.env.company.ei_include_pdf_attachment
+        res['ei_enable'] = self.env.company.ei_enable
+        return res

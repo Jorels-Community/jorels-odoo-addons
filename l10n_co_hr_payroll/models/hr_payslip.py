@@ -98,7 +98,7 @@ class HrPayslip(models.Model):
 
     def _compute_currency(self):
         for rec in self:
-            rec.currency_id = self.env.user.company_id.currency_id
+            rec.currency_id = self.env.company.currency_id
 
     def compute_sheet(self):
 
@@ -244,8 +244,7 @@ class HrPayslip(models.Model):
             rec.update({'input_line_ids': input_line_list})
             rec.update({'worked_days_line_ids': worked_days_line_list})
 
-        # Sequences
-        for rec in self:
+            # Sequences
             if rec.credit_note:
                 number = rec.number or self.env['ir.sequence'].next_by_code('salary.slip.note')
                 if not number:
@@ -253,12 +252,16 @@ class HrPayslip(models.Model):
                         _("You must create a sequence for the payroll credit notes with code 'salary.slip.note'"))
             else:
                 number = rec.number or self.env['ir.sequence'].next_by_code('salary.slip')
-            rec.number = number
+            # delete old payslip lines
+            rec.line_ids.unlink()
+            # set the list of contract for which the rules have to be applied
+            # if we don't give the contract, then the rules to apply should be for all current contracts of the employee
+            contract_ids = rec.contract_id.ids or \
+                           self.get_contract(rec.employee_id, rec.date_from, rec.date_to)
+            lines = [(0, 0, line) for line in self._get_payslip_lines(contract_ids, rec.id)]
+            rec.write({'line_ids': lines, 'number': number})
 
-        res = super(HrPayslip, self).compute_sheet()
-
-        # Totals
-        for rec in self:
+            # Totals
             accrued_total_amount = 0
             deductions_total_amount = 0
             others_total_amount = 0
@@ -278,7 +281,7 @@ class HrPayslip(models.Model):
 
             rec.edi_payload = json.dumps(self.get_json_request(), indent=4, sort_keys=False)
 
-        return res
+        return True
 
     def get_json_request(self):
         for rec in self:
@@ -286,15 +289,15 @@ class HrPayslip(models.Model):
                 raise UserError(_("number Error"))
             if not rec.contract_id.payroll_period_id:
                 raise UserError(_("payroll_period_id"))
-            if not self.env.user.company_id.name:
+            if not self.env.company.name:
                 raise UserError(_("name Error"))
-            if not self.env.user.company_id.type_document_identification_id:
+            if not self.env.company.type_document_identification_id:
                 raise UserError(_("type_document_identification_id Error"))
-            if not self.env.user.company_id.vat:
+            if not self.env.company.vat:
                 raise UserError(_("vat Error"))
-            if not self.env.user.company_id.partner_id.postal_municipality_id:
+            if not self.env.company.partner_id.postal_municipality_id:
                 raise UserError(_("postal_municipality_id Error"))
-            if not self.env.user.company_id.street:
+            if not self.env.company.street:
                 raise UserError(_("street Error"))
             if not rec.contract_id.type_worker_id:
                 raise UserError(_("type_worker_id Error"))
@@ -333,7 +336,7 @@ class HrPayslip(models.Model):
             if not rec.payment_date:
                 raise UserError(_("payment_date Error"))
 
-            rec.edi_sync = self.env.user.company_id.edi_payroll_is_not_test
+            rec.edi_sync = self.env.company.edi_payroll_is_not_test
 
             sequence_number = ''.join([i for i in rec.number if i.isdigit()])
             sequence_prefix = rec.number.split(sequence_number)
@@ -352,15 +355,15 @@ class HrPayslip(models.Model):
                 # "trm": 1
             }
 
-            employer_id_code = self.env.user.company_id.type_document_identification_id.id
-            employer_id_number_general = ''.join([i for i in self.env.user.company_id.vat if i.isdigit()])
+            employer_id_code = self.env.company.type_document_identification_id.id
+            employer_id_number_general = ''.join([i for i in self.env.company.vat if i.isdigit()])
             if employer_id_code == 6:
                 employer_id_number = employer_id_number_general[:-1]
             else:
                 employer_id_number = employer_id_number_general
 
             employer = {
-                "name": self.env.user.company_id.name,
+                "name": self.env.company.name,
                 # "surname": "string",
                 # "second_surname": "string",
                 # "first_name": "string",
@@ -368,8 +371,8 @@ class HrPayslip(models.Model):
                 "id_code": employer_id_code,
                 "id_number": employer_id_number,
                 "country_code": 46,
-                "municipality_code": self.env.user.company_id.partner_id.postal_municipality_id.id,
-                "address": self.env.user.company_id.street
+                "municipality_code": self.env.company.partner_id.postal_municipality_id.id,
+                "address": self.env.company.street
             }
 
             employee = {
@@ -1012,12 +1015,12 @@ class HrPayslip(models.Model):
                     'issue_date': str(rec.origin_payslip_id.edi_issue_date)
                 }
 
-            if self.env.user.company_id.edi_payroll_id and self.env.user.company_id.edi_payroll_pin:
+            if self.env.company.edi_payroll_id and self.env.company.edi_payroll_pin:
                 json_request['environment'] = {
-                    'software': self.env.user.company_id.edi_payroll_id,
-                    'pin': self.env.user.company_id.edi_payroll_pin
+                    'software': self.env.company.edi_payroll_id,
+                    'pin': self.env.company.edi_payroll_pin
                 }
-            elif not self.env.user.company_id.edi_payroll_enable:
+            elif not self.env.company.edi_payroll_enable:
                 pass
             else:
                 raise UserError(_("You do not have a software id and pin configured"))
@@ -1073,7 +1076,7 @@ class HrPayslip(models.Model):
         return requests_delete
 
     def validate_dian_generic(self):
-        if not self.env.user.company_id.edi_payroll_enable:
+        if not self.env.company.edi_payroll_enable:
             return
 
         _logger.debug("DIAN Validation Request: %s", json.dumps(self.get_json_request(), indent=2, sort_keys=False))
@@ -1083,8 +1086,8 @@ class HrPayslip(models.Model):
             try:
                 requests_data = self.get_json_request()
 
-                if self.env.user.company_id.api_key:
-                    token = self.env.user.company_id.api_key
+                if self.env.company.api_key:
+                    token = self.env.company.api_key
                 else:
                     raise UserError(_("You must configure a token"))
 
@@ -1101,11 +1104,11 @@ class HrPayslip(models.Model):
 
                 api_url = api_url + "/" + type_edi_document
 
-                rec.edi_is_not_test = self.env.user.company_id.edi_payroll_is_not_test
+                rec.edi_is_not_test = self.env.company.edi_payroll_is_not_test
 
                 if not rec.edi_is_not_test:
-                    if self.env.user.company_id.edi_payroll_test_set_id:
-                        params['test_set_id'] = self.env.user.company_id.edi_payroll_test_set_id
+                    if self.env.company.edi_payroll_test_set_id:
+                        params['test_set_id'] = self.env.company.edi_payroll_test_set_id
                     else:
                         raise UserError(_("You have not configured a 'TestSetId'."))
 
@@ -1156,7 +1159,7 @@ class HrPayslip(models.Model):
         return res
 
     def status_zip(self):
-        if not self.env.user.company_id.edi_payroll_enable:
+        if not self.env.company.edi_payroll_enable:
             return
 
         for rec in self:
@@ -1169,8 +1172,8 @@ class HrPayslip(models.Model):
                     requests_data = {}
                     _logger.debug('API Requests: %s', requests_data)
 
-                    if self.env.user.company_id.api_key:
-                        token = self.env.user.company_id.api_key
+                    if self.env.company.api_key:
+                        token = self.env.company.api_key
                     else:
                         raise UserError(_("You must configure a token"))
 

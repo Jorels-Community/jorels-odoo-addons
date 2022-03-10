@@ -26,4 +26,10 @@ from odoo import fields, models
 class AccountJournal(models.Model):
     _inherit = "account.journal"
 
+    resolution_invoice_id = fields.Many2one('l10n_co_edi_jorels.resolution', string="Invoice resolution",
+                                               ondelete='RESTRICT')
+    resolution_credit_note_id = fields.Many2one('l10n_co_edi_jorels.resolution', string="Credit note resolution",
+                                                   ondelete='RESTRICT')
+    resolution_debit_note_id = fields.Many2one('l10n_co_edi_jorels.resolution', string="Debit note resolution",
+                                                  ondelete='RESTRICT')
     is_out_country = fields.Boolean(string='Is it for out of the country?', default=False)

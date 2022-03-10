@@ -25,6 +25,7 @@ import logging
 
 import requests
 from odoo import api, fields, models, tools, _
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -113,9 +114,9 @@ class ResCompany(models.Model):
             else:
                 partner.email_edi_formatted = ''
 
-    def get_l10n_co_document_type(self):
+    def get_l10n_co_document_code(self):
         for rec in self.filtered(lambda company: company.partner_id):
-            l10n_co_document_type = None
+            l10n_co_document_code = None
             if rec.type_document_identification_id.id:
                 values = {
                     1: 'civil_registration',
@@ -129,9 +130,9 @@ class ResCompany(models.Model):
                     9: 'external_id',
                     10: 'id_document'
                 }
-                l10n_co_document_type = values[rec.type_document_identification_id.id]
+                l10n_co_document_code = values[rec.type_document_identification_id.id]
 
-            return l10n_co_document_type
+            return l10n_co_document_code
 
     def get_company_type(self):
         for rec in self.filtered(lambda company: company.partner_id):
@@ -147,7 +148,7 @@ class ResCompany(models.Model):
 
     def get_type_document_identification_id(self):
         for rec in self:
-            document_type = rec.partner_id.l10n_co_document_type
+            document_type = rec.partner_id.l10n_latam_identification_type_id.l10n_co_document_code
             if document_type:
                 values = {
                     'civil_registration': 1,
@@ -204,7 +205,12 @@ class ResCompany(models.Model):
 
     def _inverse_type_document_identification_id(self):
         for company in self:
-            company.partner_id.l10n_co_document_type = self.get_l10n_co_document_type()
+            l10n_co_document_code = self.get_l10n_co_document_code()
+            l10n_latam_identification_type_rec = self.env['l10n_latam.identification.type'].search(
+                [('l10n_co_document_code', '=', l10n_co_document_code)]
+            )[0]
+            company.partner_id.l10n_latam_identification_type_id = l10n_latam_identification_type_rec.id
+            # company.partner_id.l10n_co_document_code = self.get_l10n_co_document_code()
 
     def _inverse_type_organization_id(self):
         for company in self:
@@ -217,7 +223,7 @@ class ResCompany(models.Model):
 
     # Environment update
     def update_environment(self, environment):
-        if not self.env.user.company_id.ei_enable:
+        if not self.env.company.ei_enable:
             return False
 
         for rec in self:
@@ -242,7 +248,7 @@ class ResCompany(models.Model):
                 _logger.debug('API Response PUT environment: %s', response)
 
                 if 'detail' in response:
-                    raise Warning(response['detail'])
+                    raise UserError(response['detail'])
                 if 'message' in response:
                     rec.env.user.notify_info(message=response['message'])
 

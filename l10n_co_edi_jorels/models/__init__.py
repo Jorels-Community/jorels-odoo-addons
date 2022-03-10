@@ -19,7 +19,6 @@
 #
 # email: info@jorels.com
 #
-
 # First load configuration
 from . import config
 

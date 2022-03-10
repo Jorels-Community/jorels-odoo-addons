@@ -25,7 +25,7 @@ import logging
 
 import requests
 from odoo import api, fields, models, _
-from odoo.exceptions import Warning
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ class Resolution(models.Model):
             if success:
                 return super(Resolution, self).create(vals)
             else:
-                raise Warning(_("Could not save record to API"))
+                raise UserError(_("Could not save record to API"))
         else:
             return super(Resolution, self).create(vals)
 
@@ -81,7 +81,7 @@ class Resolution(models.Model):
                 if success:
                     return super(Resolution, self).write(vals)
                 else:
-                    raise Warning(_("Could not update record in API"))
+                    raise UserError(_("Could not update record in API"))
             else:
                 return super(Resolution, self).write(vals)
 
@@ -92,7 +92,7 @@ class Resolution(models.Model):
                 if success:
                     return super(models.Model, self).unlink()
                 else:
-                    raise Warning(_("Could not delete record in API"))
+                    raise UserError(_("Could not delete record in API"))
             else:
                 return super(models.Model, self).unlink()
 
@@ -128,7 +128,7 @@ class Resolution(models.Model):
             _logger.debug("Request create resolution DIAN: %s",
                           json.dumps(requests_data, indent=2, sort_keys=False))
 
-            token = str(self.env.user.company_id.api_key)
+            token = str(self.env.company.api_key)
             api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
                                                                        'https://edipo.jorels.com')
             params = {'token': token}
@@ -147,7 +147,7 @@ class Resolution(models.Model):
                 success = True
 
             if 'detail' in response:
-                raise Warning(response['detail'])
+                raise UserError(response['detail'])
             if 'message' in response:
                 if response['message'] == 'Unauthenticated.':
                     vals['resolution_message'] = _('Unable to authenticate with the API. '
@@ -206,7 +206,7 @@ class Resolution(models.Model):
                 _logger.debug("Request update resolution DIAN: %s",
                               json.dumps(requests_data, indent=2, sort_keys=False))
 
-                token = str(self.env.user.company_id.api_key)
+                token = str(self.env.company.api_key)
                 api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
                                                                            'https://edipo.jorels.com')
                 params = {'token': token}
@@ -224,7 +224,7 @@ class Resolution(models.Model):
                     success = True
 
                 if 'detail' in response:
-                    raise Warning(response['detail'])
+                    raise UserError(response['detail'])
                 if 'message' in response:
                     if response['message'] == 'Unauthenticated.':
                         vals['resolution_message'] = _('Unable to authenticate with the API. '
@@ -247,7 +247,7 @@ class Resolution(models.Model):
                 resolution_id = str(rec.resolution_id)
 
                 # The function str() is necessary for 'False' answers and boolean exceptions
-                token = str(self.env.user.company_id.api_key)
+                token = str(self.env.company.api_key)
                 api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
                                                                            'https://edipo.jorels.com')
                 params = {'token': token}
@@ -259,7 +259,7 @@ class Resolution(models.Model):
                 _logger.debug('API Response: %s', response)
 
                 if 'detail' in response:
-                    raise Warning(response['detail'])
+                    raise UserError(response['detail'])
                 if 'message' in response:
                     if response['message'] == 'Unauthenticated.':
                         rec.resolution_message = _('Unable to authenticate with the API. '
@@ -273,5 +273,5 @@ class Resolution(models.Model):
             except Exception as e:
                 rec.resolution_message = _('API connection error!')
                 _logger.debug("Connection error: %s", e)
-                raise Warning(rec.resolution_message)
+                raise UserError(rec.resolution_message)
         return success

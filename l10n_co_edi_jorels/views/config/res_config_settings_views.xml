@@ -150,9 +150,9 @@
                                     <field name="ei_include_pdf_attachment"/>
                                 </div>
                                 <div class="o_setting_right_pane">
-                                    <label string="Include PDF attachment on electronic invoice email"
+                                    <label string="Include default attachments in email"
                                            for="ei_include_pdf_attachment"/>
-                                    <div class="text-muted">Include PDF attachment on electronic invoice email</div>
+                                    <div class="text-muted">Default attachments in electronic invoice email</div>
                                 </div>
                             </div>
                         </div>

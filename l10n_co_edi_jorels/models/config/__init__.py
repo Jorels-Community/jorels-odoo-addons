@@ -22,7 +22,6 @@
 
 from . import product_template
 from . import account_taxes
-from . import ir_sequence
 from . import uom_uom
 from . import res_company
 from . import res_config_settings

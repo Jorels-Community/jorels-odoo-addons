@@ -39,7 +39,8 @@ class PosConfig(models.Model):
 
     @api.constrains('company_id', 'electronic_invoice_journal_id')
     def _check_company_electronic_invoice_journal(self):
-        if self.electronic_invoice_journal_id and self.electronic_invoice_journal_id.company_id.id != self.company_id.id:
+        if self.electronic_invoice_journal_id \
+                and self.electronic_invoice_journal_id.company_id.id != self.company_id.id:
             raise ValidationError(_("The invoice journal and the point of sale must belong to the same company."))
 
     @api.constrains('pricelist_id', 'use_pricelist', 'available_pricelist_ids', 'journal_id', 'invoice_journal_id',
@@ -47,12 +48,14 @@ class PosConfig(models.Model):
     def _check_currencies(self):
         super(PosConfig, self)._check_currencies()
 
-        if self.electronic_invoice_journal_id.currency_id and self.electronic_invoice_journal_id.currency_id != self.currency_id:
+        if self.electronic_invoice_journal_id.currency_id \
+                and self.electronic_invoice_journal_id.currency_id.id != self.currency_id.id:
             raise ValidationError(
                 _("The electronic invoice journal must be in the same currency as the Sales Journal or the company currency if that is not set."))
 
     @api.onchange('module_account')
     def _onchange_module_account(self):
         super(PosConfig, self)._onchange_module_account()
+
         if self.module_account and not self.electronic_invoice_journal_id:
             self.electronic_invoice_journal_id = self._default_electronic_invoice_journal()
