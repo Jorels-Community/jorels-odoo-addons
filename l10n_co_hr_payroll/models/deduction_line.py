@@ -20,7 +20,7 @@
 #
 
 
-from odoo import fields, models, api, _
+from odoo import fields, models, api
 from odoo.exceptions import ValidationError
 
 
@@ -71,4 +71,4 @@ class DeductionLine(models.Model):
     def _check_amount(self):
         for rec in self:
             if rec.amount <= 0:
-                raise ValidationError(_("The deduction amount must always be greater than 0 for: %s") % rec.name)
+                raise ValidationError("The deduction amount must always be greater than 0 for: %s" % rec.name)

@@ -20,18 +20,14 @@
 # email: info@jorels.com
 #
 
-from odoo import api, fields, models
+import logging
+
+from odoo import fields, models
+
+_logger = logging.getLogger(__name__)
 
 
-class AccountInvoiceRefund(models.TransientModel):
-    _inherit = 'account.invoice.refund'
+class AccountMoveLine(models.Model):
+    _inherit = "account.move.line"
 
-    # Required field for credit notes in DIAN
-    ei_correction_concept_credit_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
-                                                      string="Correction concept",
-                                                      domain=[('type_document_id', '=', '5')])
-
-    @api.onchange('ei_correction_concept_credit_id')
-    def _onchange_ei_correction_concept_credit_id(self):
-        if self.ei_correction_concept_credit_id:
-            self.description = self.ei_correction_concept_credit_id.name
+    ei_notes = fields.Char(string="Notes")

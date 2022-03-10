@@ -36,8 +36,8 @@ from odoo.exceptions import Warning
 _logger = logging.getLogger(__name__)
 
 
-class AccountInvoice(models.Model):
-    _inherit = "account.invoice"
+class AccountMove(models.Model):
+    _inherit = "account.move"
     _description = "Electronic invoicing"
 
     state = fields.Selection(selection_add=[('validate', 'Validating DIAN')])
@@ -51,7 +51,7 @@ class AccountInvoice(models.Model):
     ei_legal_monetary_totals = fields.Text(string="legal_monetary_totals json", copy=False)
     ei_invoice_lines = fields.Text(string="invoice_lines json", copy=False)
 
-    # They allow to store synchronous and production modes used when invoicing
+    # They allow storing synchronous and production modes used when invoicing
     ei_sync = fields.Boolean(string="Sync", default=False, copy=False)
     ei_is_not_test = fields.Boolean(string="In production", default=False, copy=False)
 
@@ -138,7 +138,6 @@ class AccountInvoice(models.Model):
     date_end = fields.Date(string="End date", default=None, copy=True, readonly=True,
                            states={'draft': [('readonly', False)]})
 
-    @api.multi
     def is_journal_pos(self):
         self.ensure_one()
         try:
@@ -160,7 +159,6 @@ class AccountInvoice(models.Model):
         except KeyError:
             return False
 
-    @api.multi
     def write_response(self, json_response):
         try:
             json_request = json.loads(json.dumps(json_response))
@@ -204,7 +202,6 @@ class AccountInvoice(models.Model):
             _logger.debug("Write response: %s", e)
             raise Warning("Write response: %s" % e)
 
-    @api.multi
     def get_type_document_identification_id(self):
         for rec in self:
             if rec.partner_id.type == 'invoice' and rec.partner_id.parent_id:
@@ -214,7 +211,6 @@ class AccountInvoice(models.Model):
 
             return rec_partner.type_document_identification_id.id
 
-    @api.multi
     def get_ei_customer(self):
         for rec in self:
             if rec.partner_id.type == 'invoice' and rec.partner_id.parent_id:
@@ -317,7 +313,6 @@ class AccountInvoice(models.Model):
                 raise Warning(_("The client does not have an associated identification document type."))
         return False
 
-    @api.multi
     def get_ei_legal_monetary_totals(self):
         self.ensure_one()
         line_extension_amount = self.amount_untaxed
@@ -338,7 +333,6 @@ class AccountInvoice(models.Model):
             "payable_value": payable_amount
         }
 
-    @api.multi
     def get_ei_lines(self):
         lines = []
         for rec in self:
@@ -378,12 +372,8 @@ class AccountInvoice(models.Model):
                     if invoice_line_id.ei_notes:
                         products.update({'notes': [{'text': invoice_line_id.ei_notes}]})
 
-                    if invoice_line_id.product_id.uom_id.edi_unit_measure_id.id:
-                        products.update({'uom_code': invoice_line_id.product_id.uom_id.edi_unit_measure_id.id})
-                    elif invoice_line_id.product_id.edi_unit_measure_id.id:
-                        # If the setting is used in the Odoo unit of measure, then this field is not required
-                        # However, it is left for compatibility with existing fields
-                        products.update({'uom_code': invoice_line_id.product_id.edi_unit_measure_id.id})
+                    if invoice_line_id.product_uom_id.edi_unit_measure_id.id:
+                        products.update({'uom_code': invoice_line_id.product_uom_id.edi_unit_measure_id.id})
                     else:
                         raise Warning(_("All products must be assigned a unit of measure (DIAN)"))
 
@@ -407,7 +397,7 @@ class AccountInvoice(models.Model):
                         base_amount = 0
                         allowance_charge_reason = ""
 
-                    products.update({'price_code': 1})  # Commercial value ('01')
+                    products.update({'price_code': 1})  # Valor comercial ('01')
 
                     taxable_amount = invoice_line_id.price_subtotal
 
@@ -416,7 +406,7 @@ class AccountInvoice(models.Model):
                     allowance_charges.update({'reason': allowance_charge_reason})
 
                     # Calculate tax totals for invoice line
-                    for invoice_line_tax_id in invoice_line_id.invoice_line_tax_ids:
+                    for invoice_line_tax_id in invoice_line_id.tax_ids:
                         tax_total = {}
 
                         if invoice_line_tax_id.edi_tax_id.id:
@@ -515,89 +505,93 @@ class AccountInvoice(models.Model):
         return lines
 
     # Calculation of withholdings, excluded, etc.
-    @api.one
     def _compute_amount(self):
-        res = super(AccountInvoice, self)._compute_amount()
+        res = super(AccountMove, self)._compute_amount()
 
-        amount_tax_withholding = 0
-        amount_tax_no_withholding = 0
-        amount_excluded = 0
-        for tax_line_id in self.tax_line_ids:
-            if tax_line_id.tax_id.edi_tax_id:
-                edi_tax_name = tax_line_id.tax_id.edi_tax_id.name
-                tax_name = tax_line_id.tax_id.name
-                if tax_name == 'IVA Excluido':
-                    amount_excluded = amount_excluded + tax_line_id.base
-                elif edi_tax_name[:4] == 'Rete':
-                    amount_tax_withholding = amount_tax_withholding + tax_line_id.amount_total
-                else:
-                    amount_tax_no_withholding = amount_tax_no_withholding + tax_line_id.amount_total
-            else:
-                tax_name = tax_line_id.tax_id.name
-                if tax_name == 'IVA Excluido':
-                    amount_excluded = amount_excluded + tax_line_id.base
-                elif tax_name[:3] == 'Rte':
-                    amount_tax_withholding = amount_tax_withholding + tax_line_id.amount_total
-                else:
-                    amount_tax_no_withholding = amount_tax_no_withholding + tax_line_id.amount_total
+        for rec in self:
+            amount_tax_withholding = 0
+            amount_tax_no_withholding = 0
+            amount_excluded = 0
+            for invoice_line_id in rec.invoice_line_ids:
+                if invoice_line_id.account_id:
+                    taxable_amount = invoice_line_id.price_subtotal
+                    for invoice_line_tax_id in invoice_line_id.tax_ids:
+                        if invoice_line_tax_id.edi_tax_id.id:
+                            edi_tax_name = invoice_line_tax_id.edi_tax_id.name
+                            tax_name = invoice_line_tax_id.name
+                            tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
+                            if tax_name == 'IVA Excluido':
+                                amount_excluded = amount_excluded + taxable_amount
+                            elif edi_tax_name[:4] == 'Rete':
+                                amount_tax_withholding = amount_tax_withholding + tax_amount
+                            else:
+                                amount_tax_no_withholding = amount_tax_no_withholding + tax_amount
+                        else:
+                            tax_name = invoice_line_tax_id.name
+                            tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
+                            if tax_name == 'IVA Excluido':
+                                amount_excluded = amount_excluded + taxable_amount
+                            elif tax_name[:3] == 'Rte':
+                                amount_tax_withholding = amount_tax_withholding + tax_amount
+                            else:
+                                amount_tax_no_withholding = amount_tax_no_withholding + tax_amount
 
-        self.ei_amount_tax_withholding = amount_tax_withholding
-        self.ei_amount_tax_no_withholding = amount_tax_no_withholding
-        self.ei_amount_total_no_withholding = self.amount_untaxed + self.ei_amount_tax_no_withholding
-        self.ei_amount_excluded = amount_excluded
+                    rec.ei_amount_tax_withholding = amount_tax_withholding
+                    rec.ei_amount_tax_no_withholding = amount_tax_no_withholding
+                    rec.ei_amount_total_no_withholding = rec.amount_untaxed + rec.ei_amount_tax_no_withholding
+                    rec.ei_amount_excluded = amount_excluded
 
-        if self.is_universal_discount():
-            if not ('ks_global_tax_rate' in self):
-                self.ks_calculate_discount()
-            sign = self.type in ['in_refund', 'out_refund'] and -1 or 1
-            self.amount_total_company_signed = self.amount_total * sign
-            self.amount_total_signed = self.amount_total * sign
+                    if self.is_universal_discount():
+                        if not ('ks_global_tax_rate' in rec):
+                            rec.ks_calculate_discount()
+                        sign = rec.type in ['in_refund', 'out_refund'] and -1 or 1
+                        rec.amount_total_company_signed = rec.amount_total * sign
+                        rec.amount_total_signed = rec.amount_total * sign
 
-            self.ei_amount_total_no_withholding = self.amount_untaxed + \
-                                                  self.ei_amount_tax_no_withholding - \
-                                                  self.ks_amount_discount
+                        rec.ei_amount_total_no_withholding = rec.amount_untaxed + \
+                                                             rec.ei_amount_tax_no_withholding - \
+                                                             rec.ks_amount_discount
 
-        # Value in letters
-        decimal_part, integer_part = math.modf(self.amount_total)
-        if decimal_part:
-            decimal_part = round(decimal_part * math.pow(10, self.currency_id.decimal_places))
-        if integer_part:
-            lang = self.partner_id.lang if self.partner_id.lang else 'es_CO'
+                    # Value in letters
+                    decimal_part, integer_part = math.modf(rec.amount_total)
+                    if decimal_part:
+                        decimal_part = round(decimal_part * math.pow(10, rec.currency_id.decimal_places))
+                    if integer_part:
+                        lang = rec.partner_id.lang if rec.partner_id.lang else 'es_CO'
 
-            self.value_letters = num2words(integer_part, lang=lang).upper() + ' ' + \
-                                 self.currency_id.currency_unit_label.upper()
-            if decimal_part:
-                self.value_letters = self.value_letters + ', ' + \
-                                     num2words(decimal_part, lang=lang).upper() + ' ' + \
-                                     self.currency_id.currency_subunit_label.upper() + '.'
+                        rec.value_letters = num2words(integer_part, lang=lang).upper() + ' ' + \
+                                            rec.currency_id.currency_unit_label.upper()
 
+                        if decimal_part:
+                            rec.value_letters = rec.value_letters + ', ' + \
+                                                num2words(decimal_part, lang=lang).upper() + ' ' + \
+                                                rec.currency_id.currency_subunit_label.upper() + '.'
         return res
 
-    @api.multi
     def get_ei_payment_form(self):
         for rec in self:
             payment_forms_env = self.env['l10n_co_edi_jorels.payment_forms']
 
-            if rec.date_invoice and rec.date_due:
-                if rec.date_invoice >= rec.date_due:
+            if rec.invoice_date and rec.invoice_date_due:
+                if rec.invoice_date >= rec.invoice_date_due:
                     # Cash
                     payment_forms_rec = payment_forms_env.search([('code', '=', '1')])
                     duration_measure = 0
                 else:
                     # Credit
                     payment_forms_rec = payment_forms_env.search([('code', '=', '2')])
-                    duration_measure = (rec.date_due - rec.date_invoice).days
-                payment_due_date = fields.Date.to_string(rec.date_due)
+                    duration_measure = (rec.invoice_date_due - rec.invoice_date).days
+                payment_due_date = fields.Date.to_string(rec.invoice_date_due)
             else:
                 _logger.debug("The invoice or payment date is not valid")
                 # Cash
                 payment_forms_rec = payment_forms_env.search([('code', '=', '1')])
                 duration_measure = 0
-                payment_due_date = fields.Date.to_string(rec.date_invoice)
+                payment_due_date = fields.Date.to_string(rec.invoice_date)
 
             payment_form_id = payment_forms_rec.id
 
-            # For now you always put payment method as instrument not defined [1]
+            # For now, you always put payment method as instrument not defined [1]
             return {
                 'code': payment_form_id,
                 'method_code': 1,
@@ -605,7 +599,6 @@ class AccountInvoice(models.Model):
                 'duration_days': duration_measure
             }
 
-    @api.multi
     def get_ei_type_document_id(self):
         self.ensure_one()
         type_documents_env = self.env['l10n_co_edi_jorels.type_documents']
@@ -638,18 +631,15 @@ class AccountInvoice(models.Model):
 
         return self.ei_type_document_id.id
 
-    @api.multi
     def get_ei_sync(self):
         self.ensure_one()
         self.ei_sync = self.ei_is_not_test
         return self.ei_sync
 
-    @api.multi
     def get_ei_is_not_test(self):
         self.ensure_one()
         return self.ei_is_not_test
 
-    @api.multi
     def get_ei_resolution_id(self):
         resolution_id = 0
         for rec in self:
@@ -661,9 +651,13 @@ class AccountInvoice(models.Model):
                 elif type_edi_document == 'credit_note' and rec.journal_id.refund_sequence_id.resolution_id:
                     # Credit note
                     resolution_id = rec.journal_id.refund_sequence_id.resolution_id.resolution_id
-                elif type_edi_document == 'debit_note' and rec.journal_id.debitnote_sequence_id.resolution_id:
+                # TO DO: Debit note sequence is missing in the same journal as the invoice and credit note
+                # elif type_edi_document == 'debit_note' and rec.journal_id.debitnote_sequence_id.resolution_id:
+                # At the moment, for the credit note to work, an alternative journal must be used
+                elif type_edi_document == 'debit_note' and rec.journal_id.sequence_id.resolution_id:
                     # Debit note
-                    resolution_id = rec.journal_id.debitnote_sequence_id.resolution_id.resolution_id
+                    # resolution_id = rec.journal_id.debitnote_sequence_id.resolution_id.resolution_id
+                    resolution_id = rec.journal_id.sequence_id.resolution_id.resolution_id
                 else:
                     raise Warning(_("This type of document does not have a DIAN resolution assigned"))
             else:
@@ -671,17 +665,17 @@ class AccountInvoice(models.Model):
 
         return resolution_id
 
-    @api.depends('number')
+    @api.depends('name')
     def _compute_number_formatted(self):
         for rec in self:
             number_unformatted = ''
-            if rec.number:
+            if rec.name:
                 # Remove non-alphanumeric characters
-                number = re.sub(r'\W+', '', rec.number)
-                number_unformatted = ''.join([i for i in number if i.isdigit()])
+                name = re.sub(r'\W+', '', rec.name)
+                number_unformatted = ''.join([i for i in name if i.isdigit()])
 
             if number_unformatted:
-                invoice_prefix = rec.number.split(number_unformatted)[0]
+                invoice_prefix = rec.name.split(number_unformatted)[0]
                 invoice_number = str(int(number_unformatted))
 
                 rec.ei_number = invoice_number
@@ -689,20 +683,6 @@ class AccountInvoice(models.Model):
             else:
                 rec.ei_number = ''
                 rec.number_formatted = ''
-
-    @api.model
-    def _prepare_refund(self, invoice, date_invoice=None, date=None, description=None, journal_id=None):
-        values = super(AccountInvoice, self)._prepare_refund(invoice, date_invoice, date, description, journal_id)
-
-        if description:
-            ei_correction_concept_search = self.env['l10n_co_edi_jorels.correction_concepts'].search([
-                ('name', '=', description),
-                ('type_document_id', '=', 5)
-            ])
-            if ei_correction_concept_search:
-                values['ei_correction_concept_credit_id'] = ei_correction_concept_search[0].id
-
-        return values
 
     @api.depends('ei_type_document_id', 'ei_correction_concept_credit_id', 'ei_correction_concept_debit_id')
     def _compute_ei_correction_concept_id(self):
@@ -714,7 +694,6 @@ class AccountInvoice(models.Model):
             else:
                 rec.ei_correction_concept_id = None
 
-    @api.multi
     def get_operation_code(self):
         self.ensure_one()
         operation = {
@@ -724,7 +703,6 @@ class AccountInvoice(models.Model):
             'transport': 12,
             'exchange': 25
         }
-
         type_edi_document = self.get_type_edi_document()
         if type_edi_document == 'credit_note':
             return 14 if self.ei_is_correction_without_reference else 13
@@ -733,7 +711,6 @@ class AccountInvoice(models.Model):
         else:
             return operation[self.ei_operation]
 
-    @api.multi
     def get_json_request(self):
         for rec in self:
             # If it is a sales invoice or credit note or debit note.
@@ -753,8 +730,8 @@ class AccountInvoice(models.Model):
                 }
 
                 # Due date
-                if rec.date_due:
-                    json_request['due_date'] = fields.Date.to_string(rec.date_due)
+                if rec.invoice_date_due:
+                    json_request['due_date'] = fields.Date.to_string(rec.invoice_date_due)
 
                 # Period
                 if rec.date_start and rec.date_end:
@@ -829,10 +806,17 @@ class AccountInvoice(models.Model):
                         billing_reference = False
                     elif type_edi_document == 'credit_note':
                         # Credit note
+                        invoice_env = self.env['account.move']
+                        invoice_rec = invoice_env.search([('id', '=', rec.reversed_entry_id.id)])
                         billing_reference = True
                     elif type_edi_document == 'debit_note':
                         # Debit note
-                        billing_reference = True
+                        if self.is_debit_note_module():
+                            invoice_env = self.env['account.move']
+                            invoice_rec = invoice_env.search([('id', '=', rec.debit_origin_id.id)])
+                            billing_reference = True
+                        else:
+                            raise Warning(_("The debit notes module has not been installed."))
                 else:
                     raise Warning(_("This type of document does not need to be sent to DIAN"))
 
@@ -841,15 +825,14 @@ class AccountInvoice(models.Model):
                     self._compute_ei_correction_concept_id()
                     if rec.ei_correction_concept_id:
                         json_request["discrepancy"] = {
-                            "reference": rec.reference if rec.reference else '',
+                            "reference": rec.invoice_payment_ref if rec.invoice_payment_ref else '',
                             "correction_code": rec.ei_correction_concept_id.id,
-                            "description": rec.name if rec.name else ''
+                            "description": rec.ref if rec.ref else ''
                         }
                     else:
                         raise Warning(_("You need to select a correction code first"))
 
                     if not self.ei_is_correction_without_reference:
-                        invoice_rec = self.env['account.invoice'].search([('number', '=', rec.origin)])
                         if invoice_rec and invoice_rec.ei_uuid:
                             json_request["reference"] = {
                                 "number": invoice_rec.number_formatted,
@@ -859,14 +842,14 @@ class AccountInvoice(models.Model):
                         else:
                             raise Warning(_("The reference invoice has not yet been validated before the DIAN"))
 
-                if rec.name or rec.comment:
+                if rec.ref or rec.narration:
                     notes = []
-                    if rec.name:
-                        notes.append({'text': rec.name})
-                    if rec.comment:
-                        comment = re.sub(r'<.*?>', '', rec.comment)
-                        if comment:
-                            notes.append({'text': comment})
+                    if rec.ref:
+                        notes.append({'text': rec.ref})
+                    if rec.narration:
+                        narration = re.sub(r'<.*?>', '', rec.narration)
+                        if narration:
+                            notes.append({'text': narration})
                     json_request['notes'] = notes
             else:
                 raise Warning(_("This type of document does not need to be sent to DIAN"))
@@ -875,13 +858,12 @@ class AccountInvoice(models.Model):
 
     # TO DO: It can be made more efficient by calling this function fewer times,
     # when the electronic invoice is processed. Ideally, it should be just one time
-    @api.multi
     def get_type_edi_document(self):
         type_edi_document = 'none'
         for rec in self:
             if rec.type == 'out_invoice':
-                if rec.origin:
-                    if rec.debit_invoice_id:
+                if self.is_debit_note_module():
+                    if rec.debit_origin_id.id:
                         # Debit note
                         type_edi_document = 'debit_note'
                     else:
@@ -895,7 +877,6 @@ class AccountInvoice(models.Model):
                 type_edi_document = 'credit_note'
         return type_edi_document
 
-    @api.multi
     def validate_dian_generic(self, is_test):
         if not self.env.user.company_id.ei_enable:
             return
@@ -978,78 +959,69 @@ class AccountInvoice(models.Model):
 
             if not is_test and not rec.ei_attached_document_base64_bytes:
                 rec.status_document_log()
-                # if not rec.ei_attached_document_base64_bytes:
-                #     rec.status_document()
                 if not rec.ei_attached_document_base64_bytes:
                     _logger.error('Unable to obtain an attached document.')
 
-    @api.multi
     def validate_dian(self):
         self.ensure_one()
         self.validate_dian_generic(False)
-        self.write({'state': 'open'})
+        self.write({'state': 'posted'})
 
-    @api.multi
     def validate_dian_test(self):
         self.ensure_one()
         self.validate_dian_generic(True)
-        self.write({'state': 'open'})
+        self.write({'state': 'posted'})
 
-    @api.multi
     def skip_validate_dian(self):
         self.ensure_one()
-        self.write({'state': 'open'})
+        self.write({'state': 'posted'})
         self.env.user.notify_warning(message=_("The validation process has been skipped."))
 
-    @api.multi
     def skip_validate_dian_production(self):
         self.skip_validate_dian()
 
-    @api.multi
-    def action_invoice_open(self):
+    def is_debit_note_module(self):
+        self.ensure_one()
+        return True if hasattr(self, 'debit_origin_id') else False
+
+    def post(self):
+        res = super(AccountMove, self).post()
+
         if not self.env.user.company_id.ei_enable:
-            return super(AccountInvoice, self).action_invoice_open()
+            return res
 
-        previous_invoice_state_is_draft = False
-        if self.filtered(lambda inv: inv.state == 'draft'):
-            previous_invoice_state_is_draft = True
+        # Invoices in DIAN cannot be validated with zero total
+        to_paid_invoices = self.filtered(lambda m: m.is_invoice() and m.currency_id.is_zero(m.amount_total))
+        if to_paid_invoices:
+            raise Warning(_('Please check your invoice again. Are you really billing something?'))
 
-        res = super(AccountInvoice, self).action_invoice_open()
+        to_posted_invoices = self.filtered(lambda inv: inv.state == 'posted')
+        if to_posted_invoices.filtered(
+                lambda inv: inv.type in (
+                        'out_invoice', 'out_refund') and not inv.ei_is_valid and not inv.is_journal_pos()):
+            # Environment
+            to_posted_invoices.filtered(
+                lambda inv: inv.write({'ei_is_not_test': inv.env.user.company_id.is_not_test}))
 
-        if previous_invoice_state_is_draft:
-            to_open_invoices = self.filtered(lambda inv: inv.state == 'open')
+            # Enter intermediate validation state, if option is enabled in configuration
+            if to_posted_invoices.filtered(lambda inv: inv.env.user.company_id.enable_validate_state):
+                return to_posted_invoices.filtered(lambda inv: inv.write({'state': 'validate'}))
 
-            if to_open_invoices.filtered(
-                    lambda inv: inv.type in (
-                            'out_invoice', 'out_refund') and not inv.ei_is_valid and not inv.is_journal_pos()):
-                # Environment
-                to_open_invoices.filtered(
-                    lambda inv: inv.write({'ei_is_not_test': inv.env.user.company_id.is_not_test}))
+            if to_posted_invoices.filtered(lambda inv: inv.ei_is_not_test):
+                to_posted_invoices.validate_dian_generic(False)
+                if to_posted_invoices.filtered(lambda inv: inv.env.user.company_id.enable_mass_send_print):
+                    try:
+                        to_posted_invoices.mass_send_print()
+                    except Exception as e:
+                        self.env.user.notify_danger(message=_('The invoice email could not be sent'))
+                        _logger.error('mass_send_print error: %s' % e)
+            if to_posted_invoices.filtered(lambda inv: not inv.ei_is_not_test):
+                to_posted_invoices.validate_dian_generic(True)
 
-                # Enter intermediate validation state, if option is enabled in configuration
-                if to_open_invoices.filtered(lambda inv: inv.env.user.company_id.enable_validate_state):
-                    return to_open_invoices.filtered(lambda inv: inv.write({'state': 'validate'}))
-
-                if to_open_invoices.filtered(lambda inv: inv.ei_is_not_test):
-                    to_open_invoices.validate_dian_generic(False)
-                    if to_open_invoices.filtered(lambda inv: inv.env.user.company_id.enable_mass_send_print):
-                        try:
-                            to_open_invoices.mass_send_print()
-                        except Exception as e:
-                            self.env.user.notify_danger(message=_('The invoice email could not be sent'))
-                            _logger.error('mass_send_print error: %s' % e)
-                if to_open_invoices.filtered(lambda inv: not inv.ei_is_not_test):
-                    to_open_invoices.validate_dian_generic(True)
-
-                return to_open_invoices.filtered(lambda inv: inv.write({'state': 'open'}))
-
-            to_paid_invoices = self.filtered(lambda inv: inv.state == 'paid')
-            if to_paid_invoices:
-                raise Warning(_('Please check your invoice again. Are you really billing something?'))
+            return to_posted_invoices.filtered(lambda inv: inv.write({'state': 'posted'}))
 
         return res
 
-    @api.multi
     def status_document(self):
         self.ensure_one()
         if not self.env.user.company_id.ei_enable:
@@ -1128,7 +1100,6 @@ class AccountInvoice(models.Model):
             _logger.debug("Failed to process the request: %s", e)
             raise Warning(_("Failed to process the request: %s") % e)
 
-    @api.multi
     def status_document_log(self):
         if not self.env.user.company_id.ei_enable:
             return
@@ -1170,8 +1141,7 @@ class AccountInvoice(models.Model):
                             raise Warning(response['detail'])
                         if 'message' in response:
                             if response['message'] == 'Unauthenticated.' or response['message'] == '':
-                                self.env.user.notify_warning(
-                                    message=_("Authentication error with the API"))
+                                self.env.user.notify_warning(message=_("Authentication error with the API"))
                                 _logger.debug("Authentication error with the API")
                             else:
                                 if 'errors' in response:
@@ -1271,10 +1241,9 @@ class AccountInvoice(models.Model):
             else:
                 rec.is_attached_document_matched = False
 
-    @api.multi
     def message_update(self, msg_dict, update_vals=None):
         """Check DIAN events from email content"""
-        res = super(AccountInvoice, self).message_update(msg_dict, update_vals)
+        res = super(AccountMove, self).message_update(msg_dict, update_vals)
 
         if not self.env.user.company_id.ei_enable:
             return res

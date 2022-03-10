@@ -61,7 +61,6 @@ class CustomerSoftware(models.Model):
     number_before = fields.Char("Before")
     number_after = fields.Char("After")
 
-    @api.multi
     def check_receipt(self, msg_dict):
         self.ensure_one()
         event_field = self.receipt_event_field
@@ -72,7 +71,6 @@ class CustomerSoftware(models.Model):
                and msg_dict[event_field].startswith(es) != -1 \
                and msg_dict[event_field].endswith(ee) != -1
 
-    @api.multi
     def check_rejection(self, msg_dict):
         self.ensure_one()
         event_field = self.rejection_event_field
@@ -83,7 +81,6 @@ class CustomerSoftware(models.Model):
                and msg_dict[event_field].startswith(es) != -1 \
                and msg_dict[event_field].endswith(ee) != -11
 
-    @api.multi
     def check_acceptance(self, msg_dict):
         self.ensure_one()
         event_field = self.acceptance_event_field
@@ -94,7 +91,6 @@ class CustomerSoftware(models.Model):
                and msg_dict[event_field].startswith(es) != -1 \
                and msg_dict[event_field].endswith(ee) != -11
 
-    @api.multi
     def get_invoice_event(self, msg_dict):
         self.ensure_one()
         if self.check_receipt(msg_dict):
@@ -106,7 +102,6 @@ class CustomerSoftware(models.Model):
         else:
             return 'none'
 
-    @api.multi
     def get_invoice_id(self, mail_message):
         """Return invoice_id from mail message"""
         self.ensure_one()
@@ -119,7 +114,7 @@ class CustomerSoftware(models.Model):
             for res in result.split(" "):
                 if res:
                     invoice_number = res
-                    invoice_rec = self.env['account.invoice'].search([('number_formatted', '=', invoice_number)])[0]
+                    invoice_rec = self.env['account.move'].search([('number_formatted', '=', invoice_number)])[0]
                     return invoice_rec.id
         except AttributeError:
             _logger.debug("The invoice number does not match in the search")

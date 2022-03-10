@@ -23,10 +23,8 @@
 from odoo import fields, models
 
 
-class Product(models.Model):
-    _inherit = "product.product"
+class ProductTemplate(models.Model):
+    _inherit = "product.template"
 
-    edi_unit_measure_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.unit_measures',
-                                          string="Unit of measure (DIAN)", ondelete='RESTRICT')
     brand_name = fields.Char('Brand')
     model_name = fields.Char('Model')

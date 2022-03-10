@@ -74,7 +74,6 @@ class Resolution(models.Model):
         else:
             return super(Resolution, self).create(vals)
 
-    @api.multi
     def write(self, vals):
         for rec in self:
             if rec.resolution_api_sync:
@@ -86,7 +85,6 @@ class Resolution(models.Model):
             else:
                 return super(Resolution, self).write(vals)
 
-    @api.multi
     def unlink(self):
         for rec in self:
             if rec.resolution_api_sync:
@@ -99,7 +97,6 @@ class Resolution(models.Model):
                 return super(models.Model, self).unlink()
 
     # Resolution creation
-    @api.multi
     def post_resolution(self, vals):
         success = False
         try:
@@ -165,7 +162,6 @@ class Resolution(models.Model):
         return vals, success
 
     # Resolution update
-    @api.multi
     def put_resolution(self, vals):
         success = False
         for rec in self:
@@ -243,7 +239,6 @@ class Resolution(models.Model):
         return vals, success
 
     # Resolution removal
-    @api.multi
     def delete_resolution(self):
         success = False
         for rec in self:
@@ -274,7 +269,7 @@ class Resolution(models.Model):
                     else:
                         rec.resolution_message = response['message']
                 else:
-                    rec.resolution_message = 'Unable to communicate with the API'
+                    rec.resolution_message = _('Unable to communicate with the API')
             except Exception as e:
                 rec.resolution_message = _('API connection error!')
                 _logger.debug("Connection error: %s", e)

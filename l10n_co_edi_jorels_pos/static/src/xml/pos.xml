@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--Jorels S.A.S. - Copyright (2019-2021)-->
+<!--Jorels S.A.S. - Copyright (2019-2022)-->
 
 <!--This file is part of l10n_co_edi_jorels_pos.-->
 
@@ -20,39 +20,9 @@
 <!--email: info@jorels.com-->
 
 <templates xml:space="preserve">
-    <t t-extend="PosTicket">
-        <t t-jquery="t[t-esc='widget.pos.company.name']" t-operation="replace">
-            <div style='text-align:center'>
-                <t t-esc="widget.pos.company.name"/>
-            </div>
-            <div style='text-align:center'>
-                VAT: <t t-esc="widget.pos.company.vat"/>
-            </div>
-        </t>
-        <t t-jquery="div.receipt-phone" t-operation="replace">
-            <t t-if="widget.pos.company.phone">
-                <div style='text-align:center'>
-                    Phone: <t t-esc="widget.pos.company.phone"/>
-                </div>
-            </t>
-            <t t-if="widget.pos.company.email">
-                <div style='text-align:center'>
-                    Email: <t t-esc="widget.pos.company.email"/>
-                </div>
-            </t>
-            <t t-if="widget.pos.company.website">
-                <div style='text-align:center'>
-                    Website: <t t-esc="widget.pos.company.website"/>
-                </div>
-            </t>
-        </t>
-        <t t-jquery="div.receipt-user" t-operation="replace">
-            <div style='text-align:center'>
-                User: <t t-esc="widget.pos.get_cashier().name"/>
-            </div>
-        </t>
-        <t t-jquery="t[t-if='receipt.header']" t-operation="after">
-            <t t-set="client" t-value="order.get_client()"/>
+    <t t-extend="OrderReceipt">
+        <t t-jquery="t[t-if='receipt.cashier']" t-operation="after">
+            <t t-set="client" t-value="widget.pos.get_client()"/>
             <div t-if="client">Customer: <t t-esc="client.name"/></div>
             <div t-if="client">VAT: <t t-esc="client.vat"/></div>
             <br/>
@@ -110,146 +80,79 @@
                     <t t-if="order.invoice.resolution_date_to" t-esc="order.invoice.resolution_date_to"/>
                 </div>
             </div>
-            <br/>
         </t>
-        <t t-jquery="table[class='receipt-orderlines']" t-operation="replace">
-<!--            <hr/>-->
-            <table>
-                <colgroup>
-                    <col width='30%'/>
-                    <col width='20%'/>
-                    <col width='25%'/>
-                    <col width='25%'/>
-                </colgroup>
-                <tr>
-                    <td>
-                        <span>Descripción</span>
-                        <span>-----------</span>
-                    </td>
-                    <td class="pos-right-align">
-                        <span>Cant.</span>
-                        <span>-----</span>
-                    </td>
-                    <td class="pos-right-align">
-                        <span>Vr. Unit</span>
-                        <span>--------</span>
-                    </td>
-                    <td class="pos-right-align">
-                        <span>Vr. Total</span>
-                        <span>---------</span>
-                    </td>
-                </tr>
-                <tr t-foreach="orderlines" t-as="orderline">
-                    <td>
-                        <t t-esc="orderline.get_product().display_name"/>
-                        <t t-if="orderline.get_discount() > 0">
-                            <div class="pos-disc-font">
-                                With a <t t-esc="orderline.get_discount()"/>% discount
-                            </div>
-                        </t>
-                    </td>
-                    <td class="pos-right-align">
-                        <t t-esc="orderline.get_quantity_str_with_unit()"/>
-                    </td>
-                    <td class="pos-right-align">
-                        <t t-esc="widget.format_currency(orderline.get_unit_display_price())"/>
-                    </td>
-                    <td class="pos-right-align">
-                        <t t-esc="widget.format_currency(orderline.get_display_price())"/>
-                    </td>
-                </tr>
-            </table>
+
+        <t t-jquery="t[t-foreach='receipt.orderlines']" t-operation="before">
+            <div>
+                <span class="pos-receipt-left-align">Descripción</span>
+                <span class="pos-receipt-right-align">Vr. Total</span>
+            </div>
+            <div>
+                <span class="pos-receipt-left-align">----------------</span>
+                <span class="pos-receipt-right-align">-----------</span>
+            </div>
         </t>
     </t>
 
     <t t-extend="ClientDetails">
         <t t-jquery="div.client-details-box" t-operation="append">
-<!--            <div class='client-details-left'>-->
-            <!--                <div class='client-detail'>-->
-            <!--                    <span class='label'>Departam.</span>-->
-            <!--                    <span class='detail'><t t-esc='partner.state_id'/></span>-->
-            <!--                </div>-->
-            <!--                <div class='client-detail'>-->
-            <!--                    <span class='label'>Regimen</span>-->
-            <!--                    <span class='detail'><t t-esc='partner.type_regime_id'/></span>-->
-            <!--                </div>-->
-            <!--                <div class='client-detail'>-->
-            <!--                    <span class='label'>Responsab.</span>-->
-            <!--                    <span class='detail'><t t-esc='partner.type_liability_id'/></span>-->
-            <!--                </div>-->
-            <!--                <div class='client-detail'>-->
-            <!--                    <span class='label'>Municipal.</span>-->
-            <!--                    <span class='detail'><t t-esc='partner.municipality_id'/></span>-->
-            <!--                </div>-->
-            <!--            </div>-->
-            <div class='client-detail'>
-                <span class='label'>E-mail facturación</span>
-                <span class='detail'><t t-esc='partner.email_edi'/></span>
+            <div class='client-details-left'>
+                <div class='client-detail'>
+                    <span class='label'>Lugar</span>
+                    <t t-if="partner.state_id and partner.country_id">
+                        <span class='detail'><t t-esc='partner.state_id[1]'/>,
+                            <t t-esc='partner.country_id[1]'/></span>
+                    </t>
+                    <t t-if="!partner.state_id or !partner.country_id">
+                        <span class='detail empty'>N/A</span>
+                    </t>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Regimen</span>
+                    <t t-if="partner.type_regime_id">
+                        <span class='detail'><t t-esc='partner.type_regime_id[1]'/></span>
+                    </t>
+                    <t t-if="!partner.type_regime_id">
+                        <span class='detail empty'>N/A</span>
+                    </t>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Responsab.</span>
+                    <t t-if="partner.type_liability_id">
+                        <span class='detail'><t t-esc='partner.type_liability_id[1]'/></span>
+                    </t>
+                    <t t-if="!partner.type_liability_id">
+                        <span class='detail empty'>N/A</span>
+                    </t>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Municipal.</span>
+                    <t t-if="partner.municipality_id">
+                        <span class='detail'><t t-esc='partner.municipality_id[1]'/></span>
+                    </t>
+                    <t t-if="!partner.municipality_id">
+                        <span class='detail empty'>N/A</span>
+                    </t>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Email fact.</span>
+                    <t t-if="partner.email_edi">
+                        <span class='detail'><t t-esc='partner.email_edi'/></span>
+                    </t>
+                    <t t-if="!partner.email_edi">
+                        <span class='detail empty'>N/A</span>
+                    </t>
+                </div>
             </div>
         </t>
     </t>
 
     <t t-extend="ClientDetailsEdit">
         <t t-jquery="div.client-details-box" t-operation="append">
-            <div class='client-details-left'>
-                <div class='client-detail'>
-                    <span class='label'>Tipo</span>
-                    <select class='detail' name='company_type'>
-                        <option value='person'
-                                t-att-selected="partner.company_type ? (('person' === partner.company_type) ? true : undefined) : undefined">Persona Natural</option>
-                        <option value='company'
-                                t-att-selected="partner.company_type ? (('company' === partner.company_type) ? true : undefined) : undefined">Persona Jurídica</option>
-                    </select>
-                </div>
-                <div class='client-detail'>
-                    <span class='label'>Departam.</span>
-                    <select class='detail' name='state_id'>
-                        <t t-foreach='widget.pos.states' t-as='state_id'>
-                            <option t-att-value='state_id.id'
-                                    t-att-selected="partner.state_id ? ((state_id.id === partner.state_id[0]) ? true : undefined) : undefined">
-                                <t t-esc='state_id.name'/>
-                            </option>
-                        </t>
-                    </select>
-                </div>
-                <div class='client-detail'>
-                    <span class='label'>Regimen</span>
-                    <select class='detail' name='type_regime_id'>
-                        <t t-foreach='widget.pos.type_regimes' t-as='type_regime_id'>
-                            <option t-att-value='type_regime_id.id'
-                                    t-att-selected="partner.type_regime_id ? ((type_regime_id.id === partner.type_regime_id[0]) ? true : undefined) : undefined">
-                                <t t-esc='type_regime_id.name'/>
-                            </option>
-                        </t>
-                    </select>
-                </div>
-                <div class='client-detail'>
-                    <span class='label'>Responsab.</span>
-                    <select class='detail' name='type_liability_id'>
-                        <t t-foreach='widget.pos.type_liabilities' t-as='type_liability_id'>
-                            <option t-att-value='type_liability_id.id'
-                                    t-att-selected="partner.type_liability_id ? ((type_liability_id.id === partner.type_liability_id[0]) ? true : undefined) : undefined">
-                                <t t-esc='type_liability_id.name'/>
-                            </option>
-                        </t>
-                    </select>
-                </div>
-                <div class='client-detail'>
-                    <span class='label'>Municipali.</span>
-                    <select class='detail' name='municipality_id'>
-                        <t t-foreach='widget.pos.municipalities' t-as='municipality_id'>
-                            <option t-att-value='municipality_id.id'
-                                    t-att-selected="partner.municipality_id ? ((municipality_id.id === partner.municipality_id[0]) ? true : undefined) : undefined">
-                                <t t-esc='municipality_id.name'/>
-                            </option>
-                        </t>
-                    </select>
-                </div>
-            </div>
             <div class='client-details-right'>
                 <div class='client-detail'>
-                    <span class='label'>Tipo documento</span>
-                    <select class='detail' name='l10n_co_document_type'>
+                    <span class='label'>Tipo doc.</span>
+                    <select class='detail client-edi-l10n_co_document_type needsclick' name='l10n_co_document_type'>
                         <option value='rut'
                                 t-att-selected="partner.l10n_co_document_type ? (('rut' === partner.l10n_co_document_type) ? true : undefined) : undefined">NIT</option>
                         <option value='national_citizen_id'
@@ -279,9 +182,54 @@
                     </select>
                 </div>
                 <div class='client-detail'>
+                    <span class='label'>Tipo per.</span>
+                    <select class='detail client-edi-company_type needsclick' name='company_type'>
+                        <option value='person'
+                                t-att-selected="partner.company_type ? (('person' === partner.company_type) ? true : undefined) : undefined">Persona Natural</option>
+                        <option value='company'
+                                t-att-selected="partner.company_type ? (('company' === partner.company_type) ? true : undefined) : undefined">Persona Jurídica</option>
+                    </select>
+                </div>
+                <div class='client-detail'>
                     <span class='label'>Email fact.</span>
-                    <input class='detail client-email' name='email_edi' type='email'
+                    <input class='detail client-edi-email' name='email_edi' type='email'
                            t-att-value='partner.email_edi || ""'/>
+                </div>
+            </div>
+            <div class='client-details-left'>
+                <div class='client-detail'>
+                    <span class='label'>Regimen</span>
+                    <select class='detail client-edi-type_regime needsclick' name='type_regime_id'>
+                        <t t-foreach='widget.pos.type_regimes' t-as='type_regime_id'>
+                            <option t-att-value='type_regime_id.id'
+                                    t-att-selected="partner.type_regime_id ? ((type_regime_id.id === partner.type_regime_id[0]) ? true : undefined) : undefined">
+                                <t t-esc='type_regime_id.name'/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Responsab.</span>
+                    <select class='detail client-edi-type_liability needsclick' name='type_liability_id'>
+                        <t t-foreach='widget.pos.type_liabilities' t-as='type_liability_id'>
+                            <option t-att-value='type_liability_id.id'
+                                    t-att-selected="partner.type_liability_id ? ((type_liability_id.id === partner.type_liability_id[0]) ? true : undefined) : undefined">
+                                <t t-esc='type_liability_id.name'/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Municipali.</span>
+                    <select class='detail client-edi-municipality needsclick' name='municipality_id'>
+                        <option value=''>None</option>
+                        <t t-foreach='widget.pos.municipalities' t-as='municipality_id'>
+                            <option t-att-value='municipality_id.id'
+                                    t-att-selected="partner.municipality_id ? ((municipality_id.id === partner.municipality_id[0]) ? true : undefined) : undefined">
+                                <t t-esc='municipality_id.name'/>
+                            </option>
+                        </t>
+                    </select>
                 </div>
             </div>
         </t>

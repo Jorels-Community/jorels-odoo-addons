@@ -20,18 +20,17 @@
 <!--email: info@jorels.com-->
 
 <odoo>
-    <record id="account_view_account_invoice_refund_inherit_l10n_co_edi_jorels" model="ir.ui.view">
-        <field name="name">account.invoice.refund.form.inherit.l10n_co_edi_jorels</field>
-        <field name="model">account.invoice.refund</field>
-        <field name="inherit_id" ref="account.view_account_invoice_refund"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='description']" position="attributes">
-                <attribute name="invisible">1</attribute>
-                <attribute name="required">0</attribute>
-            </xpath>
-            <xpath expr="//field[@name='description']" position="after">
-                <field name="ei_correction_concept_credit_id" required="1"/>
-            </xpath>
-        </field>
-    </record>
+    <data>
+        <record id="product_template_form_view_inherit_l10n_co_edi_jorels" model="ir.ui.view">
+            <field name="name">product.template.common.form.inherit.l10n_co_edi_jorels</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='type']" position="after">
+                    <field name="brand_name"/>
+                    <field name="model_name"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
 </odoo>

@@ -24,9 +24,9 @@
 from . import config
 
 # Then load other models
-from . import account_invoice
-from . import account_invoice_line
-from . import account_invoice_refund
+from . import account_move
+from . import account_move_line
+from . import account_move_reversal
 from . import listings
 from . import mail_message
 from . import mail_template

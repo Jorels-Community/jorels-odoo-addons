@@ -19,11 +19,11 @@
     email: info@jorels.com
  -->
 <odoo>
-    <record id="hr_salary_rule_form_l10n_co_payroll" model="ir.ui.view">
-        <field name="name">hr.salary.rule.form.l10n.co.payroll</field>
+    <record id="hr_salary_rule_view_form_l10n_co_hr_payroll" model="ir.ui.view">
+        <field name="name">hr.salary.rule.form.l10n_co_hr_payroll.inherit</field>
         <field name="model">hr.salary.rule</field>
         <field name="priority">20</field>
-        <field name="inherit_id" ref="hr_payroll.hr_salary_rule_form"/>
+        <field name="inherit_id" ref="hr_payroll_community.hr_salary_rule_form"/>
         <field name="arch" type="xml">
             <data>
                 <xpath expr="//group[1]" position="before">
@@ -41,13 +41,6 @@
                     <h2>
                         <field name="deduction_category" attrs="{'invisible': [('type_concept','!=','deduction')]}"/>
                     </h2>
-                </xpath>
-                <xpath expr="//field[@name='appears_on_payslip']" position="after">
-                    <field name="edi_is_detailed"/>
-                </xpath>
-                <xpath expr="//field[@name='quantity']" position="before">
-                    <field name="edi_quantity_select"/>
-                    <newline/>
                 </xpath>
                 <xpath expr="//field[@name='amount_percentage']" position="after">
                     <separator colspan="4" string="Edi Percent"/>

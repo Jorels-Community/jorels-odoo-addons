@@ -32,7 +32,6 @@ class Message(models.Model):
     _inherit = 'mail.message'
     _description = 'Message'
 
-    @api.multi
     def search_invoice_events(self):
         for rec in self:
             email_from_search = re.search('<(.*)>', rec.email_from)
@@ -50,7 +49,7 @@ class Message(models.Model):
                     invoice_id = cs.get_invoice_id(rec)
                     if invoice_id:
                         rec.res_id = invoice_id
-                        rec.model = 'account.invoice'
+                        rec.model = 'account.move'
                         invoice_rec = self.env[rec.model].search([('id', '=', rec.res_id)])[0]
                         if invoice_rec.event != 'acceptance':
                             invoice_rec.write({

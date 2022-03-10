@@ -26,13 +26,12 @@
     'author': 'Jorels SAS',
     'license': 'AGPL-3',
     'category': 'Human Resources',
-    'version': '12.21.12.05.1',
+    'version': '13.22.01.11.1',
     'website': "https://www.jorels.com",
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
     'depends': [
-        'hr_payroll',
-        'l10n_co',
+        # 'hr_payroll_community',
         'l10n_co_edi_jorels',
     ],
     'data': [

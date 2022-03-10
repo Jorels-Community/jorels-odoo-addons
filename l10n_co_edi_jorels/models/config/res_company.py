@@ -113,7 +113,6 @@ class ResCompany(models.Model):
             else:
                 partner.email_edi_formatted = ''
 
-    @api.multi
     def get_l10n_co_document_type(self):
         for rec in self.filtered(lambda company: company.partner_id):
             l10n_co_document_type = None
@@ -134,7 +133,6 @@ class ResCompany(models.Model):
 
             return l10n_co_document_type
 
-    @api.multi
     def get_company_type(self):
         for rec in self.filtered(lambda company: company.partner_id):
             company_type = None
@@ -147,7 +145,6 @@ class ResCompany(models.Model):
 
             return company_type
 
-    @api.multi
     def get_type_document_identification_id(self):
         for rec in self:
             document_type = rec.partner_id.l10n_co_document_type
@@ -169,7 +166,6 @@ class ResCompany(models.Model):
                     return document_type_id
             return None
 
-    @api.multi
     def get_type_organization_id(self):
         for rec in self:
             company_type = rec.partner_id.company_type
@@ -214,14 +210,12 @@ class ResCompany(models.Model):
         for company in self:
             company.partner_id.company_type = self.get_company_type()
 
-    @api.multi
     @api.depends('company_registry')
     def _compute_merchant_registration(self):
         for rec in self:
             rec.merchant_registration = rec.company_registry
 
     # Environment update
-    @api.multi
     def update_environment(self, environment):
         if not self.env.user.company_id.ei_enable:
             return False
@@ -270,7 +264,6 @@ class ResCompany(models.Model):
 
             return success
 
-    @api.multi
     def write(self, vals):
         for rec in self:
             if 'is_not_test' in vals:

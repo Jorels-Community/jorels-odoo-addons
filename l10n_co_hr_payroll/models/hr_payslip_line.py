@@ -27,52 +27,17 @@ from odoo.addons import decimal_precision as dp
 class HrPayslipLine(models.Model):
     _inherit = 'hr.payslip.line'
 
+    def _default_edi_rate(self):
+        for rec in self:
+            return rec.rate
+
     edi_rate = fields.Float(string='Edi Rate (%)', digits=dp.get_precision('Payroll Rate'),
-                            default=100.0, compute="compute_edi_rate", store=True, required=True)
+                            default=_default_edi_rate, compute="_compute_edi_rate", store=True)
 
-    edi_quantity = fields.Integer(string='Edi Quantity', default=0, compute="compute_edi_quantity", required=True,
-                                  store=True)
-
-    @api.multi
-    def compute_edi_rate(self):
+    @api.depends('rate')
+    def _compute_edi_rate(self):
         for rec in self:
             if rec.salary_rule_id.edi_percent_select == 'default':
-                return rec.rate
+                rec.edi_rate = rec.rate
             else:
-                return rec.salary_rule_id.compute_edi_percent(rec.slip_id)
-
-    @api.multi
-    def compute_edi_quantity(self):
-        for rec in self:
-            if rec.salary_rule_id.type_concept == 'earn' and rec.salary_rule_id.edi_quantity_select == 'auto':
-                worked_days_line = rec.env['hr.payslip.worked_days'].search([
-                    ('payslip_id', '=', rec.slip_id.id),
-                    ('code', '=', rec.code)
-                ])
-                if rec.salary_rule_id.earn_category in (
-                        'vacation_common',
-                        'vacation_compensated',
-                        'licensings_maternity_or_paternity_leaves',
-                        'licensings_permit_or_paid_licenses',
-                        'licensings_suspension_or_unpaid_leaves',
-                        'incapacities_common',
-                        'incapacities_professional',
-                        'incapacities_working',
-                        'legal_strikes',
-                        'primas'
-                ):
-                    return worked_days_line[0]['number_of_days'] if worked_days_line else 0
-                elif rec.salary_rule_id.earn_category in (
-                        'daily_overtime',
-                        'overtime_night_hours',
-                        'hours_night_surcharge',
-                        'sunday_holiday_daily_overtime',
-                        'daily_surcharge_hours_sundays_holidays',
-                        'sunday_night_overtime_holidays',
-                        'sunday_holidays_night_surcharge_hours'
-                ):
-                    return worked_days_line[0]['number_of_hours'] if worked_days_line else 0
-                else:
-                    return rec.quantity
-            else:
-                return rec.quantity
+                rec.edi_rate = rec.salary_rule_id._compute_edi_percent(rec.slip_id)

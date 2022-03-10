@@ -28,10 +28,12 @@
     'website': "https://www.jorels.com",
     'license': 'LGPL-3',
     'category': 'Tools',
-    'version': '12.0.0.1',
+    'version': '13.0.0.1',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
+
     'depends': ['base'],
+
     'data': [
     ],
     'installable': True,

@@ -32,7 +32,6 @@ from odoo.tools import pycompat
 class MailTemplate(models.Model):
     _inherit = 'mail.template'
 
-    @api.multi
     def generate_email(self, res_ids, fields=None):
         res = super(MailTemplate, self).generate_email(res_ids, fields)
 
@@ -42,20 +41,20 @@ class MailTemplate(models.Model):
         self.ensure_one()
 
         multi_mode = True
-        if isinstance(res_ids, pycompat.integer_types):
+        if isinstance(res_ids, int):
             res_ids = [res_ids]
             multi_mode = False
 
-        if self.env.context.get('active_model') != 'account.invoice':
+        if self.env.context.get('active_model') != 'account.move':
             return res
 
         for res_id, template in self.get_email_template(res_ids).items():
-            invoice = self.env["account.invoice"].browse(res_id)
+            invoice = self.env["account.move"].browse(res_id)
             attachments = res[res_id]["attachments"] if self.env.user.company_id.ei_include_pdf_attachment else []
 
             if invoice.ei_is_valid \
                     and invoice.type in ('out_invoice', 'out_refund') \
-                    and invoice.state in ('open', 'paid'):
+                    and invoice.state == 'posted':
 
                 pdf_name = invoice.ei_uuid + '.pdf'
                 pdf_path = Path(tempfile.gettempdir()) / pdf_name

@@ -21,3 +21,4 @@ la DIAN, como tipo de responsabilidad, tipo de regimen, correo de facturación e
 
 Este módulo es totalmente compatible con el módulo de facturación electrónica de Jorels y al igual que este último, se 
 encuentra liberado bajo licencia LGPL.
+

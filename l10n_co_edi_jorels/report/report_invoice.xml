@@ -27,8 +27,9 @@
                     <address t-field="o.partner_id"
                              t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
                     <div t-if="o.partner_id.vat" class="mt16">
-                        <t t-esc="o.company_id.country_id.vat_label or 'Tax ID'"/>
-                        :
+                        <t t-if="o.company_id.country_id.vat_label" t-esc="o.company_id.country_id.vat_label"
+                           id="inv_tax_id_label"/>
+                        <t t-else="">Tax ID</t>:
                         <span t-field="o.partner_id.vat"/>
                     </div>
                 </t>
@@ -86,13 +87,13 @@
                 </div>
             </xpath>
             <xpath expr="//div[@class='page']/h2/span[1]" position="replace">
-                <span t-if="o.env.user.company_id.ei_enable and o.ei_is_not_test and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
+                <span t-if="o.env.user.company_id.ei_enable and o.ei_is_not_test and o.type == 'out_invoice' and o.state == 'posted'">
                     Electronic Sale Invoice
                 </span>
-                <span t-if="o.env.user.company_id.ei_enable and not o.ei_is_not_test and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
+                <span t-if="o.env.user.company_id.ei_enable and not o.ei_is_not_test and o.type == 'out_invoice' and o.state == 'posted'">
                     Sale Invoice
                 </span>
-                <span t-if="not o.env.user.company_id.ei_enable and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
+                <span t-if="not o.env.user.company_id.ei_enable and o.type == 'out_invoice' and o.state == 'posted'">
                     Invoice
                 </span>
             </xpath>
@@ -156,8 +157,8 @@
                         <div class="col-12">
                             <div class="mt16 text-center">
                                 <div t-if="o.ei_is_valid">
-                                    <strong t-if="o.type == 'out_invoice' and not o.debit_invoice_id.id">CUFE:</strong>
-                                    <strong t-if="o.type == 'out_invoice' and o.debit_invoice_id.id">CUDE:</strong>
+                                    <!-- TO DO: CUDE cuando es nota debito                                   -->
+                                    <strong t-if="o.type == 'out_invoice'">CUFE:</strong>
                                     <strong t-if="o.type == 'out_refund'">CUDE:</strong>
                                     <span t-field="o.ei_uuid"/>
                                 </div>

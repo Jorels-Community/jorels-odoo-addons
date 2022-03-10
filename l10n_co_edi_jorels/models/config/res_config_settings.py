@@ -174,7 +174,6 @@ class ResConfigSettings(models.TransientModel):
         }
 
     # Environment update
-    @api.multi
     def button_put_environment(self):
         if not self.env.user.company_id.ei_enable:
             return

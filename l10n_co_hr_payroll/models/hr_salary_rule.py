@@ -21,9 +21,10 @@
 
 
 from odoo import fields, models, api, _
-from odoo.addons import decimal_precision as dp
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools.safe_eval import safe_eval
+
+from odoo.addons import decimal_precision as dp
 
 
 class HrSalaryRule(models.Model):
@@ -126,16 +127,7 @@ class HrSalaryRule(models.Model):
                     result = inputs.example * 0.10''')
     edi_percent_fix = fields.Float(string='Fixed Percent', digits=dp.get_precision('Payroll'), default=0.0)
 
-    edi_is_detailed = fields.Boolean(string="Edi detailed", default=False, required=True)
-
-    edi_quantity_select = fields.Selection([
-        ('default', 'Default'),
-        ('auto', 'Auto')
-    ], string='Edi quantity', index=True, required=True, default='default',
-        help="The computation method for rule Edi quantity.")
-
-    @api.multi
-    def compute_edi_percent(self, payslip):
+    def _compute_edi_percent(self, payslip):
         self.ensure_one()
 
         class BrowsableObject(object):
@@ -166,6 +158,6 @@ class HrSalaryRule(models.Model):
             try:
                 safe_eval(self.edi_percent_python_compute, local_dict, mode='exec', nocopy=True)
                 return float(local_dict['result'])
-            except Exception as e:
+            except Exception:
                 raise UserError(
-                    _('Wrong percent python code defined for salary rule %s (%s). %s') % (self.name, self.code, e))
+                    _('Wrong percent python code defined for salary rule %s (%s).') % (self.name, self.code))

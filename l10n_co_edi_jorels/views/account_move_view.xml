@@ -21,18 +21,19 @@
 
 <odoo>
     <data>
-        <record id="account_invoice_view_form_inherit_l10n_co_edi_jorels" model="ir.ui.view">
-            <field name="name">account.invoice.view.form.inherit.l10n_co_edi_jorels</field>
-            <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.invoice_form"/>
+        <record id="account_move_view_form_inherit_l10n_co_edi_jorels" model="ir.ui.view">
+            <field name="name">account.move.view.form.inherit.l10n_co_edi_jorels</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='payment_term_id']" position="after">
+                <xpath expr="//field[@name='ref']" position="after">
                     <field name="ei_operation"/>
                     <field name="ei_correction_concept_credit_id" attrs="{'invisible':[('type','!=','out_refund')]}"/>
                     <field name="ei_correction_concept_debit_id" attrs="{'invisible':[('type','!=','out_invoice')]}"/>
-                    <field name="ei_is_correction_without_reference" attrs="{'invisible':[('type','!=','out_refund')]}"/>
+                    <field name="ei_is_correction_without_reference"
+                           attrs="{'invisible':[('type','!=','out_refund')]}"/>
                 </xpath>
-                <xpath expr="//button[@name='action_invoice_open']" position="after">
+                <xpath expr="//button[@name='action_post']" position="after">
                     <button name="validate_dian" type="object" string="Validate DIAN"
                             class="oe_highlight o_invoice_validate" groups="account.group_account_invoice"
                             attrs="{'invisible': ['|',('ei_is_not_test','=',False),('state','!=','validate')]}"/>
@@ -47,9 +48,9 @@
                             class="o_invoice_validate" groups="base.group_no_one"
                             attrs="{'invisible': ['|',('ei_is_not_test','=',True),('state','!=','validate')]}"/>
                     <button name="status_document" type="object" string="Consult DIAN" groups="base.group_no_one"
-                            attrs="{'invisible': [('state','!=','open'),('state','!=','paid')]}"/>
+                            attrs="{'invisible': [('state','!=','posted')]}"/>
                 </xpath>
-                <xpath expr="//field[@name='date_due']" position="after">
+                <xpath expr="//field[@name='invoice_date']" position="after">
                     <field name="date_start" groups="l10n_co_edi_jorels.group_invoice_period_enable"/>
                     <field name="date_end" groups="l10n_co_edi_jorels.group_invoice_period_enable"/>
                 </xpath>
@@ -94,7 +95,7 @@
                         </group>
                     </page>
                 </xpath>
-                <xpath expr="//field[@name='amount_tax']" position="before">
+                <xpath expr="//field[@name='amount_by_group']" position="before">
                     <field name="ei_amount_tax_no_withholding"/>
                     <field name="ei_amount_total_no_withholding" class="oe_subtotal_footer_separator"/>
                     <field name="ei_amount_tax_withholding"/>
@@ -103,21 +104,22 @@
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
                     <field name="ei_notes"/>
                 </xpath>
+
             </field>
         </record>
 
         <record id="action_is_attached_document_matched" model="ir.actions.server">
             <field name="name">Review attached document</field>
-            <field name="model_id" ref="account.model_account_invoice"/>
-            <field name="binding_model_id" ref="account.model_account_invoice"/>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
             <field name="state">code</field>
             <field name="code">records._is_attached_document_matched()</field>
         </record>
 
         <record id="action_status_document_log" model="ir.actions.server">
             <field name="name">Replace with log DIAN</field>
-            <field name="model_id" ref="account.model_account_invoice"/>
-            <field name="binding_model_id" ref="account.model_account_invoice"/>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
             <field name="state">code</field>
             <field name="code">records.status_document_log()</field>
         </record>
