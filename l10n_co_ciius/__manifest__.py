@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2021)
+# Jorels S.A.S. - Copyright (2019-2022)
 #
 # This file is part of l10n_co_ciius.
 #
@@ -21,12 +21,12 @@
 #
 
 {
-    'name': "CIIU's for Colombia",
-    'summary': "CIIU'S for Colombia by Jorels",
-    'description': "CIIU'S for Colombia by Jorels",
+    'name': "CIIU's para Colombia",
+    'summary': "CIIU'S para Colombia by Jorels",
+    'description': "CIIU'S para Colombia by Jorels",
     'author': "Jorels SAS",
     'license': "LGPL-3",
-    'version': '12.0',
+    'version': '12.0.22.03.10.00.39',
     'website': "https://www.jorels.com",
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
