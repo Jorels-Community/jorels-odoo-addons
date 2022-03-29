@@ -53,6 +53,7 @@
         'views/config/account_taxes_view.xml',
         'views/config/customer_software_views.xml',
         'views/config/account_journal_views.xml',
+        'views/config/product_template_views.xml',
         'views/account_move_view.xml',
         'views/res_partner_view.xml',
         'views/mail_message_views.xml',
