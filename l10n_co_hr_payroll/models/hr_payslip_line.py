@@ -42,39 +42,35 @@ class HrPayslipLine(models.Model):
 
     def compute_edi_quantity(self):
         for rec in self:
-            if rec.salary_rule_id.amount_select == 'fix':
-                return rec.quantity
-            elif rec.salary_rule_id.amount_select == 'percentage':
-                return rec.quantity
-            elif rec.salary_rule_id.amount_select == 'code':
+            if rec.salary_rule_id.type_concept == 'earn' and rec.salary_rule_id.edi_quantity_select == 'auto':
                 worked_days_line = rec.env['hr.payslip.worked_days'].search([
                     ('payslip_id', '=', rec.slip_id.id),
                     ('code', '=', rec.code)
                 ])
-                if worked_days_line and rec.salary_rule_id.type_concept == 'earn':
-                    if rec.salary_rule_id.earn_category in (
-                            'vacation_common',
-                            'vacation_compensated',
-                            'licensings_maternity_or_paternity_leaves',
-                            'licensings_permit_or_paid_licenses',
-                            'licensings_suspension_or_unpaid_leaves',
-                            'incapacities_common',
-                            'incapacities_professional',
-                            'incapacities_working',
-                            'legal_strikes'
-                    ):
-                        return worked_days_line[0]['number_of_days']
-                    elif rec.salary_rule_id.earn_category in (
-                            'daily_overtime',
-                            'overtime_night_hours',
-                            'hours_night_surcharge',
-                            'sunday_holiday_daily_overtime',
-                            'daily_surcharge_hours_sundays_holidays',
-                            'sunday_night_overtime_holidays',
-                            'sunday_holidays_night_surcharge_hours'
-                    ):
-                        return worked_days_line[0]['number_of_hours']
-                    else:
-                        return 0
+                if rec.salary_rule_id.earn_category in (
+                        'vacation_common',
+                        'vacation_compensated',
+                        'licensings_maternity_or_paternity_leaves',
+                        'licensings_permit_or_paid_licenses',
+                        'licensings_suspension_or_unpaid_leaves',
+                        'incapacities_common',
+                        'incapacities_professional',
+                        'incapacities_working',
+                        'legal_strikes',
+                        'primas'
+                ):
+                    return worked_days_line[0]['number_of_days'] if worked_days_line else 0
+                elif rec.salary_rule_id.earn_category in (
+                        'daily_overtime',
+                        'overtime_night_hours',
+                        'hours_night_surcharge',
+                        'sunday_holiday_daily_overtime',
+                        'daily_surcharge_hours_sundays_holidays',
+                        'sunday_night_overtime_holidays',
+                        'sunday_holidays_night_surcharge_hours'
+                ):
+                    return worked_days_line[0]['number_of_hours'] if worked_days_line else 0
                 else:
-                    return 0
+                    return rec.quantity
+            else:
+                return rec.quantity

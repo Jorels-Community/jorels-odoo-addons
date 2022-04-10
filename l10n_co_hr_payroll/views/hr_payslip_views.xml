@@ -269,8 +269,8 @@
                     <field name="origin_payslip_id" attrs="{'invisible':[('credit_note','=',False)]}"/>
                 </xpath>
                 <xpath expr="//field[@name='line_ids']//tree//field[@name='rate']" position="after">
-                    <field name="edi_rate"/>
                     <field name="edi_quantity"/>
+                    <field name="edi_rate"/>
                 </xpath>
             </data>
         </field>
