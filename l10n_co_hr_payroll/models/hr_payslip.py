@@ -285,7 +285,7 @@ class HrPayslip(models.Model):
     @api.model
     def calculate_time_worked(self, start, end):
         if end < start:
-            raise ValidationError("The time worked cannot be negative.")
+            raise ValidationError(_("The time worked cannot be negative."))
 
         end_day = 30 if end.day == calendar.monthrange(end.year, end.month)[1] else end.day
         start_day = 30 if start.day == calendar.monthrange(start.year, start.month)[1] else start.day
@@ -295,55 +295,55 @@ class HrPayslip(models.Model):
     def get_json_request(self):
         for rec in self:
             if not rec.number:
-                raise UserError(_("number Error"))
+                raise UserError(_("The payroll must have a consecutive number, 'Reference' field"))
             if not rec.contract_id.payroll_period_id:
-                raise UserError(_("payroll_period_id"))
+                raise UserError(_("The contract must have the 'Scheduled Pay' field configured"))
             if not self.env.user.company_id.name:
-                raise UserError(_("name Error"))
+                raise UserError(_("Your company does not have a name"))
             if not self.env.user.company_id.type_document_identification_id:
-                raise UserError(_("type_document_identification_id Error"))
+                raise UserError(_("Your company does not have an identification type"))
             if not self.env.user.company_id.vat:
-                raise UserError(_("vat Error"))
+                raise UserError(_("Your company does not have a document number"))
             if not self.env.user.company_id.partner_id.postal_municipality_id:
-                raise UserError(_("postal_municipality_id Error"))
+                raise UserError(_("Your company does not have a postal municipality"))
             if not self.env.user.company_id.street:
-                raise UserError(_("street Error"))
+                raise UserError(_("Your company does not have an address"))
             if not rec.contract_id.type_worker_id:
-                raise UserError(_("type_worker_id Error"))
+                raise UserError(_("The contract must have the 'Type worker' field configured"))
             if not rec.contract_id.subtype_worker_id:
-                raise UserError(_("subtype_worker_id Error"))
+                raise UserError(_("The contract must have the 'Subtype worker' field configured"))
             if not rec.employee_id.address_home_id.first_name:
-                raise UserError(_("first_name Error"))
+                raise UserError(_("Employee does not have a first name"))
             if not rec.employee_id.address_home_id.surname:
-                raise UserError(_("surname Error"))
+                raise UserError(_("Employee does not have a surname"))
             if not rec.employee_id.address_home_id.type_document_identification_id:
-                raise UserError(_("type_document_identification_id Error"))
+                raise UserError(_("Employee does not have an identification type"))
             if rec.employee_id.address_home_id.type_document_identification_id.id == 6:
-                raise UserError(_("type_document_identification_id Error"))
+                raise UserError(_("The employee's document type cannot be NIT"))
             if not rec.employee_id.address_home_id.vat:
-                raise UserError(_("vat Error"))
+                raise UserError(_("Employee does not have an document number"))
             if not rec.employee_id.address_home_id.postal_municipality_id:
-                raise UserError(_("postal_municipality_id Error"))
+                raise UserError(_("Employee does not have a postal municipality"))
             if not rec.employee_id.address_home_id.street:
-                raise UserError(_("street Error"))
+                raise UserError(_("Employee does not have an address."))
             if not rec.contract_id.name:
-                raise UserError(_("name Error"))
+                raise UserError(_("Contract does not have a name"))
             if rec.contract_id.wage <= 0:
-                raise UserError(_("wage Error"))
+                raise UserError(_("The contract must have the 'Wage' field configured"))
             if not rec.contract_id.type_contract_id:
-                raise UserError(_("type_contract_id Error"))
+                raise UserError(_("The contract must have the 'Type contract' field configured"))
             if not rec.contract_id.date_start:
-                raise UserError(_("date_start Error"))
+                raise UserError(_("The contract must have the 'Start Date' field configured"))
             if not rec.date_from:
-                raise UserError(_("date_from Error"))
+                raise UserError(_("The payroll must have a period"))
             if not rec.date_to:
-                raise UserError(_("date_to Error"))
+                raise UserError(_("The payroll must have a period"))
             if not rec.payment_form_id:
-                raise UserError(_("payment_form_id Error"))
+                raise UserError(_("The payroll must have a payment form"))
             if not rec.payment_method_id:
-                raise UserError(_("payment_method_id Error"))
+                raise UserError(_("The payroll must have a payment method"))
             if not rec.payment_date:
-                raise UserError(_("payment_date Error"))
+                raise UserError(_("The payroll must have a payment date"))
 
             rec.edi_sync = self.env.user.company_id.edi_payroll_is_not_test
 
@@ -356,7 +356,7 @@ class HrPayslip(models.Model):
                     "number": sequence_number
                 }
             else:
-                raise UserError(_("sequence_prefix Error"))
+                raise UserError(_("The sequence must have a prefix"))
 
             information = {
                 "payroll_period_code": rec.contract_id.payroll_period_id.id,

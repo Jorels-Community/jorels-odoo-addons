@@ -20,7 +20,7 @@
 #
 
 
-from odoo import fields, models, api
+from odoo import fields, models, api, _
 from odoo.exceptions import ValidationError
 
 
@@ -135,22 +135,22 @@ class EarnLine(models.Model):
     def _check_time_start(self):
         for rec in self:
             if rec.time_start < 0 or rec.time_start >= 24:
-                raise ValidationError("Invalid start time: %s" % rec.time_start)
+                raise ValidationError(_("Invalid start time: %s") % rec.time_start)
 
     @api.constrains("time_end")
     def _check_time_end(self):
         for rec in self:
             if rec.time_end < 0 or rec.time_end >= 24:
-                raise ValidationError("Invalid end time: %s" % rec.time_end)
+                raise ValidationError(_("Invalid end time: %s") % rec.time_end)
 
     @api.constrains("date_start", "date_end")
     def _check_date_start_end(self):
         for rec in self:
             if rec.date_end < rec.date_start:
-                raise ValidationError("The end date must always be greater than the start date for: %s" % rec.name)
+                raise ValidationError(_("The end date must always be greater than the start date for: %s") % rec.name)
 
     @api.constrains("amount")
     def _check_amount(self):
         for rec in self:
             if rec.amount <= 0:
-                raise ValidationError("The earn amount must always be greater than 0 for: %s" % rec.name)
+                raise ValidationError(_("The earn amount must always be greater than 0 for: %s") % rec.name)
