@@ -21,10 +21,9 @@
 
 
 from odoo import fields, models, api, _
-from odoo.exceptions import UserError, ValidationError
-from odoo.tools.safe_eval import safe_eval
-
 from odoo.addons import decimal_precision as dp
+from odoo.exceptions import UserError
+from odoo.tools.safe_eval import safe_eval
 
 
 class HrSalaryRule(models.Model):
@@ -127,7 +126,9 @@ class HrSalaryRule(models.Model):
                     result = inputs.example * 0.10''')
     edi_percent_fix = fields.Float(string='Fixed Percent', digits=dp.get_precision('Payroll'), default=0.0)
 
-    def _compute_edi_percent(self, payslip):
+    edi_is_detailed = fields.Boolean(string="Edi detailed", default=False, required=True)
+
+    def compute_edi_percent(self, payslip):
         self.ensure_one()
 
         class BrowsableObject(object):

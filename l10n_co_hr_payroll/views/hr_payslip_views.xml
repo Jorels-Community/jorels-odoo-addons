@@ -45,7 +45,7 @@
                         <field name="currency_id" invisible="1"/>
                     </group>
                     <group>
-                        <field name="worked_days_total"/>
+                        <field name="worked_days_total" readonly="True"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='input_line_ids']" position="after">
@@ -270,6 +270,7 @@
                 </xpath>
                 <xpath expr="//field[@name='line_ids']//tree//field[@name='rate']" position="after">
                     <field name="edi_rate"/>
+                    <field name="edi_quantity"/>
                 </xpath>
             </data>
         </field>

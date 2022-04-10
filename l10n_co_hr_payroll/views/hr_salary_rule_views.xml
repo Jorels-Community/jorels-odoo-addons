@@ -42,6 +42,9 @@
                         <field name="deduction_category" attrs="{'invisible': [('type_concept','!=','deduction')]}"/>
                     </h2>
                 </xpath>
+                <xpath expr="//field[@name='appears_on_payslip']" position="after">
+                    <field name="edi_is_detailed"/>
+                </xpath>
                 <xpath expr="//field[@name='amount_percentage']" position="after">
                     <separator colspan="4" string="Edi Percent"/>
                     <field name="edi_percent_select"/>
