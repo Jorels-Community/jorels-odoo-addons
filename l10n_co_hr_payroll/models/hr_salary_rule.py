@@ -128,6 +128,12 @@ class HrSalaryRule(models.Model):
 
     edi_is_detailed = fields.Boolean(string="Edi detailed", default=False, required=True)
 
+    edi_quantity_select = fields.Selection([
+        ('default', 'Default'),
+        ('auto', 'Auto')
+    ], string='Edi quantity', index=True, required=True, default='default',
+        help="The computation method for rule Edi quantity.")
+
     def compute_edi_percent(self, payslip):
         self.ensure_one()
 
