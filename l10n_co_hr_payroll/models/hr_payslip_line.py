@@ -27,64 +27,54 @@ from odoo.addons import decimal_precision as dp
 class HrPayslipLine(models.Model):
     _inherit = 'hr.payslip.line'
 
-    def _default_edi_rate(self):
-        for rec in self:
-            return rec.rate
-
-    def _default_edi_quantity(self):
-        for rec in self:
-            return rec.quantity
-
     edi_rate = fields.Float(string='Edi Rate (%)', digits=dp.get_precision('Payroll Rate'),
-                            default=_default_edi_rate, compute="compute_edi_rate", store=True, required=True)
+                            default=100.0, compute="compute_edi_rate", store=True, required=True)
 
-    edi_quantity = fields.Integer(string='Edi Quantity', default=_default_edi_quantity, compute="compute_edi_quantity",
-                                  required=True, store=True)
+    edi_quantity = fields.Integer(string='Edi Quantity', default=0, compute="compute_edi_quantity", required=True,
+                                  store=True)
 
     def compute_edi_rate(self):
-        self.ensure_one()
-
-        if self.salary_rule_id.edi_percent_select == 'default':
-            return self.rate
-        else:
-            return self.salary_rule_id.compute_edi_percent(self.slip_id)
+        for rec in self:
+            if rec.salary_rule_id.edi_percent_select == 'default':
+                return rec.rate
+            else:
+                return rec.salary_rule_id.compute_edi_percent(rec.slip_id)
 
     def compute_edi_quantity(self):
-        self.ensure_one()
-
-        if self.salary_rule_id.amount_select == 'fix':
-            return self.quantity
-        elif self.salary_rule_id.amount_select == 'percentage':
-            return self.quantity
-        elif self.salary_rule_id.amount_select == 'code':
-            worked_days_line = self.env['hr.payslip.worked_days'].search([
-                ('payslip_id', '=', self.slip_id.id),
-                ('code', '=', self.code)
-            ])
-            if worked_days_line and self.salary_rule_id.type_concept == 'earn':
-                if self.salary_rule_id.earn_category in (
-                        'vacation_common',
-                        'vacation_compensated',
-                        'licensings_maternity_or_paternity_leaves',
-                        'licensings_permit_or_paid_licenses',
-                        'licensings_suspension_or_unpaid_leaves',
-                        'incapacities_common',
-                        'incapacities_professional',
-                        'incapacities_working',
-                        'legal_strikes'
-                ):
-                    return worked_days_line[0]['number_of_days']
-                elif self.salary_rule_id.earn_category in (
-                        'daily_overtime',
-                        'overtime_night_hours',
-                        'hours_night_surcharge',
-                        'sunday_holiday_daily_overtime',
-                        'daily_surcharge_hours_sundays_holidays',
-                        'sunday_night_overtime_holidays',
-                        'sunday_holidays_night_surcharge_hours'
-                ):
-                    return worked_days_line[0]['number_of_hours']
+        for rec in self:
+            if rec.salary_rule_id.amount_select == 'fix':
+                return rec.quantity
+            elif rec.salary_rule_id.amount_select == 'percentage':
+                return rec.quantity
+            elif rec.salary_rule_id.amount_select == 'code':
+                worked_days_line = rec.env['hr.payslip.worked_days'].search([
+                    ('payslip_id', '=', rec.slip_id.id),
+                    ('code', '=', rec.code)
+                ])
+                if worked_days_line and rec.salary_rule_id.type_concept == 'earn':
+                    if rec.salary_rule_id.earn_category in (
+                            'vacation_common',
+                            'vacation_compensated',
+                            'licensings_maternity_or_paternity_leaves',
+                            'licensings_permit_or_paid_licenses',
+                            'licensings_suspension_or_unpaid_leaves',
+                            'incapacities_common',
+                            'incapacities_professional',
+                            'incapacities_working',
+                            'legal_strikes'
+                    ):
+                        return worked_days_line[0]['number_of_days']
+                    elif rec.salary_rule_id.earn_category in (
+                            'daily_overtime',
+                            'overtime_night_hours',
+                            'hours_night_surcharge',
+                            'sunday_holiday_daily_overtime',
+                            'daily_surcharge_hours_sundays_holidays',
+                            'sunday_night_overtime_holidays',
+                            'sunday_holidays_night_surcharge_hours'
+                    ):
+                        return worked_days_line[0]['number_of_hours']
+                    else:
+                        return 0
                 else:
                     return 0
-            else:
-                return 0
