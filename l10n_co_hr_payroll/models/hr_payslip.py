@@ -20,6 +20,7 @@
 #
 
 
+import calendar
 import json
 import logging
 from datetime import datetime, timedelta
@@ -27,7 +28,7 @@ from datetime import datetime, timedelta
 import requests
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -280,6 +281,16 @@ class HrPayslip(models.Model):
 
         return res
 
+    @api.model
+    def calculate_time_worked(self, start, end):
+        if end < start:
+            raise ValidationError("The time worked cannot be negative.")
+
+        end_day = 30 if end.day == calendar.monthrange(end.year, end.month)[1] else end.day
+        start_day = 30 if start.day == calendar.monthrange(start.year, start.month)[1] else start.day
+
+        return (end.year - start.year) * 360 + (end.month - start.month) * 30 + end_day - start_day + 1
+
     def get_json_request(self):
         for rec in self:
             if not rec.number:
@@ -393,9 +404,13 @@ class HrPayslip(models.Model):
             if rec.employee_id.address_home_id.second_surname:
                 employee['second_surname'] = rec.employee_id.address_home_id.second_surname
 
-            amount_select = [7, 10, 14, 15, 30, (rec.date_to - rec.date_from).days + 1]
-            amount_time = amount_select[rec.contract_id.payroll_period_id.id - 1]
+            if rec.contract_id.date_end:
+                amount_time = self.calculate_time_worked(rec.contract_id.date_start, rec.contract_id.date_end)
+            else:
+                amount_time = self.calculate_time_worked(rec.contract_id.date_start, rec.date_to)
+
             rec.date = fields.Date.context_today(rec)
+
             period = {
                 "admission_date": fields.Date.to_string(rec.contract_id.date_start),
                 "settlement_start_date": fields.Date.to_string(rec.date_from),
