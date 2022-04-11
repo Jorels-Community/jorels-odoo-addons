@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-11 05:26+0000\n"
-"PO-Revision-Date: 2022-04-11 00:31-0500\n"
+"POT-Creation-Date: 2022-04-11 06:03+0000\n"
+"PO-Revision-Date: 2022-04-11 01:06-0500\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "MIME-Version: 1.0\n"
@@ -216,6 +216,12 @@ msgid "Authentication error with the API"
 msgstr "Error de autenticación con la API"
 
 #. module: l10n_co_hr_payroll
+#: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_payslip_line__edi_quantity_select__auto
+#: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_salary_rule__edi_quantity_select__auto
+msgid "Auto"
+msgstr ""
+
+#. module: l10n_co_hr_payroll
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_payslip_line__earn_category__basic
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_salary_rule__earn_category__basic
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__l10n_co_hr_payroll_earn_line__category__basic
@@ -409,7 +415,9 @@ msgstr "Total de deducciones"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_payslip_line__edi_percent_select__default
+#: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_payslip_line__edi_quantity_select__default
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_salary_rule__edi_percent_select__default
+#: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_salary_rule__edi_quantity_select__default
 msgid "Default"
 msgstr "Defecto"
 
@@ -495,6 +503,12 @@ msgstr "Respuesta Edi"
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_salary_rule__edi_is_detailed
 msgid "Edi detailed"
 msgstr "Detalle Edi"
+
+#. module: l10n_co_hr_payroll
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_payslip_line__edi_quantity_select
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_salary_rule__edi_quantity_select
+msgid "Edi quantity"
+msgstr "Cantidad Edi"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_payslip_line__deduction_category__education
@@ -1154,20 +1168,16 @@ msgid "The 'Primas' rule is mandatory in order to report Primas"
 msgstr "La regla 'Primas' es obligatoria para reportar Primas"
 
 #. module: l10n_co_hr_payroll
-#: code:addons/l10n_co_hr_payroll/models/hr_payslip.py:0
-#, python-format
-msgid ""
-"The 'Sanctions private' and 'Sanctions public' rules are mandatory in order "
-"to report Sanctions"
-msgstr ""
-"Las reglas 'Sanciones privadas' y 'Sanciones publicas' son obligatorias "
-"para reportar Sanciones"
-
-#. module: l10n_co_hr_payroll
 #: model:ir.model.fields,help:l10n_co_hr_payroll.field_l10n_co_hr_payroll_deduction_line__code
 #: model:ir.model.fields,help:l10n_co_hr_payroll.field_l10n_co_hr_payroll_earn_line__code
 msgid "The code that can be used in the salary rules"
 msgstr "El código puede ser usado en las reglas salariales"
+
+#. module: l10n_co_hr_payroll
+#: model:ir.model.fields,help:l10n_co_hr_payroll.field_hr_payslip_line__edi_quantity_select
+#: model:ir.model.fields,help:l10n_co_hr_payroll.field_hr_salary_rule__edi_quantity_select
+msgid "The computation method for rule Edi quantity."
+msgstr "Método de calculo para la cantidad Edi de la regla."
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,help:l10n_co_hr_payroll.field_hr_payslip_line__edi_percent_select
