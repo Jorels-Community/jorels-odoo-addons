@@ -244,7 +244,8 @@ class HrPayslip(models.Model):
             rec.update({'input_line_ids': input_line_list})
             rec.update({'worked_days_line_ids': worked_days_line_list})
 
-            # Sequences
+        # Sequences
+        for rec in self:
             if rec.credit_note:
                 number = rec.number or self.env['ir.sequence'].next_by_code('salary.slip.note')
                 if not number:
@@ -252,16 +253,12 @@ class HrPayslip(models.Model):
                         _("You must create a sequence for the payroll credit notes with code 'salary.slip.note'"))
             else:
                 number = rec.number or self.env['ir.sequence'].next_by_code('salary.slip')
-            # delete old payslip lines
-            rec.line_ids.unlink()
-            # set the list of contract for which the rules have to be applied
-            # if we don't give the contract, then the rules to apply should be for all current contracts of the employee
-            contract_ids = rec.contract_id.ids or \
-                           self.get_contract(rec.employee_id, rec.date_from, rec.date_to)
-            lines = [(0, 0, line) for line in self._get_payslip_lines(contract_ids, rec.id)]
-            rec.write({'line_ids': lines, 'number': number})
+            rec.number = number
 
-            # Totals
+        res = super(HrPayslip, self).compute_sheet()
+
+        # Totals
+        for rec in self:
             accrued_total_amount = 0
             deductions_total_amount = 0
             others_total_amount = 0
@@ -281,7 +278,7 @@ class HrPayslip(models.Model):
 
             rec.edi_payload = json.dumps(self.get_json_request(), indent=4, sort_keys=False)
 
-        return True
+        return res
 
     def get_json_request(self):
         for rec in self:
