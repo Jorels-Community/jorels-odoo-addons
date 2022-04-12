@@ -249,7 +249,8 @@ class ResCompany(models.Model):
                 if 'detail' in response:
                     raise UserError(response['detail'])
                 if 'message' in response:
-                    rec.env.user.notify_info(message=response['message'])
+                    # rec.env.user.notify_info(message=response['message'])
+                    _logger.debug(response['message'])
 
                 response = requests.get(api_url,
                                         headers=header,
@@ -258,12 +259,13 @@ class ResCompany(models.Model):
 
                 if 'type_environment_id' in response:
                     if environment == response['type_environment_id']:
-                        rec.env.user.notify_info(message=_("The environment has been updated. Sync the resolutions"))
+                        # rec.env.user.notify_info(message=_("The environment has been updated. Sync the resolutions"))
+                        _logger.debug("The environment has been updated. Sync the resolutions")
                         success = True
 
                 if 'message' in response:
-                    rec.env.user.notify_info(message=response['message'])
-
+                    # rec.env.user.notify_info(message=response['message'])
+                    _logger.debug(response['message'])
             except Exception as e:
                 _logger.debug("Communication error: %s", e)
 

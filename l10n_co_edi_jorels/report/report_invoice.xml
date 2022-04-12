@@ -143,7 +143,7 @@
                 <attribute name="t-attf-class">#{'col-5' if report_type != 'html' else 'col-sm-7 col-md-5'} ml-auto
                 </attribute>
             </xpath>
-            <xpath expr="//div[@id='total']/div/table/tr[1]" position="before">
+            <xpath expr="//div[@id='total']/div/table/t[1]" position="before">
                 <tr class="border-black o_total" style="">
                     <td>
                         <strong>Currency</strong>
@@ -153,8 +153,8 @@
                     </td>
                 </tr>
             </xpath>
-            <xpath expr="//div[@id='total']/div/table/tr[last()]" position="before">
-                <tr class="border-black" style="" t-if="o.env.company.ei_enable">
+            <xpath expr="//div[@id='total']/div/table/t[last()]" position="before">
+                <tr class="border-black o_total" style="" t-if="o.env.company.ei_enable">
                     <td>
                         <strong>Total without withholdings</strong>
                     </td>

@@ -199,9 +199,11 @@ class ResConfigSettings(models.TransientModel):
                 if 'detail' in response:
                     raise UserError(response['detail'])
                 if 'message' in response:
-                    rec.env.user.notify_info(message=response['message'])
+                    # rec.env.user.notify_info(message=response['message'])
+                    _logger.debug(response['message'])
                 else:
-                    rec.env.user.notify_info(message=_("Now sync the resolutions"))
+                    # rec.env.user.notify_info(message=_("Now sync the resolutions"))
+                    _logger.debug("Now sync the resolutions")
         except Exception as e:
             _logger.debug("Communication error: %s", e)
 

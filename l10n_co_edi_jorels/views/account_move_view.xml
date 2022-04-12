@@ -98,7 +98,7 @@
                         </group>
                     </page>
                 </xpath>
-                <xpath expr="//field[@name='amount_by_group']" position="before">
+                <xpath expr="//field[@name='tax_totals_json']" position="after">
                     <field name="ei_amount_tax_no_withholding"/>
                     <field name="ei_amount_total_no_withholding" class="oe_subtotal_footer_separator"/>
                     <field name="ei_amount_tax_withholding"/>
