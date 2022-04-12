@@ -7,6 +7,6 @@ Copyright (2019-2022) - Jorels SAS
 
 [https://www.jorels.com](https://www.jorels.com)
 
-Under LGPL (Lesser General Public License)
+Under AGPL v3 (Affero General Public License)
 
 ### Odoo module for electronic invoicing for Colombia
