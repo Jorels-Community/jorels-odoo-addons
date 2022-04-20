@@ -47,6 +47,6 @@ LGPL v3 y AGPL v3, dependiendo el modulo.
 
 ## Project status
 
-Actualmente los modulos l10n_co_ciius, l10n_co_edi_jorels y update_from_csv estan en producción y funcionan
-perfectamente en Odoo 15. Los demas modulos publicados aquí aún estan en pruebas en Odoo 15 y no deben ser usados en
+Actualmente los modulos l10n_co_ciius, l10n_co_edi_jorels, l10n_co_hr_payroll y update_from_csv estan en producción y funcionan
+perfectamente en Odoo 15. El modulo l10n_co_edi_jorels_pos aún esta en pruebas en Odoo 15 y no deben ser usado en
 producción.
