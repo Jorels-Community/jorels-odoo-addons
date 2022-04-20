@@ -88,8 +88,8 @@ class HrPayslip(models.Model):
     edi_xml_base64 = fields.Binary("XML", copy=False)
     edi_application_response_base64 = fields.Binary("Application response", copy=False)
     edi_attached_document_base64 = fields.Binary("Attached document", copy=False)
-    edi_pdf_base64 = fields.Binary("PDF", copy=False)
-    edi_zip_base64 = fields.Binary("Zip", copy=False)
+    edi_pdf_base64 = fields.Binary("Edi PDF", copy=False)
+    edi_zip_base64 = fields.Binary("Edi Zip", copy=False)
     edi_type_environment = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_environments",
                                            string="Type environment", copy=False)
     edi_payload = fields.Text("Payload", copy=False)
@@ -1403,11 +1403,13 @@ class HrPayslip(models.Model):
                 elif 'is_valid' in response:
                     self.write_response(response, payload)
                     if response['is_valid']:
-                        self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                        # self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                        _logger.debug("The validation at DIAN has been successful.")
                     elif 'zip_key' in response:
                         if response['zip_key'] is not None:
                             if not rec.edi_is_not_test:
-                                self.env.user.notify_success(message=_("Document sent to DIAN in habilitation."))
+                                # self.env.user.notify_success(message=_("Document sent to DIAN in habilitation."))
+                                _logger.debug("Document sent to DIAN in habilitation.")
                             else:
                                 temp_message = {self.edi_status_message, self.edi_errors_messages,
                                                 self.edi_status_description, self.edi_status_code}
@@ -1483,11 +1485,13 @@ class HrPayslip(models.Model):
                     elif 'is_valid' in response:
                         self.write_response(response, payload)
                         if response['is_valid']:
-                            self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                            # self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                            _logger.debug("The validation at DIAN has been successful.")
                         elif 'zip_key' in response or 'uuid' in response:
                             if response['zip_key'] is not None or response['uuid'] is not None:
                                 if not rec.edi_is_not_test:
-                                    self.env.user.notify_success(message=_("Document sent to DIAN in testing."))
+                                    # self.env.user.notify_success(message=_("Document sent to DIAN in testing."))
+                                    _logger.debug("Document sent to DIAN in testing.")
                                 else:
                                     temp_message = {self.edi_status_message, self.edi_errors_messages,
                                                     self.edi_status_description, self.edi_status_code}

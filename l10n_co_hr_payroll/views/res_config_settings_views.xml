@@ -103,7 +103,7 @@
                             <field name="edi_payroll_enable"/>
                         </div>
                         <div class="o_setting_right_pane">
-                            <span class="o_form_label">Enable electronic payroll for this company</span>
+                            <label string="Enable electronic payroll for this company" for="edi_payroll_enable"/>
                             <div class="text-muted">Enable electronic payroll for this company</div>
                         </div>
                     </div>

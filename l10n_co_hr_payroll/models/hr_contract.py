@@ -32,7 +32,7 @@ class HrContract(models.Model):
                                         required=True)
     high_risk_pension = fields.Boolean(string="High risk pension", required=True, default=False)
     integral_salary = fields.Boolean(string="Integral salary", required=True, default=False)
-    type_contract_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_contracts", string="Type contract",
+    type_contract_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_contracts", string="Edi Type contract",
                                        required=True)
     payroll_period_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payroll_periods", string="Payroll period",
                                         compute="_compute_payroll_period_id", store=True)

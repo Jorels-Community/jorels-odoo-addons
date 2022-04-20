@@ -30,10 +30,10 @@ class HrSalaryRule(models.Model):
     _inherit = 'hr.salary.rule'
 
     type_concept = fields.Selection([
-        ('earn', 'Earn'),
-        ('deduction', 'Deduction'),
-        ('other', 'Other')
-    ], string="Type concept", default="other", required=True)
+        ('earn', 'Edi Earn'),
+        ('deduction', 'Edi Deduction'),
+        ('other', 'Other, not Edi')
+    ], string="Type Edi concept", default="other", required=True)
 
     earn_category = fields.Selection([
         ('basic', 'Basic'),
@@ -81,7 +81,7 @@ class HrSalaryRule(models.Model):
         ('commissions', 'Commissions'),
         ('third_party_payments', 'Third party payments'),
         ('advances', 'Advances')
-    ], string="Earn category", default="other_concepts", required=True)
+    ], string="Edi Earn category", default="other_concepts", required=True)
 
     deduction_category = fields.Selection([
         ('health', 'Health'),
@@ -104,15 +104,15 @@ class HrSalaryRule(models.Model):
         ('third_party_payments', 'Third party payments'),
         ('advances', 'Advances'),
         ('other_deductions', 'Other deductions')
-    ], string="Deduction category", default="other_deductions", required=True)
+    ], string="Edi Deduction category", default="other_deductions", required=True)
 
     edi_percent_select = fields.Selection([
         ('default', 'Default'),
         ('fix', 'Fixed percent'),
         ('code', 'Python Code'),
-    ], string='Percent Type', index=True, required=True, default='default',
+    ], string='Edi Percent Type', index=True, required=True, default='default',
         help="The computation method for the rule percent.")
-    edi_percent_python_compute = fields.Text(string='Python Code',
+    edi_percent_python_compute = fields.Text(string='Edi percent Python Code',
                                              default='''
                     # Available variables:
                     #----------------------
@@ -124,7 +124,7 @@ class HrSalaryRule(models.Model):
                     # Note: returned value have to be set in the variable 'percent'
 
                     result = inputs.example * 0.10''')
-    edi_percent_fix = fields.Float(string='Fixed Percent', digits=dp.get_precision('Payroll'), default=0.0)
+    edi_percent_fix = fields.Float(string='Edi Fixed Percent', digits=dp.get_precision('Payroll'), default=0.0)
 
     edi_is_detailed = fields.Boolean(string="Edi detailed", default=False, required=True)
 
