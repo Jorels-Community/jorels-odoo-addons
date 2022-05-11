@@ -144,6 +144,24 @@ class AccountInvoice(models.Model):
     order_ref_date = fields.Date(string="Order date", default=None, copy=False, readonly=True,
                                  states={'draft': [('readonly', False)]})
 
+    # Is out of country
+    is_out_country = fields.Boolean(string='Is it for out of the country?',
+                                    default=lambda self: self._get_default_is_out_country(),
+                                    readonly=True, states={'draft': [('readonly', False)]})
+
+    @api.multi
+    def _get_default_is_out_country(self):
+        for rec in self:
+            if rec.journal_id.is_out_country:
+                return True
+            else:
+                return False
+
+    @api.onchange('journal_id')
+    def _onchange_is_out_country(self):
+        for rec in self:
+            rec.is_out_country = self._get_default_is_out_country()
+
     @api.multi
     def is_journal_pos(self):
         self.ensure_one()
@@ -282,11 +300,8 @@ class AccountInvoice(models.Model):
                         else:
                             raise Warning(_("You must assign the client a country"))
 
-                        if rec_partner.country_id.code == 'CO' and rec.journal_id.is_out_country:
-                            raise Warning(_("This is a export journal but the client's country is Colombia"))
-
-                        if rec_partner.country_id.code != 'CO' and not rec.journal_id.is_out_country:
-                            raise Warning(_("This is a national journal but the client's country is outside Colombia"))
+                        if rec_partner.country_id.code == 'CO' and rec.is_out_country:
+                            raise Warning(_("This is a export invoice but the client's country is Colombia"))
 
                         if rec_partner.municipality_id and rec_partner.country_id.code == 'CO':
                             customer_data['municipality_code'] = rec_partner.municipality_id.id
@@ -368,7 +383,7 @@ class AccountInvoice(models.Model):
                     else:
                         raise Warning(_("All products must have an internal reference assigned"))
 
-                    if rec.journal_id.is_out_country:
+                    if rec.is_out_country:
                         if invoice_line_id.product_id.brand_name:
                             products.update({'brand_name': invoice_line_id.product_id.brand_name})
                         else:
@@ -936,7 +951,7 @@ class AccountInvoice(models.Model):
                         "Content-Type": "application/json"
                     }
 
-                    if rec.journal_id.is_out_country:
+                    if rec.is_out_country:
                         params['export'] = True
 
                     api_url = api_url + "/" + type_edi_document
