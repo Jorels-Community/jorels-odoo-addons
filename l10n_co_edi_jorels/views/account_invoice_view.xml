@@ -30,7 +30,8 @@
                     <field name="ei_operation"/>
                     <field name="ei_correction_concept_credit_id" attrs="{'invisible':[('type','!=','out_refund')]}"/>
                     <field name="ei_correction_concept_debit_id" attrs="{'invisible':[('type','!=','out_invoice')]}"/>
-                    <field name="ei_is_correction_without_reference" attrs="{'invisible':[('type','!=','out_refund')]}"/>
+                    <field name="ei_is_correction_without_reference"
+                           attrs="{'invisible':[('type','!=','out_refund')]}"/>
                 </xpath>
                 <xpath expr="//button[@name='action_invoice_open']" position="after">
                     <button name="validate_dian" type="object" string="Validate DIAN"
@@ -105,6 +106,17 @@
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
                     <field name="ei_notes"/>
                 </xpath>
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="is_out_country"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_invoice_supplier_view_form_inherit_l10n_co_edi_jorels" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.view.form.inherit.l10n_co_edi_jorels</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
                 <xpath expr="//field[@name='journal_id']" position="after">
                     <field name="is_out_country"/>
                 </xpath>

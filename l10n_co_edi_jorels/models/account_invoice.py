@@ -723,6 +723,16 @@ class AccountInvoice(models.Model):
             if ei_correction_concept_search:
                 values['ei_correction_concept_credit_id'] = ei_correction_concept_search[0].id
 
+        values['is_out_country'] = invoice.is_out_country
+
+        return values
+
+    @api.model
+    def _prepare_debitnote(self, invoice, date_invoice=None, date=None, description=None, journal_id=None):
+        values = super(AccountInvoice, self)._prepare_debitnote(invoice, date_invoice, date, description, journal_id)
+
+        values['is_out_country'] = invoice.is_out_country
+
         return values
 
     @api.depends('ei_type_document_id', 'ei_correction_concept_credit_id', 'ei_correction_concept_debit_id')
