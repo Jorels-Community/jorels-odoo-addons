@@ -117,6 +117,28 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='vendor_bill_id']" position="after">
+                    <field name="ei_operation"/>
+                    <field name="ei_correction_concept_credit_id" attrs="{'invisible':[('type','!=','in_refund')]}"/>
+                    <field name="ei_correction_concept_debit_id" attrs="{'invisible':[('type','!=','in_invoice')]}"/>
+                    <field name="ei_is_correction_without_reference"
+                           attrs="{'invisible':[('type','!=','in_refund')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='date_due']" position="after">
+                    <field name="date_start" groups="l10n_co_edi_jorels.group_invoice_period_enable"/>
+                    <field name="date_end" groups="l10n_co_edi_jorels.group_invoice_period_enable"/>
+                    <field name="order_ref_number"/>
+                    <field name="order_ref_date"/>
+                </xpath>
+                <xpath expr="//field[@name='amount_tax']" position="before">
+                    <field name="ei_amount_tax_no_withholding"/>
+                    <field name="ei_amount_total_no_withholding" class="oe_subtotal_footer_separator"/>
+                    <field name="ei_amount_tax_withholding"/>
+                </xpath>
+                <!-- Invoice lines -->
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
+                    <field name="ei_notes"/>
+                </xpath>
                 <xpath expr="//field[@name='journal_id']" position="after">
                     <field name="is_out_country"/>
                 </xpath>
