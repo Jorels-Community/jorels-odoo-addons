@@ -874,7 +874,7 @@ class AccountInvoice(models.Model):
                     rec.compute_ei_correction_concept_id()
                     if rec.ei_correction_concept_id:
                         json_request["discrepancy"] = {
-                            "reference": rec.reference if rec.reference else '',
+                            # "reference": None,
                             "correction_code": rec.ei_correction_concept_id.id,
                             "description": rec.name if rec.name else ''
                         }
