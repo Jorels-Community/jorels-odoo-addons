@@ -36,9 +36,6 @@ class MailTemplate(models.Model):
     def generate_email(self, res_ids, fields=None):
         res = super(MailTemplate, self).generate_email(res_ids, fields)
 
-        if not self.env.user.company_id.ei_enable:
-            return res
-
         self.ensure_one()
 
         multi_mode = True
@@ -51,7 +48,11 @@ class MailTemplate(models.Model):
 
         for res_id, template in self.get_email_template(res_ids).items():
             invoice = self.env["account.invoice"].browse(res_id)
-            attachments = res[res_id]["attachments"] if self.env.user.company_id.ei_include_pdf_attachment else []
+
+            if not invoice.company_id.ei_enable:
+                continue
+
+            attachments = res[res_id]["attachments"] if invoice.company_id.ei_include_pdf_attachment else []
 
             if invoice.ei_is_valid \
                     and invoice.type in ('out_invoice', 'out_refund') \

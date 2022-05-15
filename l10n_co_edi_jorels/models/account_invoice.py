@@ -41,10 +41,10 @@ class AccountInvoice(models.Model):
     _description = "Electronic invoicing"
 
     state = fields.Selection(selection_add=[('validate', 'Validating DIAN')])
-    number_formatted = fields.Char(string="Number formatted", compute="_compute_number_formatted", store=True,
+    number_formatted = fields.Char(string="Number formatted", compute="compute_number_formatted", store=True,
                                    copy=False)
 
-    ei_number = fields.Char(string="Number", compute="_compute_number_formatted", store=True, copy=False)
+    ei_number = fields.Char(string="Number", compute="compute_number_formatted", store=True, copy=False)
     ei_type_document_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_documents', string="Document type",
                                           copy=False, ondelete='RESTRICT')
     ei_customer = fields.Text(string="customer json", copy=False)
@@ -97,7 +97,7 @@ class AccountInvoice(models.Model):
     # Required field for credit and debit notes in DIAN
     ei_correction_concept_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
                                                string="Correction concept", copy=False, readonly=True,
-                                               compute="_compute_ei_correction_concept_id", store=True,
+                                               compute="compute_ei_correction_concept_id", store=True,
                                                ondelete='RESTRICT')
     ei_correction_concept_credit_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
                                                       string="Credit correction concept", copy=False,
@@ -146,31 +146,25 @@ class AccountInvoice(models.Model):
 
     # Is out of country
     is_out_country = fields.Boolean(string='Is it for out of the country?',
-                                    default=lambda self: self._get_default_is_out_country(),
+                                    default=lambda self: self.get_default_is_out_country(),
                                     readonly=True, states={'draft': [('readonly', False)]})
 
     @api.multi
-    def _get_default_is_out_country(self):
+    def get_default_is_out_country(self):
         for rec in self:
-            if rec.journal_id.is_out_country:
-                return True
-            else:
-                return False
+            return bool(rec.journal_id.is_out_country)
 
     @api.onchange('journal_id')
     def _onchange_is_out_country(self):
         for rec in self:
-            rec.is_out_country = self._get_default_is_out_country()
+            rec.is_out_country = rec.get_default_is_out_country()
 
     @api.multi
     def is_journal_pos(self):
         self.ensure_one()
         try:
             journal_pos_rec = self.env['pos.config'].search([('invoice_journal_id.id', '=', self.journal_id.id)])
-            if journal_pos_rec:
-                return True
-            else:
-                return False
+            return bool(journal_pos_rec)
         except KeyError:
             return False
 
@@ -256,7 +250,7 @@ class AccountInvoice(models.Model):
                 else:
                     raise Warning(_("The client must have an email where to send the invoice."))
 
-            type_document_identification_id = self.get_type_document_identification_id()
+            type_document_identification_id = rec.get_type_document_identification_id()
             if type_document_identification_id:
                 if rec.partner_id.vat:
                     identification_number_general = ''.join([i for i in rec.partner_id.vat if i.isdigit()])
@@ -674,7 +668,7 @@ class AccountInvoice(models.Model):
     def get_ei_resolution_id(self):
         resolution_id = 0
         for rec in self:
-            type_edi_document = self.get_type_edi_document()
+            type_edi_document = rec.get_type_edi_document()
             if type_edi_document != 'none':
                 if type_edi_document == 'invoice' and rec.journal_id.sequence_id.resolution_id:
                     # Sales invoice
@@ -693,7 +687,7 @@ class AccountInvoice(models.Model):
         return resolution_id
 
     @api.depends('number')
-    def _compute_number_formatted(self):
+    def compute_number_formatted(self):
         for rec in self:
             number_unformatted = ''
             if rec.number:
@@ -736,7 +730,7 @@ class AccountInvoice(models.Model):
         return values
 
     @api.depends('ei_type_document_id', 'ei_correction_concept_credit_id', 'ei_correction_concept_debit_id')
-    def _compute_ei_correction_concept_id(self):
+    def compute_ei_correction_concept_id(self):
         for rec in self:
             if rec.ei_type_document_id.id == 5:
                 rec.ei_correction_concept_id = rec.ei_correction_concept_credit_id.id
@@ -772,15 +766,15 @@ class AccountInvoice(models.Model):
                 # Important for compatibility with old fields,
                 # third-party modules or manual changes to the database
                 if not rec.ei_number or not rec.number_formatted:
-                    self._compute_number_formatted()
+                    rec.compute_number_formatted()
 
                 json_request = {
                     'number': rec.ei_number,
-                    'type_document_code': self.get_ei_type_document_id(),
-                    'resolution_code': self.get_ei_resolution_id(),
-                    'sync': self.get_ei_sync(),
-                    'customer': self.get_ei_customer(),
-                    'operation_code': self.get_operation_code()
+                    'type_document_code': rec.get_ei_type_document_id(),
+                    'resolution_code': rec.get_ei_resolution_id(),
+                    'sync': rec.get_ei_sync(),
+                    'customer': rec.get_ei_customer(),
+                    'operation_code': rec.get_operation_code()
                 }
 
                 # Due date
@@ -832,7 +826,7 @@ class AccountInvoice(models.Model):
                         else:
                             calculation_rate = 1.0 / rec.currency_id.rate
 
-                        rate_date = self._get_currency_rate_date() or fields.Date.context_today(self)
+                        rate_date = rec._get_currency_rate_date() or fields.Date.context_today(self)
 
                         json_request['currency_code'] = invoice_currency_search.id
                         json_request['exchange_rate'] = {
@@ -858,11 +852,11 @@ class AccountInvoice(models.Model):
 
                 # json_request y billing_reference
                 billing_reference = False
-                type_edi_document = self.get_type_edi_document()
+                type_edi_document = rec.get_type_edi_document()
                 if type_edi_document != 'none':
-                    json_request['legal_monetary_totals'] = self.get_ei_legal_monetary_totals()
-                    json_request['lines'] = self.get_ei_lines()
-                    json_request['payment_forms'] = [self.get_ei_payment_form()]
+                    json_request['legal_monetary_totals'] = rec.get_ei_legal_monetary_totals()
+                    json_request['lines'] = rec.get_ei_lines()
+                    json_request['payment_forms'] = [rec.get_ei_payment_form()]
                     if type_edi_document == 'invoice':
                         # Sales invoice
                         billing_reference = False
@@ -877,7 +871,7 @@ class AccountInvoice(models.Model):
 
                 # Billing reference
                 if billing_reference:
-                    self._compute_ei_correction_concept_id()
+                    rec.compute_ei_correction_concept_id()
                     if rec.ei_correction_concept_id:
                         json_request["discrepancy"] = {
                             "reference": rec.reference if rec.reference else '',
@@ -887,7 +881,7 @@ class AccountInvoice(models.Model):
                     else:
                         raise Warning(_("You need to select a correction code first"))
 
-                    if not self.ei_is_correction_without_reference:
+                    if not rec.ei_is_correction_without_reference:
                         invoice_rec = self.env['account.invoice'].search([('number', '=', rec.origin)])
                         if invoice_rec and invoice_rec.ei_uuid:
                             json_request["reference"] = {
@@ -936,20 +930,20 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def validate_dian_generic(self, is_test):
-        if not self.env.user.company_id.ei_enable:
-            return
-
-        # raise Warning(json.dumps(self.get_json_request(), indent=2, sort_keys=False))
-        _logger.debug("DIAN Validation Request: %s", json.dumps(self.get_json_request(), indent=2, sort_keys=False))
-
         for rec in self:
-            try:
-                type_edi_document = self.get_type_edi_document()
-                if type_edi_document != 'none':
-                    requests_data = self.get_json_request()
+            if not rec.company_id.ei_enable:
+                continue
 
-                    if self.env.user.company_id.api_key:
-                        token = self.env.user.company_id.api_key
+            # raise Warning(json.dumps(self.get_json_request(), indent=2, sort_keys=False))
+            _logger.debug("DIAN Validation Request: %s", json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
+
+            try:
+                type_edi_document = rec.get_type_edi_document()
+                if type_edi_document != 'none':
+                    requests_data = rec.get_json_request()
+
+                    if rec.company_id.api_key:
+                        token = rec.company_id.api_key
                     else:
                         raise Warning(_("You must configure a token"))
 
@@ -967,8 +961,8 @@ class AccountInvoice(models.Model):
                     api_url = api_url + "/" + type_edi_document
 
                     if is_test or not rec.ei_is_not_test:
-                        if self.env.user.company_id.test_set_id:
-                            test_set_id = self.env.user.company_id.test_set_id
+                        if rec.company_id.test_set_id:
+                            test_set_id = rec.company_id.test_set_id
                             params['test_set_id'] = test_set_id
                         else:
                             raise Warning(_("You have not configured a 'TestSetId'."))
@@ -992,7 +986,7 @@ class AccountInvoice(models.Model):
                             else:
                                 raise Warning(response['message'])
                     elif 'is_valid' in response:
-                        self.write_response(response)
+                        rec.write_response(response)
                         if response['is_valid']:
                             self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
                         elif 'uuid' in response:
@@ -1000,8 +994,8 @@ class AccountInvoice(models.Model):
                                 if not rec.ei_is_not_test:
                                     self.env.user.notify_success(message=_("Document sent to DIAN in habilitation."))
                                 else:
-                                    temp_message = {self.ei_status_message, self.ei_errors_messages,
-                                                    self.ei_status_description, self.ei_status_code}
+                                    temp_message = {rec.ei_status_message, rec.ei_errors_messages,
+                                                    rec.ei_status_description, rec.ei_status_code}
                                     raise Warning(str(temp_message))
                             else:
                                 raise Warning(_('A valid UUID was not obtained. Try again.'))
@@ -1024,155 +1018,157 @@ class AccountInvoice(models.Model):
 
     @api.multi
     def validate_dian(self):
-        self.ensure_one()
-        self.validate_dian_generic(False)
-        self.write({'state': 'open'})
+        for rec in self:
+            rec.validate_dian_generic(False)
+            rec.write({'state': 'open'})
 
     @api.multi
     def validate_dian_test(self):
-        self.ensure_one()
-        self.validate_dian_generic(True)
-        self.write({'state': 'open'})
+        for rec in self:
+            rec.validate_dian_generic(True)
+            rec.write({'state': 'open'})
 
     @api.multi
     def skip_validate_dian(self):
-        self.ensure_one()
-        self.write({'state': 'open'})
-        self.env.user.notify_warning(message=_("The validation process has been skipped."))
+        for rec in self:
+            rec.write({'state': 'open'})
+            self.env.user.notify_warning(message=_("The validation process has been skipped."))
 
     @api.multi
     def skip_validate_dian_production(self):
-        self.skip_validate_dian()
+        for rec in self:
+            rec.skip_validate_dian()
 
     @api.multi
     def action_invoice_open(self):
-        if not self.env.user.company_id.ei_enable:
-            return super(AccountInvoice, self).action_invoice_open()
-
-        previous_invoice_state_is_draft = False
-        if self.filtered(lambda inv: inv.state == 'draft'):
-            previous_invoice_state_is_draft = True
-
         res = super(AccountInvoice, self).action_invoice_open()
 
-        if previous_invoice_state_is_draft:
-            to_open_invoices = self.filtered(lambda inv: inv.state == 'open')
+        to_paid_invoices = self.filtered(lambda inv: inv.state == 'paid' and inv.company_id.ei_enable)
+        if to_paid_invoices:
+            raise Warning(_('Please check your invoice again. Are you really billing something?'))
 
-            if to_open_invoices.filtered(
-                    lambda inv: inv.type in (
-                            'out_invoice', 'out_refund') and not inv.ei_is_valid and not inv.is_journal_pos()):
-                # Environment
-                to_open_invoices.filtered(
-                    lambda inv: inv.write({'ei_is_not_test': inv.env.user.company_id.is_not_test}))
+        to_electronic_invoices = self.filtered(
+            lambda inv: inv.state == 'open' and not inv.ei_is_valid and not inv.is_journal_pos() and inv.company_id.ei_enable
+        )
+        if to_electronic_invoices.filtered(lambda inv: inv.type in ('out_invoice', 'out_refund')):
+            # Environment
+            to_electronic_invoices.filtered(
+                lambda inv: inv.write({'ei_is_not_test': inv.company_id.is_not_test})
+            )
 
-                # Enter intermediate validation state, if option is enabled in configuration
-                if to_open_invoices.filtered(lambda inv: inv.env.user.company_id.enable_validate_state):
-                    return to_open_invoices.filtered(lambda inv: inv.write({'state': 'validate'}))
+            # Enter intermediate validation state, if option is enabled in configuration
+            to_electronic_invoices.filtered(
+                lambda inv: inv.company_id.enable_validate_state
+            ).write({'state': 'validate'})
 
-                if to_open_invoices.filtered(lambda inv: inv.ei_is_not_test):
-                    to_open_invoices.validate_dian_generic(False)
-                    if to_open_invoices.filtered(lambda inv: inv.env.user.company_id.enable_mass_send_print):
-                        try:
-                            to_open_invoices.mass_send_print()
-                        except Exception as e:
-                            self.env.user.notify_danger(message=_('The invoice email could not be sent'))
-                            _logger.error('mass_send_print error: %s' % e)
-                if to_open_invoices.filtered(lambda inv: not inv.ei_is_not_test):
-                    to_open_invoices.validate_dian_generic(True)
+            # Validate DIAN production
+            to_electronic_invoices.filtered(
+                lambda inv: inv.ei_is_not_test and not inv.company_id.enable_validate_state
+            ).validate_dian_generic(False)
 
-                return to_open_invoices.filtered(lambda inv: inv.write({'state': 'open'}))
+            # Validate DIAN test
+            to_electronic_invoices.filtered(
+                lambda inv: not inv.ei_is_not_test and not inv.company_id.enable_validate_state
+            ).validate_dian_generic(True)
 
-            to_paid_invoices = self.filtered(lambda inv: inv.state == 'paid')
-            if to_paid_invoices:
-                raise Warning(_('Please check your invoice again. Are you really billing something?'))
+            # Send mail
+            try:
+                to_send_invoices = to_electronic_invoices.filtered(
+                    lambda inv: inv.company_id.enable_mass_send_print and not inv.company_id.enable_validate_state
+                )
+                if to_send_invoices:
+                    to_send_invoices.mass_send_print()
+            except Exception as e:
+                self.env.user.notify_danger(message=_('The invoice email could not be sent'))
+                _logger.error('mass_send_print error: %s' % e)
 
         return res
 
     @api.multi
     def status_document(self):
-        self.ensure_one()
-        if not self.env.user.company_id.ei_enable:
-            return
+        for rec in self:
+            if not rec.company_id.ei_enable:
+                continue
 
-        try:
-            # This line ensures that the electronic fields of the invoice are updated in Odoo, before the request
-            requests_data = self.get_json_request()
-            _logger.debug('Customer data: %s', requests_data)
+            try:
+                # This line ensures that the electronic fields of the invoice are updated in Odoo, before the request
+                requests_data = rec.get_json_request()
+                _logger.debug('Customer data: %s', requests_data)
 
-            type_edi_document = self.get_type_edi_document()
-            if type_edi_document != 'none':
-                if self.ei_zip_key or self.ei_uuid:
-                    requests_data = {}
-                    _logger.debug('API Requests: %s', requests_data)
+                type_edi_document = rec.get_type_edi_document()
+                if type_edi_document != 'none':
+                    if rec.ei_zip_key or rec.ei_uuid:
+                        requests_data = {}
+                        _logger.debug('API Requests: %s', requests_data)
 
-                    if self.env.user.company_id.api_key:
-                        token = self.env.user.company_id.api_key
-                    else:
-                        raise Warning(_("You must configure a token"))
-
-                    api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
-                                                                               'https://edipo.jorels.com')
-                    params = {
-                        'token': token,
-                        'environment': 1 if self.ei_is_not_test else 2
-                    }
-                    header = {"accept": "application/json", "Content-Type": "application/json"}
-
-                    if self.ei_zip_key:
-                        api_url = api_url + "/zip/" + self.ei_zip_key
-                    else:
-                        api_url = api_url + "/document/" + self.ei_uuid
-
-                    _logger.debug('API URL: %s', api_url)
-
-                    response = requests.post(api_url,
-                                             requests_data,
-                                             headers=header,
-                                             params=params).json()
-                    _logger.debug('API Response: %s', response)
-
-                    if 'detail' in response:
-                        raise Warning(response['detail'])
-                    if 'message' in response:
-                        if response['message'] == 'Unauthenticated.' or response['message'] == '':
-                            raise Warning(_("Authentication error with the API"))
+                        if rec.company_id.api_key:
+                            token = rec.company_id.api_key
                         else:
-                            if 'errors' in response:
-                                raise Warning(response['message'] + '/ errors: ' + str(response['errors']))
+                            raise Warning(_("You must configure a token"))
+
+                        api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
+                                                                                   'https://edipo.jorels.com')
+                        params = {
+                            'token': token,
+                            'environment': 1 if rec.ei_is_not_test else 2
+                        }
+                        header = {"accept": "application/json", "Content-Type": "application/json"}
+
+                        if rec.ei_zip_key:
+                            api_url = api_url + "/zip/" + rec.ei_zip_key
+                        else:
+                            api_url = api_url + "/document/" + rec.ei_uuid
+
+                        _logger.debug('API URL: %s', api_url)
+
+                        response = requests.post(api_url,
+                                                 requests_data,
+                                                 headers=header,
+                                                 params=params).json()
+                        _logger.debug('API Response: %s', response)
+
+                        if 'detail' in response:
+                            raise Warning(response['detail'])
+                        if 'message' in response:
+                            if response['message'] == 'Unauthenticated.' or response['message'] == '':
+                                raise Warning(_("Authentication error with the API"))
                             else:
-                                raise Warning(response['message'])
-                    elif 'is_valid' in response:
-                        self.write_response(response)
-                        if response['is_valid']:
-                            self.env.user.notify_info(message=_("Validation in DIAN has been successful."))
-                        elif 'zip_key' in response or 'uuid' in response:
-                            if response['zip_key'] is not None or response['uuid'] is not None:
-                                if not self.ei_is_not_test:
-                                    self.env.user.notify_info(message=_("Document sent to DIAN in testing."))
+                                if 'errors' in response:
+                                    raise Warning(response['message'] + '/ errors: ' + str(response['errors']))
                                 else:
-                                    temp_message = {self.ei_status_message, self.ei_errors_messages,
-                                                    self.ei_status_description, self.ei_status_code}
-                                    raise Warning(str(temp_message))
+                                    raise Warning(response['message'])
+                        elif 'is_valid' in response:
+                            rec.write_response(response)
+                            if response['is_valid']:
+                                self.env.user.notify_info(message=_("Validation in DIAN has been successful."))
+                            elif 'zip_key' in response or 'uuid' in response:
+                                if response['zip_key'] is not None or response['uuid'] is not None:
+                                    if not rec.ei_is_not_test:
+                                        self.env.user.notify_info(message=_("Document sent to DIAN in testing."))
+                                    else:
+                                        temp_message = {rec.ei_status_message, rec.ei_errors_messages,
+                                                        rec.ei_status_description, rec.ei_status_code}
+                                        raise Warning(str(temp_message))
+                                else:
+                                    raise Warning(_('A valid Zip key or UUID was not obtained. Try again.'))
                             else:
-                                raise Warning(_('A valid Zip key or UUID was not obtained. Try again.'))
+                                raise Warning(_('The document could not be validated in DIAN.'))
                         else:
-                            raise Warning(_('The document could not be validated in DIAN.'))
+                            raise Warning(_("No logical response was obtained from the API"))
                     else:
-                        raise Warning(_("No logical response was obtained from the API"))
+                        raise Warning(_("A Zip key or UUID is required to check the status of the document."))
                 else:
-                    raise Warning(_("A Zip key or UUID is required to check the status of the document."))
-            else:
-                raise Warning(_("This type of document does not need to be sent to the DIAN"))
-        except Exception as e:
-            _logger.debug("Failed to process the request: %s", e)
-            raise Warning(_("Failed to process the request: %s") % e)
+                    raise Warning(_("This type of document does not need to be sent to the DIAN"))
+            except Exception as e:
+                _logger.debug("Failed to process the request: %s", e)
+                raise Warning(_("Failed to process the request: %s") % e)
 
     @api.multi
     def status_document_log(self):
-        if not self.env.user.company_id.ei_enable:
-            return
-
         for rec in self:
+            if not rec.company_id.ei_enable:
+                continue
+
             try:
                 # This line ensures that the electronic fields of the invoice are updated in Odoo,
                 # before request
@@ -1185,8 +1181,8 @@ class AccountInvoice(models.Model):
                         requests_data = {}
                         _logger.debug('API Requests: %s', requests_data)
 
-                        if self.env.user.company_id.api_key:
-                            token = self.env.user.company_id.api_key
+                        if rec.company_id.api_key:
+                            token = rec.company_id.api_key
                         else:
                             raise Warning(_("You must configure a token"))
 
@@ -1294,10 +1290,10 @@ class AccountInvoice(models.Model):
 
     @api.depends('ei_attached_document_base64_bytes')
     def _is_attached_document_matched(self):
-        if not self.env.user.company_id.ei_enable:
-            return
-
         for rec in self:
+            if not rec.company_id.ei_enable:
+                continue
+
             if rec.ei_attached_document_base64_bytes:
                 with BytesIO(base64.b64decode(rec.ei_attached_document_base64_bytes)) as file:
                     search_ok = False
@@ -1315,10 +1311,10 @@ class AccountInvoice(models.Model):
         """Check DIAN events from email content"""
         res = super(AccountInvoice, self).message_update(msg_dict, update_vals)
 
-        if not self.env.user.company_id.ei_enable:
-            return res
-
         for rec in self:
+            if not rec.company_id.ei_enable:
+                continue
+
             csi = rec.partner_id.customer_software_id
             rec.event = csi.get_event(msg_dict)
 
