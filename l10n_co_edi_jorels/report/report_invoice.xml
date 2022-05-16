@@ -126,6 +126,14 @@
                         <span t-field="o.date_end"/>
                     </p>
                 </div>
+                <div name="Order ref" class="col-auto mw-100 mb-2" t-if="o.order_ref_number">
+                    <strong>Order reference:</strong>
+                    <p class="m-0">
+                        <span t-field="o.order_ref_number"/>
+                        <span>/</span>
+                        <span t-field="o.order_ref_date"/>
+                    </p>
+                </div>
             </xpath>
             <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[1]" position="before">
                 <th class="text-center">
