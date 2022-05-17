@@ -765,9 +765,9 @@ class AccountMove(models.Model):
                         if hasattr(rec.currency_id, 'rate_inverted') and rec.currency_id.rate_inverted:
                             calculation_rate = rec.currency_id.rate
                         else:
-                            calculation_rate = 1.0 / rec.currency_id.rate
+                            calculation_rate = rec.currency_id.inverse_rate
 
-                        rate_date = self._get_currency_rate_date() or fields.Date.context_today(self)
+                        rate_date = rec.date or rec.invoice_date or fields.Date.context_today(self)
 
                         json_request['currency_code'] = invoice_currency_search.id
                         json_request['exchange_rate'] = {
