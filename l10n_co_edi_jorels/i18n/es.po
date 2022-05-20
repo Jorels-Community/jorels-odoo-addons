@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-12 07:59+0000\n"
-"PO-Revision-Date: 2022-04-12 03:14-0500\n"
+"POT-Creation-Date: 2022-05-20 22:51+0000\n"
+"PO-Revision-Date: 2022-05-20 17:54-0500\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "MIME-Version: 1.0\n"
@@ -124,6 +124,11 @@ msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
+msgid "<span>/</span>"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "<span>This document has not been validated in the DIAN</span>"
 msgstr "<span>Este documento no ha sido validado en la DIAN</span>"
 
@@ -151,6 +156,11 @@ msgstr "<strong>Número de autorización de facturación:</strong>"
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "<strong>Invoicing period:</strong>"
 msgstr "<strong>Periodo de facturación:</strong>"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
+msgid "<strong>Order reference:</strong>"
+msgstr "<strong>Ref. de la orden:</strong>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -1110,7 +1120,7 @@ msgstr "Fecha de emisión"
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_account_journal
 msgid "Journal"
-msgstr "Diario"
+msgstr "Libro diario"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_account_move_line
@@ -1460,6 +1470,20 @@ msgstr "Una vez habilitado en la DIAN"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__ei_operation
 msgid "Operation type"
 msgstr "Tipo de operación"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__order_ref_date
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__order_ref_date
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__order_ref_date
+msgid "Order date"
+msgstr "Fecha de la orden"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__order_ref_number
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__order_ref_number
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__order_ref_number
+msgid "Order reference"
+msgstr "Ref. de la orden"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_organization_provenances
