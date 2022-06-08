@@ -21,6 +21,7 @@
 #
 
 from odoo import api, fields, models, _
+from odoo.modules import module
 
 import csv
 from pathlib import Path
@@ -40,7 +41,9 @@ class ResCompany(models.Model):
             model = model[len(module_name) + 1:]
             file_name = model + '.csv'
             _logger.debug("Import csv file: %s", file_name)
-            file_path = Path(__file__).parents[2] / module_name / 'data' / file_name
+
+            module_path = module.get_module_path(module_name)
+            file_path = Path(module_path) / 'data' / file_name
             table_name = model.replace(".", "_")
 
             with open(file_path, mode="r", encoding="utf-8-sig") as csv_file:
