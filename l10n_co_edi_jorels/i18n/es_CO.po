@@ -661,7 +661,7 @@ msgstr "Tipos de moneda"
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "Customer"
-msgstr "Cliente"
+msgstr "Adquiriente"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.actions.act_window,name:l10n_co_edi_jorels.action_l10n_co_edi_jorels_customer_software
