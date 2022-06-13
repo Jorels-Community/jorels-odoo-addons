@@ -27,6 +27,8 @@
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="payment_form_id"/>
+                    <field name="payment_method_id"/>
                     <field name="ei_operation"/>
                     <field name="ei_correction_concept_credit_id" attrs="{'invisible':[('type','!=','out_refund')]}"/>
                     <field name="ei_correction_concept_debit_id" attrs="{'invisible':[('type','!=','out_invoice')]}"/>
