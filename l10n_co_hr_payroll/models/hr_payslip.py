@@ -47,13 +47,15 @@ class HrPayslip(models.Model):
     payment_date = fields.Date("Payment date", required=True, readonly=True, states={'draft': [('readonly', False)]},
                                default=lambda self: fields.Date.to_string(
                                    (datetime.now() + relativedelta(months=+1, day=1, days=-1)).date()))
-    payment_form_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_forms", string="Payment form", default=1)
+    payment_form_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_forms", string="Payment form",
+                                      default=1, readonly=True, states={'draft': [('readonly', False)]}, copy=True)
     payment_method_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_methods", string="Payment method",
-                                        default=1)
-    accrued_total_amount = fields.Monetary("Accrued total", currency_field='currency_id')
-    deductions_total_amount = fields.Monetary("Deductions total", currency_field='currency_id')
-    others_total_amount = fields.Monetary("Others total", currency_field='currency_id')
-    total_amount = fields.Monetary("Total", currency_field='currency_id')
+                                        default=1, readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+    accrued_total_amount = fields.Monetary("Accrued total", currency_field='currency_id', readonly=True, copy=True)
+    deductions_total_amount = fields.Monetary("Deductions total", currency_field='currency_id', readonly=True,
+                                              copy=True)
+    others_total_amount = fields.Monetary("Others total", currency_field='currency_id', readonly=True, copy=True)
+    total_amount = fields.Monetary("Total", currency_field='currency_id', readonly=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Currency', readonly=False, compute='_compute_currency')
     earn_ids = fields.One2many('l10n_co_hr_payroll.earn.line', 'payslip_id', string='Earn lines', readonly=True,
                                copy=True, states={'draft': [('readonly', False)]})
