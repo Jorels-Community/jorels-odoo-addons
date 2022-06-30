@@ -46,13 +46,13 @@ class PosOrder(models.Model):
             "ei_uuid": self.invoice_id.ei_uuid,
             "ei_qr_data": self.invoice_id.ei_qr_data,
             "ei_is_valid": self.invoice_id.ei_is_valid,
-            "resolution_resolution": self.invoice_id.journal_id.sequence_id.resolution_id.resolution_resolution,
-            "resolution_resolution_date": self.invoice_id.journal_id.sequence_id.resolution_id.resolution_resolution_date,
-            "resolution_prefix": self.invoice_id.journal_id.sequence_id.resolution_id.resolution_prefix,
-            "resolution_from": self.invoice_id.journal_id.sequence_id.resolution_id.resolution_from,
-            "resolution_to": self.invoice_id.journal_id.sequence_id.resolution_id.resolution_to,
-            "resolution_date_from": self.invoice_id.journal_id.sequence_id.resolution_id.resolution_date_from,
-            "resolution_date_to": self.invoice_id.journal_id.sequence_id.resolution_id.resolution_date_to,
+            "resolution_resolution": self.invoice_id.resolution_id.resolution_resolution,
+            "resolution_resolution_date": self.invoice_id.resolution_id.resolution_resolution_date,
+            "resolution_prefix": self.invoice_id.resolution_id.resolution_prefix,
+            "resolution_from": self.invoice_id.resolution_id.resolution_from,
+            "resolution_to": self.invoice_id.resolution_id.resolution_to,
+            "resolution_date_from": self.invoice_id.resolution_id.resolution_date_from,
+            "resolution_date_to": self.invoice_id.resolution_id.resolution_date_to,
         }
 
     def _prepare_invoice(self):
