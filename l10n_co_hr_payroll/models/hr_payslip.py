@@ -245,6 +245,17 @@ class HrPayslip(models.Model):
             rec.update({'input_line_ids': input_line_list})
             rec.update({'worked_days_line_ids': worked_days_line_list})
 
+        # Sequences
+        for rec in self:
+            if not rec.number:
+                rec.number = _('New')
+
+            # if not rec.number or rec.number == _('New'):
+            #     if rec.credit_note:
+            #         rec.number = self.env['ir.sequence'].next_by_code('salary.slip.note')
+            #     else:
+            #         rec.number = self.env['ir.sequence'].next_by_code('salary.slip')
+
         res = super(HrPayslip, self).compute_sheet()
 
         for rec in self:
@@ -340,16 +351,18 @@ class HrPayslip(models.Model):
 
             rec.edi_sync = rec.company_id.edi_payroll_is_not_test
 
-            sequence_number = ''.join([i for i in rec.number if i.isdigit()])
-            sequence_prefix = rec.number.split(sequence_number)
-            if sequence_prefix:
-                sequence = {
-                    # "worker_code": "string",
-                    "prefix": sequence_prefix[0],
-                    "number": sequence_number
-                }
-            else:
-                raise UserError(_("The sequence must have a prefix"))
+            sequence = {}
+            if rec.number and rec.number not in ('New', _('New')):
+                sequence_number = ''.join([i for i in rec.number if i.isdigit()])
+                sequence_prefix = rec.number.split(sequence_number)
+                if sequence_prefix:
+                    sequence = {
+                        # "worker_code": "string",
+                        "prefix": sequence_prefix[0],
+                        "number": sequence_number
+                    }
+                else:
+                    raise UserError(_("The sequence must have a prefix"))
 
             information = {
                 "payroll_period_code": rec.contract_id.payroll_period_id.id,
@@ -1248,7 +1261,6 @@ class HrPayslip(models.Model):
                 'deductions_total': rec.deductions_total_amount,
                 'total': rec.total_amount,
                 # "novelty": novelty
-                'sequence': sequence,
                 # "provider": provider,
                 'information': information,
                 'employer': employer,
@@ -1258,6 +1270,9 @@ class HrPayslip(models.Model):
                 'earn': earn,
                 'payment_dates': payment_dates,
             }
+
+            if sequence:
+                json_request['sequence'] = sequence
 
             # Optionals
             if deduction:
@@ -1271,21 +1286,12 @@ class HrPayslip(models.Model):
 
             # Credit note
             if rec.credit_note:
-                json_request['payroll_reference'] = {
-                    'number': rec.origin_payslip_id.edi_number,
-                    'uuid': rec.origin_payslip_id.edi_uuid,
-                    'issue_date': str(rec.origin_payslip_id.edi_issue_date)
-                }
-
-            if self.env.user.company_id.edi_payroll_id and self.env.user.company_id.edi_payroll_pin:
-                json_request['environment'] = {
-                    'software': self.env.user.company_id.edi_payroll_id,
-                    'pin': self.env.user.company_id.edi_payroll_pin
-                }
-            elif not self.env.user.company_id.edi_payroll_enable:
-                pass
-            else:
-                raise UserError(_("You do not have a software id and pin configured"))
+                if rec.origin_payslip_id and rec.origin_payslip_id.edi_is_valid:
+                    json_request['payroll_reference'] = {
+                        'number': rec.origin_payslip_id.edi_number,
+                        'uuid': rec.origin_payslip_id.edi_uuid,
+                        'issue_date': str(rec.origin_payslip_id.edi_issue_date)
+                    }
 
             return json_request
 
@@ -1324,12 +1330,14 @@ class HrPayslip(models.Model):
     def get_json_delete_request(self, requests_data):
         requests_delete = {
             'sync': requests_data['sync'],
-            'environment': requests_data['environment'],
             'sequence': requests_data['sequence'],
             'information': requests_data['information'],
             'employer': requests_data['employer'],
-            'payroll_reference': requests_data['payroll_reference'],
         }
+        if 'payroll_reference' in requests_data:
+            requests_delete['payroll_reference'] = requests_data['payroll_reference']
+        else:
+            raise UserError(_("The reference payroll is not valid."))
         if 'rounding' in requests_data:
             requests_delete['rounding'] = requests_data['rounding']
         if 'provider' in requests_data:
@@ -1340,18 +1348,38 @@ class HrPayslip(models.Model):
 
     @api.multi
     def validate_dian_generic(self):
-        if not self.env.user.company_id.edi_payroll_enable:
-            return
-
-        _logger.debug("DIAN Validation Request: %s", json.dumps(self.get_json_request(), indent=2, sort_keys=False))
-        # raise UserError(json.dumps(self.get_json_request(), indent=2, sort_keys=False))
-
         for rec in self:
             try:
-                requests_data = self.get_json_request()
+                if not rec.company_id.edi_payroll_enable or rec.company_id.edi_payroll_consolidated_enable:
+                    continue
 
-                if self.env.user.company_id.api_key:
-                    token = self.env.user.company_id.api_key
+                requests_data = rec.get_json_request()
+
+                # Credit note
+                if rec.credit_note:
+                    requests_data = rec.get_json_delete_request(requests_data)
+                    type_edi_document = 'payroll_delete'
+                else:
+                    type_edi_document = 'payroll'
+
+                _logger.debug("DIAN Validation Request: %s", json.dumps(requests_data, indent=2, sort_keys=False))
+                # raise Warning(json.dumps(requests_data, indent=2, sort_keys=False))
+
+                # Payload
+                payload = json.dumps(requests_data)
+
+                # Software id and pin
+                if rec.company_id.edi_payroll_id and rec.company_id.edi_payroll_pin:
+                    requests_data['environment'] = {
+                        'software': rec.company_id.edi_payroll_id,
+                        'pin': rec.company_id.edi_payroll_pin
+                    }
+                else:
+                    raise UserError(_("You do not have a software id and pin configured"))
+
+                # API key and URL
+                if rec.company_id.api_key:
+                    token = rec.company_id.api_key
                 else:
                     raise UserError(_("You must configure a token"))
 
@@ -1360,12 +1388,7 @@ class HrPayslip(models.Model):
                 params = {'token': token}
                 header = {"accept": "application/json", "Content-Type": "application/json"}
 
-                if rec.credit_note:
-                    requests_data = self.get_json_delete_request(requests_data)
-                    type_edi_document = 'payroll_delete'
-                else:
-                    type_edi_document = 'payroll'
-
+                # Request
                 api_url = api_url + "/" + type_edi_document
 
                 rec.edi_is_not_test = rec.company_id.edi_payroll_is_not_test
@@ -1378,9 +1401,8 @@ class HrPayslip(models.Model):
 
                 _logger.debug('API URL: %s', api_url)
 
-                payload = json.dumps(requests_data)
                 response = requests.post(api_url,
-                                         payload,
+                                         requests_data,
                                          headers=header,
                                          params=params).json()
                 _logger.debug('API Response: %s', response)
@@ -1396,7 +1418,7 @@ class HrPayslip(models.Model):
                         else:
                             raise UserError(response['message'])
                 elif 'is_valid' in response:
-                    self.write_response(response, payload)
+                    rec.write_response(response, payload)
                     if response['is_valid']:
                         self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
                     elif 'zip_key' in response:
@@ -1404,8 +1426,8 @@ class HrPayslip(models.Model):
                             if not rec.edi_is_not_test:
                                 self.env.user.notify_success(message=_("Document sent to DIAN in habilitation."))
                             else:
-                                temp_message = {self.edi_status_message, self.edi_errors_messages,
-                                                self.edi_status_description, self.edi_status_code}
+                                temp_message = {rec.edi_status_message, rec.edi_errors_messages,
+                                                rec.edi_status_description, rec.edi_status_code}
                                 raise UserError(str(temp_message))
                         else:
                             raise UserError(_('A valid Zip key was not obtained. Try again.'))
@@ -1420,19 +1442,37 @@ class HrPayslip(models.Model):
     @api.multi
     def action_payslip_done(self):
         res = super(HrPayslip, self).action_payslip_done()
-        self.validate_dian_generic()
+
+        for rec in self:
+            if not rec.number or rec.number in ('New', _('New')):
+                if rec.credit_note:
+                    rec.number = self.env['ir.sequence'].next_by_code('salary.slip.note')
+                    if not rec.number:
+                        raise UserError(
+                            _("You must create a sequence for the adjusment notes with code 'salary.slip.note'"))
+                else:
+                    rec.number = self.env['ir.sequence'].next_by_code('salary.slip')
+
+            if rec.company_id.edi_payroll_enable or not rec.company_id.edi_payroll_consolidated_enable:
+                rec.validate_dian_generic()
+
         return res
 
     @api.multi
     def status_zip(self):
-        if not self.env.user.company_id.edi_payroll_enable:
-            return
-
         for rec in self:
             try:
+                if not rec.company_id.edi_payroll_enable or rec.company_id.edi_payroll_consolidated_enable:
+                    continue
+
                 # This line ensures that the electronic fields of the payroll are updated in Odoo, before the request
                 payload = rec.get_json_request()
-                _logger.debug('Customer data: %s', payload)
+
+                # Credit note
+                if rec.credit_note:
+                    payload = rec.get_json_delete_request(payload)
+
+                _logger.debug('Customer data: %s', json.dumps(payload, indent=2, sort_keys=False))
 
                 if rec.edi_zip_key or rec.edi_uuid:
                     requests_data = {}
@@ -1452,13 +1492,11 @@ class HrPayslip(models.Model):
                     }
                     header = {"accept": "application/json", "Content-Type": "application/json"}
 
-                    if rec.credit_note:
-                        payload = self.get_json_delete_request(payload)
-
+                    # Request
                     if rec.edi_zip_key:
-                        api_url = api_url + "/zip/" + self.edi_zip_key
+                        api_url = api_url + "/zip/" + rec.edi_zip_key
                     else:
-                        api_url = api_url + "/document/" + self.edi_uuid
+                        api_url = api_url + "/document/" + rec.edi_uuid
 
                     _logger.debug('API URL: %s', api_url)
 
@@ -1479,7 +1517,7 @@ class HrPayslip(models.Model):
                             else:
                                 raise UserError(response['message'])
                     elif 'is_valid' in response:
-                        self.write_response(response, payload)
+                        rec.write_response(response, payload)
                         if response['is_valid']:
                             self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
                         elif 'zip_key' in response or 'uuid' in response:
@@ -1487,8 +1525,8 @@ class HrPayslip(models.Model):
                                 if not rec.edi_is_not_test:
                                     self.env.user.notify_success(message=_("Document sent to DIAN in testing."))
                                 else:
-                                    temp_message = {self.edi_status_message, self.edi_errors_messages,
-                                                    self.edi_status_description, self.edi_status_code}
+                                    temp_message = {rec.edi_status_message, rec.edi_errors_messages,
+                                                    rec.edi_status_description, rec.edi_status_code}
                                     raise UserError(str(temp_message))
                             else:
                                 raise UserError(_('A valid Zip key or UUID was not obtained. Try again.'))
@@ -1516,10 +1554,7 @@ class HrPayslip(models.Model):
                                            'name': _('Refund: ') + payslip.name,
                                            'origin_payslip_id': payslip.id
                                            })
-            number = self.env['ir.sequence'].next_by_code('salary.slip.note')
-            if not number:
-                raise UserError(
-                    _("You must create a sequence for the payroll credit notes with code 'salary.slip.note'"))
+            number = _('New')
             copied_payslip.write({'number': number})
             copied_payslip.with_context(without_compute_sheet=True).action_payslip_done()
         formview_ref = self.env.ref('hr_payroll.view_hr_payslip_form', False)

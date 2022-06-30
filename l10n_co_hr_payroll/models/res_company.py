@@ -46,8 +46,8 @@ class ResCompany(models.Model):
     # Test
     edi_payroll_is_not_test = fields.Boolean(string="Production environment", default=False, readonly=False)
 
-    # Enable/disable electronic invoicing for company
-    edi_payroll_enable = fields.Boolean(string="Enable electronic invoicing for this company", default=False,
+    # Enable/disable electronic payroll for company
+    edi_payroll_enable = fields.Boolean(string="Enable electronic payroll for this company", default=False,
                                         readonly=False)
 
     # Test
@@ -56,3 +56,7 @@ class ResCompany(models.Model):
     # Software ID and pin
     edi_payroll_id = fields.Char(string="Software ID", readonly=False)
     edi_payroll_pin = fields.Char(string="Software PIN", readonly=False)
+
+    # Consolidated payroll
+    edi_payroll_consolidated_enable = fields.Boolean(string="Enable consolidated electronic payroll for this company",
+                                                     default=False, readonly=False)
