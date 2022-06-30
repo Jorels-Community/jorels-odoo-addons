@@ -19,5 +19,38 @@
     email: info@jorels.com
  -->
 <odoo>
+    <data noupdate="1">
 
+        <record id="hr_payroll.seq_salary_slip" model="ir.sequence">
+            <field name="name">Salary Slip</field>
+            <field name="code">salary.slip</field>
+            <field name="implementation">no_gap</field>
+            <field name="padding">1</field>
+        </record>
+
+        <record id="seq_salary_slip_note" model="ir.sequence">
+            <field name="name">Salary Slip Note</field>
+            <field name="code">salary.slip.note</field>
+            <field name="implementation">no_gap</field>
+            <field name="prefix">SSAN</field>
+            <field name="padding">1</field>
+        </record>
+
+        <record id="seq_salary_slip_edi" model="ir.sequence">
+            <field name="name">Edi payslip</field>
+            <field name="code">salary.slip.edi</field>
+            <field name="implementation">no_gap</field>
+            <field name="prefix">EPSS</field>
+            <field name="padding">1</field>
+        </record>
+
+        <record id="seq_salary_slip_edi_note" model="ir.sequence">
+            <field name="name">Edi Payslip Note</field>
+            <field name="code">salary.slip.edi.note</field>
+            <field name="implementation">no_gap</field>
+            <field name="prefix">EPAN</field>
+            <field name="padding">1</field>
+        </record>
+
+    </data>
 </odoo>

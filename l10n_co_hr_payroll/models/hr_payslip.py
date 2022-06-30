@@ -93,6 +93,50 @@ class HrPayslip(models.Model):
                                            string="Type environment", copy=False)
     edi_payload = fields.Text("Payload", copy=False)
 
+    edi_payload_html = fields.Html("Html payload", copy=False, compute="_compute_edi_payload_html", store=True)
+
+    payslip_edi_ids = fields.Many2many(comodel_name='hr.payslip.edi', string='Edi Payslips',
+                                       relation='hr_payslip_hr_payslip_edi_rel',
+                                       readonly=True, copy=False)
+
+    color = fields.Integer(string='Color', required=False, default=None, readonly=True, compute='_compute_color',
+                           store=True, copy=False)
+
+    month = fields.Selection([
+        (1, 'January'),
+        (2, 'February'),
+        (3, 'March'),
+        (4, 'April'),
+        (5, 'May'),
+        (6, 'June'),
+        (7, 'July'),
+        (8, 'August'),
+        (9, 'September'),
+        (10, 'October'),
+        (11, 'November'),
+        (12, 'December')
+    ], string='Month', compute='_compute_month', store=True, copy=False)
+    year = fields.Integer(string='Year', compute='_compute_year', store=True, copy=False)
+
+    @api.depends('edi_payload')
+    def _compute_edi_payload_html(self):
+        hr_payslip_edi_env = self.env['hr.payslip.edi']
+        for rec in self:
+            if rec.edi_payload:
+                rec.edi_payload_html = hr_payslip_edi_env.json2html(json.loads(rec.edi_payload), 2)
+            else:
+                rec.edi_payload_html = ""
+
+    @api.depends('date_from')
+    def _compute_month(self):
+        for rec in self:
+            rec.month = rec.date_from.month
+
+    @api.depends('date_from')
+    def _compute_year(self):
+        for rec in self:
+            rec.year = rec.date_from.year
+
     def _format_date_hours(self, date, hours):
         date_hours = datetime(date.year,
                               date.month,
@@ -1324,7 +1368,7 @@ class HrPayslip(models.Model):
             rec.edi_pdf_base64 = response['pdf_base64_bytes']
             rec.edi_zip_base64 = response['zip_base64_bytes']
             rec.edi_type_environment = response['type_environment_id']
-            rec.edi_payload = payload
+            rec.edi_payload = json.dumps(json.loads(payload), indent=2, sort_keys=False)
 
     @api.model
     def get_json_delete_request(self, requests_data):
@@ -1578,3 +1622,15 @@ class HrPayslip(models.Model):
                       (formview_ref and formview_ref.id or False, 'form')],
             'context': {}
         }
+
+    @api.multi
+    @api.depends('state')
+    def _compute_color(self):
+        for rec in self:
+            switcher = {
+                'draft': 11,
+                'verify': 2,
+                'cancel': 1,
+                'done': 0
+            }
+            rec.color = switcher.get(rec.state, 11)
