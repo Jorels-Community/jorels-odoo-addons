@@ -22,12 +22,12 @@
 
 # First load configuration
 from . import config
+from . import listings
 
 # Then load other models
 from . import account_invoice
 from . import account_invoice_line
 from . import account_invoice_refund
-from . import listings
 from . import mail_message
 from . import mail_template
 from . import res_partner
