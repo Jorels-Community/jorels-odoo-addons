@@ -29,7 +29,7 @@ import babel
 
 import requests
 from odoo import api, fields, models, tools, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, Warning
 
 _logger = logging.getLogger(__name__)
 
@@ -38,6 +38,9 @@ class HrPayslipEdi(models.Model):
     _name = "hr.payslip.edi"
     _description = "Payslip Edi"
 
+    note = fields.Text(string='Internal Note', readonly=True, states={'draft': [('readonly', False)]})
+    contract_id = fields.Many2one('hr.contract', string='Contract', readonly=True,
+                                  states={'draft': [('readonly', False)]})
     credit_note = fields.Boolean(string='Adjustment note', readonly=True, states={'draft': [('readonly', False)]},
                                  help="Indicates this edi payslip has a refund of another")
     origin_payslip_id = fields.Many2one(comodel_name="hr.payslip.edi", string="Origin Edi payslip", readonly=True,
@@ -54,13 +57,10 @@ class HrPayslipEdi(models.Model):
                 \n* When user cancel payslip the status is \'Rejected\'.""")
     employee_id = fields.Many2one('hr.employee', string='Employee', required=True, readonly=True,
                                   states={'draft': [('readonly', False)]})
-    payslip_ids = fields.Many2many(comodel_name='hr.payslip', string='Payslips',
-                                   relation='hr_payslip_hr_payslip_edi_rel',
-                                   readonly=True, states={'draft': [('readonly', False)]}, copy=False)
     company_id = fields.Many2one('res.company', string='Company', readonly=True, copy=False,
                                  default=lambda self: self.env['res.company']._company_default_get(),
                                  states={'draft': [('readonly', False)]})
-    number = fields.Char(string='Number', readonly=True, copy=False, states={'draft': [('readonly', False)]})
+    number = fields.Char(string='Reference', readonly=True, copy=False, states={'draft': [('readonly', False)]})
     name = fields.Char(string='Edi Payslip Name', compute='_compute_name', store=True)
 
     # They allow storing synchronous and production modes used when invoicing
@@ -74,14 +74,14 @@ class HrPayslipEdi(models.Model):
                                       default=1, readonly=True, states={'draft': [('readonly', False)]}, copy=True)
     payment_method_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_methods", string="Payment method",
                                         default=1, readonly=True, states={'draft': [('readonly', False)]}, copy=True)
-    accrued_total_amount = fields.Monetary("Accrued total", currency_field='currency_id', readonly=True,
+    accrued_total_amount = fields.Monetary("Accrued", currency_field='currency_id', readonly=True,
                                            states={'draft': [('readonly', False)]}, copy=True)
-    deductions_total_amount = fields.Monetary("Deductions total", currency_field='currency_id', readonly=True,
-                                           states={'draft': [('readonly', False)]}, copy=True)
+    deductions_total_amount = fields.Monetary("Deductions", currency_field='currency_id', readonly=True,
+                                              states={'draft': [('readonly', False)]}, copy=True)
     total_amount = fields.Monetary("Total", currency_field='currency_id', readonly=True,
-                                           states={'draft': [('readonly', False)]}, copy=True)
+                                   states={'draft': [('readonly', False)]}, copy=True)
     currency_id = fields.Many2one('res.currency', string='Currency', readonly=False, compute='_compute_currency')
-    worked_days_total = fields.Integer("Worked days total", default=0)
+    worked_days_total = fields.Integer("Worked days", default=0)
 
     # Edi response fields
     edi_is_valid = fields.Boolean("Is valid?", copy=False)
@@ -115,6 +115,13 @@ class HrPayslipEdi(models.Model):
 
     edi_payload_html = fields.Html("Html payload", copy=False, compute="_compute_edi_payload_html", store=True)
 
+    payslip_ids = fields.Many2many(comodel_name='hr.payslip', string='Payslips',
+                                   relation='hr_payslip_hr_payslip_edi_rel',
+                                   readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+
+    # color = fields.Integer(string='Color', required=False, default=None, readonly=True, compute='_compute_color',
+    #                        store=True, copy=False)
+
     month = fields.Selection([
         (1, 'January'),
         (2, 'February'),
@@ -134,43 +141,13 @@ class HrPayslipEdi(models.Model):
                           states={'draft': [('readonly', False)]},
                           default=lambda self: fields.Date.context_today(self).year)
 
-    @api.multi
-    def refund_sheet(self):
-        copied_payslip = None
-        for payslip in self:
-            if payslip.credit_note:
-                raise UserError(_("A adjustment note should not be made to a adjustment note"))
-            copied_payslip = payslip.copy({'credit_note': True,
-                                           'name': _('Refund: ') + payslip.name,
-                                           'origin_payslip_id': payslip.id
-                                           })
-            number = self.env['ir.sequence'].next_by_code('salary.slip.edi.note')
-            if not number:
-                raise UserError(
-                    _("You must create a sequence for the payroll credit notes with code 'salary.slip.edi.note'"))
-            copied_payslip.write({'number': number})
-            copied_payslip.action_payslip_done()
-        formview_ref = self.env.ref('hr_payroll.view_hr_payslip_form', False)
-        treeview_ref = self.env.ref('hr_payroll.view_hr_payslip_tree', False)
-
-        if copied_payslip is not None:
-            domain = "[('id', 'in', %s)]" % copied_payslip.ids
-        else:
-            domain = "[(credit_note, '=', True)]"
-
-        return {
-            'name': ("Refund Edi Payslip"),
-            'view_mode': 'tree, form',
-            'view_id': False,
-            'view_type': 'form',
-            'res_model': 'hr.payslip.edi',
-            'type': 'ir.actions.act_window',
-            'target': 'current',
-            'domain': domain,
-            'views': [(treeview_ref and treeview_ref.id or False, 'tree'),
-                      (formview_ref and formview_ref.id or False, 'form')],
-            'context': {}
-        }
+    @api.depends('edi_payload')
+    def _compute_edi_payload_html(self):
+        for rec in self:
+            if rec.edi_payload:
+                rec.edi_payload_html = rec.payload2html(json.loads(rec.edi_payload), 2)
+            else:
+                rec.edi_payload_html = ""
 
     @api.depends('employee_id', 'month', 'year')
     def _compute_name(self):
@@ -188,150 +165,10 @@ class HrPayslipEdi(models.Model):
             )
 
     @api.multi
-    def _compute_currency(self):
-        for rec in self:
-            rec.currency_id = rec.company_id.currency_id
-
-    @api.multi
     def unlink(self):
         if any(self.filtered(lambda payslip: payslip.state not in ('draft', 'cancel'))):
             raise UserError(_('You cannot delete a Edi payslip which is not draft or cancelled!'))
         return super(HrPayslipEdi, self).unlink()
-
-    @api.multi
-    def write_response(self, response, payload):
-        for rec in self:
-            rec.edi_is_valid = response['is_valid']
-            rec.edi_is_restored = response['is_restored']
-            rec.edi_algorithm = response['algorithm']
-            rec.edi_class = response['class']
-            rec.edi_number = response['number']
-            rec.edi_uuid = response['uuid']
-            rec.edi_issue_date = response['issue_date']
-            rec.edi_expedition_date = response['expedition_date']
-            rec.edi_zip_key = response['zip_key']
-            rec.edi_status_code = response['status_code']
-            rec.edi_status_description = response['status_description']
-            rec.edi_status_message = response['status_message']
-            rec.edi_errors_messages = str(response['errors_messages'])
-            rec.edi_xml_name = response['xml_name']
-            rec.edi_zip_name = response['zip_name']
-            rec.edi_signature = response['signature']
-            rec.edi_qr_code = response['qr_code']
-            rec.edi_qr_data = response['qr_data']
-            rec.edi_qr_link = response['qr_link']
-            rec.edi_pdf_download_link = response['pdf_download_link']
-            rec.edi_xml_base64 = response['xml_base64_bytes']
-            rec.edi_application_response_base64 = response['application_response_base64_bytes']
-            rec.edi_attached_document_base64 = response['attached_document_base64_bytes']
-            rec.edi_pdf_base64 = response['pdf_base64_bytes']
-            rec.edi_zip_base64 = response['zip_base64_bytes']
-            rec.edi_type_environment = response['type_environment_id']
-            rec.edi_payload = json.dumps(json.loads(payload), indent=2, sort_keys=False)
-
-    @api.multi
-    def validate_dian_generic(self):
-        for rec in self:
-            try:
-                if not rec.company_id.edi_payroll_enable or not rec.company_id.edi_payroll_consolidated_enable:
-                    continue
-
-                requests_data = json.loads(rec.edi_payload)
-
-                _logger.debug("DIAN Validation Request: %s", json.dumps(requests_data, indent=2, sort_keys=False))
-                # raise UserError(json.dumps(requests_data, indent=2, sort_keys=False))
-
-                # Software id and pin
-                if rec.company_id.edi_payroll_id and rec.company_id.edi_payroll_pin:
-                    requests_data['environment'] = {
-                        'software': rec.company_id.edi_payroll_id,
-                        'pin': rec.company_id.edi_payroll_pin
-                    }
-                else:
-                    raise UserError(_("You do not have a software id and pin configured"))
-
-                # API key and URL
-                if rec.company_id.api_key:
-                    token = rec.company_id.api_key
-                else:
-                    raise UserError(_("You must configure a token"))
-
-                api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
-                                                                           'https://edipo.jorels.com')
-                params = {'token': token}
-                header = {"accept": "application/json", "Content-Type": "application/json"}
-
-                # Credit note
-                # if rec.credit_note:
-                #     requests_data = self.get_json_delete_request(requests_data)
-                #     type_edi_document = 'payroll_delete'
-                # else:
-                #     type_edi_document = 'payroll'
-                type_edi_document = 'payroll'
-
-                # Request
-                api_url = api_url + "/" + type_edi_document
-
-                rec.edi_is_not_test = rec.company_id.edi_payroll_is_not_test
-
-                if not rec.edi_is_not_test:
-                    if rec.company_id.edi_payroll_test_set_id:
-                        params['test_set_id'] = rec.company_id.edi_payroll_test_set_id
-                    else:
-                        raise UserError(_("You have not configured a 'TestSetId'."))
-
-                _logger.debug('API URL: %s', api_url)
-
-                payload = json.dumps(requests_data)
-                response = requests.post(api_url,
-                                         requests_data,
-                                         headers=header,
-                                         params=params).json()
-                _logger.debug('API Response: %s', response)
-
-                if 'detail' in response:
-                    raise UserError(response['detail'])
-                if 'message' in response:
-                    if response['message'] == 'Unauthenticated.' or response['message'] == '':
-                        raise UserError(_("Authentication error with the API"))
-                    else:
-                        if 'errors' in response:
-                            raise UserError(response['message'] + '/ errors: ' + str(response['errors']))
-                        else:
-                            raise UserError(response['message'])
-                elif 'is_valid' in response:
-                    rec.write_response(response, payload)
-                    if response['is_valid']:
-                        self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
-                    elif 'zip_key' in response:
-                        if response['zip_key'] is not None:
-                            if not rec.edi_is_not_test:
-                                self.env.user.notify_success(message=_("Document sent to DIAN in habilitation."))
-                            else:
-                                temp_message = {rec.edi_status_message, rec.edi_errors_messages,
-                                                rec.edi_status_description, rec.edi_status_code}
-                                raise UserError(str(temp_message))
-                        else:
-                            raise UserError(_('A valid Zip key was not obtained. Try again.'))
-                    else:
-                        raise UserError(_('The document could not be validated in DIAN.'))
-                else:
-                    raise UserError(_("No logical response was obtained from the API."))
-            except Exception as e:
-                _logger.debug("Failed to process the request: %s", e)
-                raise UserError(_("Failed to process the request: %s") % e)
-
-    @api.multi
-    def action_payslip_done(self):
-        for rec in self:
-            if rec.credit_note:
-                raise UserError("An adjustment note cannot be created directly, do it from the corresponding payslip")
-
-            rec.compute_sheet()
-            rec.write({'state': 'done'})
-            rec.validate_dian_generic()
-
-        return True
 
     @api.multi
     def action_payslip_draft(self):
@@ -349,37 +186,38 @@ class HrPayslipEdi(models.Model):
         return True
 
     @api.multi
+    def _compute_currency(self):
+        for rec in self:
+            rec.currency_id = rec.company_id.currency_id
+
+    @api.multi
     def compute_sheet(self):
         for rec in self:
-            number = rec.number or self.env['ir.sequence'].next_by_code('salary.slip.edi')
+            number = rec.number or _('New')
 
-            sequence_number = ''.join([i for i in number if i.isdigit()])
-            sequence_prefix = number.split(sequence_number)[0]
+            # The date is the sending date
+            date = fields.Date.context_today(self)
 
-            payload = {}
-            if rec.payslip_ids:
-                for index, payslip in enumerate(rec.payslip_ids):
-                    if index > 0:
-                        payload = rec.join_dicts(payload, json.loads(payslip.edi_payload), sequence_prefix,
-                                                 sequence_number, fields.Date.to_string(rec.date))
-                    else:
-                        payload = json.loads(payslip.edi_payload)
+            # Save
+            rec.write({
+                'number': number,
+                'date': date,
+            })
 
+            # Payload
+            payload = rec.get_json_request()
+            edi_payload = json.dumps(payload, indent=4, sort_keys=False)
+
+            # Save
             rec.write({
                 'edi_sync': rec.company_id.edi_payroll_is_not_test,
                 'edi_is_not_test': rec.company_id.edi_payroll_is_not_test,
-                'number': number,
-                'edi_payload': json.dumps(payload, indent=4, sort_keys=False),
-                'payment_form_id': payload['payment']['code'],
-                'payment_method_id': payload['payment']['method_code'],
-                'accrued_total_amount': payload['accrued_total'],
-                'deductions_total_amount': payload['deductions_total'],
-                'total_amount': payload['total'],
-                'worked_days_total': payload['earn']['basic']['worked_days'],
+                'edi_payload': edi_payload,
             })
+
         return True
 
-    def join_dicts(self, a, b, prefix, number, date_issue):
+    def join_dicts(self, a, b, date_issue):
         if dt.datetime.strptime(a['period']['settlement_start_date'], '%Y-%m-%d') \
                 < dt.datetime.strptime(b['period']['settlement_start_date'], '%Y-%m-%d'):
             first, last = deepcopy(a), deepcopy(b)
@@ -399,8 +237,8 @@ class HrPayslipEdi(models.Model):
         ])
 
         # Sequence
-        last['sequence']["prefix"] = prefix
-        last['sequence']["number"] = number
+        if 'sequence' in last:
+            last.pop('sequence')
 
         # Period
         self.dict_root_merge(first['period'], last['period'], [
@@ -485,6 +323,428 @@ class HrPayslipEdi(models.Model):
         ])
 
         return last
+
+    @api.multi
+    def get_json_request(self):
+        for rec in self:
+            if not rec.number:
+                raise UserError(_("The payroll must have a consecutive number, 'Reference' field"))
+            if not rec.contract_id.payroll_period_id:
+                raise UserError(_("The contract must have the 'Scheduled Pay' field configured"))
+            if not rec.company_id.name:
+                raise UserError(_("Your company does not have a name"))
+            if not rec.company_id.type_document_identification_id:
+                raise UserError(_("Your company does not have an identification type"))
+            if not rec.company_id.vat:
+                raise UserError(_("Your company does not have a document number"))
+            if not rec.company_id.partner_id.postal_municipality_id:
+                raise UserError(_("Your company does not have a postal municipality"))
+            if not rec.company_id.street:
+                raise UserError(_("Your company does not have an address"))
+            if not rec.contract_id.type_worker_id:
+                raise UserError(_("The contract must have the 'Type worker' field configured"))
+            if not rec.contract_id.subtype_worker_id:
+                raise UserError(_("The contract must have the 'Subtype worker' field configured"))
+            if not rec.employee_id.address_home_id.first_name:
+                raise UserError(_("Employee does not have a first name"))
+            if not rec.employee_id.address_home_id.surname:
+                raise UserError(_("Employee does not have a surname"))
+            if not rec.employee_id.address_home_id.type_document_identification_id:
+                raise UserError(_("Employee does not have an identification type"))
+            if rec.employee_id.address_home_id.type_document_identification_id.id == 6:
+                raise UserError(_("The employee's document type cannot be NIT"))
+            if not rec.employee_id.address_home_id.vat:
+                raise UserError(_("Employee does not have an document number"))
+            if not rec.employee_id.address_home_id.postal_municipality_id:
+                raise UserError(_("Employee does not have a postal municipality"))
+            if not rec.employee_id.address_home_id.street:
+                raise UserError(_("Employee does not have an address."))
+            if not rec.contract_id.name:
+                raise UserError(_("Contract does not have a name"))
+            if rec.contract_id.wage <= 0:
+                raise UserError(_("The contract must have the 'Wage' field configured"))
+            if not rec.contract_id.type_contract_id:
+                raise UserError(_("The contract must have the 'Type contract' field configured"))
+            if not rec.contract_id.date_start:
+                raise UserError(_("The contract must have the 'Start Date' field configured"))
+            # if not rec.date_from:
+            #     raise UserError(_("The payroll must have a period"))
+            # if not rec.date_to:
+            #     raise UserError(_("The payroll must have a period"))
+            if not rec.payment_form_id:
+                raise UserError(_("The payroll must have a payment form"))
+            if not rec.payment_method_id:
+                raise UserError(_("The payroll must have a payment method"))
+            # if not rec.payment_date:
+            #     raise UserError(_("The payroll must have a payment date"))
+            if not rec.month:
+                raise UserError(_("The payroll must have a month"))
+            if not rec.year:
+                raise UserError(_("The payroll must have a year"))
+
+            sequence = {}
+            if rec.number and rec.number not in ('New', _('New')):
+                sequence_number = ''.join([i for i in rec.number if i.isdigit()])
+                sequence_prefix = rec.number.split(sequence_number)
+                if sequence_prefix:
+                    sequence = {
+                        # "worker_code": "string",
+                        "prefix": sequence_prefix[0],
+                        "number": int(sequence_number)
+                    }
+                else:
+                    raise UserError(_("The sequence must have a prefix"))
+
+            json_request = {}
+
+            # Others fields
+            if rec.payslip_ids:
+                for index, payslip in enumerate(rec.payslip_ids):
+                    if index > 0:
+                        json_request = rec.join_dicts(json_request, json.loads(payslip.edi_payload),
+                                                      fields.Date.to_string(rec.date))
+                    else:
+                        json_request = json.loads(payslip.edi_payload)
+
+            # Sequence
+            if sequence:
+                json_request['sequence'] = sequence
+
+            # Notes
+            if rec.note:
+                notes = [{
+                    "text": rec.note
+                }]
+                json_request['notes'] = notes
+
+            # Save
+            rec.write({
+                'payment_form_id': json_request['payment']['code'],
+                'payment_method_id': json_request['payment']['method_code'],
+                'accrued_total_amount': json_request['accrued_total'],
+                'deductions_total_amount': json_request['deductions_total'],
+                'total_amount': json_request['total'],
+                'worked_days_total': json_request['earn']['basic']['worked_days'],
+            })
+
+            # Credit note
+            if rec.credit_note:
+                if rec.origin_payslip_id:
+                    if rec.origin_payslip_id.edi_is_valid:
+                        json_request['payroll_reference'] = {
+                            'number': rec.origin_payslip_id.edi_number,
+                            'uuid': rec.origin_payslip_id.edi_uuid,
+                            'issue_date': str(rec.origin_payslip_id.edi_issue_date)
+                        }
+                    else:
+                        json_request['payroll_reference'] = {
+                            'number': rec.origin_payslip_id.number,
+                            'issue_date': str(rec.origin_payslip_id.date)
+                        }
+                else:
+                    raise UserError(_("The Origin payslip is required for adjusment notes."))
+
+                json_request = rec.get_json_delete_request(json_request)
+
+            return json_request
+
+    @api.multi
+    def write_response(self, response, payload):
+        for rec in self:
+            rec.edi_is_valid = response['is_valid']
+            rec.edi_is_restored = response['is_restored']
+            rec.edi_algorithm = response['algorithm']
+            rec.edi_class = response['class']
+            rec.edi_number = response['number']
+            rec.edi_uuid = response['uuid']
+            rec.edi_issue_date = response['issue_date']
+            rec.edi_expedition_date = response['expedition_date']
+            rec.edi_zip_key = response['zip_key']
+            rec.edi_status_code = response['status_code']
+            rec.edi_status_description = response['status_description']
+            rec.edi_status_message = response['status_message']
+            rec.edi_errors_messages = str(response['errors_messages'])
+            rec.edi_xml_name = response['xml_name']
+            rec.edi_zip_name = response['zip_name']
+            rec.edi_signature = response['signature']
+            rec.edi_qr_code = response['qr_code']
+            rec.edi_qr_data = response['qr_data']
+            rec.edi_qr_link = response['qr_link']
+            rec.edi_pdf_download_link = response['pdf_download_link']
+            rec.edi_xml_base64 = response['xml_base64_bytes']
+            rec.edi_application_response_base64 = response['application_response_base64_bytes']
+            rec.edi_attached_document_base64 = response['attached_document_base64_bytes']
+            rec.edi_pdf_base64 = response['pdf_base64_bytes']
+            rec.edi_zip_base64 = response['zip_base64_bytes']
+            rec.edi_type_environment = response['type_environment_id']
+            rec.edi_payload = payload
+
+    @api.model
+    def get_json_delete_request(self, requests_data):
+        requests_delete = {}
+
+        if 'sequence' in requests_data:
+            requests_delete['sequence'] = requests_data['sequence']
+        if 'payroll_reference' in requests_data:
+            requests_delete['payroll_reference'] = requests_data['payroll_reference']
+
+        requests_delete['sync'] = requests_data['sync']
+        requests_delete['information'] = requests_data['information']
+        requests_delete['employer'] = requests_data['employer']
+
+        if 'rounding' in requests_data:
+            requests_delete['rounding'] = requests_data['rounding']
+        if 'provider' in requests_data:
+            requests_delete['provider'] = requests_data['provider']
+        if 'notes' in requests_data:
+            requests_delete['notes'] = requests_data['notes']
+
+        return requests_delete
+
+    @api.multi
+    def validate_dian_generic(self):
+        for rec in self:
+            try:
+                if not rec.company_id.edi_payroll_enable or not rec.company_id.edi_payroll_consolidated_enable:
+                    continue
+
+                requests_data = rec.get_json_request()
+
+                if 'sequence' not in requests_data:
+                    raise UserError(_("The sequence is required."))
+
+                # Credit note
+                if rec.credit_note:
+                    type_edi_document = 'payroll_delete'
+                    if 'payroll_reference' not in requests_data or 'uuid' not in requests_data['payroll_reference']:
+                        raise UserError(_("The reference payroll is not valid."))
+                else:
+                    type_edi_document = 'payroll'
+
+                # Payload
+                payload = json.dumps(requests_data, indent=2, sort_keys=False)
+
+                # Software id and pin
+                if rec.company_id.edi_payroll_id and rec.company_id.edi_payroll_pin:
+                    requests_data['environment'] = {
+                        'software': rec.company_id.edi_payroll_id,
+                        'pin': rec.company_id.edi_payroll_pin
+                    }
+                else:
+                    raise UserError(_("You do not have a software id and pin configured"))
+
+                # API key and URL
+                if rec.company_id.api_key:
+                    token = rec.company_id.api_key
+                else:
+                    raise UserError(_("You must configure a token"))
+
+                api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
+                                                                           'https://edipo.jorels.com')
+                params = {'token': token}
+                header = {"accept": "application/json", "Content-Type": "application/json"}
+
+                # Request
+                api_url = api_url + "/" + type_edi_document
+
+                rec.edi_is_not_test = rec.company_id.edi_payroll_is_not_test
+
+                if not rec.edi_is_not_test:
+                    if rec.company_id.edi_payroll_test_set_id:
+                        params['test_set_id'] = rec.company_id.edi_payroll_test_set_id
+                    else:
+                        raise UserError(_("You have not configured a 'TestSetId'."))
+
+                _logger.debug('API URL: %s', api_url)
+                _logger.debug("DIAN Validation Request: %s", json.dumps(requests_data, indent=2, sort_keys=False))
+                # raise Warning(json.dumps(requests_data, indent=2, sort_keys=False))
+
+                response = requests.post(api_url,
+                                         json.dumps(requests_data),
+                                         headers=header,
+                                         params=params).json()
+                _logger.debug('API Response: %s', response)
+
+                if 'detail' in response:
+                    raise UserError(response['detail'])
+                if 'message' in response:
+                    if response['message'] == 'Unauthenticated.' or response['message'] == '':
+                        raise UserError(_("Authentication error with the API"))
+                    else:
+                        if 'errors' in response:
+                            raise UserError(response['message'] + '/ errors: ' + str(response['errors']))
+                        else:
+                            raise UserError(response['message'])
+                elif 'is_valid' in response:
+                    rec.write_response(response, payload)
+                    if response['is_valid']:
+                        self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                    elif 'zip_key' in response:
+                        if response['zip_key'] is not None:
+                            if not rec.edi_is_not_test:
+                                self.env.user.notify_success(message=_("Document sent to DIAN in habilitation."))
+                            else:
+                                temp_message = {rec.edi_status_message, rec.edi_errors_messages,
+                                                rec.edi_status_description, rec.edi_status_code}
+                                raise UserError(str(temp_message))
+                        else:
+                            raise UserError(_('A valid Zip key was not obtained. Try again.'))
+                    else:
+                        raise UserError(_('The document could not be validated in DIAN.'))
+                else:
+                    raise UserError(_("No logical response was obtained from the API."))
+            except Exception as e:
+                _logger.debug("Failed to process the request: %s", e)
+                raise UserError(_("Failed to process the request: %s") % e)
+
+    @api.multi
+    def action_payslip_done(self):
+        for rec in self:
+            if not rec.number or rec.number in ('New', _('New')):
+                if rec.credit_note:
+                    rec.number = self.env['ir.sequence'].next_by_code('salary.slip.edi.note')
+                else:
+                    rec.number = self.env['ir.sequence'].next_by_code('salary.slip.edi')
+
+            if not self.env.context.get('without_compute_sheet'):
+                rec.compute_sheet()
+            rec.write({'state': 'done'})
+
+            if rec.company_id.edi_payroll_enable and rec.company_id.edi_payroll_consolidated_enable:
+                rec.validate_dian_generic()
+
+        return True
+
+    @api.multi
+    def status_zip(self):
+        for rec in self:
+            try:
+                if not rec.company_id.edi_payroll_enable or not rec.company_id.edi_payroll_consolidated_enable:
+                    continue
+
+                # This line ensures that the electronic fields of the payroll are updated in Odoo, before the request
+                payload = json.dumps(rec.get_json_request(), indent=2, sort_keys=False)
+
+                _logger.debug('Payload: %s', payload)
+
+                if rec.edi_zip_key or rec.edi_uuid:
+                    requests_data = {}
+                    _logger.debug('API Requests: %s', requests_data)
+
+                    # API key and URL
+                    if rec.company_id.api_key:
+                        token = rec.company_id.api_key
+                    else:
+                        raise UserError(_("You must configure a token"))
+
+                    api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
+                                                                               'https://edipo.jorels.com')
+                    params = {
+                        'token': token,
+                        'environment': rec.edi_type_environment.id
+                    }
+                    header = {"accept": "application/json", "Content-Type": "application/json"}
+
+                    # Request
+                    if rec.edi_zip_key:
+                        api_url = api_url + "/zip/" + rec.edi_zip_key
+                    else:
+                        api_url = api_url + "/document/" + rec.edi_uuid
+
+                    _logger.debug('API URL: %s', api_url)
+
+                    response = requests.post(api_url,
+                                             json.dumps(requests_data),
+                                             headers=header,
+                                             params=params).json()
+                    _logger.debug('API Response: %s', response)
+
+                    if 'detail' in response:
+                        raise UserError(response['detail'])
+                    if 'message' in response:
+                        if response['message'] == 'Unauthenticated.' or response['message'] == '':
+                            raise UserError(_("Authentication error with the API"))
+                        else:
+                            if 'errors' in response:
+                                raise UserError(response['message'] + '/ errors: ' + str(response['errors']))
+                            else:
+                                raise UserError(response['message'])
+                    elif 'is_valid' in response:
+                        rec.write_response(response, payload)
+                        if response['is_valid']:
+                            self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                        elif 'zip_key' in response or 'uuid' in response:
+                            if response['zip_key'] is not None or response['uuid'] is not None:
+                                if not rec.edi_is_not_test:
+                                    self.env.user.notify_success(message=_("Document sent to DIAN in testing."))
+                                else:
+                                    temp_message = {rec.edi_status_message, rec.edi_errors_messages,
+                                                    rec.edi_status_description, rec.edi_status_code}
+                                    raise UserError(str(temp_message))
+                            else:
+                                raise UserError(_('A valid Zip key or UUID was not obtained. Try again.'))
+                        else:
+                            raise UserError(_('The document could not be validated in DIAN.'))
+                    else:
+                        raise UserError(_("No logical response was obtained from the API."))
+                else:
+                    raise UserError(_("A zip key or UUID is required to check the status of the document."))
+
+            except Exception as e:
+                _logger.debug("Failed to process the request: %s", e)
+                raise UserError(_("Failed to process the request: %s") % e)
+
+    @api.multi
+    def refund_sheet(self):
+        refund_payslip = None
+        for payslip in self:
+            if payslip.credit_note:
+                raise UserError(_("A adjustment note should not be made to a adjustment note"))
+
+            refund_payslip = payslip.copy({'credit_note': True,
+                                           'name': _('Refund: ') + payslip.name,
+                                           'origin_payslip_id': payslip.id,
+                                           'number': _('New'),
+                                           })
+            refund_payslip.with_context(without_compute_sheet=True).action_payslip_done()
+
+            if payslip.edi_payload and not refund_payslip.edi_payload:
+                payload = refund_payslip.get_json_request()
+                refund_payslip.write({'edi_payload': json.dumps(payload, indent=2, sort_keys=False)})
+
+        formview_ref = self.env.ref('l10n_co_hr_payroll.view_hr_payslip_edi_form', False)
+        treeview_ref = self.env.ref('l10n_co_hr_payroll.view_hr_payslip_edi_tree', False)
+
+        if refund_payslip is not None:
+            domain = "[('id', 'in', %s)]" % refund_payslip.ids
+        else:
+            domain = "[(credit_note, '=', True)]"
+
+        return {
+            'name': ("Refund Edi Payslip"),
+            'view_mode': 'tree, form',
+            'view_id': False,
+            'view_type': 'form',
+            'res_model': 'hr.payslip.edi',
+            'type': 'ir.actions.act_window',
+            'target': 'current',
+            'domain': domain,
+            'views': [(treeview_ref and treeview_ref.id or False, 'tree'),
+                      (formview_ref and formview_ref.id or False, 'form')],
+            'context': {}
+        }
+
+    # @api.multi
+    # @api.depends('state')
+    # def _compute_color(self):
+    #     for rec in self:
+    #         switcher = {
+    #             'draft': 11,
+    #             'verify': 2,
+    #             'cancel': 1,
+    #             'done': 0
+    #         }
+    #         rec.color = switcher.get(rec.state, 11)
 
     # Root
     def dict_root_sum(self, first, last, fields=[]):
@@ -694,7 +954,7 @@ class HrPayslipEdi(models.Model):
             return field_name
 
     @api.model
-    def json2html(self, payload, tab, title=""):
+    def payload2html(self, payload, tab, title=""):
         output = ""
         output_temp = "<table class='o_group o_inner_group o_group_col_12'><tbody>"
         for key, value in payload.items():
@@ -741,7 +1001,7 @@ class HrPayslipEdi(models.Model):
                     continue
                 output += "<h" + str(tab) + ">" + \
                           self.get_json2html_field_name(field_name, key) + "</h" + str(tab) + ">"
-                output += self.json2html(value, tab + 1, field_name)
+                output += self.payload2html(value, tab + 1, field_name)
 
         for key, value in payload.items():
             field_name = title + "_" + key
@@ -750,13 +1010,5 @@ class HrPayslipEdi(models.Model):
                           self.get_json2html_field_name(field_name, key) + "</h" + str(tab) + ">"
                 for i, valor in enumerate(value):
                     output += "<h" + str(tab + 1) + ">" + str(i + 1) + ". " + "</h" + str(tab + 1) + ">"
-                    output += self.json2html(valor, tab + 1, field_name)
+                    output += self.payload2html(valor, tab + 1, field_name)
         return output
-
-    @api.depends('edi_payload')
-    def _compute_edi_payload_html(self):
-        for rec in self:
-            if rec.edi_payload:
-                rec.edi_payload_html = self.json2html(json.loads(rec.edi_payload), 2)
-            else:
-                rec.edi_payload_html = ""

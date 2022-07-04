@@ -51,17 +51,17 @@ class HrPayslip(models.Model):
                                       default=1, readonly=True, states={'draft': [('readonly', False)]}, copy=True)
     payment_method_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_methods", string="Payment method",
                                         default=1, readonly=True, states={'draft': [('readonly', False)]}, copy=True)
-    accrued_total_amount = fields.Monetary("Accrued total", currency_field='currency_id', readonly=True, copy=True)
-    deductions_total_amount = fields.Monetary("Deductions total", currency_field='currency_id', readonly=True,
+    accrued_total_amount = fields.Monetary("Accrued", currency_field='currency_id', readonly=True, copy=True)
+    deductions_total_amount = fields.Monetary("Deductions", currency_field='currency_id', readonly=True,
                                               copy=True)
-    others_total_amount = fields.Monetary("Others total", currency_field='currency_id', readonly=True, copy=True)
+    others_total_amount = fields.Monetary("Others", currency_field='currency_id', readonly=True, copy=True)
     total_amount = fields.Monetary("Total", currency_field='currency_id', readonly=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Currency', readonly=False, compute='_compute_currency')
     earn_ids = fields.One2many('l10n_co_hr_payroll.earn.line', 'payslip_id', string='Earn lines', readonly=True,
                                copy=True, states={'draft': [('readonly', False)]})
     deduction_ids = fields.One2many('l10n_co_hr_payroll.deduction.line', 'payslip_id', string='Deduction lines',
                                     copy=True, readonly=True, states={'draft': [('readonly', False)]})
-    worked_days_total = fields.Integer("Worked days total", default=0)
+    worked_days_total = fields.Integer("Worked days", default=0)
 
     # Edi response fields
     edi_is_valid = fields.Boolean("Is valid?", copy=False)
@@ -99,8 +99,8 @@ class HrPayslip(models.Model):
                                        relation='hr_payslip_hr_payslip_edi_rel',
                                        readonly=True, copy=False)
 
-    color = fields.Integer(string='Color', required=False, default=None, readonly=True, compute='_compute_color',
-                           store=True, copy=False)
+    # color = fields.Integer(string='Color', required=False, default=None, readonly=True, compute='_compute_color',
+    #                        store=True, copy=False)
 
     month = fields.Selection([
         (1, 'January'),
@@ -123,7 +123,7 @@ class HrPayslip(models.Model):
         hr_payslip_edi_env = self.env['hr.payslip.edi']
         for rec in self:
             if rec.edi_payload:
-                rec.edi_payload_html = hr_payslip_edi_env.json2html(json.loads(rec.edi_payload), 2)
+                rec.edi_payload_html = hr_payslip_edi_env.payload2html(json.loads(rec.edi_payload), 2)
             else:
                 rec.edi_payload_html = ""
 
@@ -318,7 +318,7 @@ class HrPayslip(models.Model):
             rec.others_total_amount = others_total_amount
             rec.total_amount = accrued_total_amount - deductions_total_amount
 
-            rec.edi_payload = json.dumps(self.get_json_request(), indent=4, sort_keys=False)
+            rec.edi_payload = json.dumps(rec.get_json_request(), indent=4, sort_keys=False)
 
         return res
 
@@ -1506,7 +1506,7 @@ class HrPayslip(models.Model):
         res = super(HrPayslip, self).action_payslip_done()
 
         for rec in self:
-            if rec.company_id.edi_payroll_enable or not rec.company_id.edi_payroll_consolidated_enable:
+            if rec.company_id.edi_payroll_enable and not rec.company_id.edi_payroll_consolidated_enable:
                 rec.validate_dian_generic()
 
         return res
@@ -1633,14 +1633,14 @@ class HrPayslip(models.Model):
             'context': {}
         }
 
-    @api.multi
-    @api.depends('state')
-    def _compute_color(self):
-        for rec in self:
-            switcher = {
-                'draft': 11,
-                'verify': 2,
-                'cancel': 1,
-                'done': 0
-            }
-            rec.color = switcher.get(rec.state, 11)
+    # @api.multi
+    # @api.depends('state')
+    # def _compute_color(self):
+    #     for rec in self:
+    #         switcher = {
+    #             'draft': 11,
+    #             'verify': 2,
+    #             'cancel': 1,
+    #             'done': 0
+    #         }
+    #         rec.color = switcher.get(rec.state, 11)
