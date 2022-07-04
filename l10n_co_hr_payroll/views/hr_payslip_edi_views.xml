@@ -118,10 +118,7 @@
         <field name="name">hr.payslip.edi.tree</field>
         <field name="model">hr.payslip.edi</field>
         <field name="arch" type="xml">
-            <tree string="Edi Payslip" decoration-primary="state=='draft'"
-                  decoration-warning="state=='verify'"
-                  decoration-danger="state=='cancel'"
-                  decoration-muted="state=='done'">
+            <tree string="Edi Payslip" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" >
                 <field name="number"/>
                 <field name="employee_id"/>
                 <field name="name"/>
@@ -129,10 +126,10 @@
                 <field name="month"/>
                 <field name="date"/>
                 <field name="company_id" groups="base.group_multi_company"/>
-                <field name="worked_days_total"/>
-                <field name="accrued_total_amount"/>
-                <field name="deductions_total_amount"/>
-                <field name="total_amount"/>
+                <field name="worked_days_total" sum="worked_days_total"/>
+                <field name="accrued_total_amount" sum="accrued_total_amount"/>
+                <field name="deductions_total_amount" sum="deductions_total_amount"/>
+                <field name="total_amount" sum="total_amount"/>
                 <field name="state"/>
             </tree>
         </field>
