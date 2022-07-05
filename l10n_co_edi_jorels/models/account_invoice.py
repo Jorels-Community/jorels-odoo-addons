@@ -699,13 +699,13 @@ class AccountInvoice(models.Model):
             if type_edi_document != 'none':
                 if type_edi_document == 'invoice' and rec.journal_id.sequence_id.resolution_id:
                     # Sales invoice
-                    rec.resolution_id = rec.journal_id.sequence_id.resolution_id.resolution_id
+                    rec.resolution_id = rec.journal_id.sequence_id.resolution_id.id
                 elif type_edi_document == 'credit_note' and rec.journal_id.refund_sequence_id.resolution_id:
                     # Credit note
-                    rec.resolution_id = rec.journal_id.refund_sequence_id.resolution_id.resolution_id
+                    rec.resolution_id = rec.journal_id.refund_sequence_id.resolution_id.id
                 elif type_edi_document == 'debit_note' and rec.journal_id.debitnote_sequence_id.resolution_id:
                     # Debit note
-                    rec.resolution_id = rec.journal_id.debitnote_sequence_id.resolution_id.resolution_id
+                    rec.resolution_id = rec.journal_id.debitnote_sequence_id.resolution_id.id
                 else:
                     _logger.debug("This type of document does not have a DIAN resolution assigned")
 
