@@ -805,7 +805,7 @@ class AccountInvoice(models.Model):
                 json_request = {
                     'number': rec.ei_number,
                     'type_document_code': rec.get_ei_type_document_id(),
-                    'resolution_code': rec.resolution_id.id,
+                    'resolution_code': rec.resolution_id.resolution_id,
                     'sync': rec.get_ei_sync(),
                     'customer': rec.get_ei_customer(),
                     'operation_code': rec.get_operation_code()
