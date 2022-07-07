@@ -27,11 +27,11 @@ configuraciones de Odoo.
 
 Email: info@jorels.com
 
-Telegram: @jorelscom
+Telegram: https://t.me/Jorels_SAS
 
 ## Roadmap
 
-Trabajando en la migración a la versión 15 de Odoo
+Versión 16 de Odoo
 
 ## Contributing
 
@@ -48,5 +48,5 @@ LGPL v3 y AGPL v3, dependiendo el modulo.
 ## Project status
 
 Actualmente los modulos l10n_co_ciius, l10n_co_edi_jorels, l10n_co_hr_payroll y update_from_csv estan en producción y funcionan
-perfectamente en Odoo 15. El modulo l10n_co_edi_jorels_pos aún esta en pruebas en Odoo 15 y no deben ser usado en
+perfectamente en Odoo 12, 13, 14 y 15. El modulo l10n_co_edi_jorels_pos aún esta en pruebas en Odoo 15 y no deben ser usado en
 producción.
