@@ -1001,39 +1001,42 @@ class AccountMove(models.Model):
     def _post(self, soft=True):
         res = super(AccountMove, self)._post(soft)
 
-        if not self.env.company.ei_enable:
-            return res
+        to_edi = res.filtered(lambda inv: inv.company_id.ei_enable)
+        if to_edi:
+            # Invoices in DIAN cannot be validated with zero total
+            to_paid_invoices = to_edi.filtered(
+                lambda inv: inv.is_invoice() and inv.currency_id.is_zero(inv.amount_total))
+            if to_paid_invoices:
+                raise UserError(_('Please check your invoice again. Are you really billing something?'))
 
-        # Invoices in DIAN cannot be validated with zero total
-        to_paid_invoices = self.filtered(lambda m: m.is_invoice() and m.currency_id.is_zero(m.amount_total))
-        if to_paid_invoices:
-            raise UserError(_('Please check your invoice again. Are you really billing something?'))
+            # Posted invoices
+            to_posted_invoices = to_edi.filtered(
+                lambda inv: inv.move_type in ('out_invoice', 'out_refund')
+                            and inv.state == 'posted'
+                            and not inv.ei_is_valid
+                            and not inv.is_journal_pos()
+                            and not inv.company_id.enable_validate_state
+            )
+            if to_posted_invoices:
+                to_posted_invoices.filtered(lambda inv: inv.write({'ei_is_not_test': inv.company_id.is_not_test}))
 
-        to_posted_invoices = self.filtered(lambda inv: inv.state == 'posted')
-        if to_posted_invoices.filtered(
-                lambda inv: inv.move_type in (
-                'out_invoice', 'out_refund') and not inv.ei_is_valid and not inv.is_journal_pos()):
-            # Environment
-            to_posted_invoices.filtered(
-                lambda inv: inv.write({'ei_is_not_test': inv.env.company.is_not_test}))
+                # Production invoices
+                to_production_invoices = to_posted_invoices.filtered(lambda inv: inv.ei_is_not_test)
+                if to_production_invoices:
+                    to_production_invoices.validate_dian_generic(False)
+                    to_mass_send = to_production_invoices.filtered(lambda inv: inv.company_id.enable_mass_send_print)
+                    if to_mass_send:
+                        try:
+                            to_mass_send.mass_send_print()
+                        except Exception as e:
+                            # self.env.user.notify_danger(message=_('The invoice email could not be sent'))
+                            _logger.debug("The invoice email could not be sent")
+                            _logger.error('mass_send_print error: %s' % e)
 
-            # Enter intermediate validation state, if option is enabled in configuration
-            if to_posted_invoices.filtered(lambda inv: inv.env.company.enable_validate_state):
-                return to_posted_invoices.filtered(lambda inv: inv.write({'state': 'validate'}))
-
-            if to_posted_invoices.filtered(lambda inv: inv.ei_is_not_test):
-                to_posted_invoices.validate_dian_generic(False)
-                # if to_posted_invoices.filtered(lambda inv: inv.env.company.enable_mass_send_print):
-                #     try:
-                #         to_posted_invoices.mass_send_print()
-                #     except Exception as e:
-                #         # self.env.user.notify_danger(message=_('The invoice email could not be sent'))
-                #         _logger.debug("The invoice email could not be sent")
-                #         _logger.error('mass_send_print error: %s' % e)
-            if to_posted_invoices.filtered(lambda inv: not inv.ei_is_not_test):
-                to_posted_invoices.validate_dian_generic(True)
-
-            return to_posted_invoices.filtered(lambda inv: inv.write({'state': 'posted'}))
+                # Test invoices
+                to_test_invoices = to_posted_invoices.filtered(lambda inv: not inv.ei_is_not_test)
+                if to_test_invoices:
+                    to_test_invoices.validate_dian_generic(True)
 
         return res
 
