@@ -39,9 +39,11 @@ class PosConfig(models.Model):
 
     @api.constrains('company_id', 'electronic_invoice_journal_id')
     def _check_company_electronic_invoice_journal(self):
-        if self.electronic_invoice_journal_id \
-                and self.electronic_invoice_journal_id.company_id.id != self.company_id.id:
-            raise ValidationError(_("The invoice journal and the point of sale must belong to the same company."))
+        for config in self:
+            if config.electronic_invoice_journal_id \
+                    and config.electronic_invoice_journal_id.company_id.id != config.company_id.id:
+                raise ValidationError(
+                    _("The electronic invoice journal and the point of sale %s must belong to its company.", config.name))
 
     @api.constrains('pricelist_id', 'use_pricelist', 'available_pricelist_ids', 'journal_id', 'invoice_journal_id',
                     'electronic_invoice_journal_id', 'payment_method_ids')

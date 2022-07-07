@@ -27,7 +27,7 @@
     'author': 'Jorels SAS',
     'license': 'LGPL-3',
     'category': 'Point of Sale',
-    'version': '14.0.22.03.07.11.36',
+    'version': '15.0.22.07.07.01.03',
     'website': 'https://www.jorels.com',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
@@ -38,14 +38,18 @@
         'l10n_co_edi_jorels',
     ],
     'data': [
-        'views/pos_view.xml',
         'views/pos_config_view.xml',
     ],
-    'qweb': [
-        'static/src/xml/ClientDetailsEdit.xml',
-        'static/src/xml/OrderReceipt.xml',
-        'static/src/xml/PaymentScreen.xml',
-    ],
+    'assets': {
+        'point_of_sale.assets': [
+            'l10n_co_edi_jorels_pos/static/src/css/**/*',
+            'l10n_co_edi_jorels_pos/static/src/js/**/*',
+            'l10n_co_edi_jorels_pos/static/lib/js/qrcode/qrcode.js',
+        ],
+        'web.assets_qweb': [
+            'l10n_co_edi_jorels_pos/static/src/xml/**/*',
+        ],
+    },
     'installable': True,
     'auto_install': True,
 }
