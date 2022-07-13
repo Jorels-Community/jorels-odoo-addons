@@ -44,7 +44,6 @@ class AccountInvoice(models.Model):
     number_formatted = fields.Char(string="Number formatted", compute="compute_number_formatted", store=True,
                                    copy=False)
 
-    ei_number = fields.Char(string="Number", compute="compute_number_formatted", store=True, copy=False)
     ei_type_document_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_documents', string="Document type",
                                           copy=False, ondelete='RESTRICT')
     ei_customer = fields.Text(string="customer json", copy=False)
@@ -52,38 +51,64 @@ class AccountInvoice(models.Model):
     ei_invoice_lines = fields.Text(string="invoice_lines json", copy=False)
 
     # They allow to store synchronous and production modes used when invoicing
-    ei_sync = fields.Boolean(string="Sync", default=False, copy=False)
-    ei_is_not_test = fields.Boolean(string="In production", default=False, copy=False)
+    ei_sync = fields.Boolean(string="Sync", default=False, copy=False, readonly=True)
+    ei_is_not_test = fields.Boolean(string="In production", copy=False, readonly=True,
+                                    default=lambda self: self.env[
+                                        'res.company'
+                                    ]._company_default_get().is_not_test, store=True, compute="_compute_ei_is_not_test")
 
     # API Response:
-    ei_is_valid = fields.Boolean(string="Valid", copy=False)
-    ei_algorithm = fields.Char(string="Algorithm", copy=False)
-    ei_uuid = fields.Char(string="UUID", copy=False)
-    ei_issue_date = fields.Date(string="Issue date", copy=False)
-    ei_zip_key = fields.Char(string="Zip key", copy=False)
-    ei_status_code = fields.Char(string="Status code", copy=False)
-    ei_status_description = fields.Char(string="Status description", copy=False)
-    ei_status_message = fields.Char(string="Status message", copy=False)
-    ei_xml_file_name = fields.Char(string="Xml file name", copy=False)
-    ei_xml_name = fields.Char(string="Xml name", copy=False)
-    ei_zip_name = fields.Char(string="Zip name", copy=False)
-    ei_url_acceptance = fields.Char(string="URL acceptance", copy=False)
-    ei_url_rejection = fields.Char(string="URL rejection", copy=False)
-    ei_xml_bytes = fields.Boolean(string="XML Bytes", copy=False)
-    ei_errors_messages = fields.Text("Message", copy=False)
-    ei_qr_data = fields.Text(string="Qr data", copy=False)
-    ei_application_response_base64_bytes = fields.Binary("Application response", attachment=True, copy=False)
-    ei_attached_document_base64_bytes = fields.Binary("Attached document", attachment=True, copy=False)
-    ei_pdf_base64_bytes = fields.Binary('Pdf document', attachment=True, copy=False)
-    ei_zip_base64_bytes = fields.Binary('Zip document', attachment=True, copy=False)
-    ei_dian_response_base64_bytes = fields.Binary('DIAN response', attachment=True, copy=False)
+    ei_is_valid = fields.Boolean(string="Valid", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    ei_is_restored = fields.Boolean("Is restored?", copy=False, readonly=True)
+    ei_algorithm = fields.Char(string="Algorithm", copy=False, readonly=True)
+    ei_class = fields.Char("Class", copy=False, readonly=True)
+    ei_number = fields.Char(string="Number", compute="compute_number_formatted", store=True, copy=False, readonly=True)
+    ei_uuid = fields.Char(string="UUID", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    ei_issue_date = fields.Date(string="Issue date", copy=False, readonly=True,
+                                states={'draft': [('readonly', False)]})
+    ei_expedition_date = fields.Char("Expedition date", copy=False, readonly=True)
+    ei_zip_key = fields.Char(string="Zip key", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    ei_status_code = fields.Char(string="Status code", copy=False, readonly=True)
+    ei_status_description = fields.Char(string="Status description", copy=False, readonly=True)
+    ei_status_message = fields.Char(string="Status message", copy=False, readonly=True)
+    ei_errors_messages = fields.Text("Message", copy=False, readonly=True)
+    ei_xml_name = fields.Char(string="Xml name", copy=False, readonly=True)
+    ei_zip_name = fields.Char(string="Zip name", copy=False, readonly=True)
+    ei_signature = fields.Char(string="Signature", copy=False, readonly=True)
+    ei_qr_code = fields.Char("QR code", copy=False, readonly=True)
+    ei_qr_data = fields.Text(string="Qr data", copy=False, readonly=True)
+    ei_qr_link = fields.Char("QR link", copy=False, readonly=True)
+    ei_pdf_download_link = fields.Char("PDF link", copy=False, readonly=True)
+    ei_xml_base64_bytes = fields.Binary('XML', attachment=True, copy=False, readonly=True)
+    ei_application_response_base64_bytes = fields.Binary("Application response", attachment=True, copy=False,
+                                                         readonly=True)
+    ei_attached_document_base64_bytes = fields.Binary("Attached document", attachment=True, copy=False, readonly=True,
+                                                      states={'draft': [('readonly', False)]})
+    ei_pdf_base64_bytes = fields.Binary('Pdf document', attachment=True, copy=False, readonly=True,
+                                        states={'draft': [('readonly', False)]})
+    ei_zip_base64_bytes = fields.Binary('Zip document', attachment=True, copy=False, readonly=True)
+    ei_type_environment = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_environments",
+                                          string="Type environment", copy=False, readonly=True,
+                                          states={'draft': [('readonly', False)]},
+                                          default=lambda self: 1 if self.env[
+                                              'res.company'
+                                          ]._company_default_get().is_not_test else 2)
+    ei_payload = fields.Text("Payload", copy=False, readonly=True)
 
-    ei_attached_zip_base64_bytes = fields.Binary('Attached zip', attachment=True, copy=False)
-    ei_xml_base64_bytes = fields.Binary('XML', attachment=True, copy=False)
-    ei_signature = fields.Char(string="Signature", copy=False)
+    # Old fields, compatibility
+    ei_xml_file_name = fields.Char(string="Xml file name", copy=False, readonly=True)
+    ei_url_acceptance = fields.Char(string="URL acceptance", copy=False, readonly=True)
+    ei_url_rejection = fields.Char(string="URL rejection", copy=False, readonly=True)
+    ei_xml_bytes = fields.Boolean(string="XML Bytes", copy=False, readonly=True)
+    ei_dian_response_base64_bytes = fields.Binary('DIAN response', attachment=True, copy=False, readonly=True,
+                                                  states={'draft': [('readonly', False)]})
+
+    # For mail attached
+    ei_attached_zip_base64_bytes = fields.Binary('Attached zip', attachment=True, copy=False, readonly=True,
+                                                 states={'draft': [('readonly', False)]})
 
     # QR image
-    ei_qr_image = fields.Binary("QR Code", attachment=True, copy=False)
+    ei_qr_image = fields.Binary("QR Code", attachment=True, copy=False, readonly=True)
 
     # Total taxes only / without withholdings
     ei_amount_tax_withholding = fields.Monetary("Withholdings", compute="_compute_amount", store=True)
@@ -162,6 +187,14 @@ class AccountInvoice(models.Model):
     resolution_id = fields.Many2one(string="Resolution", comodel_name='l10n_co_edi_jorels.resolution', copy=False,
                                     store=True, compute="_compute_resolution", ondelete='RESTRICT')
 
+    @api.depends("ei_type_environment")
+    def _compute_ei_is_not_test(self):
+        for rec in self:
+            if rec.ei_type_environment:
+                rec.ei_is_not_test = (rec.ei_type_environment.id == 1)
+            else:
+                rec.ei_is_not_test = rec.company_id.is_not_test
+
     @api.multi
     def _default_payment_method_id(self):
         if not self.env['l10n_co_edi_jorels.payment_methods'].search_count([]):
@@ -215,30 +248,36 @@ class AccountInvoice(models.Model):
             return False
 
     @api.multi
-    def write_response(self, json_response):
+    def write_response(self, response, payload):
         try:
-            json_request = json.loads(json.dumps(json_response))
-
             for rec in self:
-                rec.ei_is_valid = json_request['is_valid']
-                rec.ei_algorithm = json_request['algorithm']
-                rec.ei_uuid = json_request['uuid']
-                rec.ei_issue_date = json_request['issue_date']
-                rec.ei_zip_key = json_request['zip_key']
-                rec.ei_status_code = json_request['status_code']
-                rec.ei_status_description = json_request['status_description']
-                rec.ei_status_message = json_request['status_message']
-                rec.ei_xml_name = json_request['xml_name']
-                rec.ei_zip_name = json_request['zip_name']
-                rec.ei_xml_base64_bytes = json_request['xml_base64_bytes']
-                if json_request['errors_messages']:
-                    rec.ei_errors_messages = str(json_request['errors_messages'])
-                rec.ei_qr_data = json_request['qr_data']
-                rec.ei_application_response_base64_bytes = json_request['application_response_base64_bytes']
-                rec.ei_attached_document_base64_bytes = json_request['attached_document_base64_bytes']
-                rec.ei_pdf_base64_bytes = json_request['pdf_base64_bytes']
-                rec.ei_zip_base64_bytes = json_request['zip_base64_bytes']
-                rec.ei_signature = json_request['signature']
+                rec.ei_is_valid = response['is_valid']
+                rec.ei_is_restored = response['is_restored']
+                rec.ei_algorithm = response['algorithm']
+                rec.ei_class = response['class']
+                rec.ei_number = response['number']
+                rec.ei_uuid = response['uuid']
+                rec.ei_issue_date = response['issue_date']
+                rec.ei_expedition_date = response['expedition_date']
+                rec.ei_zip_key = response['zip_key']
+                rec.ei_status_code = response['status_code']
+                rec.ei_status_description = response['status_description']
+                rec.ei_status_message = response['status_message']
+                rec.ei_errors_messages = str(response['errors_messages'])
+                rec.ei_xml_name = response['xml_name']
+                rec.ei_zip_name = response['zip_name']
+                rec.ei_signature = response['signature']
+                rec.ei_qr_code = response['qr_code']
+                rec.ei_qr_data = response['qr_data']
+                rec.ei_qr_link = response['qr_link']
+                rec.ei_pdf_download_link = response['pdf_download_link']
+                rec.ei_xml_base64_bytes = response['xml_base64_bytes']
+                rec.ei_application_response_base64_bytes = response['application_response_base64_bytes']
+                rec.ei_attached_document_base64_bytes = response['attached_document_base64_bytes']
+                rec.ei_pdf_base64_bytes = response['pdf_base64_bytes']
+                rec.ei_zip_base64_bytes = response['zip_base64_bytes']
+                rec.ei_type_environment = response['type_environment_id']
+                rec.ei_payload = payload
 
                 # QR code
                 qr = qrcode.QRCode(
@@ -709,31 +748,38 @@ class AccountInvoice(models.Model):
                 else:
                     _logger.debug("This type of document does not have a DIAN resolution assigned")
 
-    @api.depends('number')
+    @api.depends('number', 'reference')
     def compute_number_formatted(self):
         for rec in self:
-            prefix = rec.resolution_id.resolution_prefix
-            ei_number = ''
-            number_formatted = ''
+            if rec.type in ['out_invoice', 'out_refund']:
+                prefix = rec.resolution_id.resolution_prefix
+                ei_number = ''
+                number_formatted = ''
 
-            if rec.number and prefix:
-                # Remove non-alphanumeric characters
-                number = re.sub(r'\W+', '', rec.number)
-                len_prefix = len(prefix)
-                len_number = len(number)
-                if 0 < len_prefix < len_number and number[0:len_prefix] == prefix:
-                    number_unformatted = ''.join([i for i in number[len_prefix:] if i.isdigit()])
-                    if number_unformatted:
-                        ei_number = str(int(number_unformatted))
-                        number_formatted = prefix + ei_number
+                if rec.number and prefix:
+                    # Remove non-alphanumeric characters
+                    number = re.sub(r'\W+', '', rec.number)
+                    len_prefix = len(prefix)
+                    len_number = len(number)
+                    if 0 < len_prefix < len_number and number[0:len_prefix] == prefix:
+                        number_unformatted = ''.join([i for i in number[len_prefix:] if i.isdigit()])
+                        if number_unformatted:
+                            ei_number = str(int(number_unformatted))
+                            number_formatted = prefix + ei_number
 
-            if ei_number and number_formatted:
-                rec.ei_number = ei_number
-                rec.number_formatted = number_formatted
+                if ei_number and number_formatted:
+                    rec.ei_number = ei_number
+                    rec.number_formatted = number_formatted
+                else:
+                    rec.ei_number = ''
+                    rec.number_formatted = ''
+                    _logger.debug('Compute number format: Error.')
+            elif rec.type in ['in_invoice', 'in_refund']:
+                rec.ei_number = rec.reference
+                rec.number_formatted = rec.reference
             else:
                 rec.ei_number = ''
                 rec.number_formatted = ''
-                _logger.debug('Compute number format: Error.')
 
     @api.model
     def _prepare_refund(self, invoice, date_invoice=None, date=None, description=None, journal_id=None):
@@ -1020,7 +1066,7 @@ class AccountInvoice(models.Model):
                             else:
                                 raise Warning(response['message'])
                     elif 'is_valid' in response:
-                        rec.write_response(response)
+                        rec.write_response(response, json.dumps(requests_data, indent=2, sort_keys=False))
                         if response['is_valid']:
                             self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
                         elif 'uuid' in response:
@@ -1157,7 +1203,7 @@ class AccountInvoice(models.Model):
                         _logger.debug('API URL: %s', api_url)
 
                         response = requests.post(api_url,
-                                                 requests_data,
+                                                 json.dumps(requests_data),
                                                  headers=header,
                                                  params=params).json()
                         _logger.debug('API Response: %s', response)
@@ -1173,7 +1219,7 @@ class AccountInvoice(models.Model):
                                 else:
                                     raise Warning(response['message'])
                         elif 'is_valid' in response:
-                            rec.write_response(response)
+                            rec.write_response(response, json.dumps(requests_data, indent=2, sort_keys=False))
                             if response['is_valid']:
                                 self.env.user.notify_info(message=_("Validation in DIAN has been successful."))
                             elif 'zip_key' in response or 'uuid' in response:
