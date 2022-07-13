@@ -53,6 +53,8 @@
                 <xpath expr="//field[@name='invoice_date']" position="after">
                     <field name="date_start" groups="l10n_co_edi_jorels.group_invoice_period_enable"/>
                     <field name="date_end" groups="l10n_co_edi_jorels.group_invoice_period_enable"/>
+                    <field name="order_ref_number"/>
+                    <field name="order_ref_date"/>
                 </xpath>
                 <xpath expr="//page[@name='other_info']" position="after">
                     <page string="DIAN response" name="info_Dian">

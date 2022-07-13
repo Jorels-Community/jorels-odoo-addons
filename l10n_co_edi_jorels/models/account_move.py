@@ -137,6 +137,13 @@ class AccountMove(models.Model):
                              states={'draft': [('readonly', False)]})
     date_end = fields.Date(string="End date", default=None, copy=True, readonly=True,
                            states={'draft': [('readonly', False)]})
+
+    # Order Reference
+    order_ref_number = fields.Char(string="Order reference", default=None, copy=False, readonly=True,
+                                   states={'draft': [('readonly', False)]})
+    order_ref_date = fields.Date(string="Order date", default=None, copy=False, readonly=True,
+                                 states={'draft': [('readonly', False)]})
+
     # Is out of country
     is_out_country = fields.Boolean(string='Is it for out of the country?',
                                     default=lambda self: self._get_default_is_out_country(),
@@ -752,6 +759,14 @@ class AccountMove(models.Model):
                         'date_start': fields.Date.to_string(rec.date_start),
                         'date_end': fields.Date.to_string(rec.date_end)
                     }
+
+                # Order reference
+                if rec.order_ref_number:
+                    json_request['order_reference'] = {
+                        'number': rec.order_ref_number
+                    }
+                    if rec.order_ref_date:
+                        json_request['order_reference']['issue_date'] = fields.Date.to_string(rec.order_ref_date)
 
                 # Multi-currency compatibility
                 if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
