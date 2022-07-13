@@ -139,7 +139,7 @@ class AccountMove(models.Model):
                            states={'draft': [('readonly', False)]})
     # Is out of country
     is_out_country = fields.Boolean(string='Is it for out of the country?',
-                                    default=lambda self: self.get_default_is_out_country(),
+                                    default=lambda self: self._get_default_is_out_country(),
                                     readonly=True, states={'draft': [('readonly', False)]})
 
     def _get_default_is_out_country(self):
