@@ -104,7 +104,9 @@
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
                     <field name="ei_notes"/>
                 </xpath>
-
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="is_out_country"/>
+                </xpath>
             </field>
         </record>
 
