@@ -76,7 +76,7 @@ class AccountInvoice(models.Model):
     ei_zip_name = fields.Char(string="Zip name", copy=False, readonly=True)
     ei_signature = fields.Char(string="Signature", copy=False, readonly=True)
     ei_qr_code = fields.Char("QR code", copy=False, readonly=True)
-    ei_qr_data = fields.Text(string="Qr data", copy=False, readonly=True)
+    ei_qr_data = fields.Text(string="QR data", copy=False, readonly=True)
     ei_qr_link = fields.Char("QR link", copy=False, readonly=True)
     ei_pdf_download_link = fields.Char("PDF link", copy=False, readonly=True)
     ei_xml_base64_bytes = fields.Binary('XML', attachment=True, copy=False, readonly=True)
@@ -90,9 +90,7 @@ class AccountInvoice(models.Model):
     ei_type_environment = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_environments",
                                           string="Type environment", copy=False, readonly=True,
                                           states={'draft': [('readonly', False)]},
-                                          default=lambda self: 1 if self.env[
-                                              'res.company'
-                                          ]._company_default_get().is_not_test else 2)
+                                          default=lambda self: self._default_ei_type_environment())
     ei_payload = fields.Text("Payload", copy=False, readonly=True)
 
     # Old fields, compatibility
@@ -108,7 +106,7 @@ class AccountInvoice(models.Model):
                                                  states={'draft': [('readonly', False)]})
 
     # QR image
-    ei_qr_image = fields.Binary("QR Code", attachment=True, copy=False, readonly=True)
+    ei_qr_image = fields.Binary("QR image", attachment=True, copy=False, readonly=True)
 
     # Total taxes only / without withholdings
     ei_amount_tax_withholding = fields.Monetary("Withholdings", compute="_compute_amount", store=True)
@@ -186,6 +184,14 @@ class AccountInvoice(models.Model):
     # Store resolution
     resolution_id = fields.Many2one(string="Resolution", comodel_name='l10n_co_edi_jorels.resolution', copy=False,
                                     store=True, compute="_compute_resolution", ondelete='RESTRICT')
+
+    radian_ids = fields.One2many(comodel_name='l10n_co_edi_jorels.radian', inverse_name='invoice_id')
+
+    @api.multi
+    def _default_ei_type_environment(self):
+        if not self.env['l10n_co_edi_jorels.type_environments'].search_count([]):
+            self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.type_environments')
+        return 1 if self.env['res.company']._company_default_get().is_not_test else 2
 
     @api.depends("ei_type_environment")
     def _compute_ei_is_not_test(self):

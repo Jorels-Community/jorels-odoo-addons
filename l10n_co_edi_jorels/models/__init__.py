@@ -25,9 +25,10 @@ from . import config
 from . import listings
 
 # Then load other models
+from . import res_partner
 from . import account_invoice
 from . import account_invoice_line
 from . import account_invoice_refund
 from . import mail_message
 from . import mail_template
-from . import res_partner
+from . import radian

@@ -132,39 +132,74 @@
                 <xpath expr="//page[@name='other_info']" position="after">
                     <page string="DIAN response" name="info_Dian">
                         <group name="dian_response">
-<!--                            <field name="ei_sync"/>-->
+                            <!--                            <field name="ei_sync"/>-->
                             <field name="ei_is_not_test" invisible="1"/>
                             <field name="ei_is_valid"/>
-<!--                            <field name="ei_is_restored"/>-->
-<!--                            <field name="ei_algorithm"/>-->
-<!--                            <field name="ei_class"/>-->
+                            <!--                            <field name="ei_is_restored"/>-->
+                            <!--                            <field name="ei_algorithm"/>-->
+                            <!--                            <field name="ei_class"/>-->
                             <field name="ei_number"/>
                             <field name="ei_uuid"/>
                             <field name="ei_issue_date"/>
-<!--                            <field name="ei_expedition_date"/>-->
+                            <!--                            <field name="ei_expedition_date"/>-->
                             <field name="ei_zip_key" attrs="{'invisible':[('ei_is_not_test','=',True)]}"/>
-<!--                            <field name="ei_status_code"/>-->
-<!--                            <field name="ei_status_description"/>-->
-<!--                            <field name="ei_status_message"/>-->
-<!--                            <field name="ei_errors_messages"/>-->
-<!--                            <field name="ei_xml_name"/>-->
-<!--                            <field name="ei_zip_name"/>-->
-<!--                            <field name="ei_signature"/>-->
-<!--                            <field name="ei_qr_code"/>-->
-<!--                            <field name="ei_qr_data"/>-->
-<!--                            <field name="ei_qr_link" widget="url"/>-->
-<!--                            <field name="ei_pdf_download_link" widget="url"/>-->
-<!--                            <field name="ei_xml_base64_bytes"/>-->
-<!--                            <field name="ei_application_response_base64_bytes"/>-->
+                            <!--                            <field name="ei_status_code"/>-->
+                            <!--                            <field name="ei_status_description"/>-->
+                            <!--                            <field name="ei_status_message"/>-->
+                            <!--                            <field name="ei_errors_messages"/>-->
+                            <!--                            <field name="ei_xml_name"/>-->
+                            <!--                            <field name="ei_zip_name"/>-->
+                            <!--                            <field name="ei_signature"/>-->
+                            <!--                            <field name="ei_qr_code"/>-->
+                            <!--                            <field name="ei_qr_data"/>-->
+                            <!--                            <field name="ei_qr_link" widget="url"/>-->
+                            <!--                            <field name="ei_pdf_download_link" widget="url"/>-->
+                            <!--                            <field name="ei_xml_base64_bytes"/>-->
+                            <!--                            <field name="ei_application_response_base64_bytes"/>-->
                             <field name="ei_attached_document_base64_bytes"/>
                             <field name="ei_pdf_base64_bytes"/>
-<!--                            <field name="ei_zip_base64_bytes"/>-->
+                            <!--                            <field name="ei_zip_base64_bytes"/>-->
                             <field name="ei_type_environment"/>
                             <field name="ei_attached_zip_base64_bytes"/>
-<!--                            <field name="ei_payload" groups="base.group_no_one"/>-->
-<!--                            <field name="ei_qr_image" widget="image"/>-->
-<!--                            <field name="event"/>-->
+                            <!--                            <field name="ei_payload" groups="base.group_no_one"/>-->
+                            <!--                            <field name="ei_qr_image" widget="image"/>-->
+                            <!--                            <field name="event"/>-->
                         </group>
+                    </page>
+                    <page name="dian_events" string="Dian Events">
+                        <field name="radian_ids" context="{'default_invoice_id': id}">
+                            <form string="Radian events">
+                                <header>
+                                    <button string="Validate" name="action_post" type="object" states="draft"
+                                            class="oe_highlight"/>
+                                    <button name="action_status" type="object" string="Consult DIAN"
+                                            groups="base.group_no_one"
+                                            attrs="{'invisible': [('state','!=','posted')]}"/>
+                                    <button string="Set to Draft" name="action_draft" type="object" states="cancel"/>
+                                    <button string="Cancel" name="action_cancel" type="object" states="draft,posted"/>
+                                    <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
+                                </header>
+                                <sheet>
+                                    <h1 class="mt0">
+                                        <div attrs="{'invisible': [('name','=',False)]}">
+                                            <field name="name" class="oe_inline"/>
+                                        </div>
+                                    </h1>
+                                    <group>
+                                        <group name="group-left">
+                                            <field name="event_id"/>
+                                            <field name="rejection_concept_id"
+                                                   attrs="{'invisible':[('event_id','!=',4)]}"/>
+                                        </group>
+                                        <group name="group-right">
+                                            <field name="date"/>
+                                            <field name="company_id" groups="base.group_multi_company"/>
+                                            <field name="note"/>
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='amount_tax']" position="before">
