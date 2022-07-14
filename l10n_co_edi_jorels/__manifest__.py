@@ -38,7 +38,7 @@
         'l10n_co',
         # 'web_notify',
         'update_from_csv',
-        # 'account_debit_note',
+        'account_debit_note',
         'base_vat',
         # 'universal_discount'
     ],
