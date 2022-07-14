@@ -28,10 +28,10 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='ref']" position="after">
                     <field name="ei_operation"/>
-                    <field name="ei_correction_concept_credit_id" attrs="{'invisible':[('type','!=','out_refund')]}"/>
-                    <field name="ei_correction_concept_debit_id" attrs="{'invisible':[('type','!=','out_invoice')]}"/>
+                    <field name="ei_correction_concept_credit_id" attrs="{'invisible':[('type','not in',('out_refund', 'in_refund'))]}"/>
+                    <field name="ei_correction_concept_debit_id" attrs="{'invisible':[('type','not in',('out_invoice', 'in_invoice'))]}"/>
                     <field name="ei_is_correction_without_reference"
-                           attrs="{'invisible':[('type','!=','out_refund')]}"/>
+                           attrs="{'invisible':[('type','not in',('out_refund', 'in_refund'))]}"/>
                 </xpath>
                 <xpath expr="//button[@name='action_post']" position="after">
                     <button name="validate_dian" type="object" string="Validate DIAN"
