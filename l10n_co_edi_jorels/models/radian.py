@@ -129,7 +129,7 @@ class Radian(models.Model):
             rec.edi_class = response['class']
             rec.edi_number = response['number']
             rec.edi_uuid = response['uuid']
-            rec.edi_issue_date = fields.Datetime.from_string(response['issue_date'])
+            rec.edi_issue_date = response['issue_date']
             rec.edi_expedition_date = response['expedition_date']
             rec.edi_zip_key = response['zip_key']
             rec.edi_status_code = response['status_code']
