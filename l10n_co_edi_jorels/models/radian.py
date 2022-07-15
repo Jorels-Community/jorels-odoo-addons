@@ -63,7 +63,11 @@ class Radian(models.Model):
                                          ('state', 'not in', ('draft', 'cancel'))], tracking=True)
 
     # Storing synchronous and production modes
-    edi_sync = fields.Boolean(string="Sync", default=False, copy=False, readonly=True)
+    edi_sync = fields.Boolean(string="Sync", copy=False, readonly=True,
+                              default=lambda self: self.env[
+                                  'res.company'
+                              ]._company_default_get().is_not_test, store=True,
+                              compute="_compute_edi_is_not_test")
     edi_is_not_test = fields.Boolean(string="In production", copy=False, readonly=True,
                                      default=lambda self: self.env[
                                          'res.company'
@@ -126,6 +130,7 @@ class Radian(models.Model):
                 rec.edi_is_not_test = (rec.edi_type_environment.id == 1)
             else:
                 rec.edi_is_not_test = rec.company_id.is_not_test
+            rec.edi_sync = rec.edi_is_not_test
 
     @api.depends("prefix", "number")
     def _compute_name(self):
