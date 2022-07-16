@@ -240,9 +240,9 @@ class Radian(models.Model):
                 raise UserError(_("The rejection concept is required for the DIAN claim event."))
             if not rec.invoice_id.ei_uuid:
                 raise UserError(_("The invoice UUID (CUFE) is required for DIAN events."))
-            if not rec.user_id.partner_id.type_document_identification_id:
+            if not rec.user_id.type_document_identification_id:
                 raise UserError(_("The document type for user is required for DIAN events."))
-            if not rec.user_id.partner_id.vat:
+            if not rec.user_id.vat:
                 raise UserError(_("The document number (VAT) for user is required for DIAN events."))
             if not rec.user_id.first_name:
                 raise UserError(_("The user first name is required for DIAN events"))
@@ -250,6 +250,8 @@ class Radian(models.Model):
                 raise UserError(_("The user surname is required for DIAN events"))
             if not rec.number or not rec.prefix:
                 raise UserError(_("The number and prefix are required for DIAN events"))
+            if not rec.user_id or not rec.user_id.function:
+                raise UserError(_("The user and his/her job title (function) is required for DIAN events"))
 
             json_request = {
                 "prefix": rec.prefix,
@@ -257,11 +259,11 @@ class Radian(models.Model):
                 "sync": rec.company_id.is_not_test,
                 "uuid": rec.invoice_id.ei_uuid,
                 "person": {
-                    "id_code": rec.user_id.partner_id.type_document_identification_id.id,
-                    "id_number": ''.join([i for i in rec.user_id.partner_id.vat if i.isdigit()]),
+                    "id_code": rec.user_id.type_document_identification_id.id,
+                    "id_number": ''.join([i for i in rec.user_id.vat if i.isdigit()]),
                     "first_name": rec.user_id.first_name,
                     "surname": rec.user_id.surname,
-                    "job_title": "Asistente de contabilidad",
+                    "job_title": rec.user_id.function,
                     "country_code": 46,
                     "company_department": "Contabilidad"
                 },
