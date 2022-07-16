@@ -18,7 +18,7 @@
 #
 #   email: info@jorels.com
 #
-
+import ast
 import json
 import logging
 
@@ -145,7 +145,10 @@ class HrPayslipEdi(models.Model):
     def _compute_edi_payload_html(self):
         for rec in self:
             if rec.edi_payload:
-                rec.edi_payload_html = rec.payload2html(json.loads(rec.edi_payload), 2)
+                try:
+                    rec.edi_payload_html = rec.payload2html(json.loads(rec.edi_payload), 2)
+                except json.decoder.JSONDecodeError as e:
+                    rec.edi_payload_html = rec.payload2html(ast.literal_eval(rec.edi_payload), 2)
             else:
                 rec.edi_payload_html = ""
 
