@@ -204,20 +204,20 @@
                                     <small t-field="o.ei_signature"/>
                                 </div>
                                 <strong>Invoicing authorization number:</strong>
-                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_resolution"/>
+                                <span t-field="o.resolution_id.resolution_resolution"/>
                                 <strong>Date:</strong>
-                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_resolution_date"/>
+                                <span t-field="o.resolution_id.resolution_resolution_date"/>
                                 <br/>
                                 <strong>Authorized range from:</strong>
-                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_prefix"/>
-                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_from"/>
+                                <span t-field="o.resolution_id.resolution_prefix"/>
+                                <span t-field="o.resolution_id.resolution_from"/>
                                 <strong>to</strong>
-                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_prefix"/>
-                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_to"/>
+                                <span t-field="o.resolution_id.resolution_prefix"/>
+                                <span t-field="o.resolution_id.resolution_to"/>
                                 <strong>Valid from:</strong>
-                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_date_from"/>
+                                <span t-field="o.resolution_id.resolution_date_from"/>
                                 <strong>to</strong>
-                                <span t-field="o.journal_id.sequence_id.resolution_id.resolution_date_to"/>
+                                <span t-field="o.resolution_id.resolution_date_to"/>
                                 <br/>
                                 <strong>Graphic representation of electronic invoicing printed by computer with own
                                     software by

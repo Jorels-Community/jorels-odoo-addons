@@ -151,14 +151,27 @@ class AccountMove(models.Model):
 
     # Payment form
     payment_form_id = fields.Many2one(string="Payment form", comodel_name='l10n_co_edi_jorels.payment_forms',
-                                      default=1, copy=True, store=True, compute="_compute_payment_form_id",
+                                      copy=True, store=True, compute="_compute_payment_form_id",
                                       readonly=True, ondelete='RESTRICT')
     payment_method_id = fields.Many2one(string="Payment method", comodel_name='l10n_co_edi_jorels.payment_methods',
-                                        default=1, copy=True, readonly=True, states={'draft': [('readonly', False)]},
+                                        default=lambda self: self._default_payment_method_id(), copy=True,
+                                        readonly=True, states={'draft': [('readonly', False)]},
                                         domain=[('scope', '=', '')], ondelete='RESTRICT')
+
+    # Store resolution
+    resolution_id = fields.Many2one(string="Resolution", comodel_name='l10n_co_edi_jorels.resolution', copy=False,
+                                    store=True, compute="_compute_resolution", ondelete='RESTRICT')
+
+    def _default_payment_method_id(self):
+        if not self.env['l10n_co_edi_jorels.payment_methods'].search_count([]):
+            self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.payment_methods')
+        return 1
 
     @api.depends('invoice_date', 'invoice_date_due')
     def _compute_payment_form_id(self):
+        if not self.env['l10n_co_edi_jorels.payment_forms'].search_count([]):
+            self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.payment_forms')
+
         for rec in self:
             if rec.invoice_date and rec.invoice_date_due:
                 if rec.invoice_date >= rec.invoice_date_due:
@@ -620,7 +633,6 @@ class AccountMove(models.Model):
                 duration_measure = 0
                 payment_due_date = fields.Date.to_string(rec.invoice_date)
 
-            # For now, you always put payment method as instrument not defined [1]
             return {
                 'code': rec.payment_form_id.id,
                 'method_code': rec.payment_method_id.id,
@@ -669,49 +681,52 @@ class AccountMove(models.Model):
         self.ensure_one()
         return self.ei_is_not_test
 
-    def get_ei_resolution_id(self):
-        resolution_id = 0
+    @api.depends('journal_id')
+    def _compute_resolution(self):
         for rec in self:
             type_edi_document = rec.get_type_edi_document()
             if type_edi_document != 'none':
                 if type_edi_document == 'invoice' and rec.journal_id.sequence_id.resolution_id:
                     # Sales invoice
-                    resolution_id = rec.journal_id.sequence_id.resolution_id.resolution_id
+                    rec.resolution_id = rec.journal_id.sequence_id.resolution_id.id
                 elif type_edi_document == 'credit_note' and rec.journal_id.refund_sequence_id.resolution_id:
                     # Credit note
-                    resolution_id = rec.journal_id.refund_sequence_id.resolution_id.resolution_id
+                    rec.resolution_id = rec.journal_id.refund_sequence_id.resolution_id.id
                 # TO DO: Debit note sequence is missing in the same journal as the invoice and credit note
                 # elif type_edi_document == 'debit_note' and rec.journal_id.debitnote_sequence_id.resolution_id:
                 # At the moment, for the credit note to work, an alternative journal must be used
                 elif type_edi_document == 'debit_note' and rec.journal_id.sequence_id.resolution_id:
                     # Debit note
-                    # resolution_id = rec.journal_id.debitnote_sequence_id.resolution_id.resolution_id
-                    resolution_id = rec.journal_id.sequence_id.resolution_id.resolution_id
+                    # rec.resolution_id = rec.journal_id.debitnote_sequence_id.resolution_id.id
+                    rec.resolution_id = rec.journal_id.sequence_id.resolution_id.id
                 else:
-                    raise Warning(_("This type of document does not have a DIAN resolution assigned"))
-            else:
-                raise Warning(_("This type of document does not need to be sent to DIAN"))
-
-        return resolution_id
+                    _logger.debug("This type of document does not have a DIAN resolution assigned")
 
     @api.depends('name')
     def compute_number_formatted(self):
         for rec in self:
-            number_unformatted = ''
-            if rec.name:
+            prefix = rec.resolution_id.resolution_prefix
+            ei_number = ''
+            number_formatted = ''
+
+            if rec.name and prefix:
                 # Remove non-alphanumeric characters
                 name = re.sub(r'\W+', '', rec.name)
-                number_unformatted = ''.join([i for i in name if i.isdigit()])
+                len_prefix = len(prefix)
+                len_name = len(name)
+                if 0 < len_prefix < len_name and name[0:len_prefix] == prefix:
+                    number_unformatted = ''.join([i for i in name[len_prefix:] if i.isdigit()])
+                    if number_unformatted:
+                        ei_number = str(int(number_unformatted))
+                        number_formatted = prefix + ei_number
 
-            if number_unformatted:
-                invoice_prefix = rec.name.split(number_unformatted)[0]
-                invoice_number = str(int(number_unformatted))
-
-                rec.ei_number = invoice_number
-                rec.number_formatted = invoice_prefix + invoice_number
+            if ei_number and number_formatted:
+                rec.ei_number = ei_number
+                rec.number_formatted = number_formatted
             else:
                 rec.ei_number = ''
                 rec.number_formatted = ''
+                _logger.debug('Compute number format: Error.')
 
     @api.depends('ei_type_document_id', 'ei_correction_concept_credit_id', 'ei_correction_concept_debit_id')
     def compute_ei_correction_concept_id(self):
@@ -749,10 +764,14 @@ class AccountMove(models.Model):
                 if not rec.ei_number or not rec.number_formatted:
                     rec.compute_number_formatted()
 
+                    # Check resolution
+                    if not rec.resolution_id:
+                        raise Warning(_("This type of document does not have a DIAN resolution assigned"))
+
                 json_request = {
                     'number': rec.ei_number,
                     'type_document_code': rec.get_ei_type_document_id(),
-                    'resolution_code': rec.get_ei_resolution_id(),
+                    'resolution_code': rec.resolution_id.resolution_id,
                     'sync': rec.get_ei_sync(),
                     'customer': rec.get_ei_customer(),
                     'operation_code': rec.get_operation_code()
