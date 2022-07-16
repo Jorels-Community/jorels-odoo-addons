@@ -149,6 +149,28 @@ class AccountMove(models.Model):
                                     default=lambda self: self.get_default_is_out_country(),
                                     readonly=True, states={'draft': [('readonly', False)]})
 
+    # Payment form
+    payment_form_id = fields.Many2one(string="Payment form", comodel_name='l10n_co_edi_jorels.payment_forms',
+                                      default=1, copy=True, store=True, compute="_compute_payment_form_id",
+                                      readonly=True, ondelete='RESTRICT')
+    payment_method_id = fields.Many2one(string="Payment method", comodel_name='l10n_co_edi_jorels.payment_methods',
+                                        default=1, copy=True, readonly=True, states={'draft': [('readonly', False)]},
+                                        domain=[('scope', '=', '')], ondelete='RESTRICT')
+
+    @api.depends('invoice_date', 'invoice_date_due')
+    def _compute_payment_form_id(self):
+        for rec in self:
+            if rec.invoice_date and rec.invoice_date_due:
+                if rec.invoice_date >= rec.invoice_date_due:
+                    # Cash
+                    rec.payment_form_id = 1
+                else:
+                    # Credit
+                    rec.payment_form_id = 2
+            else:
+                # Cash
+                rec.payment_form_id = 1
+
     def get_default_is_out_country(self):
         for rec in self:
             return bool(rec.journal_id.is_out_country)
@@ -584,31 +606,24 @@ class AccountMove(models.Model):
 
     def get_ei_payment_form(self):
         for rec in self:
-            payment_forms_env = self.env['l10n_co_edi_jorels.payment_forms']
-
             if rec.invoice_date and rec.invoice_date_due:
                 if rec.invoice_date >= rec.invoice_date_due:
                     # Cash
-                    payment_forms_rec = payment_forms_env.search([('code', '=', '1')])
                     duration_measure = 0
                 else:
                     # Credit
-                    payment_forms_rec = payment_forms_env.search([('code', '=', '2')])
                     duration_measure = (rec.invoice_date_due - rec.invoice_date).days
                 payment_due_date = fields.Date.to_string(rec.invoice_date_due)
             else:
                 _logger.debug("The invoice or payment date is not valid")
                 # Cash
-                payment_forms_rec = payment_forms_env.search([('code', '=', '1')])
                 duration_measure = 0
                 payment_due_date = fields.Date.to_string(rec.invoice_date)
 
-            payment_form_id = payment_forms_rec.id
-
             # For now, you always put payment method as instrument not defined [1]
             return {
-                'code': payment_form_id,
-                'method_code': 1,
+                'code': rec.payment_form_id.id,
+                'method_code': rec.payment_method_id.id,
                 'due_date': payment_due_date,
                 'duration_days': duration_measure
             }
