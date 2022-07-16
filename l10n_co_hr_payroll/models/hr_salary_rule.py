@@ -126,7 +126,7 @@ class HrSalaryRule(models.Model):
                     result = inputs.example * 0.10''')
     edi_percent_fix = fields.Float(string='Fixed Percent', digits=dp.get_precision('Payroll'), default=0.0)
 
-    edi_is_detailed = fields.Boolean(string="Edi detailed", default=False, required=True)
+    edi_is_detailed = fields.Boolean(string="Edi detailed", default=False)
 
     edi_quantity_select = fields.Selection([
         ('default', 'Default'),
