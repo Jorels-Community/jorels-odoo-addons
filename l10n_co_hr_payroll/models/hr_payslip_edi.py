@@ -145,7 +145,7 @@ class HrPayslipEdi(models.Model):
     def _compute_edi_payload_html(self):
         for rec in self:
             if rec.edi_payload:
-                rec.edi_payload_html = rec.payload2html(json.loads(json.dumps(rec.edi_payload)), 2)
+                rec.edi_payload_html = rec.payload2html(json.loads(rec.edi_payload), 2)
             else:
                 rec.edi_payload_html = ""
 
@@ -401,10 +401,10 @@ class HrPayslipEdi(models.Model):
             if rec.payslip_ids:
                 for index, payslip in enumerate(rec.payslip_ids):
                     if index > 0:
-                        json_request = rec.join_dicts(json_request, json.loads(json.dumps(payslip.edi_payload)),
+                        json_request = rec.join_dicts(json_request, json.loads(payslip.edi_payload),
                                                       fields.Date.to_string(rec.date))
                     else:
-                        json_request = json.loads(json.dumps(payslip.edi_payload))
+                        json_request = json.loads(payslip.edi_payload)
 
             # Sequence
             if sequence:
