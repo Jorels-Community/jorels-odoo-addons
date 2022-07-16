@@ -203,7 +203,7 @@ class Radian(models.Model):
             rec.write({'state': 'posted'})
 
             # Validate DIAN
-            if rec.company_id.ei_enable and (
+            if rec.company_id.ei_enable and not rec.edi_is_valid and (
                     (rec.type == 'supplier' and rec.event_id.code in ('030', '031', '032', '033')) or \
                     (rec.type == 'customer' and rec.event_id.code == '034')
             ):
