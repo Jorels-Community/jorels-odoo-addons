@@ -104,7 +104,7 @@ class HrPayslip(models.Model):
 
     def _compute_currency(self):
         for rec in self:
-            rec.currency_id = self.env.user.company_id.currency_id
+            rec.currency_id = rec.company_id.currency_id
 
     def compute_sheet(self):
         for rec in self:
@@ -300,15 +300,15 @@ class HrPayslip(models.Model):
                 raise UserError(_("The payroll must have a consecutive number, 'Reference' field"))
             if not rec.contract_id.payroll_period_id:
                 raise UserError(_("The contract must have the 'Scheduled Pay' field configured"))
-            if not self.env.user.company_id.name:
+            if not rec.company_id.name:
                 raise UserError(_("Your company does not have a name"))
-            if not self.env.user.company_id.type_document_identification_id:
+            if not rec.company_id.type_document_identification_id:
                 raise UserError(_("Your company does not have an identification type"))
-            if not self.env.user.company_id.vat:
+            if not rec.company_id.vat:
                 raise UserError(_("Your company does not have a document number"))
-            if not self.env.user.company_id.partner_id.postal_municipality_id:
+            if not rec.company_id.partner_id.postal_municipality_id:
                 raise UserError(_("Your company does not have a postal municipality"))
-            if not self.env.user.company_id.street:
+            if not rec.company_id.street:
                 raise UserError(_("Your company does not have an address"))
             if not rec.contract_id.type_worker_id:
                 raise UserError(_("The contract must have the 'Type worker' field configured"))
@@ -347,7 +347,7 @@ class HrPayslip(models.Model):
             if not rec.payment_date:
                 raise UserError(_("The payroll must have a payment date"))
 
-            rec.edi_sync = self.env.user.company_id.edi_payroll_is_not_test
+            rec.edi_sync = rec.company_id.edi_payroll_is_not_test
 
             sequence_number = ''.join([i for i in rec.number if i.isdigit()])
             sequence_prefix = rec.number.split(sequence_number)
@@ -366,15 +366,15 @@ class HrPayslip(models.Model):
                 # "trm": 1
             }
 
-            employer_id_code = self.env.user.company_id.type_document_identification_id.id
-            employer_id_number_general = ''.join([i for i in self.env.user.company_id.vat if i.isdigit()])
+            employer_id_code = rec.company_id.type_document_identification_id.id
+            employer_id_number_general = ''.join([i for i in rec.company_id.vat if i.isdigit()])
             if employer_id_code == 6:
                 employer_id_number = employer_id_number_general[:-1]
             else:
                 employer_id_number = employer_id_number_general
 
             employer = {
-                "name": self.env.user.company_id.name,
+                "name": rec.company_id.name,
                 # "surname": "string",
                 # "second_surname": "string",
                 # "first_name": "string",
@@ -382,8 +382,8 @@ class HrPayslip(models.Model):
                 "id_code": employer_id_code,
                 "id_number": employer_id_number,
                 "country_code": 46,
-                "municipality_code": self.env.user.company_id.partner_id.postal_municipality_id.id,
-                "address": self.env.user.company_id.street
+                "municipality_code": rec.company_id.partner_id.postal_municipality_id.id,
+                "address": rec.company_id.street
             }
 
             employee = {
@@ -1375,11 +1375,11 @@ class HrPayslip(models.Model):
 
                 api_url = api_url + "/" + type_edi_document
 
-                rec.edi_is_not_test = self.env.user.company_id.edi_payroll_is_not_test
+                rec.edi_is_not_test = rec.company_id.edi_payroll_is_not_test
 
                 if not rec.edi_is_not_test:
-                    if self.env.user.company_id.edi_payroll_test_set_id:
-                        params['test_set_id'] = self.env.user.company_id.edi_payroll_test_set_id
+                    if rec.company_id.edi_payroll_test_set_id:
+                        params['test_set_id'] = rec.company_id.edi_payroll_test_set_id
                     else:
                         raise UserError(_("You have not configured a 'TestSetId'."))
 
@@ -1443,8 +1443,9 @@ class HrPayslip(models.Model):
                     requests_data = {}
                     _logger.debug('API Requests: %s', requests_data)
 
-                    if self.env.user.company_id.api_key:
-                        token = self.env.user.company_id.api_key
+                    # API key and URL
+                    if rec.company_id.api_key:
+                        token = rec.company_id.api_key
                     else:
                         raise UserError(_("You must configure a token"))
 
