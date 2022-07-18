@@ -44,13 +44,13 @@ class PosOrder(models.Model):
             "ei_uuid": self.account_move.ei_uuid,
             "ei_qr_data": self.account_move.ei_qr_data,
             "ei_is_valid": self.account_move.ei_is_valid,
-            "resolution_resolution": self.account_move.journal_id.sequence_id.resolution_id.resolution_resolution,
-            "resolution_resolution_date": self.account_move.journal_id.sequence_id.resolution_id.resolution_resolution_date,
-            "resolution_prefix": self.account_move.journal_id.sequence_id.resolution_id.resolution_prefix,
-            "resolution_from": self.account_move.journal_id.sequence_id.resolution_id.resolution_from,
-            "resolution_to": self.account_move.journal_id.sequence_id.resolution_id.resolution_to,
-            "resolution_date_from": self.account_move.journal_id.sequence_id.resolution_id.resolution_date_from,
-            "resolution_date_to": self.account_move.journal_id.sequence_id.resolution_id.resolution_date_to,
+            "resolution_resolution": self.account_move.resolution_id.resolution_resolution,
+            "resolution_resolution_date": self.account_move.resolution_id.resolution_resolution_date,
+            "resolution_prefix": self.account_move.resolution_id.resolution_prefix,
+            "resolution_from": self.account_move.resolution_id.resolution_from,
+            "resolution_to": self.account_move.resolution_id.resolution_to,
+            "resolution_date_from": self.account_move.resolution_id.resolution_date_from,
+            "resolution_date_to": self.account_move.resolution_id.resolution_date_to,
         }
 
     def _prepare_invoice_vals(self):
