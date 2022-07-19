@@ -21,13 +21,6 @@
 <odoo>
     <data noupdate="1">
 
-        <record id="hr_payroll_community.seq_salary_slip" model="ir.sequence">
-            <field name="name">Salary Slip</field>
-            <field name="code">salary.slip</field>
-            <field name="implementation">no_gap</field>
-            <field name="padding">1</field>
-        </record>
-
         <record id="seq_salary_slip_note" model="ir.sequence">
             <field name="name">Salary Slip Note</field>
             <field name="code">salary.slip.note</field>
