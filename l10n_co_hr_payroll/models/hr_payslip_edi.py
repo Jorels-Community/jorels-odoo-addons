@@ -69,7 +69,7 @@ class HrPayslipEdi(models.Model):
 
     # Edi fields
     date = fields.Date("Date", required=True, readonly=True, states={'draft': [('readonly', False)]},
-                       default=fields.Date.context_today)
+                       default=fields.Date.context_today, copy=False)
     payment_form_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_forms", string="Payment form",
                                       default=1, readonly=True, states={'draft': [('readonly', False)]}, copy=True)
     payment_method_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_methods", string="Payment method",
