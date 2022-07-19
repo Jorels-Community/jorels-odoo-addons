@@ -43,54 +43,106 @@ class MailTemplate(models.Model):
             res_ids = [res_ids]
             multi_mode = False
 
-        if self.env.context.get('active_model') != 'account.invoice':
+        if self._context.get('active_model') not in ('account.invoice', 'l10n_co_edi_jorels.radian'):
             return res
 
-        for res_id, template in self.get_email_template(res_ids).items():
-            invoice = self.env["account.invoice"].browse(res_id)
+        if self._context.get('active_model') == 'account.invoice':
+            for res_id, template in self.get_email_template(res_ids).items():
+                invoice = self.env["account.invoice"].browse(res_id)
 
-            if not invoice.company_id.ei_enable:
-                continue
+                if not invoice.company_id.ei_enable:
+                    continue
 
-            attachments = res[res_id]["attachments"] if invoice.company_id.ei_include_pdf_attachment else []
+                attachments = res[res_id]["attachments"] if invoice.company_id.ei_include_pdf_attachment else []
 
-            if invoice.ei_is_valid \
-                    and invoice.type in ('out_invoice', 'out_refund') \
-                    and invoice.state in ('open', 'paid'):
+                if invoice.ei_is_valid \
+                        and invoice.type in ('out_invoice', 'out_refund') \
+                        and invoice.state in ('open', 'paid'):
 
-                pdf_name = invoice.ei_uuid + '.pdf'
-                pdf_path = Path(tempfile.gettempdir()) / pdf_name
+                    pdf_name = invoice.ei_uuid + '.pdf'
+                    pdf_path = Path(tempfile.gettempdir()) / pdf_name
 
-                xml_name = invoice.ei_uuid + '.xml'
-                xml_path = Path(tempfile.gettempdir()) / xml_name
+                    xml_name = invoice.ei_uuid + '.xml'
+                    xml_path = Path(tempfile.gettempdir()) / xml_name
 
-                zip_name = invoice.ei_uuid + '.zip'
-                zip_path = Path(tempfile.gettempdir()) / zip_name
+                    zip_name = invoice.ei_uuid + '.zip'
+                    zip_path = Path(tempfile.gettempdir()) / zip_name
 
-                zip_archive = zipfile.ZipFile(zip_path, 'w')
+                    zip_archive = zipfile.ZipFile(zip_path, 'w')
 
-                pdf_handle = open(pdf_path, 'wb')
-                pdf_handle.write(base64.decodebytes(res[res_id]["attachments"][0][1]))
-                pdf_handle.close()
-                zip_archive.write(pdf_path, arcname=pdf_name)
+                    pdf_handle = open(pdf_path, 'wb')
+                    pdf_handle.write(base64.decodebytes(res[res_id]["attachments"][0][1]))
+                    pdf_handle.close()
+                    zip_archive.write(pdf_path, arcname=pdf_name)
 
-                if invoice.ei_attached_document_base64_bytes:
-                    xml_handle = open(xml_path, 'wb')
-                    xml_handle.write(base64.decodebytes(invoice.ei_attached_document_base64_bytes))
-                    xml_handle.close()
-                    zip_archive.write(xml_path, arcname=xml_name)
+                    if invoice.ei_attached_document_base64_bytes:
+                        xml_handle = open(xml_path, 'wb')
+                        xml_handle.write(base64.decodebytes(invoice.ei_attached_document_base64_bytes))
+                        xml_handle.close()
+                        zip_archive.write(xml_path, arcname=xml_name)
 
-                zip_archive.close()
+                    zip_archive.close()
 
-                if invoice.ei_attached_document_base64_bytes:
-                    with open(zip_path, 'rb') as f:
-                        attached_zip = f.read()
-                        ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
-                        attachments += [(zip_name, ei_attached_zip_base64_bytes)]
-                        invoice.write({
-                            'ei_attached_zip_base64_bytes': ei_attached_zip_base64_bytes
-                        })
+                    if invoice.ei_attached_document_base64_bytes:
+                        with open(zip_path, 'rb') as f:
+                            attached_zip = f.read()
+                            ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
+                            attachments += [(zip_name, ei_attached_zip_base64_bytes)]
+                            invoice.write({
+                                'ei_attached_zip_base64_bytes': ei_attached_zip_base64_bytes
+                            })
 
-            res[res_id]["attachments"] = attachments
+                res[res_id]["attachments"] = attachments
+
+        if self._context.get('active_model') == 'l10n_co_edi_jorels.radian':
+            for res_id, template in self.get_email_template(res_ids).items():
+                radian = self.env["l10n_co_edi_jorels.radian"].browse(res_id)
+
+                if not radian.company_id.ei_enable:
+                    continue
+
+                # attachments = res[res_id]["attachments"] if radian.company_id.ei_include_pdf_attachment else []
+                attachments = []
+
+                if radian.edi_is_valid and radian.state == 'posted':
+
+                    # pdf_name = radian.edi_uuid + '.pdf'
+                    # pdf_path = Path(tempfile.gettempdir()) / pdf_name
+
+                    xml_name = radian.edi_uuid + '.xml'
+                    xml_path = Path(tempfile.gettempdir()) / xml_name
+
+                    zip_name = radian.edi_uuid + '.zip'
+                    zip_path = Path(tempfile.gettempdir()) / zip_name
+
+                    zip_archive = zipfile.ZipFile(zip_path, 'w')
+
+                    # pdf_handle = open(pdf_path, 'wb')
+                    # pdf_handle.write(base64.decodebytes(res[res_id]["attachments"][0][1]))
+                    # pdf_handle.close()
+                    # zip_archive.write(pdf_path, arcname=pdf_name)
+
+                    if radian.edi_attached_document_base64:
+                        xml_handle = open(xml_path, 'wb')
+                        xml_handle.write(base64.decodebytes(radian.edi_attached_document_base64))
+                        xml_handle.close()
+                        zip_archive.write(xml_path, arcname=xml_name)
+
+                    zip_archive.close()
+
+                    if radian.edi_attached_document_base64:
+                        with open(zip_path, 'rb') as f:
+                            attached_zip = f.read()
+                            edi_attached_zip_base64 = base64.encodebytes(attached_zip)
+                            attachments += [(zip_name, edi_attached_zip_base64)]
+                            radian.write({
+                                'edi_attached_zip_base64': edi_attached_zip_base64
+                            })
+
+                if 'res_id' in res:
+                    res["attachments"] = attachments
+                    return res
+                else:
+                    res[res_id]["attachments"] = attachments
 
         return multi_mode and res or res[res_ids[0]]

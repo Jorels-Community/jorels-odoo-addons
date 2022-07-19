@@ -64,4 +64,63 @@
             <field name="auto_delete" eval="True"/>
         </record>
     </data>
+
+    <data noupdate="1">
+        <record id="l10n_co_edi_jorels.email_template_radian" model="mail.template">
+            <field name="name">Radian event: Send by email</field>
+            <field name="model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
+            <field name="email_from">${object.company_id.email_edi_formatted |safe}</field>
+            <field name="email_to">${object.invoice_id.partner_id.email_edi}</field>
+            <field name="partner_to">${object.invoice_id.partner_id.id}</field>
+            <field name="subject">Evento;${object.invoice_id.ei_number or ''};${object.company_id.vat_formatted or ''};${object.company_id.business_name or object.company_id.name or ''};${object.name or ''};${object.event_id.code or ''}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear ${object.invoice_id.partner_id.name}
+                        % if object.invoice_id.partner_id.parent_id:
+                            (${object.invoice_id.partner_id.parent_id.name})
+                        % endif
+                        <br/>
+                        <br/>
+                        Here is your
+                        Radian event
+                        <strong>${object.event_id.name}</strong>
+                        with number
+                        <strong>${object.name}</strong>
+                        (with invoice: ${object.invoice_id.ei_number})
+                        % if object.company_id.business_name:
+                            from ${object.company_id.business_name}.
+                        % else:
+                            from ${object.company_id.name}.
+                        % endif
+                        <br/>
+                        <br/>
+                        Do not hesitate to contact us if you have any question.
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.invoice_id.partner_id.lang}</field>
+            <field name="user_signature" eval="False"/>
+            <field name="auto_delete" eval="True"/>
+        </record>
+<!--        <act_window name="Send Radian event By Email"-->
+<!--                    res_model="mail.compose.message"-->
+<!--                    src_model="l10n_co_edi_jorels.radian"-->
+<!--                    view_mode="form"-->
+<!--                    target="new"-->
+<!--                    key2="client_action_relate"-->
+<!--                    id="l10n_co_edi_jorels_send_radian_by_email_action"-->
+<!--                    context="{-->
+<!--                'default_model': 'l10n_co_edi_jorels.radian',-->
+<!--                'active_model': 'l10n_co_edi_jorels.radian',-->
+<!--                'mail_post_autofollow': True,-->
+<!--                'default_composition_mode': 'comment',-->
+<!--                'default_use_template': True,-->
+<!--                'default_res_id': active_id,-->
+<!--                'default_template_id': ref('l10n_co_edi_jorels.email_template_radian'),-->
+<!--                'force_email': True,-->
+<!--                'custom_layout': 'mail.mail_notification_light',-->
+<!--            }"-->
+<!--        />-->
+    </data>
 </odoo>
