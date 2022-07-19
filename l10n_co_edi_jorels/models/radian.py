@@ -60,8 +60,8 @@ class Radian(models.Model):
                                  states={'draft': [('readonly', False)]})
     invoice_id = fields.Many2one(comodel_name="account.invoice", string="Invoice", required=True, readonly=True,
                                  states={'draft': [('readonly', False)]}, copy=False,
-                                 domain=[('type', 'in', ('in_invoice', 'in_refund', 'out_invoice', 'out_refund')),
-                                         ('edi_is_valid', '=', True)], tracking=True)
+                                 domain=[('type', 'in', ('in_invoice', 'in_refund', 'out_invoice', 'out_refund'))],
+                                 tracking=True)
 
     # Storing synchronous and production modes
     edi_sync = fields.Boolean(string="Sync", copy=False, readonly=True,
