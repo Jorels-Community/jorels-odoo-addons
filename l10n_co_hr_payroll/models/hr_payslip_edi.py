@@ -116,20 +116,20 @@ class HrPayslipEdi(models.Model):
     edi_payload_html = fields.Html("Html payload", copy=False, compute="_compute_edi_payload_html", store=True)
 
     month = fields.Selection([
-        (1, 'January'),
-        (2, 'February'),
-        (3, 'March'),
-        (4, 'April'),
-        (5, 'May'),
-        (6, 'June'),
-        (7, 'July'),
-        (8, 'August'),
-        (9, 'September'),
-        (10, 'October'),
-        (11, 'November'),
-        (12, 'December')
+        ('1', 'January'),
+        ('2', 'February'),
+        ('3', 'March'),
+        ('4', 'April'),
+        ('5', 'May'),
+        ('6', 'June'),
+        ('7', 'July'),
+        ('8', 'August'),
+        ('9', 'September'),
+        ('10', 'October'),
+        ('11', 'November'),
+        ('12', 'December')
     ], string='Month', index=True, copy=False, required=True, readonly=True, states={'draft': [('readonly', False)]},
-        default=lambda self: fields.Date.context_today(self).month)
+        default=lambda self: str(fields.Date.context_today(self).month))
     year = fields.Integer(string='Year', index=True, copy=False, required=True, readonly=True,
                           states={'draft': [('readonly', False)]},
                           default=lambda self: fields.Date.context_today(self).year)
@@ -179,7 +179,7 @@ class HrPayslipEdi(models.Model):
 
             employee = self.employee_id
 
-            date_ym = dt.date(rec.year, rec.month, 1)
+            date_ym = dt.date(rec.year, int(rec.month), 1)
             locale = self.env.context.get('lang') or 'en_US'
             rec.name = _('Salary Slip of %s for %s') % (
                 employee.name,
