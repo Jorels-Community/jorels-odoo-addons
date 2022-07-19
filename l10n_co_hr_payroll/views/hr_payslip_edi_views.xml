@@ -27,7 +27,9 @@
                 <header>
                     <button string="Confirm" name="action_payslip_done" type="object" states="draft"
                             class="oe_highlight"/>
-                    <!--                    <button string="Refund" name="refund_sheet" states="confirm,done" type='object'/>-->
+                    <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
+                            attrs="{'invisible': [('state','=','draft')]}"/>
+                    <button string="Refund" name="refund_sheet" states="confirm,done" type='object'/>
                     <button string="Set to Draft" name="action_payslip_draft" type="object" states="cancel"/>
                     <button string="Compute Sheet" name="compute_sheet" type="object" states="draft"
                             class="oe_highlight"/>
@@ -40,10 +42,13 @@
                             <field name="number"/>
                             <field name="month"/>
                             <field name="year" widget="integer"/>
+                            <field name="origin_payslip_id"/>
                         </group>
                         <group name="group-right">
                             <field name="date"/>
                             <field name="employee_id"/>
+                            <field name="contract_id"/>
+                            <field name="credit_note"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                         <group name="payment">
@@ -54,7 +59,12 @@
                     <notebook>
                         <page name="payslips" string="Payslips">
                             <field name="payslip_ids"
-                                   domain="[('state', '=', 'done'), ('employee_id', '=', employee_id), ('month', '=', month), ('year', '=', year), ('credit_note', '=', False)]"/>
+                                   domain="[('state', '=', 'done'),
+                                            ('employee_id', '=', employee_id),
+                                            ('month', '=', month),
+                                            ('year', '=', year),
+                                            ('credit_note', '=', False),
+                                            ('contract_id', '=', contract_id)]"/>
                             <group>
                                 <field name="accrued_total_amount" widget="monetary" readonly="True"/>
                                 <field name="deductions_total_amount" widget="monetary" readonly="True"/>
@@ -117,10 +127,17 @@
                   decoration-warning="state=='verify'"
                   decoration-danger="state=='cancel'"
                   decoration-muted="state=='done'">
-                <field name="date"/>
+                <field name="number"/>
                 <field name="employee_id"/>
+                <field name="name"/>
+                <field name="year"/>
+                <field name="month"/>
+                <field name="date"/>
                 <field name="company_id" groups="base.group_multi_company"/>
-                <field name="payslip_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                <field name="worked_days_total"/>
+                <field name="accrued_total_amount"/>
+                <field name="deductions_total_amount"/>
+                <field name="total_amount"/>
                 <field name="state"/>
             </tree>
         </field>
