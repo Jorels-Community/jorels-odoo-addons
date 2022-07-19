@@ -235,6 +235,9 @@
                 <xpath expr="//page[last()]" position="after">
                     <page name="edi_response" string="Edi Response">
                         <group>
+                            <field name="payslip_edi_ids" readonly="True"/>
+                            <field name="edi_sync" readonly="True"/>
+                            <field name="edi_is_not_test" readonly="True"/>
                             <field name="edi_is_valid" readonly="True"/>
                             <field name="edi_is_restored" readonly="True"/>
                             <field name="edi_algorithm" readonly="True"/>
@@ -261,7 +264,12 @@
                             <field name="edi_pdf_base64" readonly="True"/>
                             <field name="edi_zip_base64" readonly="True"/>
                             <field name="edi_type_environment" readonly="True"/>
-                            <field name="edi_payload" groups="base.group_no_one" readonly="True"/>
+                            </group>
+                    </page>
+                    <page string="Edi Payload">
+                        <group>
+                            <field name="edi_payload_html" readonly="True"/>
+                            <field name="edi_payload" readonly="True" groups="base.group_no_one"/>
                         </group>
                     </page>
                 </xpath>
