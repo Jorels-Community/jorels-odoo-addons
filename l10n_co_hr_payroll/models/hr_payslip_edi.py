@@ -727,7 +727,6 @@ class HrPayslipEdi(models.Model):
             'context': {}
         }
 
-    # @api.multi
     # @api.depends('state')
     # def _compute_color(self):
     #     for rec in self:

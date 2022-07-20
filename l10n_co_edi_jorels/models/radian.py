@@ -32,6 +32,7 @@ _logger = logging.getLogger(__name__)
 
 class Radian(models.Model):
     _name = "l10n_co_edi_jorels.radian"
+    _inherit = ['portal.mixin', 'mail.thread', 'mail.activity.mixin']
     _description = "Radian events"
 
     state = fields.Selection(selection=[
@@ -60,7 +61,7 @@ class Radian(models.Model):
     move_id = fields.Many2one(comodel_name="account.move", string="Invoice", required=True, readonly=True,
                               states={'draft': [('readonly', False)]}, copy=False,
                               domain=[('type', 'in', ('in_invoice', 'in_refund', 'out_invoice', 'out_refund')),
-                                      ('state', 'not in', ('draft', 'cancel'))], tracking=True)
+                                      ('edi_is_valid', '=', True)], tracking=True)
 
     # Storing synchronous and production modes
     edi_sync = fields.Boolean(string="Sync", copy=False, readonly=True,
@@ -107,6 +108,10 @@ class Radian(models.Model):
                                            default=lambda self: self._default_edi_type_environment())
     edi_payload = fields.Text("Payload", copy=False, readonly=True)
 
+    # For mail attached
+    edi_attached_zip_base64 = fields.Binary('Attached zip', attachment=True, copy=False, readonly=True,
+                                            states={'draft': [('readonly', False)]})
+
     user_id = fields.Many2one('res.users', string='Salesperson', track_visibility='onchange',
                               readonly=True, states={'draft': [('readonly', False)]},
                               default=lambda self: self.env.user, copy=False)
@@ -116,6 +121,17 @@ class Radian(models.Model):
         ('supplier', 'Supplier Event'),
     ], readonly=True, states={'draft': [('readonly', False)]}, index=True, change_default=True,
         default=lambda self: self._context.get('type', 'customer'), track_visibility='always')
+
+    # sent = fields.Boolean(readonly=True, default=False, copy=False,
+    #                       help="It indicates that the Radian event has been sent.")
+
+    def action_send_email(self):
+        for rec in self:
+            mail_template = self.env.ref('l10n_co_edi_jorels.email_template_radian')
+            mail_template.with_context({
+                'active_model': 'l10n_co_edi_jorels.radian'
+            }).send_mail(res_id=rec.id, force_send=True, notif_layout='mail.mail_notification_light')
+        return {'type': 'ir.actions.act_window_close', 'infos': 'mail_sent'}
 
     def _default_edi_type_environment(self):
         if not self.env['l10n_co_edi_jorels.type_environments'].search_count([]):
@@ -207,6 +223,7 @@ class Radian(models.Model):
                     (rec.type == 'customer' and rec.event_id.code == '034')
             ):
                 rec.validate_dian_generic()
+                rec.action_send_email()
 
         return True
 

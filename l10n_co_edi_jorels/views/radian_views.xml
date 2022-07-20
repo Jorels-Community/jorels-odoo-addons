@@ -30,6 +30,7 @@
                             attrs="{'invisible': [('state','=','draft')]}"/>
                     <button string="Set to Draft" name="action_draft" type="object" states="cancel"/>
                     <button string="Cancel" name="action_cancel" type="object" states="draft,posted"/>
+                    <button string="Send by email" name="action_send_email" type="object" states="posted"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
                 </header>
                 <sheet>
@@ -89,11 +90,18 @@
                                 <field name="edi_pdf_base64"/>
                                 <field name="edi_zip_base64"/>
                                 <field name="edi_type_environment"/>
+                                <field name="edi_attached_zip_base64"/>
                                 <field name="edi_payload" groups="base.group_no_one"/>
                             </group>
                         </page>
                     </notebook>
                 </sheet>
+                <div class="o_attachment_preview"/>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>
