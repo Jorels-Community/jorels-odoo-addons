@@ -89,7 +89,7 @@
                                 <field name="edi_pdf_base64"/>
                                 <field name="edi_zip_base64"/>
                                 <field name="edi_type_environment"/>
-                                <field name="edi_payload"/>
+                                <field name="edi_payload" groups="base.group_no_one"/>
                             </group>
                         </page>
                     </notebook>
