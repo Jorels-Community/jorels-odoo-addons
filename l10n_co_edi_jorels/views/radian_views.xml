@@ -121,6 +121,37 @@
         </field>
     </record>
 
+    <record id="view_l10n_co_edi_jorels_radian_search" model="ir.ui.view">
+        <field name="name">l10n_co_edi_jorels.radian.search</field>
+        <field name="model">l10n_co_edi_jorels.radian</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="move_id"/>
+                <field name="event_id"/>
+                <field name="date"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="state"/>
+                <field name="user_id"/>
+                <field name="edi_is_valid"/>
+                <filter name="filter_draft"
+                        string="Draft"
+                        domain="[('state','=','draft')]"/>
+                <filter name="filter_posted"
+                        string="Posted"
+                        domain="[('state','=','posted')]"/>
+                <filter name="filter_cancel"
+                        string="Cancelled"
+                        domain="[('state','=','cancel')]"/>
+                <group expand="0" string="Invoice">
+                    <filter name="groupby_move" context="{'group_by' : 'move_id'}" string="Invoice"/>
+                </group>
+                <group expand="0" string="Event">
+                    <filter name="groupby_event" context="{'group_by' : 'event_id'}" string="Event"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <!-- Supplier Radian actions and menus -->
     <record id="action_l10n_co_edi_jorels_radian_supplier" model="ir.actions.act_window">
         <field name="name">Radian events</field>
@@ -128,7 +159,7 @@
         <field name="view_mode">tree,form</field>
         <field eval="False" name="view_id"/>
         <field name="domain">[('type','=','supplier')]</field>
-        <field name="context">{'default_type': 'supplier', 'type': 'supplier'}</field>
+        <field name="context">{'default_type': 'supplier', 'type': 'supplier', 'search_default_groupby_move': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Radian event!
@@ -162,7 +193,7 @@
         <field name="view_mode">tree,form</field>
         <field eval="False" name="view_id"/>
         <field name="domain">[('type','=','customer')]</field>
-        <field name="context">{'default_type': 'customer', 'type': 'customer'}</field>
+        <field name="context">{'default_type': 'customer', 'type': 'customer', 'search_default_groupby_move': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Radian event!
