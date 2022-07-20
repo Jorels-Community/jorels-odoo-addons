@@ -118,6 +118,7 @@
                                     <group>
                                         <group name="group-left">
                                             <field name="type" invisible="1"/>
+                                            <field name="invoice_id" invisible="1"/>
                                             <field name="event_id"/>
                                             <field name="rejection_concept_id"
                                                    attrs="{'invisible':[('event_id','!=',4)]}"/>
@@ -226,6 +227,7 @@
                                     <group>
                                         <group name="group-left">
                                             <field name="type" invisible="1"/>
+                                            <field name="invoice_id" invisible="1"/>
                                             <field name="event_id"/>
                                             <field name="rejection_concept_id"
                                                    attrs="{'invisible':[('event_id','!=',4)]}"/>
