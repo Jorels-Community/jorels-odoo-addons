@@ -42,7 +42,7 @@ class Radian(models.Model):
     date = fields.Date("Date", required=True, readonly=True, default=fields.Date.context_today, copy=False)
     event_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.events", string="Event", required=True, readonly=True,
                                tracking=True, ondelete='RESTRICT', states={'draft': [('readonly', False)]},
-                               domain=[('code', 'in', ['030', '031', '032', '033', '034'])])
+                               domain=[('code', 'in', ('030', '031', '032', '033', '034'))])
     name = fields.Char(string="Reference", compute="_compute_name", store=True, copy=False, readonly=True,
                        default=lambda self: _("New"))
     number = fields.Integer(string="Number", readonly=True, states={'draft': [('readonly', False)]}, tracking=True,
@@ -59,8 +59,8 @@ class Radian(models.Model):
                                  states={'draft': [('readonly', False)]})
     move_id = fields.Many2one(comodel_name="account.move", string="Invoice", required=True, readonly=True,
                               states={'draft': [('readonly', False)]}, copy=False,
-                              domain=[('type', 'in', ['in_invoice', 'in_refund']),
-                                      ('state', 'not in', ['draft', 'cancel'])], tracking=True)
+                              domain=[('type', 'in', ('in_invoice', 'in_refund', 'out_invoice', 'out_refund')),
+                                      ('state', 'not in', ('draft', 'cancel'))], tracking=True)
 
     # Storing synchronous and production modes
     edi_sync = fields.Boolean(string="Sync", default=False, copy=False, readonly=True)
@@ -68,18 +68,18 @@ class Radian(models.Model):
                                      default=lambda self: self.env[
                                          'res.company'
                                      ]._company_default_get().is_not_test, store=True,
-                                     compute="_compute_ei_is_not_test")
+                                     compute="_compute_edi_is_not_test")
 
     # Edi response fields
-    edi_is_valid = fields.Boolean("Is valid?", copy=False, readonly=True)
+    edi_is_valid = fields.Boolean("Is valid?", copy=False, readonly=True, states={'draft': [('readonly', False)]})
     edi_is_restored = fields.Boolean("Is restored?", copy=False, readonly=True)
     edi_algorithm = fields.Char("Algorithm", copy=False, readonly=True)
     edi_class = fields.Char("Class", copy=False, readonly=True)
     edi_number = fields.Char("Number", copy=False, readonly=True)
-    edi_uuid = fields.Char("UUID", copy=False, readonly=True)
-    edi_issue_date = fields.Date("Date", copy=False, readonly=True)
+    edi_uuid = fields.Char("UUID", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    edi_issue_date = fields.Date("Date", copy=False, readonly=True, states={'draft': [('readonly', False)]})
     edi_expedition_date = fields.Char("Expedition date", copy=False, readonly=True)
-    edi_zip_key = fields.Char("Zip key", copy=False, readonly=True)
+    edi_zip_key = fields.Char("Zip key", copy=False, readonly=True, states={'draft': [('readonly', False)]})
     edi_status_code = fields.Char("Status code", copy=False, readonly=True)
     edi_status_description = fields.Char("Status description", copy=False, readonly=True)
     edi_status_message = fields.Char("Status message", copy=False, readonly=True)
@@ -93,16 +93,30 @@ class Radian(models.Model):
     edi_pdf_download_link = fields.Char("PDF link", copy=False, readonly=True)
     edi_xml_base64 = fields.Binary("XML", copy=False, readonly=True)
     edi_application_response_base64 = fields.Binary("Application response", copy=False, readonly=True)
-    edi_attached_document_base64 = fields.Binary("Attached document", copy=False, readonly=True)
-    edi_pdf_base64 = fields.Binary("PDF", copy=False, readonly=True)
+    edi_attached_document_base64 = fields.Binary("Attached document", copy=False, readonly=True,
+                                                 states={'draft': [('readonly', False)]})
+    edi_pdf_base64 = fields.Binary("PDF", copy=False, readonly=True, states={'draft': [('readonly', False)]})
     edi_zip_base64 = fields.Binary("Zip document", copy=False, readonly=True)
     edi_type_environment = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_environments",
-                                           string="Type environment", copy=False, readonly=True)
+                                           string="Type environment", copy=False, readonly=True,
+                                           states={'draft': [('readonly', False)]},
+                                           default=lambda self: self._default_edi_type_environment())
     edi_payload = fields.Text("Payload", copy=False, readonly=True)
 
     user_id = fields.Many2one('res.users', string='Salesperson', track_visibility='onchange',
                               readonly=True, states={'draft': [('readonly', False)]},
                               default=lambda self: self.env.user, copy=False)
+
+    type = fields.Selection([
+        ('customer', 'Customer Event'),
+        ('supplier', 'Supplier Event'),
+    ], readonly=True, states={'draft': [('readonly', False)]}, index=True, change_default=True,
+        default=lambda self: self._context.get('type', 'customer'), track_visibility='always')
+
+    def _default_edi_type_environment(self):
+        if not self.env['l10n_co_edi_jorels.type_environments'].search_count([]):
+            self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.type_environments')
+        return 1 if self.env['res.company']._company_default_get().is_not_test else 2
 
     @api.depends("edi_type_environment")
     def _compute_edi_is_not_test(self):
@@ -152,33 +166,44 @@ class Radian(models.Model):
 
     def action_post(self):
         for rec in self:
+            if rec.type == 'customer' and rec.move_id.type not in ('out_invoice', 'out_refund'):
+                raise Warning(_("The invoice must be a sales invoice"))
+            if rec.type == 'supplier' and rec.move_id.type not in ('in_invoice', 'in_refund'):
+                raise Warning(_("The invoice must be a purchase invoice"))
+
             # Sequence
-            name_sequence = 'radian_' + rec.event_id.code
-            prefix = "E" + rec.event_id.code
+            name_sequence = "radian_" + rec.event_id.code + "_" + rec.type
+            seq_search = self.env['ir.sequence'].search([
+                ('code', '=', name_sequence),
+                ('company_id', '=', rec.company_id.id)
+            ])
+            if not seq_search:
+                seq_search = self.env['ir.sequence'].search([('code', '=', name_sequence)])
+
+            prefix, suffix = seq_search[0]._get_prefix_suffix()
+
 
             if not rec.name or rec.name in ('New', _('New')):
-                rec.name = rec.env['ir.sequence'].next_by_code(name_sequence)
+                rec.name = seq_search[0].with_context(force_company=rec.company_id.id).next_by_code(name_sequence)
 
-            if rec.name and rec.name not in ('New', _('New')) and rec.name[0:4] == prefix:
-                rec.number = ''.join([i for i in rec.name[4:] if i.isdigit()])
+            if rec.name and rec.name not in ('New', _('New')) and rec.name[0:len(prefix)] == prefix:
+                rec.number = ''.join([i for i in rec.name[len(prefix):] if i.isdigit()])
                 rec.prefix = prefix
 
-            if not rec.number or not rec.prefix:
+            else:
                 raise UserError(_("The DIAN event sequence is wrong."))
 
             # Posted
             rec.write({'state': 'posted'})
 
             # Validate DIAN
-            if rec.company_id.ei_enable:
+            if rec.company_id.ei_enable and (
+                    (rec.type == 'supplier' and rec.event_id.code in ('030', '031', '032', '033')) or \
+                    (rec.type == 'customer' and rec.event_id.code == '034')
+            ):
                 rec.validate_dian_generic()
 
         return True
-
-    # @api.multi
-    # def action_status(self):
-    #     for rec in self:
-    #         raise UserError("No implementado")
 
     def action_draft(self):
         for rec in self:
@@ -187,11 +212,17 @@ class Radian(models.Model):
 
     def action_cancel(self):
         for rec in self:
-            if not rec.edi_is_valid:
-                rec.write({'state': 'cancel'})
-            else:
-                raise UserError(_("You cannot cancel a Radian event that has already been validated to the DIAN"))
+            rec.write({'state': 'cancel'})
         return True
+
+    def unlink(self):
+        for rec in self:
+            if rec.state not in ('draft', 'cancel'):
+                raise UserError(_('You cannot delete an event which is not draft or cancelled.'))
+            elif rec.name and rec.name not in ('New', _('New')):
+                raise UserError(_('You cannot delete an event after it has been posted (and received a number). '
+                                  'You can set it back to "Draft" state and modify its content, then re-confirm it.'))
+        return super(Radian, self).unlink()
 
     def get_json_request(self):
         for rec in self:

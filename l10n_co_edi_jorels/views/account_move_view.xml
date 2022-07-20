@@ -121,8 +121,11 @@
                                    attrs="{'invisible':[('type','not in', ('out_invoice', 'out_refund'))]}"/>
                         </group>
                     </page>
-                    <page name="dian_events" string="Dian Events">
-                        <field name="radian_ids">
+                    <page name="dian_events" string="Dian Events"
+                          attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}">
+                        <field name="radian_ids"
+                               context="{'type': type in ('out_invoice','out_refund') and 'customer' or 'supplier', 'default_move_id': id}"
+                               options="{'always_reload': True}">
                             <form string="Radian events">
                                 <header>
                                     <button string="Validate" name="action_post" type="object" states="draft"
@@ -142,6 +145,8 @@
                                     </h1>
                                     <group>
                                         <group name="group-left">
+                                            <field name="type" invisible="1"/>
+                                            <field name="move_id" invisible="1"/>
                                             <field name="event_id"/>
                                             <field name="rejection_concept_id"
                                                    attrs="{'invisible':[('event_id','!=',4)]}"/>

@@ -26,8 +26,8 @@
             <form string="Radian events">
                 <header>
                     <button string="Validate" name="action_post" type="object" states="draft" class="oe_highlight"/>
-<!--                    <button name="action_status" type="object" string="Consult DIAN" groups="base.group_no_one"-->
-<!--                            attrs="{'invisible': [('state','!=','posted')]}"/>-->
+                    <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
+                            attrs="{'invisible': [('state','=','draft')]}"/>
                     <button string="Set to Draft" name="action_draft" type="object" states="cancel"/>
                     <button string="Cancel" name="action_cancel" type="object" states="draft,posted"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
@@ -36,6 +36,13 @@
                     <h1 class="mt0">
                         <div attrs="{'invisible': [('name','=',False)]}">
                             <field name="name" class="oe_inline"/>
+                        </div>
+                        <field name="type" invisible="1"/>
+                        <div attrs="{'invisible': [('type','!=','customer')]}">
+                            <span>Customer Event</span>
+                        </div>
+                        <div attrs="{'invisible': [('type','!=','supplier')]}">
+                            <span>Supplier Event</span>
                         </div>
                     </h1>
                     <group>
@@ -106,10 +113,14 @@
         </field>
     </record>
 
-    <record id="action_view_l10n_co_edi_jorels_radian" model="ir.actions.act_window">
+    <!-- Supplier Radian actions and menus -->
+    <record id="action_l10n_co_edi_jorels_radian_supplier" model="ir.actions.act_window">
         <field name="name">Radian events</field>
         <field name="res_model">l10n_co_edi_jorels.radian</field>
         <field name="view_mode">tree,form</field>
+        <field eval="False" name="view_id"/>
+        <field name="domain">[('type','=','supplier')]</field>
+        <field name="context">{'default_type': 'supplier', 'type': 'supplier'}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Radian event!
@@ -117,8 +128,58 @@
         </field>
     </record>
 
-    <menuitem action="action_view_l10n_co_edi_jorels_radian"
+    <record id="action_l10n_co_edi_jorels_radian_supplier_tree" model="ir.actions.act_window.view">
+        <field eval="1" name="sequence"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_l10n_co_edi_jorels_radian_tree"/>
+        <field name="act_window_id" ref="action_l10n_co_edi_jorels_radian_supplier"/>
+    </record>
+
+    <record id="action_l10n_co_edi_jorels_radian_supplier_form" model="ir.actions.act_window.view">
+        <field eval="2" name="sequence"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_l10n_co_edi_jorels_radian_form"/>
+        <field name="act_window_id" ref="action_l10n_co_edi_jorels_radian_supplier"/>
+    </record>
+
+    <menuitem action="action_l10n_co_edi_jorels_radian_supplier"
               id="menu_l10n_co_edi_jorels_radian_tree"
               name="Radian events"
               parent="account.menu_finance_payables"/>
+
+    <!-- Customer Radian actions and menus -->
+    <record id="action_l10n_co_edi_jorels_radian_customer" model="ir.actions.act_window">
+        <field name="name">Radian events</field>
+        <field name="res_model">l10n_co_edi_jorels.radian</field>
+        <field name="view_mode">tree,form</field>
+        <field eval="False" name="view_id"/>
+        <field name="domain">[('type','=','customer')]</field>
+        <field name="context">{'default_type': 'customer', 'type': 'customer'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Radian event!
+            </p>
+        </field>
+    </record>
+
+    <record id="action_l10n_co_edi_jorels_radian_customer_tree" model="ir.actions.act_window.view">
+        <field eval="1" name="sequence"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_l10n_co_edi_jorels_radian_tree"/>
+        <field name="act_window_id" ref="action_l10n_co_edi_jorels_radian_customer"/>
+    </record>
+
+    <record id="action_l10n_co_edi_jorels_radian_customer_form" model="ir.actions.act_window.view">
+        <field eval="2" name="sequence"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_l10n_co_edi_jorels_radian_form"/>
+        <field name="act_window_id" ref="action_l10n_co_edi_jorels_radian_customer"/>
+    </record>
+
+    <menuitem action="action_l10n_co_edi_jorels_radian_customer"
+              id="menu_l10n_co_edi_jorels_radian_customer"
+              name="Radian events"
+              parent="account.menu_finance_receivables"/>
+
+
 </odoo>
