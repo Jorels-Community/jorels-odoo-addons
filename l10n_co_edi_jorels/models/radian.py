@@ -188,9 +188,9 @@ class Radian(models.Model):
     def action_post(self):
         for rec in self:
             if rec.type == 'customer' and rec.move_id.type not in ('out_invoice', 'out_refund'):
-                raise Warning(_("The invoice must be a sales invoice"))
+                raise UserError(_("The invoice must be a sales invoice"))
             if rec.type == 'supplier' and rec.move_id.type not in ('in_invoice', 'in_refund'):
-                raise Warning(_("The invoice must be a purchase invoice"))
+                raise UserError(_("The invoice must be a purchase invoice"))
 
             # Sequence
             name_sequence = "radian_" + rec.event_id.code + "_" + rec.type
