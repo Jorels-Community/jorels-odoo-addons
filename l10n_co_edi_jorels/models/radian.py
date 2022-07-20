@@ -60,8 +60,8 @@ class Radian(models.Model):
                                  states={'draft': [('readonly', False)]})
     move_id = fields.Many2one(comodel_name="account.move", string="Invoice", required=True, readonly=True,
                               states={'draft': [('readonly', False)]}, copy=False,
-                              domain=[('type', 'in', ('in_invoice', 'in_refund', 'out_invoice', 'out_refund')),
-                                      ('edi_is_valid', '=', True)], tracking=True)
+                              domain=[('type', 'in', ('in_invoice', 'in_refund', 'out_invoice', 'out_refund'))],
+                              tracking=True)
 
     # Storing synchronous and production modes
     edi_sync = fields.Boolean(string="Sync", copy=False, readonly=True,
@@ -203,14 +203,12 @@ class Radian(models.Model):
 
             prefix, suffix = seq_search[0]._get_prefix_suffix()
 
-
             if not rec.name or rec.name in ('New', _('New')):
                 rec.name = seq_search[0].with_context(force_company=rec.company_id.id).next_by_code(name_sequence)
 
             if rec.name and rec.name not in ('New', _('New')) and rec.name[0:len(prefix)] == prefix:
                 rec.number = ''.join([i for i in rec.name[len(prefix):] if i.isdigit()])
                 rec.prefix = prefix
-
             else:
                 raise UserError(_("The DIAN event sequence is wrong."))
 
