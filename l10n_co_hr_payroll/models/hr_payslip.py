@@ -18,6 +18,7 @@
 #
 #   email: info@jorels.com
 #
+import ast
 import calendar
 import json
 import logging
@@ -122,7 +123,10 @@ class HrPayslip(models.Model):
         hr_payslip_edi_env = self.env['hr.payslip.edi']
         for rec in self:
             if rec.edi_payload:
-                rec.edi_payload_html = hr_payslip_edi_env.payload2html(json.loads(rec.edi_payload), 2)
+                try:
+                    rec.edi_payload_html = hr_payslip_edi_env.payload2html(json.loads(rec.edi_payload), 2)
+                except json.decoder.JSONDecodeError as e:
+                    rec.edi_payload_html = hr_payslip_edi_env.payload2html(ast.literal_eval(rec.edi_payload), 2)
             else:
                 rec.edi_payload_html = ""
 
