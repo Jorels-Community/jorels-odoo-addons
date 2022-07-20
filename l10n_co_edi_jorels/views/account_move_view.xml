@@ -121,6 +121,41 @@
                                    attrs="{'invisible':[('type','not in', ('out_invoice', 'out_refund'))]}"/>
                         </group>
                     </page>
+                    <page name="dian_events" string="Dian Events">
+                        <field name="radian_ids">
+                            <form string="Radian events">
+                                <header>
+                                    <button string="Validate" name="action_post" type="object" states="draft"
+                                            class="oe_highlight"/>
+                                    <button name="action_status" type="object" string="Consult DIAN"
+                                            groups="base.group_no_one"
+                                            attrs="{'invisible': [('state','!=','posted')]}"/>
+                                    <button string="Set to Draft" name="action_draft" type="object" states="cancel"/>
+                                    <button string="Cancel" name="action_cancel" type="object" states="draft,posted"/>
+                                    <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
+                                </header>
+                                <sheet>
+                                    <h1 class="mt0">
+                                        <div attrs="{'invisible': [('name','=',False)]}">
+                                            <field name="name" class="oe_inline"/>
+                                        </div>
+                                    </h1>
+                                    <group>
+                                        <group name="group-left">
+                                            <field name="event_id"/>
+                                            <field name="rejection_concept_id"
+                                                   attrs="{'invisible':[('event_id','!=',4)]}"/>
+                                        </group>
+                                        <group name="group-right">
+                                            <field name="date"/>
+                                            <field name="company_id" groups="base.group_multi_company"/>
+                                            <field name="note"/>
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
                 </xpath>
                 <xpath expr="//field[@name='amount_by_group']" position="before">
                     <field name="ei_amount_tax_no_withholding"/>

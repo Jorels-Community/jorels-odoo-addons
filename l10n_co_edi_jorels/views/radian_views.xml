@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    l10n_co_hr_payroll
+    Copyright (C) 2022  Jorels SAS
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    email: info@jorels.com
+ -->
+<odoo>
+    <record id="view_l10n_co_edi_jorels_radian_form" model="ir.ui.view">
+        <field name="name">l10n_co_edi_jorels.radian.form</field>
+        <field name="model">l10n_co_edi_jorels.radian</field>
+        <field name="arch" type="xml">
+            <form string="Radian events">
+                <header>
+                    <button string="Validate" name="action_post" type="object" states="draft" class="oe_highlight"/>
+<!--                    <button name="action_status" type="object" string="Consult DIAN" groups="base.group_no_one"-->
+<!--                            attrs="{'invisible': [('state','!=','posted')]}"/>-->
+                    <button string="Set to Draft" name="action_draft" type="object" states="cancel"/>
+                    <button string="Cancel" name="action_cancel" type="object" states="draft,posted"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
+                </header>
+                <sheet>
+                    <h1 class="mt0">
+                        <div attrs="{'invisible': [('name','=',False)]}">
+                            <field name="name" class="oe_inline"/>
+                        </div>
+                    </h1>
+                    <group>
+                        <group name="group-left">
+                            <field name="move_id" options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="event_id"/>
+                            <field name="rejection_concept_id" attrs="{'invisible':[('event_id','!=',4)]}"/>
+                        </group>
+                        <group name="group-right">
+                            <field name="date"/>
+                            <field name="user_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="note"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="edi_response" string="Edi Response">
+                            <group>
+                                <field name="edi_sync"/>
+                                <field name="edi_is_not_test"/>
+                                <field name="edi_is_valid"/>
+                                <field name="edi_is_restored"/>
+                                <field name="edi_algorithm"/>
+                                <field name="edi_class"/>
+                                <field name="edi_number"/>
+                                <field name="edi_uuid"/>
+                                <field name="edi_issue_date"/>
+                                <field name="edi_expedition_date"/>
+                                <field name="edi_zip_key"/>
+                                <field name="edi_status_code"/>
+                                <field name="edi_status_description"/>
+                                <field name="edi_status_message"/>
+                                <field name="edi_errors_messages"/>
+                                <field name="edi_xml_name"/>
+                                <field name="edi_zip_name"/>
+                                <field name="edi_signature"/>
+                                <field name="edi_qr_code"/>
+                                <field name="edi_qr_data"/>
+                                <field name="edi_qr_link" widget="url"/>
+                                <field name="edi_pdf_download_link" widget="url"/>
+                                <field name="edi_xml_base64"/>
+                                <field name="edi_application_response_base64"/>
+                                <field name="edi_attached_document_base64"/>
+                                <field name="edi_pdf_base64"/>
+                                <field name="edi_zip_base64"/>
+                                <field name="edi_type_environment"/>
+                                <field name="edi_payload"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_l10n_co_edi_jorels_radian_tree" model="ir.ui.view">
+        <field name="name">l10n_co_edi_jorels.radian.tree</field>
+        <field name="model">l10n_co_edi_jorels.radian</field>
+        <field name="arch" type="xml">
+            <tree string="DIAN Events" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="move_id"/>
+                <field name="event_id"/>
+                <field name="date"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_view_l10n_co_edi_jorels_radian" model="ir.actions.act_window">
+        <field name="name">Radian events</field>
+        <field name="res_model">l10n_co_edi_jorels.radian</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Radian event!
+            </p>
+        </field>
+    </record>
+
+    <menuitem action="action_view_l10n_co_edi_jorels_radian"
+              id="menu_l10n_co_edi_jorels_radian_tree"
+              name="Radian events"
+              parent="account.menu_finance_payables"/>
+</odoo>
