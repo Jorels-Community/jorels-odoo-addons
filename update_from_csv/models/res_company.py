@@ -69,7 +69,7 @@ class ResCompany(models.Model):
                     query = query + "write_uid=" + str(self.env.user.id) + ",write_date=NOW()"
 
                     # Execute query
-                    # _logger.debug(query)
+                    #_logger.debug(query)
                     self._cr.execute(query)
 
                     # Count
