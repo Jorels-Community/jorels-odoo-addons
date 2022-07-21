@@ -53,7 +53,7 @@ class ResCompany(models.Model):
                     if line_count == 0:
                         _logger.debug(f'Column names are {", ".join(row)}')
                         field_names = row
-                    
+
                     # Insert
                     query = "insert into " + table_name + "("
                     for field_name in field_names:
@@ -61,20 +61,21 @@ class ResCompany(models.Model):
                     query = query + "create_uid,create_date,write_uid,write_date) values("
                     for field_name in field_names:
                         query = query + "$$" + row[field_name] + "$$,"
-                    query = query + str(self.env.user.id) + ',NOW(),' + str(self.env.user.id) + ',NOW()) ON CONFLICT(id) DO UPDATE SET '
-                    
+                    query = query + str(self.env.user.id) + ',NOW(),' + str(
+                        self.env.user.id) + ',NOW()) ON CONFLICT(id) DO UPDATE SET '
+
                     # Update
                     for field_name in field_names:
                         query = query + field_name + "=$$" + row[field_name] + "$$,"
                     query = query + "write_uid=" + str(self.env.user.id) + ",write_date=NOW()"
-                    
+
                     # Execute query
                     #_logger.debug(query)
                     self._cr.execute(query)
-                    
+
                     # Count
                     line_count += 1
-                    
+
                 self._cr.execute("select max(id) from " + table_name)
                 max_id = self._cr.dictfetchall()[0]['max']
                 self._cr.execute(f"SELECT setval('{table_name}_id_seq',{str(max_id + 1)}, true)")
