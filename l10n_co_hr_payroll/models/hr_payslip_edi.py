@@ -220,6 +220,7 @@ class HrPayslipEdi(models.Model):
 
         return True
 
+    @api.model
     def join_dicts(self, a, b, date_issue):
         if dt.datetime.strptime(a['period']['settlement_start_date'], '%Y-%m-%d') \
                 < dt.datetime.strptime(b['period']['settlement_start_date'], '%Y-%m-%d'):
@@ -750,14 +751,17 @@ class HrPayslipEdi(models.Model):
     #         rec.color = switcher.get(rec.state, 11)
 
     # Root
+    @api.model
     def dict_root_sum(self, first, last, fields=[]):
         for field in fields:
             self.dict_root_sum_field(first, last, field)
 
+    @api.model
     def dict_root_merge(self, first, last, fields=[]):
         for field in fields:
             self.dict_root_merge_field(first, last, field)
 
+    @api.model
     def dict_root_sum_field(self, first, last, field):
         if field in first:
             if field not in last:
@@ -765,10 +769,12 @@ class HrPayslipEdi(models.Model):
             else:
                 last[field] += first[field]
 
+    @api.model
     def dict_root_merge_field(self, first, last, field):
         if field in first:
             last[field] = first[field]
 
+    @api.model
     def dict_root_append_lists(self, first, last, list_fields):
         for list_field in list_fields:
             if list_field in first:
@@ -777,6 +783,7 @@ class HrPayslipEdi(models.Model):
                 for temp_dict in first[list_field]:
                     last[list_field].append(temp_dict)
 
+    @api.model
     def dict_root_append_dicts(self, first, last, dict_fields):
         for dict_field in dict_fields:
             if dict_field in first:
@@ -785,12 +792,14 @@ class HrPayslipEdi(models.Model):
                 self.dict_root_append_lists(first[dict_field], last[dict_field], first[dict_field])
 
     # Others
+    @api.model
     def dict_append_lists_1(self, first, last, b, c=[]):
         if b in first:
             if b not in last:
                 last[b] = {}
             self.dict_root_append_lists(first[b], last[b], c)
 
+    @api.model
     def dict_sum_1(self, first, last, b, c=[], d=[]):
         if b in first:
             if b not in last:
@@ -798,6 +807,7 @@ class HrPayslipEdi(models.Model):
             self.dict_root_sum(first[b], last[b], c)
             self.dict_root_merge(first[b], last[b], d)
 
+    @api.model
     def dict_sum_2(self, first, last, a, b, c=[], d=[]):
         if a in first:
             if a not in last:
@@ -808,11 +818,13 @@ class HrPayslipEdi(models.Model):
                 self.dict_root_sum(first[a][b], last[a][b], c)
                 self.dict_root_merge(first[a][b], last[a][b], d)
 
+    @api.model
     def dict_merge_field(self, first, last, a, b, c):
         if c in first[a][b]:
             if c not in last[a][b]:
                 last[a][b][c] = first[a][b][c]
 
+    @api.model
     def dict_sum_field(self, first, last, a, b, c):
         if c in first[a][b]:
             if c not in last[a][b]:

@@ -43,7 +43,6 @@
                     </div>
                 </div>
             </xpath>
-
             <xpath expr="//div[@id='hr_payroll_localization']" position="after">
                 <h2>Parameters</h2>
                 <div class="row mt16 o_settings_container">

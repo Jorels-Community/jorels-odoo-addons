@@ -32,7 +32,6 @@
     'support': 'info@jorels.com',
     'depends': [
         'hr_payroll',
-        'l10n_co',
         'l10n_co_edi_jorels',
     ],
     'data': [

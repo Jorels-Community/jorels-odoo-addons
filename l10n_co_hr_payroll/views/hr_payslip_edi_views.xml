@@ -59,7 +59,12 @@
                     <notebook>
                         <page name="payslips" string="Payslips">
                             <field name="payslip_ids"
-                                   domain="[('state', '=', 'done'), ('employee_id', '=', employee_id), ('month', '=', month), ('year', '=', year), ('credit_note', '=', False), ('contract_id', '=', contract_id)]"/>
+                                   domain="[('state', '=', 'done'),
+                                            ('employee_id', '=', employee_id),
+                                            ('month', '=', month),
+                                            ('year', '=', year),
+                                            ('credit_note', '=', False),
+                                            ('contract_id', '=', contract_id)]"/>
                             <group>
                                 <field name="accrued_total_amount" widget="monetary" readonly="True"/>
                                 <field name="deductions_total_amount" widget="monetary" readonly="True"/>
@@ -118,7 +123,7 @@
         <field name="name">hr.payslip.edi.tree</field>
         <field name="model">hr.payslip.edi</field>
         <field name="arch" type="xml">
-            <tree string="Edi Payslip" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" >
+            <tree string="Edi Payslip" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                 <field name="number"/>
                 <field name="employee_id"/>
                 <field name="name"/>

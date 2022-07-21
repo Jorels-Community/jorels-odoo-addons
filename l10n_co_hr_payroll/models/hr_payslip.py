@@ -48,13 +48,12 @@ class HrPayslip(models.Model):
     payment_date = fields.Date("Payment date", required=True, readonly=True, states={'draft': [('readonly', False)]},
                                default=lambda self: fields.Date.to_string(
                                    (datetime.now() + relativedelta(months=+1, day=1, days=-1)).date()))
-    payment_form_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_forms", string="Payment form",
-                                      default=1, readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+    payment_form_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_forms", string="Payment form", default=1,
+                                      readonly=True, states={'draft': [('readonly', False)]}, copy=True)
     payment_method_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_methods", string="Payment method",
                                         default=1, readonly=True, states={'draft': [('readonly', False)]}, copy=True)
     accrued_total_amount = fields.Monetary("Accrued", currency_field='currency_id', readonly=True, copy=True)
-    deductions_total_amount = fields.Monetary("Deductions", currency_field='currency_id', readonly=True,
-                                              copy=True)
+    deductions_total_amount = fields.Monetary("Deductions", currency_field='currency_id', readonly=True, copy=True)
     others_total_amount = fields.Monetary("Others", currency_field='currency_id', readonly=True, copy=True)
     total_amount = fields.Monetary("Total", currency_field='currency_id', readonly=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Currency', readonly=False, compute='_compute_currency')
@@ -334,8 +333,7 @@ class HrPayslip(models.Model):
         end_day = 30 if end.day == calendar.monthrange(end.year, end.month)[1] else end.day
         start_day = 30 if start.day == calendar.monthrange(start.year, start.month)[1] else start.day
 
-        return (end.year - start.year) * 360 + (
-                end.month - start.month) * 30 + end_day - start_day + 1
+        return (end.year - start.year) * 360 + (end.month - start.month) * 30 + end_day - start_day + 1
 
     @api.multi
     def get_json_request(self):
