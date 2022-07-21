@@ -50,7 +50,7 @@ class AccountMove(models.Model):
     ei_legal_monetary_totals = fields.Text(string="legal_monetary_totals json", copy=False)
     ei_invoice_lines = fields.Text(string="invoice_lines json", copy=False)
 
-    # They allow storing synchronous and production modes used when invoicing
+    # They allow to store synchronous and production modes used when invoicing
     ei_sync = fields.Boolean(string="Sync", default=False, copy=False, readonly=True)
     ei_is_not_test = fields.Boolean(string="In production", copy=False, readonly=True,
                                     default=lambda self: self.env['res.company']._company_default_get().is_not_test,
@@ -143,7 +143,7 @@ class AccountMove(models.Model):
         ('mandates', 'Mandates'),
         ('transport', 'Transport'),
         ('exchange', 'Exchange')
-    ], string="Operation type", default=lambda self: self.env.user.company_id.ei_operation, copy=True, readonly=True,
+    ], string="Operation type", default=lambda self: self.env.company.ei_operation, copy=True, readonly=True,
         required=True, states={'draft': [('readonly', False)]})
 
     # DIAN events
@@ -994,8 +994,7 @@ class AccountMove(models.Model):
                 continue
 
             # raise Warning(json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
-            _logger.debug("DIAN Validation Request: %s",
-                          json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
+            _logger.debug("DIAN Validation Request: %s", json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
 
             try:
                 type_edi_document = rec.get_type_edi_document()

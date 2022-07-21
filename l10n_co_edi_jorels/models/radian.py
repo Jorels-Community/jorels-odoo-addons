@@ -368,3 +368,81 @@ class Radian(models.Model):
             except Exception as e:
                 _logger.debug("Failed to process the request: %s", e)
                 raise UserError(_("Failed to process the request: %s") % e)
+
+    def status_zip(self):
+        for rec in self:
+            try:
+                if not rec.company_id.ei_enable:
+                    continue
+
+                # This line ensures that the fields are updated in Odoo, before the request
+                payload = json.dumps(rec.get_json_request(), indent=2, sort_keys=False)
+
+                _logger.debug('Payload: %s', payload)
+
+                if rec.edi_zip_key or rec.edi_uuid:
+                    requests_data = {}
+                    _logger.debug('API Requests: %s', requests_data)
+
+                    # API key and URL
+                    if rec.company_id.api_key:
+                        token = rec.company_id.api_key
+                    else:
+                        raise UserError(_("You must configure a token"))
+
+                    api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
+                                                                               'https://edipo.jorels.com')
+                    params = {
+                        'token': token,
+                        'environment': rec.edi_type_environment.id
+                    }
+                    header = {"accept": "application/json", "Content-Type": "application/json"}
+
+                    # Request
+                    if rec.edi_zip_key:
+                        api_url = api_url + "/zip/" + rec.edi_zip_key
+                    else:
+                        api_url = api_url + "/document/" + rec.edi_uuid
+
+                    _logger.debug('API URL: %s', api_url)
+
+                    response = requests.post(api_url,
+                                             json.dumps(requests_data),
+                                             headers=header,
+                                             params=params).json()
+                    _logger.debug('API Response: %s', response)
+
+                    if 'detail' in response:
+                        raise UserError(response['detail'])
+                    if 'message' in response:
+                        if response['message'] == 'Unauthenticated.' or response['message'] == '':
+                            raise UserError(_("Authentication error with the API"))
+                        else:
+                            if 'errors' in response:
+                                raise UserError(response['message'] + '/ errors: ' + str(response['errors']))
+                            else:
+                                raise UserError(response['message'])
+                    elif 'is_valid' in response:
+                        rec.write_response(response, payload)
+                        if response['is_valid']:
+                            self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                        elif 'zip_key' in response or 'uuid' in response:
+                            if response['zip_key'] is not None or response['uuid'] is not None:
+                                if not rec.edi_is_not_test:
+                                    self.env.user.notify_success(message=_("Document sent to DIAN in testing."))
+                                else:
+                                    temp_message = {rec.edi_status_message, rec.edi_errors_messages,
+                                                    rec.edi_status_description, rec.edi_status_code}
+                                    raise UserError(str(temp_message))
+                            else:
+                                raise UserError(_('A valid Zip key or UUID was not obtained. Try again.'))
+                        else:
+                            raise UserError(_('The document could not be validated in DIAN.'))
+                    else:
+                        raise UserError(_("No logical response was obtained from the API."))
+                else:
+                    raise UserError(_("A zip key or UUID is required to check the status of the document."))
+
+            except Exception as e:
+                _logger.debug("Failed to process the request: %s", e)
+                raise UserError(_("Failed to process the request: %s") % e)

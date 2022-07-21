@@ -62,7 +62,7 @@ class ResConfigSettings(models.TransientModel):
     # Update resolutions on Odoo database
     @api.model
     def action_update_resolutions(self):
-        if not self.env.user.company_id.ei_enable:
+        if not self.env.company.ei_enable:
             return {
                 "name": _("Resolutions"),
                 "type": "ir.actions.act_window",
@@ -71,7 +71,7 @@ class ResConfigSettings(models.TransientModel):
             }
 
         try:
-            token = str(self.env.user.company_id.api_key)
+            token = str(self.env.company.api_key)
             api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
                                                                        'https://edipo.jorels.com')
             params = {'token': token}
@@ -175,7 +175,7 @@ class ResConfigSettings(models.TransientModel):
 
     # Environment update
     def button_put_environment(self):
-        if not self.env.user.company_id.ei_enable:
+        if not self.env.company.ei_enable:
             return
 
         try:

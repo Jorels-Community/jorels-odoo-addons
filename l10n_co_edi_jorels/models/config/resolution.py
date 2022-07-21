@@ -128,7 +128,7 @@ class Resolution(models.Model):
             _logger.debug("Request create resolution DIAN: %s",
                           json.dumps(requests_data, indent=2, sort_keys=False))
 
-            token = str(self.env.user.company_id.api_key)
+            token = str(self.env.company.api_key)
             api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
                                                                        'https://edipo.jorels.com')
             params = {'token': token}
@@ -206,7 +206,7 @@ class Resolution(models.Model):
                 _logger.debug("Request update resolution DIAN: %s",
                               json.dumps(requests_data, indent=2, sort_keys=False))
 
-                token = str(self.env.user.company_id.api_key)
+                token = str(self.env.company.api_key)
                 api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
                                                                            'https://edipo.jorels.com')
                 params = {'token': token}
@@ -247,7 +247,7 @@ class Resolution(models.Model):
                 resolution_id = str(rec.resolution_id)
 
                 # The function str() is necessary for 'False' answers and boolean exceptions
-                token = str(self.env.user.company_id.api_key)
+                token = str(self.env.company.api_key)
                 api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
                                                                            'https://edipo.jorels.com')
                 params = {'token': token}

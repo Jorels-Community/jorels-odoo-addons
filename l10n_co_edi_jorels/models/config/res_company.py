@@ -217,7 +217,7 @@ class ResCompany(models.Model):
 
     # Environment update
     def update_environment(self, environment):
-        if not self.env.user.company_id.ei_enable:
+        if not self.env.company.ei_enable:
             return False
 
         for rec in self:
