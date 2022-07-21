@@ -274,7 +274,7 @@ class Resolution(models.Model):
                     else:
                         rec.resolution_message = response['message']
                 else:
-                    rec.resolution_message = 'Unable to communicate with the API'
+                    rec.resolution_message = _('Unable to communicate with the API')
             except Exception as e:
                 rec.resolution_message = _('API connection error!')
                 _logger.debug("Connection error: %s", e)

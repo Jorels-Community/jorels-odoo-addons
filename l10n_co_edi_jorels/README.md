@@ -10,5 +10,3 @@ Copyright (2019-2022) - Jorels SAS
 Under LGPL (Lesser General Public License)
 
 ### Odoo module for electronic invoicing for Colombia
-
-Tested on Odoo 12, 13 and 14

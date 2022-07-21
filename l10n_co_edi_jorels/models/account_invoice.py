@@ -53,9 +53,8 @@ class AccountInvoice(models.Model):
     # They allow to store synchronous and production modes used when invoicing
     ei_sync = fields.Boolean(string="Sync", default=False, copy=False, readonly=True)
     ei_is_not_test = fields.Boolean(string="In production", copy=False, readonly=True,
-                                    default=lambda self: self.env[
-                                        'res.company'
-                                    ]._company_default_get().is_not_test, store=True, compute="_compute_ei_is_not_test")
+                                    default=lambda self: self.env['res.company']._company_default_get().is_not_test,
+                                    store=True, compute="_compute_ei_is_not_test")
 
     # API Response:
     ei_is_valid = fields.Boolean(string="Valid", copy=False, readonly=True, states={'draft': [('readonly', False)]})
@@ -376,7 +375,7 @@ class AccountInvoice(models.Model):
                             raise Warning(_("You must assign the client a country"))
 
                         if rec_partner.country_id.code == 'CO' and rec.is_out_country:
-                            raise Warning(_("This is a export invoice but the client's country is Colombia"))
+                            raise Warning(_("This is an export invoice but the client's country is Colombia"))
 
                         if rec_partner.municipality_id and rec_partner.country_id.code == 'CO':
                             customer_data['municipality_code'] = rec_partner.municipality_id.id
@@ -1020,7 +1019,7 @@ class AccountInvoice(models.Model):
             if not rec.company_id.ei_enable:
                 continue
 
-            # raise Warning(json.dumps(self.get_json_request(), indent=2, sort_keys=False))
+            # raise Warning(json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
             _logger.debug("DIAN Validation Request: %s", json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
 
             try:
@@ -1097,8 +1096,6 @@ class AccountInvoice(models.Model):
 
             if not is_test and not rec.ei_attached_document_base64_bytes:
                 rec.status_document_log()
-                # if not rec.ei_attached_document_base64_bytes:
-                #     rec.status_document()
                 if not rec.ei_attached_document_base64_bytes:
                     _logger.error('Unable to obtain an attached document.')
 
@@ -1292,8 +1289,7 @@ class AccountInvoice(models.Model):
                             raise Warning(response['detail'])
                         if 'message' in response:
                             if response['message'] == 'Unauthenticated.' or response['message'] == '':
-                                self.env.user.notify_warning(
-                                    message=_("Authentication error with the API"))
+                                self.env.user.notify_warning(message=_("Authentication error with the API"))
                                 _logger.debug("Authentication error with the API")
                             else:
                                 if 'errors' in response:
