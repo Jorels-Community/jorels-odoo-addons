@@ -28,8 +28,8 @@ class PosConfig(models.Model):
     _inherit = 'pos.config'
 
     def _default_electronic_invoice_journal(self):
-        return self.env['account.journal'].search([('type', '=', 'sale'), ('company_id', '=', self.env.company.id)],
-                                                  limit=1)
+        return self.env['account.journal'].search(
+            [('type', '=', 'sale'), ('company_id', '=', self.env.company.id)], limit=1)
 
     electronic_invoice_journal_id = fields.Many2one(
         'account.journal', string='Electronic Invoice Journal',
