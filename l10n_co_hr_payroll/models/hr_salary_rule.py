@@ -165,6 +165,6 @@ class HrSalaryRule(models.Model):
             try:
                 safe_eval(self.edi_percent_python_compute, local_dict, mode='exec', nocopy=True)
                 return float(local_dict['result'])
-            except Exception:
+            except Exception as e:
                 raise UserError(
-                    _('Wrong percent python code defined for salary rule %s (%s).') % (self.name, self.code))
+                    _('Wrong percent python code defined for salary rule %s (%s). %s') % (self.name, self.code, e))

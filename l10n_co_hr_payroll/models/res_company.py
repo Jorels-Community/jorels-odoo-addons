@@ -60,4 +60,3 @@ class ResCompany(models.Model):
     # Consolidated payroll
     edi_payroll_consolidated_enable = fields.Boolean(string="Enable consolidated electronic payroll for this company",
                                                      default=False, readonly=False)
-

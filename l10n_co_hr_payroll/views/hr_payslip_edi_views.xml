@@ -123,7 +123,7 @@
         <field name="name">hr.payslip.edi.tree</field>
         <field name="model">hr.payslip.edi</field>
         <field name="arch" type="xml">
-            <tree string="Edi Payslip" decoration-info="state=='draft'" decoration-muted="state == 'cancel'" >
+            <tree string="Edi Payslip" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
                 <field name="number"/>
                 <field name="employee_id"/>
                 <field name="name"/>

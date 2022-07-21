@@ -264,7 +264,7 @@
                             <field name="edi_pdf_base64" readonly="True"/>
                             <field name="edi_zip_base64" readonly="True"/>
                             <field name="edi_type_environment" readonly="True"/>
-                            </group>
+                        </group>
                     </page>
                     <page string="Edi Payload">
                         <group>
