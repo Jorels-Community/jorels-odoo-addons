@@ -1,4 +1,4 @@
-// Jorels S.A.S. - Copyright (2019-2021)
+// Jorels S.A.S. - Copyright (2019-2022)
 //
 // This file is part of l10n_co_edi_jorels_pos.
 //
