@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 13.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-10 06:48+0000\n"
-"PO-Revision-Date: 2022-04-10 01:52-0500\n"
+"PO-Revision-Date: 2022-07-21 00:58-0500\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "MIME-Version: 1.0\n"
@@ -1512,7 +1512,7 @@ msgstr "Su compañía no tiene un tipo de identificación"
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_payslip__edi_zip_base64
 msgid "Zip"
-msgstr "C.P."
+msgstr "Documento Zip"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_payslip__edi_zip_key
