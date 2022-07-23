@@ -43,8 +43,8 @@ class HrPayslip(models.Model):
     edi_is_not_test = fields.Boolean(string="In production", default=False, copy=False)
 
     # Edi fields
-    date = fields.Date("Date", required=True, readonly=True, states={'draft': [('readonly', False)]},
-                       default=fields.Date.context_today)
+    date = fields.Date('Date Account', states={'draft': [('readonly', False)]}, readonly=True,
+                       help="Keep empty to use the period of the validation(Payslip) date.")
     payment_date = fields.Date("Payment date", required=True, readonly=True, states={'draft': [('readonly', False)]},
                                default=lambda self: fields.Date.to_string(
                                    (datetime.now() + relativedelta(months=+1, day=1, days=-1)).date()))
