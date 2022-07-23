@@ -27,7 +27,7 @@
     'author': 'Jorels SAS',
     'license': 'LGPL-3',
     'category': 'Point of Sale',
-    'version': '12.0.0.1',
+    'version': '12.0.22.07.23.02.58',
     'website': 'https://www.jorels.com',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
