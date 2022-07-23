@@ -57,7 +57,8 @@ class MailTemplate(models.Model):
 
                 if invoice.ei_is_valid \
                         and invoice.type in ('out_invoice', 'out_refund') \
-                        and invoice.state in ('open', 'paid'):
+                        and invoice.state not in ('draft', 'validate')\
+                        and invoice.ei_uuid:
 
                     pdf_name = invoice.ei_uuid + '.pdf'
                     pdf_path = Path(tempfile.gettempdir()) / pdf_name
@@ -104,7 +105,9 @@ class MailTemplate(models.Model):
                 # attachments = res[res_id]["attachments"] if radian.company_id.ei_include_pdf_attachment else []
                 attachments = []
 
-                if radian.edi_is_valid and radian.state == 'posted':
+                if radian.edi_is_valid \
+                        and radian.state == 'posted'\
+                        and radian.edi_uuid:
 
                     # pdf_name = radian.edi_uuid + '.pdf'
                     # pdf_path = Path(tempfile.gettempdir()) / pdf_name
