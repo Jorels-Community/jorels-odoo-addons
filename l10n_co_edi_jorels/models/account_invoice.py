@@ -750,7 +750,10 @@ class AccountInvoice(models.Model):
                     # Debit note
                     rec.resolution_id = rec.journal_id.debitnote_sequence_id.resolution_id.id
                 else:
+                    rec.resolution_id = None
                     _logger.debug("This type of document does not have a DIAN resolution assigned")
+            else:
+                rec.resolution_id = None
 
     @api.depends('number', 'reference')
     def compute_number_formatted(self):
