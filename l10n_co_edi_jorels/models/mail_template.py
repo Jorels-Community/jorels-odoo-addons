@@ -46,24 +46,25 @@ class MailTemplate(models.Model):
 
         if self._context.get('active_model') == 'account.move':
             for res_id, template in self.get_email_template(res_ids).items():
-                invoice = self.env["account.move"].browse(res_id)
+                move = self.env["account.move"].browse(res_id)
 
-                if not invoice.company_id.ei_enable:
+                if not move.company_id.ei_enable:
                     continue
 
-                attachments = res[res_id]["attachments"] if invoice.company_id.ei_include_pdf_attachment else []
+                attachments = res[res_id]["attachments"] if move.company_id.ei_include_pdf_attachment else []
 
-                if invoice.ei_is_valid \
-                        and invoice.type in ('out_invoice', 'out_refund') \
-                        and invoice.state == 'posted':
+                if move.ei_is_valid \
+                        and move.type in ('out_invoice', 'out_refund') \
+                        and move.state not in ('draft', 'validate')\
+                        and move.ei_uuid:
 
-                    pdf_name = invoice.ei_uuid + '.pdf'
+                    pdf_name = move.ei_uuid + '.pdf'
                     pdf_path = Path(tempfile.gettempdir()) / pdf_name
 
-                    xml_name = invoice.ei_uuid + '.xml'
+                    xml_name = move.ei_uuid + '.xml'
                     xml_path = Path(tempfile.gettempdir()) / xml_name
 
-                    zip_name = invoice.ei_uuid + '.zip'
+                    zip_name = move.ei_uuid + '.zip'
                     zip_path = Path(tempfile.gettempdir()) / zip_name
 
                     zip_archive = zipfile.ZipFile(zip_path, 'w')
@@ -73,20 +74,20 @@ class MailTemplate(models.Model):
                     pdf_handle.close()
                     zip_archive.write(pdf_path, arcname=pdf_name)
 
-                    if invoice.ei_attached_document_base64_bytes:
+                    if move.ei_attached_document_base64_bytes:
                         xml_handle = open(xml_path, 'wb')
-                        xml_handle.write(base64.decodebytes(invoice.ei_attached_document_base64_bytes))
+                        xml_handle.write(base64.decodebytes(move.ei_attached_document_base64_bytes))
                         xml_handle.close()
                         zip_archive.write(xml_path, arcname=xml_name)
 
                     zip_archive.close()
 
-                    if invoice.ei_attached_document_base64_bytes:
+                    if move.ei_attached_document_base64_bytes:
                         with open(zip_path, 'rb') as f:
                             attached_zip = f.read()
                             ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
                             attachments += [(zip_name, ei_attached_zip_base64_bytes)]
-                            invoice.write({
+                            move.write({
                                 'ei_attached_zip_base64_bytes': ei_attached_zip_base64_bytes
                             })
 
@@ -102,7 +103,9 @@ class MailTemplate(models.Model):
                 # attachments = res[res_id]["attachments"] if radian.company_id.ei_include_pdf_attachment else []
                 attachments = []
 
-                if radian.edi_is_valid and radian.state == 'posted':
+                if radian.edi_is_valid \
+                        and radian.state == 'posted'\
+                        and radian.edi_uuid:
 
                     # pdf_name = radian.edi_uuid + '.pdf'
                     # pdf_path = Path(tempfile.gettempdir()) / pdf_name
@@ -139,8 +142,9 @@ class MailTemplate(models.Model):
 
                 if 'res_id' in res:
                     res["attachments"] = attachments
-                    return res
                 else:
                     res[res_id]["attachments"] = attachments
+
+            return res
 
         return multi_mode and res or res[res_ids[0]]

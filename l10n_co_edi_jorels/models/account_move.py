@@ -31,7 +31,7 @@ import qrcode
 import requests
 from num2words import num2words
 from odoo import api, fields, models, _
-from odoo.exceptions import Warning
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -295,7 +295,7 @@ class AccountMove(models.Model):
                 rec.ei_qr_image = qr_image
         except Exception as e:
             _logger.debug("Write response: %s", e)
-            raise Warning("Write response: %s" % e)
+            raise UserError("Write response: %s" % e)
 
     def get_type_document_identification_id(self):
         for rec in self:
@@ -314,14 +314,14 @@ class AccountMove(models.Model):
                 if rec.partner_id.email:
                     email_edi = rec.partner_id.email
                 else:
-                    raise Warning(_("The client must have an email where to send the invoice."))
+                    raise UserError(_("The client must have an email where to send the invoice."))
             else:
                 rec_partner = rec.partner_id
 
                 if rec_partner.email_edi:
                     email_edi = rec_partner.email_edi
                 else:
-                    raise Warning(_("The client must have an email where to send the invoice."))
+                    raise UserError(_("The client must have an email where to send the invoice."))
 
             type_document_identification_id = rec.get_type_document_identification_id()
             if type_document_identification_id:
@@ -363,27 +363,27 @@ class AccountMove(models.Model):
                             if customer_rec:
                                 customer_data['country_code'] = customer_rec.id
                             else:
-                                raise Warning(_("You must assign the client a valid country"))
+                                raise UserError(_("You must assign the client a valid country"))
                         else:
-                            raise Warning(_("You must assign the client a country"))
+                            raise UserError(_("You must assign the client a country"))
 
                         if rec_partner.country_id.code == 'CO' and rec.is_out_country:
-                            raise Warning(_("This is an export invoice but the client's country is Colombia"))
+                            raise UserError(_("This is an export invoice but the client's country is Colombia"))
 
                         if rec_partner.municipality_id and rec_partner.country_id.code == 'CO':
                             customer_data['municipality_code'] = rec_partner.municipality_id.id
                         elif rec_partner.country_id.code == 'CO':
-                            raise Warning(_("You must assign the client a municipality"))
+                            raise UserError(_("You must assign the client a municipality"))
 
                         if rec_partner.type_regime_id:
                             customer_data['regime_code'] = rec_partner.type_regime_id.id
                         else:
-                            raise Warning(_("You must assign the client a type of regimen"))
+                            raise UserError(_("You must assign the client a type of regimen"))
 
                         if rec_partner.type_liability_id:
                             customer_data['liability_code'] = rec_partner.type_liability_id.id
                         else:
-                            raise Warning(_("You must assign the customer a type of liability"))
+                            raise UserError(_("You must assign the customer a type of liability"))
 
                         if rec.partner_id.phone:
                             phone = rec.partner_id.phone
@@ -400,9 +400,9 @@ class AccountMove(models.Model):
 
                         return customer_data
                 else:
-                    raise Warning(_("The client does not have an identification document number."))
+                    raise UserError(_("The client does not have an identification document number."))
             else:
-                raise Warning(_("The client does not have an associated identification document type."))
+                raise UserError(_("The client does not have an associated identification document type."))
         return False
 
     def get_ei_legal_monetary_totals(self):
@@ -431,7 +431,7 @@ class AccountMove(models.Model):
             for invoice_line_id in rec.invoice_line_ids:
                 if invoice_line_id.account_id:
                     if not (0 <= invoice_line_id.discount < 100):
-                        raise Warning("The discount must always be greater than or equal to 0 and less than 100.")
+                        raise UserError(_("The discount must always be greater than or equal to 0 and less than 100."))
 
                     price_unit = 100.0 * invoice_line_id.price_subtotal / (invoice_line_id.quantity * (
                             100.0 - invoice_line_id.discount))
@@ -446,18 +446,18 @@ class AccountMove(models.Model):
                     if invoice_line_id.product_id.code:
                         products.update({'product_ref': invoice_line_id.product_id.code})
                     else:
-                        raise Warning(_("All products must have an internal reference assigned"))
+                        raise UserError(_("All products must have an internal reference assigned"))
 
                     if rec.is_out_country:
                         if invoice_line_id.product_id.brand_name:
                             products.update({'brand_name': invoice_line_id.product_id.brand_name})
                         else:
-                            raise Warning(_("Products on export invoices must have a brand name"))
+                            raise UserError(_("Products on export invoices must have a brand name"))
 
                         if invoice_line_id.product_id.model_name:
                             products.update({'model_name': invoice_line_id.product_id.model_name})
                         else:
-                            raise Warning(_("Products on export invoices must have a model name"))
+                            raise UserError(_("Products on export invoices must have a model name"))
 
                     products.update({'description': invoice_line_id.name})
 
@@ -467,7 +467,7 @@ class AccountMove(models.Model):
                     if invoice_line_id.product_uom_id.edi_unit_measure_id.id:
                         products.update({'uom_code': invoice_line_id.product_uom_id.edi_unit_measure_id.id})
                     else:
-                        raise Warning(_("All products must be assigned a unit of measure (DIAN)"))
+                        raise UserError(_("All products must be assigned a unit of measure (DIAN)"))
 
                     products.update({'quantity': invoice_line_id.quantity})
                     products.update({'line_extension_value': invoice_line_id.price_subtotal})
@@ -524,9 +524,9 @@ class AccountMove(models.Model):
                                     tax_total.update({'base_uom': "1.000000"})
                                     tax_totals['tax_totals'].append(tax_total)
                                 else:
-                                    raise Warning(_("Electronic invoicing is not yet compatible with this tax type."))
+                                    raise UserError(_("Electronic invoicing is not yet compatible with this tax type."))
                         else:
-                            raise Warning(_("All taxes must be assigned a tax type (DIAN)."))
+                            raise UserError(_("All taxes must be assigned a tax type (DIAN)."))
 
                     # UPDATE ALL THE ELEMENTS OF THE PRODUCT
                     invoice_temps.update(products)
@@ -544,18 +544,18 @@ class AccountMove(models.Model):
                     # Transport compatibility
                     if rec.ei_operation == 'transport':
                         if 'waypoint_id' not in invoice_line_id:
-                            raise Warning(_("Transport compatibility is only available with "
+                            raise UserError(_("Transport compatibility is only available with "
                                             "Jorels SAS Freight Transport Module"))
 
                         if invoice_line_id.waypoint_id:
                             # Check field values
                             if not invoice_line_id.waypoint_id.name_seq:
-                                raise Warning(_("A waypoint doesn't have an associated id number"))
+                                raise UserError(_("A waypoint doesn't have an associated id number"))
                             if not invoice_line_id.waypoint_id.total:
-                                raise Warning(_("The waypoint %s doesn't have an total")
+                                raise UserError(_("The waypoint %s doesn't have an total")
                                               % invoice_line_id.waypoint_id.name_seq)
                             if not invoice_line_id.waypoint_id.weight:
-                                raise Warning(_("The waypoint %s doesn't have an weight")
+                                raise UserError(_("The waypoint %s doesn't have an weight")
                                               % invoice_line_id.waypoint_id.name_seq)
 
                             # Transport remittance registered in the RNDC
@@ -590,7 +590,7 @@ class AccountMove(models.Model):
 
                     # Mandates compatibility
                     if rec.ei_operation == 'mandates':
-                        raise Warning(_("Electronic invoicing does not yet support mandates"))
+                        raise UserError(_("Electronic invoicing does not yet support mandates"))
 
                     lines.append(invoice_temps)
 
@@ -707,9 +707,9 @@ class AccountMove(models.Model):
                 # Debit note
                 type_documents_rec = type_documents_env.search([('code', '=', '92')])
             else:
-                raise Warning(_("This type of document does not need to be sent to DIAN"))
+                raise UserError(_("This type of document does not need to be sent to DIAN"))
         else:
-            raise Warning(_("This type of document does not need to be sent to DIAN"))
+            raise UserError(_("This type of document does not need to be sent to DIAN"))
 
         self.ei_type_document_id = type_documents_rec.id
 
@@ -820,7 +820,7 @@ class AccountMove(models.Model):
 
                 # Check resolution
                 if not rec.resolution_id:
-                    raise Warning(_("This type of document does not have a DIAN resolution assigned"))
+                    raise UserError(_("This type of document does not have a DIAN resolution assigned"))
 
                 json_request = {
                     'number': rec.ei_number,
@@ -889,7 +889,7 @@ class AccountMove(models.Model):
                             'date': str(rate_date)
                         }
                     else:
-                        raise Warning(_("A currency type in Odoo does not correspond to any DIAN currency type"))
+                        raise UserError(_("A currency type in Odoo does not correspond to any DIAN currency type"))
 
                 if self.is_universal_discount():
                     if rec.ks_amount_discount:
@@ -927,9 +927,9 @@ class AccountMove(models.Model):
                             invoice_rec = invoice_env.search([('id', '=', rec.debit_origin_id.id)])
                             billing_reference = True
                         else:
-                            raise Warning(_("The debit notes module has not been installed."))
+                            raise UserError(_("The debit notes module has not been installed."))
                 else:
-                    raise Warning(_("This type of document does not need to be sent to DIAN"))
+                    raise UserError(_("This type of document does not need to be sent to DIAN"))
 
                 # Billing reference
                 if billing_reference:
@@ -941,7 +941,7 @@ class AccountMove(models.Model):
                             "description": rec.ref if rec.ref else ''
                         }
                     else:
-                        raise Warning(_("You need to select a correction code first"))
+                        raise UserError(_("You need to select a correction code first"))
 
                     if not rec.ei_is_correction_without_reference:
                         if invoice_rec and invoice_rec.ei_uuid:
@@ -951,7 +951,7 @@ class AccountMove(models.Model):
                                 "issue_date": fields.Date.to_string(invoice_rec.ei_issue_date)
                             }
                         else:
-                            raise Warning(_("The reference invoice has not yet been validated before the DIAN"))
+                            raise UserError(_("The reference invoice has not yet been validated before the DIAN"))
 
                 if rec.ref or rec.narration:
                     notes = []
@@ -963,7 +963,7 @@ class AccountMove(models.Model):
                             notes.append({'text': narration})
                     json_request['notes'] = notes
             else:
-                raise Warning(_("This type of document does not need to be sent to DIAN"))
+                raise UserError(_("This type of document does not need to be sent to DIAN"))
 
             return json_request
 
@@ -1004,7 +1004,7 @@ class AccountMove(models.Model):
                     if rec.company_id.api_key:
                         token = rec.company_id.api_key
                     else:
-                        raise Warning(_("You must configure a token"))
+                        raise UserError(_("You must configure a token"))
 
                     api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
                                                                                'https://edipo.jorels.com')
@@ -1024,7 +1024,7 @@ class AccountMove(models.Model):
                             test_set_id = rec.company_id.test_set_id
                             params['test_set_id'] = test_set_id
                         else:
-                            raise Warning(_("You have not configured a 'TestSetId'."))
+                            raise UserError(_("You have not configured a 'TestSetId'."))
 
                     _logger.debug('API URL: %s', api_url)
 
@@ -1035,15 +1035,15 @@ class AccountMove(models.Model):
                     _logger.debug('API Response: %s', response)
 
                     if 'detail' in response:
-                        raise Warning(response['detail'])
+                        raise UserError(response['detail'])
                     if 'message' in response:
                         if response['message'] == 'Unauthenticated.' or response['message'] == '':
-                            raise Warning(_("Authentication error with the API"))
+                            raise UserError(_("Authentication error with the API"))
                         else:
                             if 'errors' in response:
-                                raise Warning(response['message'] + '/ errors: ' + str(response['errors']))
+                                raise UserError(response['message'] + '/ errors: ' + str(response['errors']))
                             else:
-                                raise Warning(response['message'])
+                                raise UserError(response['message'])
                     elif 'is_valid' in response:
                         rec.write_response(response, json.dumps(requests_data, indent=2, sort_keys=False))
                         if response['is_valid']:
@@ -1055,18 +1055,18 @@ class AccountMove(models.Model):
                                 else:
                                     temp_message = {rec.ei_status_message, rec.ei_errors_messages,
                                                     rec.ei_status_description, rec.ei_status_code}
-                                    raise Warning(str(temp_message))
+                                    raise UserError(str(temp_message))
                             else:
-                                raise Warning(_('A valid UUID was not obtained. Try again.'))
+                                raise UserError(_('A valid UUID was not obtained. Try again.'))
                         else:
-                            raise Warning(_('The document could not be validated in DIAN.'))
+                            raise UserError(_('The document could not be validated in DIAN.'))
                     else:
-                        raise Warning(_("No logical response was obtained from the API."))
+                        raise UserError(_("No logical response was obtained from the API."))
                 else:
-                    raise Warning(_("This type of document does not need to be sent to the DIAN"))
+                    raise UserError(_("This type of document does not need to be sent to the DIAN"))
             except Exception as e:
                 _logger.debug("Failed to process the request: %s", e)
-                raise Warning(_("Failed to process the request: %s") % e)
+                raise UserError(_("Failed to process the request: %s") % e)
 
             if not is_test and not rec.ei_attached_document_base64_bytes:
                 rec.status_document_log()
@@ -1099,46 +1099,39 @@ class AccountMove(models.Model):
     def post(self):
         res = super(AccountMove, self).post()
 
-        to_paid_invoices = self.filtered(
-            lambda inv: inv.is_invoice() and inv.currency_id.is_zero(inv.amount_total) and inv.company_id.ei_enable)
-        if to_paid_invoices:
-            raise Warning(_('Please check your invoice again. Are you really billing something?'))
+        to_edi = self.filtered(lambda inv: inv.company_id.ei_enable
+                                           and inv.type in ('out_invoice', 'out_refund')
+                                           and not inv.ei_is_valid
+                                           and not inv.is_journal_pos())
+        if to_edi:
+            # Invoices in DIAN cannot be validated with zero total
+            to_paid_invoices = to_edi.filtered(lambda inv: inv.currency_id.is_zero(inv.amount_total))
+            if to_paid_invoices:
+                raise UserError(_('Please check your invoice again. Are you really billing something?'))
 
-        to_electronic_invoices = self.filtered(
-            lambda
-                inv: inv.state == 'posted' and not inv.ei_is_valid and not inv.is_journal_pos() and inv.company_id.ei_enable
-        )
-        if to_electronic_invoices.filtered(lambda inv: inv.type in ('out_invoice', 'out_refund')):
-            # Environment
-            to_electronic_invoices.filtered(
-                lambda inv: inv.write({'ei_is_not_test': inv.company_id.is_not_test})
-            )
+            # Validate invoices
+            to_electronic_invoices = to_edi.filtered(lambda inv: inv.state == 'posted'
+                                                                 and not inv.company_id.enable_validate_state)
+            if to_electronic_invoices:
+                to_electronic_invoices.filtered(lambda inv: inv.write({'ei_is_not_test': inv.company_id.is_not_test}))
 
-            # Enter intermediate validation state, if option is enabled in configuration
-            to_electronic_invoices.filtered(
-                lambda inv: inv.company_id.enable_validate_state
-            ).write({'state': 'validate'})
+                # Production invoices
+                to_production_invoices = to_electronic_invoices.filtered(lambda inv: inv.ei_is_not_test)
+                if to_production_invoices:
+                    to_production_invoices.validate_dian_generic(False)
+                    to_mass_send = to_production_invoices.filtered(lambda inv: inv.company_id.enable_mass_send_print)
+                    if to_mass_send:
+                        try:
+                            to_mass_send.mass_send_print()
+                        except Exception as e:
+                            self.env.user.notify_danger(message=_('The invoice email could not be sent'))
+                            _logger.debug("The invoice email could not be sent")
+                            _logger.error('mass_send_print error: %s' % e)
 
-            # Validate DIAN production
-            to_electronic_invoices.filtered(
-                lambda inv: inv.ei_is_not_test and not inv.company_id.enable_validate_state
-            ).validate_dian_generic(False)
-
-            # Validate DIAN test
-            to_electronic_invoices.filtered(
-                lambda inv: not inv.ei_is_not_test and not inv.company_id.enable_validate_state
-            ).validate_dian_generic(True)
-
-            # Send mail
-            try:
-                to_send_invoices = to_electronic_invoices.filtered(
-                    lambda inv: inv.company_id.enable_mass_send_print and not inv.company_id.enable_validate_state
-                )
-                if to_send_invoices:
-                    to_send_invoices.mass_send_print()
-            except Exception as e:
-                self.env.user.notify_danger(message=_('The invoice email could not be sent'))
-                _logger.error('mass_send_print error: %s' % e)
+                # Test invoices
+                to_test_invoices = to_electronic_invoices.filtered(lambda inv: not inv.ei_is_not_test)
+                if to_test_invoices:
+                    to_test_invoices.validate_dian_generic(True)
 
         return res
 
@@ -1161,7 +1154,7 @@ class AccountMove(models.Model):
                         if rec.company_id.api_key:
                             token = rec.company_id.api_key
                         else:
-                            raise Warning(_("You must configure a token"))
+                            raise UserError(_("You must configure a token"))
 
                         api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
                                                                                    'https://edipo.jorels.com')
@@ -1185,15 +1178,15 @@ class AccountMove(models.Model):
                         _logger.debug('API Response: %s', response)
 
                         if 'detail' in response:
-                            raise Warning(response['detail'])
+                            raise UserError(response['detail'])
                         if 'message' in response:
                             if response['message'] == 'Unauthenticated.' or response['message'] == '':
-                                raise Warning(_("Authentication error with the API"))
+                                raise UserError(_("Authentication error with the API"))
                             else:
                                 if 'errors' in response:
-                                    raise Warning(response['message'] + '/ errors: ' + str(response['errors']))
+                                    raise UserError(response['message'] + '/ errors: ' + str(response['errors']))
                                 else:
-                                    raise Warning(response['message'])
+                                    raise UserError(response['message'])
                         elif 'is_valid' in response:
                             rec.write_response(response, json.dumps(requests_data, indent=2, sort_keys=False))
                             if response['is_valid']:
@@ -1205,20 +1198,20 @@ class AccountMove(models.Model):
                                     else:
                                         temp_message = {rec.ei_status_message, rec.ei_errors_messages,
                                                         rec.ei_status_description, rec.ei_status_code}
-                                        raise Warning(str(temp_message))
+                                        raise UserError(str(temp_message))
                                 else:
-                                    raise Warning(_('A valid Zip key or UUID was not obtained. Try again.'))
+                                    raise UserError(_('A valid Zip key or UUID was not obtained. Try again.'))
                             else:
-                                raise Warning(_('The document could not be validated in DIAN.'))
+                                raise UserError(_('The document could not be validated in DIAN.'))
                         else:
-                            raise Warning(_("No logical response was obtained from the API"))
+                            raise UserError(_("No logical response was obtained from the API"))
                     else:
-                        raise Warning(_("A Zip key or UUID is required to check the status of the document."))
+                        raise UserError(_("A Zip key or UUID is required to check the status of the document."))
                 else:
-                    raise Warning(_("This type of document does not need to be sent to the DIAN"))
+                    raise UserError(_("This type of document does not need to be sent to the DIAN"))
             except Exception as e:
                 _logger.debug("Failed to process the request: %s", e)
-                raise Warning(_("Failed to process the request: %s") % e)
+                raise UserError(_("Failed to process the request: %s") % e)
 
     def status_document_log(self):
         for rec in self:
@@ -1240,7 +1233,7 @@ class AccountMove(models.Model):
                         if rec.company_id.api_key:
                             token = rec.company_id.api_key
                         else:
-                            raise Warning(_("You must configure a token"))
+                            raise UserError(_("You must configure a token"))
 
                         api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
                                                                                    'https://edipo.jorels.com')
@@ -1258,7 +1251,7 @@ class AccountMove(models.Model):
                         _logger.debug('API Response: %s', response)
 
                         if 'detail' in response:
-                            raise Warning(response['detail'])
+                            raise UserError(response['detail'])
                         if 'message' in response:
                             if response['message'] == 'Unauthenticated.' or response['message'] == '':
                                 self.env.user.notify_warning(message=_("Authentication error with the API"))

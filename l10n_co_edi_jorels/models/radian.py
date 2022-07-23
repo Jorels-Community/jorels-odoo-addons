@@ -59,7 +59,7 @@ class Radian(models.Model):
                                  default=lambda self: self.env['res.company']._company_default_get(),
                                  states={'draft': [('readonly', False)]})
     move_id = fields.Many2one(comodel_name="account.move", string="Invoice", required=True, readonly=True,
-                              states={'draft': [('readonly', False)]}, copy=False,
+                              states={'draft': [('readonly', False)]}, copy=True,
                               domain=[('type', 'in', ('in_invoice', 'in_refund', 'out_invoice', 'out_refund'))],
                               tracking=True)
 

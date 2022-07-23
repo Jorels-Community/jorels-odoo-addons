@@ -33,45 +33,40 @@
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
                         Dear
                         % if object.partner_id.parent_id:
-                        ${object.partner_id.name} (${object.partner_id.parent_id.name}),
+                            ${object.partner_id.name} (${object.partner_id.parent_id.name}),
                         % else:
-                        ${object.partner_id.name},
+                            ${object.partner_id.name},
                         % endif
-                        <br/>
-                        <br/>
+                        <br /><br />
                         Here is your
                         % if object.name:
-                        invoice
-                        <strong>${object.name}</strong>
+                            invoice <strong>${object.name}</strong>
                         % else:
                         invoice
                         %endif
                         % if object.invoice_origin:
-                        (with reference: ${object.invoice_origin})
+                            (with reference: ${object.invoice_origin})
                         % endif
-                        amounting in
-                        <strong>${format_amount(object.amount_total, object.currency_id)}</strong>
+                        amounting in <strong>${format_amount(object.amount_total, object.currency_id)}</strong>
                         from ${object.company_id.name}.
                         % if object.invoice_payment_state == 'paid':
-                        This invoice is already paid.
+                            This invoice is already paid.
                         % else:
-                        Please remit payment at your earliest convenience.
+                            Please remit payment at your earliest convenience.
                         % endif
-                        <br/>
-                        <br/>
-                        Do not hesitate to contact us if you have any questions.
+                        <br /><br />
+                        Do not hesitate to contact us if you have any question.
                     </p>
                 </div>
             </field>
             <field name="report_template" ref="account.account_invoices"/>
-            <field name="report_name">
-                Invoice_${(object.name or '').replace('/','_')}${object.state == 'draft' and '_draft' or ''}
-            </field>
+            <field name="report_name">Invoice_${(object.name or '').replace('/','_')}${object.state == 'draft' and '_draft' or ''}</field>
             <field name="lang">${object.partner_id.lang}</field>
             <field name="user_signature" eval="False"/>
             <field name="auto_delete" eval="True"/>
         </record>
     </data>
+
     <data noupdate="1">
     <record id="l10n_co_edi_jorels.email_template_radian" model="mail.template">
         <field name="name">Radian event: Send by email</field>
