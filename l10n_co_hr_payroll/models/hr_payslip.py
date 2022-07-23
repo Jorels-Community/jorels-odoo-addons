@@ -1587,27 +1587,30 @@ class HrPayslip(models.Model):
         # The following line is commented, because if applied, the sequence is incorrectly calculated
         # and the relationship to the original payroll would not be taken by default
         # res = super(HrPayslip, self).refund_sheet()
-        refund_payslip = None
+        copied_payslip = None
         for payslip in self:
             if payslip.credit_note:
                 raise UserError(_("A adjustment note should not be made to a adjustment note"))
 
-            refund_payslip = payslip.copy({'credit_note': True,
+            copied_payslip = payslip.copy({'credit_note': True,
                                            'name': _('Refund: ') + payslip.name,
                                            'origin_payslip_id': payslip.id,
                                            'number': _('New'),
                                            })
-            refund_payslip.action_payslip_done()
+            # It is important to call compute_sheet here,
+            # so that the accounting of the adjustment notes works well.
+            copied_payslip.compute_sheet()
+            copied_payslip.action_payslip_done()
 
-            if payslip.edi_payload and not refund_payslip.edi_payload:
-                payload = refund_payslip.get_json_request()
-                refund_payslip.write({'edi_payload': json.dumps(payload, indent=2, sort_keys=False)})
+            if payslip.edi_payload and not copied_payslip.edi_payload:
+                payload = copied_payslip.get_json_request()
+                copied_payslip.write({'edi_payload': json.dumps(payload, indent=2, sort_keys=False)})
 
         formview_ref = self.env.ref('hr_payroll_community.view_hr_payslip_form', False)
         treeview_ref = self.env.ref('hr_payroll_community.view_hr_payslip_tree', False)
 
-        if refund_payslip is not None:
-            domain = "[('id', 'in', %s)]" % refund_payslip.ids
+        if copied_payslip is not None:
+            domain = "[('id', 'in', %s)]" % copied_payslip.ids
         else:
             domain = "[(credit_note, '=', True)]"
 
