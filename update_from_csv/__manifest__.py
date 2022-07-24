@@ -31,9 +31,7 @@
     'version': '14.0.0.1',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
-
     'depends': ['base'],
-
     'data': [
     ],
     'installable': True,
