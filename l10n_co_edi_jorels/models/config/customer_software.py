@@ -102,8 +102,8 @@ class CustomerSoftware(models.Model):
         else:
             return 'none'
 
-    def get_invoice_id(self, mail_message):
-        """Return invoice_id from mail message"""
+    def get_move_id(self, mail_message):
+        """Return move_id from mail message"""
         self.ensure_one()
 
         try:

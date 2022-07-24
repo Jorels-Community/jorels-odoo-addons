@@ -44,7 +44,7 @@ class ResPartner(models.Model):
     customer_software_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.customer_software',
                                            string="Customer software", copy=False, ondelete='RESTRICT')
     type_document_identification_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_document_identifications",
-                                                      string="Type document identification",
+                                                      string="Type document identification", readonly=True,
                                                       compute='_compute_type_document_identification_id', store=True,
                                                       copy=False, ondelete='RESTRICT')
     # surname, second_surname, first_name, other_names
@@ -63,7 +63,7 @@ class ResPartner(models.Model):
 
     @api.depends('l10n_latam_identification_type_id')
     def _compute_type_document_identification_id(self):
-        if not self.env['l10n_co_edi_jorels.type_document_identifications'].search([]):
+        if not self.env['l10n_co_edi_jorels.type_document_identifications'].search_count([]):
             self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.type_document_identifications')
 
         for rec in self:

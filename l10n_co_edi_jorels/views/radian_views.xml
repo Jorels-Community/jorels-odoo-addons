@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    l10n_co_hr_payroll
+    Copyright (C) 2022  Jorels SAS
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    email: info@jorels.com
+ -->
+<odoo>
+    <record id="view_l10n_co_edi_jorels_radian_form" model="ir.ui.view">
+        <field name="name">l10n_co_edi_jorels.radian.form</field>
+        <field name="model">l10n_co_edi_jorels.radian</field>
+        <field name="arch" type="xml">
+            <form string="Radian events">
+                <header>
+                    <button string="Validate" name="action_post" type="object" states="draft" class="oe_highlight"/>
+                    <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
+                            attrs="{'invisible': [('state','=','draft')]}"/>
+                    <button string="Set to Draft" name="action_draft" type="object" states="cancel"/>
+                    <button string="Cancel" name="action_cancel" type="object" states="draft,posted"/>
+                    <button string="Send by email" name="action_send_email" type="object" states="posted"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
+                </header>
+                <sheet>
+                    <h1 class="mt0">
+                        <div attrs="{'invisible': [('name','=',False)]}">
+                            <field name="name" class="oe_inline"/>
+                        </div>
+                        <field name="type" invisible="1"/>
+                        <div attrs="{'invisible': [('type','!=','customer')]}">
+                            <span>Customer Event</span>
+                        </div>
+                        <div attrs="{'invisible': [('type','!=','supplier')]}">
+                            <span>Supplier Event</span>
+                        </div>
+                    </h1>
+                    <group>
+                        <group name="group-left">
+                            <field name="move_id" options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="event_id"/>
+                            <field name="rejection_concept_id" attrs="{'invisible':[('event_id','!=',4)]}"/>
+                        </group>
+                        <group name="group-right">
+                            <field name="date"/>
+                            <field name="user_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="note"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="edi_response" string="Edi Response">
+                            <group>
+                                <field name="edi_sync"/>
+                                <field name="edi_is_not_test"/>
+                                <field name="edi_is_valid"/>
+                                <field name="edi_is_restored"/>
+                                <field name="edi_algorithm"/>
+                                <field name="edi_class"/>
+                                <field name="edi_number"/>
+                                <field name="edi_uuid"/>
+                                <field name="edi_issue_date"/>
+                                <field name="edi_expedition_date"/>
+                                <field name="edi_zip_key"/>
+                                <field name="edi_status_code"/>
+                                <field name="edi_status_description"/>
+                                <field name="edi_status_message"/>
+                                <field name="edi_errors_messages"/>
+                                <field name="edi_xml_name"/>
+                                <field name="edi_zip_name"/>
+                                <field name="edi_signature"/>
+                                <field name="edi_qr_code"/>
+                                <field name="edi_qr_data"/>
+                                <field name="edi_qr_link" widget="url"/>
+                                <field name="edi_pdf_download_link" widget="url"/>
+                                <field name="edi_xml_base64"/>
+                                <field name="edi_application_response_base64"/>
+                                <field name="edi_attached_document_base64"/>
+                                <field name="edi_pdf_base64"/>
+                                <field name="edi_zip_base64"/>
+                                <field name="edi_type_environment"/>
+                                <field name="edi_attached_zip_base64"/>
+                                <field name="edi_payload" groups="base.group_no_one"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="o_attachment_preview"/>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_l10n_co_edi_jorels_radian_tree" model="ir.ui.view">
+        <field name="name">l10n_co_edi_jorels.radian.tree</field>
+        <field name="model">l10n_co_edi_jorels.radian</field>
+        <field name="arch" type="xml">
+            <tree string="DIAN Events" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="move_id"/>
+                <field name="event_id"/>
+                <field name="date"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_l10n_co_edi_jorels_radian_search" model="ir.ui.view">
+        <field name="name">l10n_co_edi_jorels.radian.search</field>
+        <field name="model">l10n_co_edi_jorels.radian</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="move_id"/>
+                <field name="event_id"/>
+                <field name="date"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="state"/>
+                <field name="user_id"/>
+                <field name="edi_is_valid"/>
+                <filter name="filter_draft"
+                        string="Draft"
+                        domain="[('state','=','draft')]"/>
+                <filter name="filter_posted"
+                        string="Posted"
+                        domain="[('state','=','posted')]"/>
+                <filter name="filter_cancel"
+                        string="Cancelled"
+                        domain="[('state','=','cancel')]"/>
+                <group expand="0" string="Invoice">
+                    <filter name="groupby_move" context="{'group_by' : 'move_id'}" string="Invoice"/>
+                </group>
+                <group expand="0" string="Event">
+                    <filter name="groupby_event" context="{'group_by' : 'event_id'}" string="Event"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Supplier Radian actions and menus -->
+    <record id="action_l10n_co_edi_jorels_radian_supplier" model="ir.actions.act_window">
+        <field name="name">Radian events</field>
+        <field name="res_model">l10n_co_edi_jorels.radian</field>
+        <field name="view_mode">tree,form</field>
+        <field eval="False" name="view_id"/>
+        <field name="domain">[('type','=','supplier')]</field>
+        <field name="context">{'default_type': 'supplier', 'type': 'supplier', 'search_default_groupby_move': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Radian event!
+            </p>
+        </field>
+    </record>
+
+    <record id="action_l10n_co_edi_jorels_radian_supplier_tree" model="ir.actions.act_window.view">
+        <field eval="1" name="sequence"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_l10n_co_edi_jorels_radian_tree"/>
+        <field name="act_window_id" ref="action_l10n_co_edi_jorels_radian_supplier"/>
+    </record>
+
+    <record id="action_l10n_co_edi_jorels_radian_supplier_form" model="ir.actions.act_window.view">
+        <field eval="2" name="sequence"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_l10n_co_edi_jorels_radian_form"/>
+        <field name="act_window_id" ref="action_l10n_co_edi_jorels_radian_supplier"/>
+    </record>
+
+    <menuitem action="action_l10n_co_edi_jorels_radian_supplier"
+              id="menu_l10n_co_edi_jorels_radian_tree"
+              name="Radian events"
+              parent="account.menu_finance_payables"/>
+
+    <!-- Customer Radian actions and menus -->
+    <record id="action_l10n_co_edi_jorels_radian_customer" model="ir.actions.act_window">
+        <field name="name">Radian events</field>
+        <field name="res_model">l10n_co_edi_jorels.radian</field>
+        <field name="view_mode">tree,form</field>
+        <field eval="False" name="view_id"/>
+        <field name="domain">[('type','=','customer')]</field>
+        <field name="context">{'default_type': 'customer', 'type': 'customer', 'search_default_groupby_move': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Radian event!
+            </p>
+        </field>
+    </record>
+
+    <record id="action_l10n_co_edi_jorels_radian_customer_tree" model="ir.actions.act_window.view">
+        <field eval="1" name="sequence"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_l10n_co_edi_jorels_radian_tree"/>
+        <field name="act_window_id" ref="action_l10n_co_edi_jorels_radian_customer"/>
+    </record>
+
+    <record id="action_l10n_co_edi_jorels_radian_customer_form" model="ir.actions.act_window.view">
+        <field eval="2" name="sequence"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_l10n_co_edi_jorels_radian_form"/>
+        <field name="act_window_id" ref="action_l10n_co_edi_jorels_radian_customer"/>
+    </record>
+
+    <menuitem action="action_l10n_co_edi_jorels_radian_customer"
+              id="menu_l10n_co_edi_jorels_radian_customer"
+              name="Radian events"
+              parent="account.menu_finance_receivables"/>
+
+
+</odoo>

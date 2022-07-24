@@ -33,42 +33,36 @@
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
                         Dear
                         % if object.partner_id.parent_id:
-                        ${object.partner_id.name} (${object.partner_id.parent_id.name}),
+                            ${object.partner_id.name} (${object.partner_id.parent_id.name}),
                         % else:
-                        ${object.partner_id.name},
+                            ${object.partner_id.name},
                         % endif
-                        <br/>
-                        <br/>
+                        <br /><br />
                         Here is your
                         % if object.name:
-                        invoice
-                        <strong>${object.name}</strong>
+                            invoice <strong>${object.name}</strong>
                         % else:
                         invoice
                         %endif
                         % if object.invoice_origin:
-                        (with reference: ${object.invoice_origin})
+                            (with reference: ${object.invoice_origin})
                         % endif
-                        amounting in
-                        <strong>${format_amount(object.amount_total, object.currency_id)}</strong>
+                        amounting in <strong>${format_amount(object.amount_total, object.currency_id)}</strong>
                         from ${object.company_id.name}.
                         % if object.payment_state in ('paid', 'in_payment'):
-                        This invoice is already paid.
+                            This invoice is already paid.
                         % else:
-                        Please remit payment at your earliest convenience.
-                        % if object.payment_reference:
-                        <br/>
-                        <br/>
-                        Please use the following communication for your payment: <strong>
-                        ${object.payment_reference}</strong>.
+                            Please remit payment at your earliest convenience.
+                            % if object.payment_reference:
+                                <br /><br />
+                                Please use the following communication for your payment: <strong>${object.payment_reference}</strong>.
+                            % endif
                         % endif
-                        % endif
-                        <br/>
-                        <br/>
+                        <br /><br />
                         Do not hesitate to contact us if you have any questions.
                         % if object.invoice_user_id.signature:
-                        <br/>
-                        ${object.invoice_user_id.signature | safe}
+                            <br/>
+                            ${object.invoice_user_id.signature | safe}
                         % endif
                     </p>
                 </div>
@@ -78,5 +72,63 @@
             <field name="lang">${object.partner_id.lang}</field>
             <field name="auto_delete" eval="True"/>
         </record>
+    </data>
+
+    <data noupdate="1">
+    <record id="l10n_co_edi_jorels.email_template_radian" model="mail.template">
+        <field name="name">Radian event: Send by email</field>
+        <field name="model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
+        <field name="email_from">${object.company_id.email_edi_formatted |safe}</field>
+        <field name="email_to">${object.move_id.partner_id.email_edi}</field>
+        <field name="partner_to">${object.move_id.partner_id.id}</field>
+        <field name="subject">Evento;${object.move_id.ei_number or ''};${object.company_id.vat_formatted or ''};${object.company_id.business_name or object.company_id.name or ''};${object.name or ''};${object.event_id.code or ''}</field>
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Dear ${object.move_id.partner_id.name}
+                    % if object.move_id.partner_id.parent_id:
+                        (${object.move_id.partner_id.parent_id.name})
+                    % endif
+                    <br/>
+                    <br/>
+                    Here is your
+                    Radian event
+                    <strong>${object.event_id.name}</strong>
+                    with number
+                    <strong>${object.name}</strong>
+                    (with invoice: ${object.move_id.ei_number})
+                    % if object.company_id.business_name:
+                        from ${object.company_id.business_name}.
+                    % else:
+                        from ${object.company_id.name}.
+                    % endif
+                    <br/>
+                    <br/>
+                    Do not hesitate to contact us if you have any question.
+                </p>
+            </div>
+        </field>
+        <field name="lang">${object.move_id.partner_id.lang}</field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+<!--        <act_window name="Send Radian event By Email"-->
+<!--                    res_model="mail.compose.message"-->
+<!--                    src_model="l10n_co_edi_jorels.radian"-->
+<!--                    view_mode="form"-->
+<!--                    target="new"-->
+<!--                    key2="client_action_relate"-->
+<!--                    id="l10n_co_edi_jorels_send_radian_by_email_action"-->
+<!--                    context="{-->
+<!--                'default_model': 'l10n_co_edi_jorels.radian',-->
+<!--                'active_model': 'l10n_co_edi_jorels.radian',-->
+<!--                'mail_post_autofollow': True,-->
+<!--                'default_composition_mode': 'comment',-->
+<!--                'default_use_template': True,-->
+<!--                'default_res_id': active_id,-->
+<!--                'default_template_id': ref('l10n_co_edi_jorels.email_template_radian'),-->
+<!--                'force_email': True,-->
+<!--                'custom_layout': 'mail.mail_notification_light',-->
+<!--            }"-->
+<!--        />-->
     </data>
 </odoo>

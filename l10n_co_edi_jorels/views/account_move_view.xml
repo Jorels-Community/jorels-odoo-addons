@@ -27,30 +27,32 @@
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='ref']" position="after">
-                    <field name="ei_operation"/>
+                    <field name="payment_form_id"/>
+                    <field name="payment_method_id"/>
+                    <field name="ei_operation"
+                           attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
                     <field name="ei_correction_concept_credit_id"
-                           attrs="{'invisible':[('move_type','!=','out_refund'),('move_type','!=','in_refund')]}"/>
+                           attrs="{'invisible':[('move_type','not in',('out_refund', 'in_refund'))]}"/>
                     <field name="ei_correction_concept_debit_id"
-                           attrs="{'invisible':[('move_type','!=','out_invoice'),('move_type','!=','in_invoice')]}"/>
+                           attrs="{'invisible':['|',('move_type','not in',('out_invoice', 'in_invoice')),('debit_origin_id','=',False)]}"/>
                     <field name="ei_is_correction_without_reference"
-                           attrs="{'invisible':[('move_type','!=','out_refund')]}"/>
+                           attrs="{'invisible':[('move_type','not in',('out_refund', 'in_refund'))]}"/>
                 </xpath>
                 <xpath expr="//button[@name='action_post']" position="after">
                     <button name="validate_dian" type="object" string="Validate DIAN"
-                            class="oe_highlight o_invoice_validate" groups="account.group_account_invoice"
-                            attrs="{'invisible': ['|',('ei_is_not_test','=',False),('state','!=','validate')]}"/>
+                            class="oe_highlight o_invoice_validate" groups="base.group_no_one"
+                            attrs="{'invisible': ['|','|','|',('ei_is_valid','=',True),('ei_is_not_test','=',False),('state','!=','posted'),('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
                     <button name="skip_validate_dian" type="object" string="Skip DIAN validation"
-                            class="oe_highlight o_invoice_validate" groups="account.group_account_invoice"
-                            attrs="{'invisible': ['|',('ei_is_not_test','=',True),('state','!=','validate')]}"/>
-                    <!-- Buttons visible only in developer mode -->
+                            class="oe_highlight o_invoice_validate" groups="base.group_no_one"
+                            attrs="{'invisible': ['|','|',('ei_is_not_test','=',True),('state','!=','validate'),('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
                     <button name="skip_validate_dian_production" type="object" string="Skip DIAN validation"
                             class="o_invoice_validate" groups="base.group_no_one"
-                            attrs="{'invisible': ['|',('ei_is_not_test','=',False),('state','!=','validate')]}"/>
+                            attrs="{'invisible': ['|','|',('ei_is_not_test','=',False),('state','!=','validate'),('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
                     <button name="validate_dian_test" type="object" string="Validate DIAN Test"
-                            class="o_invoice_validate" groups="base.group_no_one"
-                            attrs="{'invisible': ['|',('ei_is_not_test','=',True),('state','!=','validate')]}"/>
+                            class="oe_highlight o_invoice_validate" groups="base.group_no_one"
+                            attrs="{'invisible': ['|','|','|',('ei_is_valid','=',True),('ei_is_not_test','=',True),('state','!=','posted'),('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
                     <button name="status_document" type="object" string="Consult DIAN" groups="base.group_no_one"
-                            attrs="{'invisible': [('state','!=','posted')]}"/>
+                            attrs="{'invisible': ['|',('state','!=','posted'),('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
                 </xpath>
                 <xpath expr="//field[@name='invoice_date']" position="after">
                     <field name="date_start" groups="l10n_co_edi_jorels.group_invoice_period_enable"/>
@@ -60,44 +62,113 @@
                 </xpath>
                 <xpath expr="//page[@name='other_info']" position="after">
                     <page string="DIAN response" name="info_Dian"
-                          attrs="{'invisible': [('move_type','!=','out_invoice'),('move_type','!=','out_refund')]}">
+                          attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}">
                         <group name="dian_response">
-                            <group name="dian_left">
-                                <field name="ei_is_valid" readonly="True"/>
-                                <field name="ei_is_not_test" readonly="True"/>
-                                <field name="ei_sync" readonly="True"/>
-                                <field name="ei_uuid" readonly="True"/>
-                                <field name="ei_issue_date" readonly="True"/>
-                                <field name="ei_zip_key" readonly="True"/>
-                                <field name="ei_status_code" readonly="True"/>
-                                <field name="ei_status_description" readonly="True"/>
-                                <field name="ei_status_message" readonly="True"/>
-                            </group>
-                            <group name="dian_right">
-                                <field name="ei_xml_file_name" readonly="True"/>
-                                <field name="ei_zip_name" readonly="True"/>
-                                <field name="ei_url_acceptance" readonly="True"/>
-                                <field name="ei_url_rejection" readonly="True"/>
-                                <field name="ei_xml_bytes" readonly="True"/>
-                                <field name="ei_errors_messages" readonly="True"/>
-                                <field name="ei_application_response_base64_bytes" readonly="True"/>
-                                <field name="ei_attached_document_base64_bytes" readonly="True"/>
-                                <field name="is_attached_document_matched" readonly="True"/>
-                                <field name="ei_pdf_base64_bytes" readonly="True"/>
-                                <field name="ei_zip_base64_bytes" readonly="True"/>
-                                <field name="ei_dian_response_base64_bytes" readonly="True"/>
-                                <field name="ei_attached_zip_base64_bytes" readonly="True"/>
-                                <field name="ei_xml_base64_bytes" readonly="True"/>
-                                <field name="ei_signature" readonly="True"/>
-                            </group>
-                            <group name="dian_qr">
-                                <field name="ei_qr_data" readonly="True"/>
-                                <field name="ei_qr_image" widget="image" readonly="True"/>
-                            </group>
-                            <group name="dian_event">
-                                <field name="event"/>
-                            </group>
+                            <field name="ei_sync"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_is_not_test"/>
+                            <field name="ei_is_valid"/>
+                            <field name="ei_is_restored"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_algorithm"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_class"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_number"/>
+                            <field name="ei_uuid"/>
+                            <field name="ei_issue_date"/>
+                            <field name="ei_expedition_date"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_zip_key"/>
+                            <field name="ei_status_code"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_status_description"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_status_message"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_errors_messages"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_xml_name"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_zip_name"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_signature"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_qr_code"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_qr_data"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_qr_link" widget="url"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_pdf_download_link" widget="url"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_xml_base64_bytes"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_application_response_base64_bytes"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_attached_document_base64_bytes"/>
+                            <field name="ei_pdf_base64_bytes"/>
+                            <field name="ei_zip_base64_bytes"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_type_environment"/>
+                            <field name="ei_attached_zip_base64_bytes"/>
+                            <field name="ei_payload" groups="base.group_no_one"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="ei_qr_image" widget="image"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
+                            <field name="event"
+                                   attrs="{'invisible':[('move_type','not in', ('out_invoice', 'out_refund'))]}"/>
                         </group>
+                    </page>
+                    <page name="dian_events" string="Dian Events"
+                          attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}">
+                        <field name="radian_ids"
+                               context="{'type': move_type in ('out_invoice','out_refund') and 'customer' or 'supplier', 'default_move_id': id}"
+                               options="{'always_reload': True}">
+                            <form string="Radian events">
+                                <header>
+                                    <button string="Validate" name="action_post" type="object" states="draft"
+                                            class="oe_highlight"/>
+                                    <button name="status_zip" type="object" string="Consult DIAN"
+                                            groups="base.group_no_one"
+                                            attrs="{'invisible': [('state','=','draft')]}"/>
+                                    <button string="Set to Draft" name="action_draft" type="object" states="cancel"/>
+                                    <button string="Cancel" name="action_cancel" type="object" states="draft,posted"/>
+                                    <button string="Send by email" name="action_send_email" type="object"
+                                            states="posted"/>
+                                    <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
+                                </header>
+                                <sheet>
+                                    <h1 class="mt0">
+                                        <div attrs="{'invisible': [('name','=',False)]}">
+                                            <field name="name" class="oe_inline"/>
+                                        </div>
+                                        <field name="type" invisible="1"/>
+                                        <div attrs="{'invisible': [('type','!=','customer')]}">
+                                            <span>Customer Event</span>
+                                        </div>
+                                        <div attrs="{'invisible': [('type','!=','supplier')]}">
+                                            <span>Supplier Event</span>
+                                        </div>
+                                    </h1>
+                                    <group>
+                                        <group name="group-left">
+                                            <field name="type" invisible="1"/>
+                                            <field name="move_id" invisible="1"/>
+                                            <field name="event_id"/>
+                                            <field name="rejection_concept_id"
+                                                   attrs="{'invisible':[('event_id','!=',4)]}"/>
+                                        </group>
+                                        <group name="group-right">
+                                            <field name="date"/>
+                                            <field name="user_id"/>
+                                            <field name="company_id" groups="base.group_multi_company"/>
+                                            <field name="note"/>
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='amount_by_group']" position="before">
@@ -108,6 +179,10 @@
                 <!-- Invoice lines -->
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
                     <field name="ei_notes"/>
+                </xpath>
+                <xpath expr="//field[@name='journal_id']" position="after">
+                    <field name="is_out_country"
+                           attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
                 </xpath>
             </field>
         </record>

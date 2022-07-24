@@ -25,7 +25,6 @@ import logging
 
 import requests
 from odoo import api, fields, models, tools, _
-from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -210,7 +209,6 @@ class ResCompany(models.Model):
                 [('l10n_co_document_code', '=', l10n_co_document_code)]
             )[0]
             company.partner_id.l10n_latam_identification_type_id = l10n_latam_identification_type_rec.id
-            # company.partner_id.l10n_co_document_code = self.get_l10n_co_document_code()
 
     def _inverse_type_organization_id(self):
         for company in self:
@@ -248,7 +246,7 @@ class ResCompany(models.Model):
                 _logger.debug('API Response PUT environment: %s', response)
 
                 if 'detail' in response:
-                    raise UserError(response['detail'])
+                    raise Warning(response['detail'])
                 if 'message' in response:
                     rec.env.user.notify_info(message=response['message'])
 
