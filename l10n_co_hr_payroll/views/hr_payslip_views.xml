@@ -235,6 +235,9 @@
                 <xpath expr="//page[last()]" position="after">
                     <page name="edi_response" string="Edi Response">
                         <group>
+                            <field name="payslip_edi_ids" readonly="True"/>
+                            <field name="edi_sync" readonly="True"/>
+                            <field name="edi_is_not_test" readonly="True"/>
                             <field name="edi_is_valid" readonly="True"/>
                             <field name="edi_is_restored" readonly="True"/>
                             <field name="edi_algorithm" readonly="True"/>
@@ -261,7 +264,12 @@
                             <field name="edi_pdf_base64" readonly="True"/>
                             <field name="edi_zip_base64" readonly="True"/>
                             <field name="edi_type_environment" readonly="True"/>
-                            <field name="edi_payload" groups="base.group_no_one" readonly="True"/>
+                        </group>
+                    </page>
+                    <page string="Edi Payload">
+                        <group>
+                            <field name="edi_payload_html" readonly="True"/>
+                            <field name="edi_payload" readonly="True" groups="base.group_no_one"/>
                         </group>
                     </page>
                 </xpath>
@@ -271,6 +279,22 @@
                 <xpath expr="//field[@name='line_ids']//tree//field[@name='rate']" position="after">
                     <field name="edi_quantity"/>
                     <field name="edi_rate"/>
+                </xpath>
+            </data>
+        </field>
+    </record>
+    <record id="hr_payslip_tree_l10n_co_payroll" model="ir.ui.view">
+        <field name="name">hr.payslip.tree.l10n.co.payroll</field>
+        <field name="model">hr.payslip</field>
+        <field name="priority">20</field>
+        <field name="inherit_id" ref="hr_payroll_community.view_hr_payslip_tree"/>
+        <field name="arch" type="xml">
+            <data>
+                <xpath expr="//field[@name='state']" position="before">
+                    <field name="worked_days_total"/>
+                    <field name="accrued_total_amount"/>
+                    <field name="deductions_total_amount"/>
+                    <field name="total_amount"/>
                 </xpath>
             </data>
         </field>
