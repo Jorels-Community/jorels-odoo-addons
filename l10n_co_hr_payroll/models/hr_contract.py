@@ -26,14 +26,11 @@ from odoo import fields, models, api
 class HrContract(models.Model):
     _inherit = 'hr.contract'
 
-    type_worker_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_workers", string="Type worker",
-                                     required=True)
-    subtype_worker_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.subtype_workers", string="Subtype worker",
-                                        required=True)
-    high_risk_pension = fields.Boolean(string="High risk pension", required=True, default=False)
-    integral_salary = fields.Boolean(string="Integral salary", required=True, default=False)
-    type_contract_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_contracts", string="Edi Type contract",
-                                       required=True)
+    type_worker_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_workers", string="Type worker")
+    subtype_worker_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.subtype_workers", string="Subtype worker")
+    high_risk_pension = fields.Boolean(string="High risk pension", default=False)
+    integral_salary = fields.Boolean(string="Integral salary", default=False)
+    type_contract_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_contracts", string="Type contract")
     payroll_period_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payroll_periods", string="Payroll period",
                                         compute="_compute_payroll_period_id", store=True)
 

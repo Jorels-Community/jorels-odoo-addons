@@ -77,7 +77,7 @@ class ResConfigSettings(models.TransientModel):
     edi_payroll_is_not_test = fields.Boolean(related="company_id.edi_payroll_is_not_test",
                                              string="Production environment", default=False, readonly=False)
 
-    # Enable/disable electronic invoicing for company
+    # Enable/disable electronic payroll for company
     edi_payroll_enable = fields.Boolean(related="company_id.edi_payroll_enable",
                                         string="Enable electronic payroll for this company", default=False,
                                         readonly=False)
@@ -90,9 +90,15 @@ class ResConfigSettings(models.TransientModel):
     edi_payroll_id = fields.Char(related="company_id.edi_payroll_id", string="Software ID", readonly=False)
     edi_payroll_pin = fields.Char(related="company_id.edi_payroll_pin", string="Software PIN", readonly=False)
 
+    # Consolidated payroll
+    edi_payroll_consolidated_enable = fields.Boolean(related="company_id.edi_payroll_consolidated_enable",
+                                                     string="Enable consolidated electronic payroll for this company",
+                                                     default=False, readonly=False)
+
     @api.model
     def get_values(self):
         res = super(ResConfigSettings, self).get_values()
         res['edi_payroll_is_not_test'] = self.env.company.edi_payroll_is_not_test
         res['edi_payroll_enable'] = self.env.company.edi_payroll_enable
+        res['edi_payroll_consolidated_enable'] = self.env.company.edi_payroll_consolidated_enable
         return res
