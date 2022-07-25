@@ -31,9 +31,7 @@
     'version': '15.0.22.04.12.03.48',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
-
     'depends': ['base'],
-
     'data': [
     ],
     'installable': True,
