@@ -23,7 +23,7 @@
         <field name="print_report_name">(object.name)</field>
         <field name="attachment">(object.state == 'posted') and ((object.name or 'SLIP').replace('/','_')+'.pdf')
         </field>
-        <field name="binding_model_id" ref="model_hr_payslip"/>
+        <field name="binding_model_id" ref="model_hr_payslip_edi"/>
         <field name="binding_type">report</field>
         <field name="groups_id" eval="[(4, ref('hr_payroll_community.group_hr_payroll_community_user'))]"/>
     </record>
