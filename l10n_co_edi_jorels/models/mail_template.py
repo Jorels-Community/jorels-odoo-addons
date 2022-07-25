@@ -24,7 +24,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-from odoo import models
+from odoo import models, api
 
 
 class MailTemplate(models.Model):
@@ -33,58 +33,111 @@ class MailTemplate(models.Model):
     def generate_email(self, res_ids, fields=None):
         res = super().generate_email(res_ids, fields)
 
-        if not self.env.company.ei_enable:
-            return res
+        self.ensure_one()
 
         multi_mode = True
         if isinstance(res_ids, int):
             res_ids = [res_ids]
             multi_mode = False
 
-        if self.model not in ['account.move']:
+        if self.model not in ('account.move', 'l10n_co_edi_jorels.radian'):
             return res
 
         records = self.env[self.model].browse(res_ids)
-        for record in records:
-            record_data = (res[record.id] if multi_mode else res)
 
-            if record.ei_is_valid \
-                    and record.move_type in ('out_invoice', 'out_refund') \
-                    and record.state == 'posted':
+        if self.model == 'account.move':
+            for move in records:
+                record_data = (res[move.id] if multi_mode else res)
 
-                pdf_name = record.ei_uuid + '.pdf'
-                pdf_path = Path(tempfile.gettempdir()) / pdf_name
+                if not move.company_id.ei_enable:
+                    continue
 
-                xml_name = record.ei_uuid + '.xml'
-                xml_path = Path(tempfile.gettempdir()) / xml_name
+                if move.ei_is_valid \
+                        and move.move_type in ('out_invoice', 'out_refund') \
+                        and move.state not in ('draft', 'validate')\
+                        and move.ei_uuid:
 
-                zip_name = record.ei_uuid + '.zip'
-                zip_path = Path(tempfile.gettempdir()) / zip_name
+                    pdf_name = move.ei_uuid + '.pdf'
+                    pdf_path = Path(tempfile.gettempdir()) / pdf_name
 
-                zip_archive = zipfile.ZipFile(zip_path, 'w')
+                    xml_name = move.ei_uuid + '.xml'
+                    xml_path = Path(tempfile.gettempdir()) / xml_name
 
-                pdf_handle = open(pdf_path, 'wb')
-                pdf_handle.write(base64.decodebytes(record_data["attachments"][0][1]))
-                pdf_handle.close()
-                zip_archive.write(pdf_path, arcname=pdf_name)
+                    zip_name = move.ei_uuid + '.zip'
+                    zip_path = Path(tempfile.gettempdir()) / zip_name
 
-                if record.ei_attached_document_base64_bytes:
-                    xml_handle = open(xml_path, 'wb')
-                    xml_handle.write(base64.decodebytes(record.ei_attached_document_base64_bytes))
-                    xml_handle.close()
-                    zip_archive.write(xml_path, arcname=xml_name)
+                    zip_archive = zipfile.ZipFile(zip_path, 'w')
 
-                zip_archive.close()
+                    pdf_handle = open(pdf_path, 'wb')
+                    pdf_handle.write(base64.decodebytes(record_data["attachments"][0][1]))
+                    pdf_handle.close()
+                    zip_archive.write(pdf_path, arcname=pdf_name)
 
-                if record.ei_attached_document_base64_bytes:
-                    with open(zip_path, 'rb') as f:
-                        attached_zip = f.read()
-                        ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
-                        record_data.setdefault('attachments', [])
-                        if not self.env.company.ei_include_pdf_attachment:
-                            record_data['attachments'] = []
-                        record_data['attachments'].append((zip_name, ei_attached_zip_base64_bytes))
-                        record.write({
-                            'ei_attached_zip_base64_bytes': ei_attached_zip_base64_bytes
-                        })
+                    if move.ei_attached_document_base64_bytes:
+                        xml_handle = open(xml_path, 'wb')
+                        xml_handle.write(base64.decodebytes(move.ei_attached_document_base64_bytes))
+                        xml_handle.close()
+                        zip_archive.write(xml_path, arcname=xml_name)
+
+                    zip_archive.close()
+
+                    if move.ei_attached_document_base64_bytes:
+                        with open(zip_path, 'rb') as f:
+                            attached_zip = f.read()
+                            ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
+                            record_data.setdefault('attachments', [])
+                            if not move.company_id.ei_include_pdf_attachment:
+                                record_data['attachments'] = []
+                            record_data['attachments'].append((zip_name, ei_attached_zip_base64_bytes))
+                            move.write({
+                                'ei_attached_zip_base64_bytes': ei_attached_zip_base64_bytes
+                            })
+
+        if self.model == 'l10n_co_edi_jorels.radian':
+            for radian in records:
+                record_data = (res[radian.id] if multi_mode else res)
+
+                if not radian.company_id.ei_enable:
+                    continue
+
+                if radian.edi_is_valid \
+                        and radian.state == 'posted'\
+                        and radian.edi_uuid:
+
+                    # pdf_name = radian.edi_uuid + '.pdf'
+                    # pdf_path = Path(tempfile.gettempdir()) / pdf_name
+
+                    xml_name = radian.edi_uuid + '.xml'
+                    xml_path = Path(tempfile.gettempdir()) / xml_name
+
+                    zip_name = radian.edi_uuid + '.zip'
+                    zip_path = Path(tempfile.gettempdir()) / zip_name
+
+                    zip_archive = zipfile.ZipFile(zip_path, 'w')
+
+                    # pdf_handle = open(pdf_path, 'wb')
+                    # pdf_handle.write(base64.decodebytes(res[res_id]["attachments"][0][1]))
+                    # pdf_handle.close()
+                    # zip_archive.write(pdf_path, arcname=pdf_name)
+
+                    if radian.edi_attached_document_base64:
+                        xml_handle = open(xml_path, 'wb')
+                        xml_handle.write(base64.decodebytes(radian.edi_attached_document_base64))
+                        xml_handle.close()
+                        zip_archive.write(xml_path, arcname=xml_name)
+
+                    zip_archive.close()
+
+                    if radian.edi_attached_document_base64:
+                        with open(zip_path, 'rb') as f:
+                            attached_zip = f.read()
+                            edi_attached_zip_base64 = base64.encodebytes(attached_zip)
+                            record_data.setdefault('attachments', [])
+                            if not radian.company_id.edi_include_pdf_attachment:
+                                record_data['attachments'] = []
+                            record_data['attachments'].append((zip_name, edi_attached_zip_base64))
+                            radian.write({
+                                'edi_attached_zip_base64': edi_attached_zip_base64
+                            })
+
         return res

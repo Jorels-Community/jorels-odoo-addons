@@ -37,13 +37,14 @@
         'l10n_co',
         # 'web_notify',
         'update_from_csv',
-        # 'account_debit_note',
+        'account_debit_note',
         'base_vat',
         # 'universal_discount'
     ],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
+        'data/ir_sequence_data.xml',
         'data/data.xml',
         'views/config/res_company.xml',
         'views/config/res_config_settings_views.xml',
@@ -57,6 +58,7 @@
         'views/res_partner_view.xml',
         'views/mail_message_views.xml',
         'views/account_move_reversal_view.xml',
+        'views/radian_views.xml',
         'report/report_invoice.xml',
         'data/mail_template_data.xml',
     ],

@@ -209,7 +209,6 @@ class ResCompany(models.Model):
                 [('l10n_co_document_code', '=', l10n_co_document_code)]
             )[0]
             company.partner_id.l10n_latam_identification_type_id = l10n_latam_identification_type_rec.id
-            # company.partner_id.l10n_co_document_code = self.get_l10n_co_document_code()
 
     def _inverse_type_organization_id(self):
         for company in self:

@@ -27,8 +27,7 @@
             <field name="inherit_id" ref="base.view_company_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[@class='oe_title']" position="inside">
-                    <label for="trade_name"
-                           attrs="{'invisible': ['|', ('trade_name', '=', False), ('trade_name', '=', '')]}"/>
+                    <label for="trade_name" attrs="{'invisible': ['|', ('trade_name', '=', False), ('trade_name', '=', '')]}"/>
                     <h2>
                         <field name="trade_name" placeholder="Trade name"/>
                     </h2>

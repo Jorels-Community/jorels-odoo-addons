@@ -123,4 +123,54 @@
             <field name="auto_delete" eval="True"/>
         </record>
     </data>
+
+    <data noupdate="0">
+        <record id="l10n_co_edi_jorels.email_template_radian" model="mail.template">
+            <field name="name">Radian event: Send by email</field>
+            <field name="model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
+            <field name="email_from">{{ (object.company_id.email_edi_formatted) }}</field>
+            <field name="email_to">{{ (object.move_id.partner_id.email_edi) }}</field>
+            <field name="partner_to">{{ object.move_id.partner_id.id }}</field>
+            <field name="subject">Evento;{{object.move_id.ei_number or ''}};{{object.company_id.vat_formatted or ''}};{{object.company_id.business_name or object.company_id.name or ''}};{{object.name or ''}};{{object.event_id.code or ''}}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear
+                        <t t-if="object.move_id and object.move_id.partner_id and object.move_id.partner_id.parent_id">
+                            <t t-out="object.move_id.partner_id.name or ''">Brandon Freeman</t> (<t t-out="object.move_id.partner_id.parent_id.name or ''">Azure Interior</t>),
+                        </t>
+                        <t t-else="">
+                            <t t-if="object.move_id and object.move_id.partner_id">
+                                <t t-out="object.move_id.partner_id.name or ''">Brandon Freeman</t>,
+                            </t>
+                        </t>
+                        <br /><br />
+                        Here is your
+                        <t t-if="object.event_id and object.event_id.name">
+                            Radian event <strong t-out="object.event_id.name or ''">Acuse de recibido</strong>
+                        </t>
+                        <t t-else="">
+                            Radian event
+                        </t>
+                        <t t-if="object.name">
+                            with number <strong t-out="object.name or ''">E0310</strong>
+                        </t>
+                        <t t-if="object.move_id and object.move_id.ei_number">
+                            (with invoice: <t t-out="object.move_id.ei_number or ''">INV0</t>)
+                        </t>
+                        <t t-if="object.company_id.business_name">
+                            from <t t-out="object.company_id.business_name or ''">YourCompany</t>.
+                        </t>
+                        <t t-else="object.company_id.name">
+                            from <t t-out="object.company_id.name or ''">YourCompany</t>.
+                        </t>
+                        <br /><br />
+                        Do not hesitate to contact us if you have any questions.
+                    </p>
+                </div>
+            </field>
+            <field name="lang">{{ object.move_id.partner_id.lang }}</field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+    </data>
 </odoo>

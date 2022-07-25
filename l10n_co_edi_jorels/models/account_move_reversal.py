@@ -47,4 +47,6 @@ class AccountMoveReversal(models.TransientModel):
             if ei_correction_concept_search:
                 values['ei_correction_concept_credit_id'] = ei_correction_concept_search[0].id
 
+        values['is_out_country'] = move.is_out_country
+
         return values

@@ -45,9 +45,9 @@ class Message(models.Model):
                 partner_rec = self.env['res.partner'].search([('email', '=', email_from)])
                 if partner_rec:
                     cs = partner_rec.customer_software_id
-                    invoice_id = cs.get_invoice_id(rec)
-                    if invoice_id:
-                        rec.res_id = invoice_id
+                    move_id = cs.get_move_id(rec)
+                    if move_id:
+                        rec.res_id = move_id
                         rec.model = 'account.move'
                         invoice_rec = self.env[rec.model].search([('id', '=', rec.res_id)])[0]
                         if invoice_rec.event != 'acceptance':
