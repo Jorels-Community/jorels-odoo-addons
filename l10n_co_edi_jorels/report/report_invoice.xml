@@ -150,7 +150,7 @@
             <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[1]" position="before">
                 <th name="th_num_item" class="text-center">
                     <span>#</span>
-                    <t t-set="colspan" t-value="colspan + 1"/>
+<!--                    <t t-set="colspan" t-value="colspan + 1"/>-->
                     <t t-set="num_item" t-value="0"/>
                 </th>
             </xpath>
@@ -192,7 +192,7 @@
                     </td>
                 </tr>
             </xpath>
-            <xpath expr="//div[@id='total']/div/table/tr[last()]" position="before">
+            <xpath expr="//div[@id='total']/div/table/tr[last()]" position="after">
                 <tr class="border-black" style="" t-if="o.env.company.ei_enable">
                     <td>
                         <strong>Total without withholdings</strong>
