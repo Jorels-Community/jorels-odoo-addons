@@ -182,7 +182,7 @@
                 <attribute name="t-attf-class">#{'col-5' if report_type != 'html' else 'col-sm-7 col-md-5'}
                 </attribute>
             </xpath>
-            <xpath expr="//div[@id='total']/div/table/t[1]" position="before">
+            <xpath expr="//t[@t-set='tax_totals']" position="before">
                 <tr class="border-black o_total" style="">
                     <td>
                         <strong>Currency</strong>
@@ -192,7 +192,7 @@
                     </td>
                 </tr>
             </xpath>
-            <xpath expr="//div[@id='total']/div/table/tr[last()]" position="before">
+            <xpath expr="//t[@t-call='account.document_tax_totals']" position="after">
                 <tr class="border-black" style="" t-if="o.env.company.ei_enable">
                     <td>
                         <strong>Total without withholdings</strong>
