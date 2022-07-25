@@ -160,7 +160,8 @@
         <field name="view_mode">tree,form</field>
         <field eval="False" name="view_id"/>
         <field name="domain">[('type','=','supplier')]</field>
-        <field name="context">{'default_type': 'supplier', 'type': 'supplier', 'search_default_groupby_invoice': 1}</field>
+        <field name="context">{'default_type': 'supplier', 'type': 'supplier', 'search_default_groupby_invoice': 1}
+        </field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Radian event!
@@ -195,7 +196,8 @@
         <field name="view_mode">tree,form</field>
         <field eval="False" name="view_id"/>
         <field name="domain">[('type','=','customer')]</field>
-        <field name="context">{'default_type': 'customer', 'type': 'customer', 'search_default_groupby_invoice': 1}</field>
+        <field name="context">{'default_type': 'customer', 'type': 'customer', 'search_default_groupby_invoice': 1}
+        </field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Radian event!
@@ -222,4 +224,11 @@
               name="Radian events"
               parent="account.menu_finance_receivables"/>
 
+    <record id="action_send_radian_by_email" model="ir.actions.server">
+        <field name="name">Send Radian event By Email</field>
+        <field name="model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
+        <field name="binding_model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
+        <field name="state">code</field>
+        <field name="code">records._send_email()</field>
+    </record>
 </odoo>

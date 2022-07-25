@@ -101,11 +101,12 @@
                                 <header>
                                     <button string="Validate" name="action_post" type="object" states="draft"
                                             class="oe_highlight"/>
-                                    <button name="action_status" type="object" string="Consult DIAN"
-                                            groups="base.group_no_one"
-                                            attrs="{'invisible': [('state','!=','posted')]}"/>
+                                    <button name="status_zip" type="object" string="Consult DIAN"
+                                            groups="base.group_no_one" attrs="{'invisible': [('state','=','draft')]}"/>
                                     <button string="Set to Draft" name="action_draft" type="object" states="cancel"/>
                                     <button string="Cancel" name="action_cancel" type="object" states="draft,posted"/>
+                                    <button string="Send by email" name="action_send_email" type="object"
+                                            states="posted"/>
                                     <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
                                 </header>
                                 <sheet>
@@ -113,10 +114,16 @@
                                         <div attrs="{'invisible': [('name','=',False)]}">
                                             <field name="name" class="oe_inline"/>
                                         </div>
+                                        <field name="type" invisible="1"/>
+                                        <div attrs="{'invisible': [('type','!=','customer')]}">
+                                            <span>Customer Event</span>
+                                        </div>
+                                        <div attrs="{'invisible': [('type','!=','supplier')]}">
+                                            <span>Supplier Event</span>
+                                        </div>
                                     </h1>
                                     <group>
                                         <group name="group-left">
-                                            <field name="type" invisible="1"/>
                                             <field name="invoice_id" invisible="1"/>
                                             <field name="event_id"/>
                                             <field name="rejection_concept_id"
@@ -124,6 +131,7 @@
                                         </group>
                                         <group name="group-right">
                                             <field name="date"/>
+                                            <field name="user_id"/>
                                             <field name="company_id" groups="base.group_multi_company"/>
                                             <field name="note"/>
                                         </group>
@@ -210,11 +218,12 @@
                                 <header>
                                     <button string="Validate" name="action_post" type="object" states="draft"
                                             class="oe_highlight"/>
-                                    <button name="action_status" type="object" string="Consult DIAN"
-                                            groups="base.group_no_one"
-                                            attrs="{'invisible': [('state','!=','posted')]}"/>
+                                    <button name="status_zip" type="object" string="Consult DIAN"
+                                            groups="base.group_no_one" attrs="{'invisible': [('state','=','draft')]}"/>
                                     <button string="Set to Draft" name="action_draft" type="object" states="cancel"/>
                                     <button string="Cancel" name="action_cancel" type="object" states="draft,posted"/>
+                                    <button string="Send by email" name="action_send_email" type="object"
+                                            states="posted"/>
                                     <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
                                 </header>
                                 <sheet>
@@ -222,10 +231,16 @@
                                         <div attrs="{'invisible': [('name','=',False)]}">
                                             <field name="name" class="oe_inline"/>
                                         </div>
+                                        <field name="type" invisible="1"/>
+                                        <div attrs="{'invisible': [('type','!=','customer')]}">
+                                            <span>Customer Event</span>
+                                        </div>
+                                        <div attrs="{'invisible': [('type','!=','supplier')]}">
+                                            <span>Supplier Event</span>
+                                        </div>
                                     </h1>
                                     <group>
                                         <group name="group-left">
-                                            <field name="type" invisible="1"/>
                                             <field name="invoice_id" invisible="1"/>
                                             <field name="event_id"/>
                                             <field name="rejection_concept_id"
@@ -233,6 +248,7 @@
                                         </group>
                                         <group name="group-right">
                                             <field name="date"/>
+                                            <field name="user_id"/>
                                             <field name="company_id" groups="base.group_multi_company"/>
                                             <field name="note"/>
                                         </group>

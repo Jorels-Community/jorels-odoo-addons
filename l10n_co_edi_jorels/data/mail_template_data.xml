@@ -65,7 +65,7 @@
         </record>
     </data>
 
-    <data noupdate="1">
+    <data noupdate="0">
         <record id="l10n_co_edi_jorels.email_template_radian" model="mail.template">
             <field name="name">Radian event: Send by email</field>
             <field name="model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
@@ -103,24 +103,5 @@
             <field name="user_signature" eval="False"/>
             <field name="auto_delete" eval="False"/>
         </record>
-<!--        <act_window name="Send Radian event By Email"-->
-<!--                    res_model="mail.compose.message"-->
-<!--                    src_model="l10n_co_edi_jorels.radian"-->
-<!--                    view_mode="form"-->
-<!--                    target="new"-->
-<!--                    key2="client_action_relate"-->
-<!--                    id="l10n_co_edi_jorels_send_radian_by_email_action"-->
-<!--                    context="{-->
-<!--                'default_model': 'l10n_co_edi_jorels.radian',-->
-<!--                'active_model': 'l10n_co_edi_jorels.radian',-->
-<!--                'mail_post_autofollow': True,-->
-<!--                'default_composition_mode': 'comment',-->
-<!--                'default_use_template': True,-->
-<!--                'default_res_id': active_id,-->
-<!--                'default_template_id': ref('l10n_co_edi_jorels.email_template_radian'),-->
-<!--                'force_email': True,-->
-<!--                'custom_layout': 'mail.mail_notification_light',-->
-<!--            }"-->
-<!--        />-->
     </data>
 </odoo>

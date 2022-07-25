@@ -48,12 +48,12 @@ class MailTemplate(models.Model):
 
         if self._context.get('active_model') == 'account.invoice':
             for res_id, template in self.get_email_template(res_ids).items():
-                invoice = self.env["account.invoice"].browse(res_id)
+                invoice = self.env['account.invoice'].browse(res_id)
 
                 if not invoice.company_id.ei_enable:
                     continue
 
-                attachments = res[res_id]["attachments"] if invoice.company_id.ei_include_pdf_attachment else []
+                attachments = res[res_id]['attachments'] if invoice.company_id.ei_include_pdf_attachment else []
 
                 if invoice.ei_is_valid \
                         and invoice.type in ('out_invoice', 'out_refund') \
@@ -97,7 +97,7 @@ class MailTemplate(models.Model):
 
         if self._context.get('active_model') == 'l10n_co_edi_jorels.radian':
             for res_id, template in self.get_email_template(res_ids).items():
-                radian = self.env["l10n_co_edi_jorels.radian"].browse(res_id)
+                radian = self.env['l10n_co_edi_jorels.radian'].browse(res_id)
 
                 if not radian.company_id.ei_enable:
                     continue
@@ -143,9 +143,14 @@ class MailTemplate(models.Model):
                             })
 
                 if 'res_id' in res:
-                    res["attachments"] = attachments
-                    return res
+                    if 'attachments' not in res:
+                        res['attachments'] = []
+                    res['attachments'] += attachments
                 else:
-                    res[res_id]["attachments"] = attachments
+                    if 'attachments' not in res[res_id]:
+                        res[res_id]['attachments'] = []
+                    res[res_id]['attachments'] += attachments
+
+            return res
 
         return multi_mode and res or res[res_ids[0]]
