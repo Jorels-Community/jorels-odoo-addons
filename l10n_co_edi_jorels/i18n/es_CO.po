@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-16 14:05+0000\n"
-"PO-Revision-Date: 2022-05-16 09:14-0500\n"
+"POT-Creation-Date: 2022-07-25 15:01+0000\n"
+"PO-Revision-Date: 2022-07-25 10:32-0500\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "MIME-Version: 1.0\n"
@@ -61,6 +61,15 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid ""
 "<br/>\n"
+"                                <strong>Organization type:</strong>"
+msgstr ""
+"<br/>\n"
+"                                <strong>Tipo de organización:</strong>"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
+msgid ""
+"<br/>\n"
 "                                <strong>Regime type:</strong>"
 msgstr ""
 "<br/>\n"
@@ -70,6 +79,62 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
 msgid "<br/>When changing the environment, this is automatic"
 msgstr "<br/>Cuando cambia el entorno, esto es automatico"
+
+#. module: l10n_co_edi_jorels
+#: model:mail.template,body_html:l10n_co_edi_jorels.email_template_radian
+msgid ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"                <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"                    Dear ${object.move_id.partner_id.name}\n"
+"                    % if object.move_id.partner_id.parent_id:\n"
+"                        (${object.move_id.partner_id.parent_id.name})\n"
+"                    % endif\n"
+"                    <br/>\n"
+"                    <br/>\n"
+"                    Here is your\n"
+"                    Radian event\n"
+"                    <strong>${object.event_id.name}</strong>\n"
+"                    with number\n"
+"                    <strong>${object.name}</strong>\n"
+"                    (with invoice: ${object.move_id.ei_number})\n"
+"                    % if object.company_id.business_name:\n"
+"                        from ${object.company_id.business_name}.\n"
+"                    % else:\n"
+"                        from ${object.company_id.name}.\n"
+"                    % endif\n"
+"                    <br/>\n"
+"                    <br/>\n"
+"                    Do not hesitate to contact us if you have any "
+"question.\n"
+"                </p>\n"
+"            </div>\n"
+"        "
+msgstr ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"                <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"                    Querido ${object.move_id.partner_id.name}\n"
+"                    % if object.move_id.partner_id.parent_id:\n"
+"                        (${object.move_id.partner_id.parent_id.name})\n"
+"                    % endif\n"
+"                    <br/>\n"
+"                    <br/>\n"
+"                    Aquí está su\n"
+"                    evento del Radian\n"
+"                    <strong>${object.event_id.name}</strong>\n"
+"                    con número\n"
+"                    <strong>${object.name}</strong>\n"
+"                    (con factura: ${object.move_id.ei_number})\n"
+"                    % if object.company_id.business_name:\n"
+"                        de ${object.company_id.business_name}.\n"
+"                    % else:\n"
+"                        de ${object.company_id.name}.\n"
+"                    % endif\n"
+"                    <br/>\n"
+"                    <br/>\n"
+"                    No dude en contactarnos si tiene alguna inquietud.\n"
+"                </p>\n"
+"            </div>\n"
+"        "
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
@@ -118,6 +183,18 @@ msgid "<span class=\"o_form_label\">Top invoice note</span>"
 msgstr "<span class=\"o_form_label\">Nota superior de la factura</span>"
 
 #. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
+msgid "<span>Customer Event</span>"
+msgstr "<span>Evento de cliente</span>"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
+msgid "<span>Supplier Event</span>"
+msgstr "<span>Evento de proveedor</span>"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "<span>This document has not been validated in the DIAN</span>"
 msgstr "<span>Este documento no ha sido validado en la DIAN</span>"
@@ -149,18 +226,38 @@ msgstr "<strong>Periodo de facturación:</strong>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
+msgid "<strong>NIT:</strong>"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
+msgid "<strong>Operation type:</strong>"
+msgstr "<strong>Tipo de operación:</strong>"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "<strong>Order reference:</strong>"
 msgstr "<strong>Ref. de la orden:</strong>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
-msgid "<strong>Organization type:</strong>"
-msgstr "<strong>Tipo de organización:</strong>"
+msgid "<strong>Payment form:</strong>"
+msgstr "<strong>Forma de pago:</strong>"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
+msgid "<strong>Payment method:</strong>"
+msgstr "<strong>Método de pago:</strong>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "<strong>Signature:</strong>"
 msgstr "<strong>Firma:</strong>"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
+msgid "<strong>The withholdings are for informational purposes only.</strong>"
+msgstr "<strong>Las retenciones son solo a nivel informativo.</strong>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -209,15 +306,29 @@ msgstr "No fue obtenido un UUID valido. Intente nuevamente."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "A valid Zip key or UUID was not obtained. Try again."
 msgstr "No se obtuvo una clave Zip o UUID válida. Inténtalo de nuevo."
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "A valid Zip key was not obtained. Try again."
+msgstr "No fue obtenida una llave Zip valida. Intente nuevamente."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "A waypoint doesn't have an associated id number"
 msgstr "Una remesa no tiene un número de identificación asociado"
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "A zip key or UUID is required to check the status of the document."
+msgstr ""
+"Se requiere una clave Zip o UUID para verificar el estado del documento."
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__account_move__ei_operation__aiu
@@ -237,6 +348,11 @@ msgid "Acceptance"
 msgstr "Aceptación"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__access_warning
+msgid "Access warning"
+msgstr "Alerta de acceso"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_account_move_reversal
 msgid "Account Move Reversal"
 msgstr "Revocación de movimiento en cuenta"
@@ -245,6 +361,36 @@ msgstr "Revocación de movimiento en cuenta"
 #: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__account_move__event__receipt
 msgid "Acknowledgment of receipt"
 msgstr "Acuse de recibo"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_needaction
+msgid "Action Needed"
+msgstr "Acción necesaria"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_ids
+msgid "Activities"
+msgstr "Actividades"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_state
+msgid "Activity State"
+msgstr "Estado de la actividad"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model,name:l10n_co_edi_jorels.model_account_debit_note
+msgid "Add Debit Note wizard"
+msgstr "Asistente para agregar nota débito"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
@@ -265,6 +411,7 @@ msgstr "Código de agencia"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_algorithm
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_algorithm
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_algorithm
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_algorithm
 msgid "Algorithm"
 msgstr "Algoritmo"
 
@@ -301,6 +448,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_application_response_base64_bytes
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_application_response_base64_bytes
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_application_response_base64_bytes
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_application_response_base64
 msgid "Application response"
 msgstr "Respuesta de la aplicación"
 
@@ -308,6 +456,7 @@ msgstr "Respuesta de la aplicación"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_attached_document_base64_bytes
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_attached_document_base64_bytes
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_attached_document_base64_bytes
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_attached_document_base64
 msgid "Attached document"
 msgstr "Documento adjunto"
 
@@ -315,11 +464,18 @@ msgstr "Documento adjunto"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_attached_zip_base64_bytes
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_attached_zip_base64_bytes
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_attached_zip_base64_bytes
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_attached_zip_base64
 msgid "Attached zip"
 msgstr "Zip adjunto"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_attachment_count
+msgid "Attachment Count"
+msgstr "Conteo de archivos adjuntos"
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "Authentication error with the API"
 msgstr "Error de autenticación con al API"
@@ -373,6 +529,26 @@ msgstr "Algoritmo CUFE"
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "CUFE:"
 msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__l10n_co_edi_jorels_radian__state__cancel
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_search
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_class
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_class
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_class
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_class
+msgid "Class"
+msgstr "Clase"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_correction_concepts__code
@@ -429,6 +605,11 @@ msgid "Companies"
 msgstr "Compañías"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__company_id
+msgid "Company"
+msgstr "Compañia"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__business_name
 msgid "Company name to invoice"
 msgstr "Nombre de la compañía para facturar"
@@ -440,6 +621,7 @@ msgstr "Opciones de configuración"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
 msgid "Consult DIAN"
 msgstr "Consultar DIAN"
 
@@ -510,6 +692,12 @@ msgid "Create resolutions in API"
 msgstr "Crear resoluciones en la API"
 
 #. module: l10n_co_edi_jorels
+#: model_terms:ir.actions.act_window,help:l10n_co_edi_jorels.action_l10n_co_edi_jorels_radian_customer
+#: model_terms:ir.actions.act_window,help:l10n_co_edi_jorels.action_l10n_co_edi_jorels_radian_supplier
+msgid "Create your first Radian event!"
+msgstr "¡Crea tu primer evento del Radian!"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.actions.act_window,help:l10n_co_edi_jorels.action_l10n_co_edi_jorels_customer_software
 msgid "Create your first customer software!"
 msgstr "¡Cree su primer software de cliente!"
@@ -535,6 +723,7 @@ msgstr "¡Cree su primera resolución!"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal__create_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_department__create_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_municipality__create_uid
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__create_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_reference_prices__create_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_rejection_concepts__create_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__create_uid
@@ -587,6 +776,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal__create_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_department__create_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_municipality__create_date
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__create_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_reference_prices__create_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_rejection_concepts__create_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__create_date
@@ -631,6 +821,7 @@ msgid "Credit correction concept"
 msgstr "Concepto de corrección crédito"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_import_journal_creation__resolution_credit_note_id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__resolution_credit_note_id
 msgid "Credit note resolution"
 msgstr "Resolución de nota crédito"
@@ -644,6 +835,16 @@ msgstr "Tipos de moneda"
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "Customer"
 msgstr "Cliente"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__l10n_co_edi_jorels_radian__type__customer
+msgid "Customer Event"
+msgstr "Evento de cliente"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__access_url
+msgid "Customer Portal URL"
+msgstr "URL Portal de Cliente"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.actions.act_window,name:l10n_co_edi_jorels.action_l10n_co_edi_jorels_customer_software
@@ -671,6 +872,11 @@ msgid "D.I.E.:"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_tree
+msgid "DIAN Events"
+msgstr "Eventos DIAN"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
 msgid "DIAN TESTSETID"
 msgstr ""
@@ -682,6 +888,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
 msgid "DIAN response"
 msgstr "Respuesta DIAN"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__date
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_issue_date
+msgid "Date"
+msgstr "Fecha"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__resolution_date_from
@@ -701,14 +913,10 @@ msgid "Debit correction concept"
 msgstr "Concepto de corrección débito"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_import_journal_creation__resolution_debit_note_id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__resolution_debit_note_id
 msgid "Debit note resolution"
 msgstr "Resolución de nota débito"
-
-#. module: l10n_co_edi_jorels
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
-msgid "Default attachments in electronic invoice email"
-msgstr "Adjuntos por defecto en email de facturación electrónica"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_municipalities__department_id
@@ -732,11 +940,17 @@ msgid "Description"
 msgstr "Descripción"
 
 #. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+msgid "Dian Events"
+msgstr "Eventos DIAN"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_discounts
 msgid "Discounts"
 msgstr "Descuentos"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_debit_note__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move_line__display_name
@@ -757,6 +971,7 @@ msgstr "Descuentos"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_department__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_municipality__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_reference_prices__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_rejection_concepts__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__display_name
@@ -798,7 +1013,7 @@ msgstr "Descuentos"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_partner__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_uom_uom__display_name
 msgid "Display Name"
-msgstr "Nombre Público"
+msgstr "Nombre mostrado"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__account_move__event__rejection
@@ -807,12 +1022,14 @@ msgstr "Rechazo de documento"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "Document sent to DIAN in habilitation."
 msgstr "Documento enviado a la DIAN en habilitación."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "Document sent to DIAN in testing."
 msgstr "Documento enviado a la DIAN en pruebas."
@@ -831,6 +1048,17 @@ msgstr "Tipo de documento"
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_type_documents
 msgid "Document types"
 msgstr "Tipos de documento"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__l10n_co_edi_jorels_radian__state__draft
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_search
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
+msgid "Edi Response"
+msgstr "Respuesta Edi"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -936,13 +1164,28 @@ msgid "Environment types"
 msgstr "Tipos de entorno"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_errors_messages
+msgid "Error messages"
+msgstr "Mensajes de error"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__event
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__event
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__event
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__event_id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_operation_events__event_id
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_form_customer_software
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_search
 msgid "Event"
 msgstr "Evento"
+
+#. module: l10n_co_edi_jorels
+#: model:mail.template,subject:l10n_co_edi_jorels.email_template_radian
+msgid ""
+"Evento;${object.move_id.ei_number or ''};${object.company_id.vat_formatted "
+"or ''};${object.company_id.business_name or object.company_id.name or ''};"
+"${object.name or ''};${object.event_id.code or ''}"
+msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_events
@@ -963,6 +1206,14 @@ msgid "Excluded"
 msgstr "Excluido"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_expedition_date
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_expedition_date
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_expedition_date
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_expedition_date
+msgid "Expedition date"
+msgstr "Fecha de expedición"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__account_move__event__acceptance
 msgid "Express acceptance of document"
 msgstr "Aceptación expresa de documento"
@@ -975,6 +1226,7 @@ msgstr "Fallo al procesar la solicitud"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "Failed to process the request: %s"
 msgstr "Fallo al procesar la solicitud: %s"
@@ -986,6 +1238,26 @@ msgstr "Fallo al procesar la solicitud: %s"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_customer_software__rejection_event_field
 msgid "Field"
 msgstr "Campo"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_channel_ids
+msgid "Followers (Channels)"
+msgstr "Seguidores (Canales)"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores (Empresas)"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__footer_custom_text
@@ -1025,6 +1297,7 @@ msgid "Header text"
 msgstr "Texto de encabezado"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_debit_note__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move_line__id
@@ -1045,6 +1318,7 @@ msgstr "Texto de encabezado"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_department__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_municipality__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_reference_prices__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_rejection_concepts__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__id
@@ -1086,6 +1360,16 @@ msgstr "Texto de encabezado"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_partner__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_uom_uom__id
 msgid "ID"
+msgstr "Identificación"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_exception_icon
+msgid "Icon"
+msgstr "Icono"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_exception_icon
+msgid "Icon to indicate an exception activity."
 msgstr ""
 
 #. module: l10n_co_edi_jorels
@@ -1099,6 +1383,18 @@ msgid "Identification document types"
 msgstr "Tipos de documento de identificación"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_needaction
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_unread
+msgid "If checked, new messages require your attention."
+msgstr "Si está marcado, hay nuevos mensajes que requieren su atención."
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_has_error
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si se encuentra marcado, algunos mensajes tienen error de envío."
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
 msgid "If you don't have one, write to"
 msgstr "Si no tiene una, escriba a"
@@ -1107,19 +1403,16 @@ msgstr "Si no tiene una, escriba a"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_is_not_test
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_is_not_test
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_is_not_test
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_is_not_test
 msgid "In production"
 msgstr "En producción"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__ei_include_pdf_attachment
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings__ei_include_pdf_attachment
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
 msgid "Include PDF attachment on electronic invoice email"
 msgstr "Incluir PDF adjunto en el correo de factura electrónica"
-
-#. module: l10n_co_edi_jorels
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
-msgid "Include default attachments in email"
-msgstr "Incluir adjuntos por defecto en email"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings__enable_validate_state
@@ -1127,14 +1420,22 @@ msgid "Intermediate Validation DIAN state"
 msgstr "Estado intermedio de validación DIAN"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__move_id
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_search
 msgid "Invoice"
 msgstr "Factura"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_import_journal_creation__resolution_invoice_id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__resolution_invoice_id
 msgid "Invoice resolution"
 msgstr "Resolución de facturación"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_is_follower
+msgid "Is Follower"
+msgstr "Es un seguidor"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_is_correction_without_reference
@@ -1144,9 +1445,26 @@ msgid "Is it a correction without reference?"
 msgstr "¿Es una corrección sin referencia?"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_import_journal_creation__is_out_country
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__is_out_country
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__is_out_country
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__is_out_country
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__is_out_country
 msgid "Is it for out of the country?"
 msgstr "¿Es para fuera del país?"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_is_restored
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_is_restored
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_is_restored
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_is_restored
+msgid "Is restored?"
+msgstr "¿Ha sido restaurado?"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_is_valid
+msgid "Is valid?"
+msgstr "¿Es válido?"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_issue_date
@@ -1171,6 +1489,7 @@ msgid "Languages"
 msgstr "Idiomas"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_debit_note____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move_line____last_update
@@ -1191,6 +1510,7 @@ msgstr "Idiomas"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_department____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_municipality____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_reference_prices____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_rejection_concepts____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution____last_update
@@ -1232,7 +1552,7 @@ msgstr "Idiomas"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_partner____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_uom_uom____last_update
 msgid "Last Modified on"
-msgstr "Última Modificación el"
+msgstr "Última modificación el"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_correction_concepts__write_uid
@@ -1250,6 +1570,7 @@ msgstr "Última Modificación el"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal__write_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_department__write_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_municipality__write_uid
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__write_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_reference_prices__write_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_rejection_concepts__write_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__write_uid
@@ -1302,6 +1623,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal__write_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_department__write_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal_municipality__write_date
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__write_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_reference_prices__write_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_rejection_concepts__write_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__write_date
@@ -1351,6 +1673,11 @@ msgid "Liability types"
 msgstr "Tipos de responsabilidad"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_main_attachment_id
+msgid "Main Attachment"
+msgstr "Adjuntos principales"
+
+#. module: l10n_co_edi_jorels
 #: model:res.groups,name:l10n_co_edi_jorels.l10n_co_edi_jorels_group_manager
 msgid "Manager"
 msgstr "Responsable"
@@ -1384,6 +1711,16 @@ msgid "Message"
 msgstr "Mensaje"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_has_error
+msgid "Message Delivery error"
+msgstr "Error de Envío de Mensaje"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_ids
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_product_product__model_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_product_template__model_name
 msgid "Model"
@@ -1401,6 +1738,11 @@ msgstr "Municipios"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_users__municipality_id
 msgid "Municipality"
 msgstr "Municipio"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -1466,6 +1808,27 @@ msgid "Neighborhood"
 msgstr "Barrio"
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "New"
+msgstr "Nuevo"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Siguiente plazo de actividad"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_summary
+msgid "Next Activity Summary"
+msgstr "Resumen de la siguiente actividad"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_type_id
+msgid "Next Activity Type"
+msgstr "Siguiente tipo de actividad"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__resolution_next_consecutive
 msgid "Next consecutive"
 msgstr "Siguiente consecutivo"
@@ -1478,14 +1841,20 @@ msgstr "No fue obtenida una respuesta lógica desde la API"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "No logical response was obtained from the API."
-msgstr "No fue obtenida una respuesta lógica desde la API"
+msgstr "No fue obtenida una respuesta lógica desde la API."
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__account_move__event__none
 msgid "None"
 msgstr "Ninguno"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__note
+msgid "Note"
+msgstr "Nota"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move_line__ei_notes
@@ -1502,6 +1871,8 @@ msgstr "Ahora sincronice las resoluciones"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_number
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_number
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_number
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_number
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__number
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__resolution_number
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_form_customer_software
 msgid "Number"
@@ -1513,6 +1884,31 @@ msgstr "Número"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__number_formatted
 msgid "Number formatted"
 msgstr "Número formateado"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de acciones"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de errores"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr "Número de mensajes que requieren una acción"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de envío"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_unread_counter
+msgid "Number of unread messages"
+msgstr "Número de mensajes no leidos"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
@@ -1563,9 +1959,43 @@ msgid "PAS:"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_pdf_base64
+msgid "PDF"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_pdf_download_link
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_pdf_download_link
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_pdf_download_link
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_pdf_download_link
+msgid "PDF link"
+msgstr "Enlace PDF"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_payload
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_payload
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_payload
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_payload
+msgid "Payload"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__payment_form_id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__payment_form_id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__payment_form_id
+msgid "Payment form"
+msgstr "Forma de pago"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_payment_forms
 msgid "Payment forms"
 msgstr "Formas de pago"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__payment_method_id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__payment_method_id
+msgid "Payment method"
+msgstr "Método de pago"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_payment_methods
@@ -1595,6 +2025,11 @@ msgstr "Porcentaje"
 msgid "Please check your invoice again. Are you really billing something?"
 msgstr ""
 "Por favor revise su factura nuevamente. ¿Está facturando algo realmente?"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__access_url
+msgid "Portal Access URL"
+msgstr "URL de acceso al portal"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_postal
@@ -1633,6 +2068,13 @@ msgid "Postal zone"
 msgstr "Zona postal"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__l10n_co_edi_jorels_radian__state__posted
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_search
+msgid "Posted"
+msgstr "Publicado"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__prefix
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__resolution_prefix
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_documents__prefix
 msgid "Prefix"
@@ -1673,23 +2115,40 @@ msgstr ""
 "Los productos en las facturas de exportación deben tener un nombre de modelo"
 
 #. module: l10n_co_edi_jorels
-#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_qr_image
-#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_qr_image
-#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_qr_image
-msgid "QR Code"
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_qr_code
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_qr_code
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_qr_code
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_qr_code
+msgid "QR code"
 msgstr "Código QR"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_environments__url_qr
 msgid "QR code url"
-msgstr ""
+msgstr "Url código QR"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_qr_data
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_qr_data
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_qr_data
-msgid "Qr data"
-msgstr ""
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_qr_data
+msgid "QR data"
+msgstr "Datos QR"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_qr_image
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_qr_image
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_qr_image
+msgid "QR image"
+msgstr "Imagen QR"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_qr_link
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_qr_link
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_qr_link
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_qr_link
+msgid "QR link"
+msgstr "Enlace QR"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -1697,9 +2156,32 @@ msgid "R.C.:"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__radian_ids
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__radian_ids
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__radian_ids
+msgid "Radian"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: model:ir.actions.act_window,name:l10n_co_edi_jorels.action_l10n_co_edi_jorels_radian_customer
+#: model:ir.actions.act_window,name:l10n_co_edi_jorels.action_l10n_co_edi_jorels_radian_supplier
+#: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian
+#: model:ir.ui.menu,name:l10n_co_edi_jorels.menu_l10n_co_edi_jorels_radian_customer
+#: model:ir.ui.menu,name:l10n_co_edi_jorels.menu_l10n_co_edi_jorels_radian_tree
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
+msgid "Radian events"
+msgstr "Eventos del Radian"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_form_customer_software
 msgid "Receipt"
 msgstr "Recibo"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__name
+msgid "Reference"
+msgstr "Referencia"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_reference_prices
@@ -1724,6 +2206,11 @@ msgid "Rejection"
 msgstr "Rechazo"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__rejection_concept_id
+msgid "Rejection concept"
+msgstr "Concepto de rechazo"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_rejection_concepts
 msgid "Rejection concepts"
 msgstr "Conceptos de rechazo"
@@ -1734,6 +2221,9 @@ msgid "Replace with log DIAN"
 msgstr "Reemplazar con log DIAN"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__resolution_id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__resolution_id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__resolution_id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__resolution_resolution
 msgid "Resolution"
 msgstr "Resolución"
@@ -1752,14 +2242,29 @@ msgid "Resolutions"
 msgstr "Resoluciones"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_user_id
+msgid "Responsible User"
+msgstr "Usuario responsable"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.actions.server,name:l10n_co_edi_jorels.action_is_attached_document_matched
 msgid "Review attached document"
 msgstr "Revisar documento adjunto"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Error de envío SMS"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "Sale Invoice"
 msgstr "Factura de Venta"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__user_id
+msgid "Salesperson"
+msgstr "Vendedor"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_payment_methods__scope
@@ -1784,6 +2289,34 @@ msgid "Second surname"
 msgstr "Segundo apellido"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__access_token
+msgid "Security Token"
+msgstr "Token de seguridad"
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "Send Radian Event by Email"
+msgstr "Enviar Evento del Radian por Email"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.actions.server,name:l10n_co_edi_jorels.action_send_radian_by_email
+msgid "Send Radian event By Email"
+msgstr "Enviar evento del Radian por Email"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
+msgid "Send by email"
+msgstr "Enviar por email"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
+msgid "Set to Draft"
+msgstr "Cambiar a borrador"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal__sidewalk
 msgid "Sidewalk"
 msgstr "Vereda"
@@ -1792,6 +2325,7 @@ msgstr "Vereda"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_signature
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_signature
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_signature
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_signature
 msgid "Signature"
 msgstr "Firma"
 
@@ -1823,13 +2357,28 @@ msgstr "Inicia con"
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__state
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__state
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__state
 msgid "Status"
 msgstr "Estado"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Estado basado en actividades\n"
+"Vencida: la fecha tope ya ha pasado\n"
+"Hoy: La fecha tope es hoy\n"
+"Planificada: futuras actividades."
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_status_code
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_status_code
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_status_code
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_status_code
 msgid "Status code"
 msgstr "Código de estado"
 
@@ -1837,6 +2386,7 @@ msgstr "Código de estado"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_status_description
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_status_description
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_status_description
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_status_description
 msgid "Status description"
 msgstr "Descripción de estado"
 
@@ -1844,6 +2394,7 @@ msgstr "Descripción de estado"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_status_message
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_status_message
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_status_message
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_status_message
 msgid "Status message"
 msgstr "Mensaje de estado"
 
@@ -1861,6 +2412,11 @@ msgid "Supplier"
 msgstr "Proveedor"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__l10n_co_edi_jorels_radian__type__supplier
+msgid "Supplier Event"
+msgstr "Evento de proveedor"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_partner__surname
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_users__surname
 msgid "Surname"
@@ -1870,6 +2426,7 @@ msgstr "Apellido"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_sync
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_sync
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_sync
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_sync
 msgid "Sync"
 msgstr "Sincrono"
 
@@ -1948,6 +2505,12 @@ msgid "TestSetId"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "The DIAN event sequence is wrong."
+msgstr "La secuencia de Eventos Dian está mal."
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The client does not have an associated identification document type."
@@ -1981,11 +2544,19 @@ msgstr "El modulo de notas débito no ha sido instalado."
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
+msgid ""
+"The discount must always be greater than or equal to 0 and less than 100."
+msgstr "El descuento debe ser siempre mayor o igual a cero y menor que 100."
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
 msgid "The document could not be consulted."
 msgstr "El documento no puede ser consultado."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The document could not be validated in DIAN."
 msgstr "El documento no puede ser validado en la DIAN."
@@ -1997,10 +2568,55 @@ msgid "The document has not been validated."
 msgstr "El documento no ha sido validado."
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "The document number (VAT) for user is required for DIAN events."
+msgstr ""
+"El número de documento (NIF) para el usuario es obligatorio para Eventos "
+"DIAN."
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "The document type for user is required for DIAN events."
+msgstr ""
+"El tipo de documento para el usuario es obligatorio para Eventos DIAN."
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/config/res_company.py:0
 #, python-format
 msgid "The environment has been updated. Sync the resolutions"
 msgstr "El entorno ha sido actualizado. Sincronice las resoluciones"
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "The invoice UUID (CUFE) is required for DIAN events."
+msgstr "El UUID (CUFE) de la factura es obligatorio para Eventos DIAN."
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
+msgid "The invoice email could not be sent"
+msgstr "El email de la factura no pudo ser enviado"
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "The invoice must be a purchase invoice"
+msgstr "La factura debe ser una factura de compra"
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "The invoice must be a sales invoice"
+msgstr "La factura debe ser una factura de venta"
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "The number and prefix are required for DIAN events"
+msgstr "El número y prefijo son obligatorios para Eventos DIAN"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
@@ -2009,7 +2625,34 @@ msgid "The reference invoice has not yet been validated before the DIAN"
 msgstr "La factura de referencia no ha sido validada en la DIAN"
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "The rejection concept is required for the DIAN claim event."
+msgstr "El concepto de rechazo es obligatorio para eventos DIAN de Rechazo."
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "The user and his/her job title (function) is required for DIAN events"
+msgstr ""
+"El usuario y el titulo de su trabajo (cargo) es obligatorio para Eventos "
+"DIAN"
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "The user first name is required for DIAN events"
+msgstr "El primer nombre del usuario es obligatorio para eventos DIAN"
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "The user surname is required for DIAN events"
+msgstr "El apellido del usuario es obligatorio para eventos DIAN"
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The validation at DIAN has been successful."
 msgstr "La validación en la DIAN ha sido exitosa."
@@ -2035,16 +2678,9 @@ msgstr "La remesa %s no tiene un peso"
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
-msgid "This is a export journal but the client's country is Colombia"
-msgstr "Esta es un diario de exportación pero el país del cliente es Colombia"
-
-#. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
-#, python-format
-msgid ""
-"This is a national journal but the client's country is outside Colombia"
+msgid "This is an export invoice but the client's country is Colombia"
 msgstr ""
-"Esta es un diario nacional pero el país del cliente está fuera de Colombia"
+"Esta es una factura de exportación pero el país del cliente es Colombia"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
@@ -2109,6 +2745,7 @@ msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal__type
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__type
 msgid "Type"
 msgstr "Tipo"
 
@@ -2134,6 +2771,14 @@ msgid "Type endorsement events"
 msgstr "Tipo de eventos de respaldo"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_type_environment
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_type_environment
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_type_environment
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_type_environment
+msgid "Type environment"
+msgstr "Tipo de entorno"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_type_event_payments
 msgid "Type event payments"
 msgstr "Tipo pagos de eventos"
@@ -2157,6 +2802,11 @@ msgstr "Tipo de tiempos de mandato"
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_type_nature_mandates
 msgid "Type nature mandates"
 msgstr "Tipo de naturaleza de mandato"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_type_operation_events
@@ -2216,6 +2866,7 @@ msgstr "URL de rechazo"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_uuid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_uuid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_uuid
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_uuid
 msgid "UUID"
 msgstr ""
 
@@ -2242,6 +2893,16 @@ msgid "Unit of measure (DIAN)"
 msgstr "Unidad de medida (DIAN)"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_unread
+msgid "Unread Messages"
+msgstr "Mensajes sin Leer"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr "Contador de mensajes sin leer"
+
+#. module: l10n_co_edi_jorels
 #: model:res.groups,name:l10n_co_edi_jorels.l10n_co_edi_jorels_group_user
 msgid "User"
 msgstr "Usuario"
@@ -2257,6 +2918,12 @@ msgstr "Tipos de usuario"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_is_valid
 msgid "Valid"
 msgstr "Valido"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
+msgid "Validate"
+msgstr "Validar"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
@@ -2287,6 +2954,16 @@ msgid "Value in letters"
 msgstr "Valor en letras"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__website_message_ids
+msgid "Website Messages"
+msgstr "Mensajes del sitio web"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__website_message_ids
+msgid "Website communication history"
+msgstr "Historial de comunicaciones del sitio web"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_amount_tax_withholding
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_amount_tax_withholding
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_amount_tax_withholding
@@ -2307,6 +2984,7 @@ msgstr "Tipos de trabajador"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_xml_base64_bytes
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_xml_base64_bytes
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_xml_base64_bytes
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_xml_base64
 msgid "XML"
 msgstr ""
 
@@ -2316,6 +2994,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_xml_bytes
 msgid "XML Bytes"
 msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_xml_name
+msgid "XML name"
+msgstr "Nombre XML"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_xml_file_name
@@ -2332,7 +3015,26 @@ msgid "Xml name"
 msgstr "Nombre XML"
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid ""
+"You cannot delete an event after it has been posted (and received a "
+"number). You can set it back to \"Draft\" state and modify its content, "
+"then re-confirm it."
+msgstr ""
+"No puede eliminar un evento después de que se haya publicado (y recibido un "
+"número). Puede volver a establecerlo en el estado \"Borrador\" y modificar "
+"su contenido, luego volver a confirmarlo."
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "You cannot delete an event which is not draft or cancelled."
+msgstr "No puede eliminar un evento que no esté borrador o cancelado."
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "You have not configured a 'TestSetId'."
 msgstr "No tiene configurado un 'TestSetId'."
@@ -2369,6 +3071,7 @@ msgstr "Debe asignar al cliente un tipo de responsabilidad"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "You must configure a token"
 msgstr "Debe configurar un token"
@@ -2383,6 +3086,7 @@ msgstr "Necesita seleccionar primero un concepto de corrección"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_zip_base64_bytes
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_zip_base64_bytes
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_zip_base64_bytes
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_zip_base64
 msgid "Zip document"
 msgstr "Documento Zip"
 
@@ -2390,6 +3094,7 @@ msgstr "Documento Zip"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_zip_key
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_zip_key
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_zip_key
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_zip_key
 msgid "Zip key"
 msgstr "Llave Zip"
 
@@ -2397,6 +3102,7 @@ msgstr "Llave Zip"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_zip_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_zip_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_zip_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_zip_name
 msgid "Zip name"
 msgstr "Nombre del Zip"
 

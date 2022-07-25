@@ -122,14 +122,40 @@ class Radian(models.Model):
     ], readonly=True, states={'draft': [('readonly', False)]}, index=True, change_default=True,
         default=lambda self: self._context.get('type', 'customer'), tracking=True)
 
-    # sent = fields.Boolean(readonly=True, default=False, copy=False,
-    #                       help="It indicates that the Radian event has been sent.")
+    def _send_email(self):
+        for rec in self:
+            mail_template = rec.env.ref('l10n_co_edi_jorels.email_template_radian', False)
+            ctx = dict(active_model='l10n_co_edi_jorels.radian')
+            if mail_template:
+                mail_template.with_context(ctx).send_mail(res_id=rec.id, force_send=True,
+                                                          notif_layout='mail.mail_notification_light')
+        return True
 
     def action_send_email(self):
-        for rec in self:
-            mail_template = self.env.ref('l10n_co_edi_jorels.email_template_radian')
-            mail_template.send_mail(res_id=rec.id, force_send=True, notif_layout='mail.mail_notification_light')
-        return {'type': 'ir.actions.act_window_close', 'infos': 'mail_sent'}
+        self.ensure_one()
+        mail_template = self.env.ref('l10n_co_edi_jorels.email_template_radian', False)
+        ctx = dict(
+            default_model='l10n_co_edi_jorels.radian',
+            mail_post_autofollow=True,
+            default_composition_mode='comment',
+            default_use_template=bool(mail_template),
+            default_res_id=self.id,
+            default_template_id=mail_template and mail_template.id or False,
+            force_email=True,
+            custom_layout="mail.mail_notification_light",
+        )
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Send Radian Event by Email'),
+            'res_model': 'mail.compose.message',
+            'src_model': 'l10n_co_edi_jorels.radian',
+            'view_mode': 'form',
+            'target': 'new',
+            'view_type': 'form',
+            'views': [(False, 'form')],
+            'view_id': False,
+            'context': ctx,
+        }
 
     def _default_edi_type_environment(self):
         if not self.env['l10n_co_edi_jorels.type_environments'].search_count([]):

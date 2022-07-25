@@ -220,5 +220,11 @@
               name="Radian events"
               parent="account.menu_finance_receivables"/>
 
-
+    <record id="action_send_radian_by_email" model="ir.actions.server">
+        <field name="name">Send Radian event By Email</field>
+        <field name="model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
+        <field name="binding_model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
+        <field name="state">code</field>
+        <field name="code">records._send_email()</field>
+    </record>
 </odoo>
