@@ -14,35 +14,19 @@
         <field name="groups_id" eval="[(4, ref('hr_payroll_community.group_hr_payroll_community_user'))]"/>
     </record>
 
-    <!--    <record id="action_hr_payslip_co_report"-->
-    <!--            string="Edi payslip"-->
-    <!--            model="hr.payslip"-->
-    <!--            report_type="qweb-pdf"-->
-    <!--            name="l10n_co_hr_payroll.report_hr_payslip_co_template_translated"-->
-    <!--            paperformat="base.paperformat_us"-->
-    <!--            groups="hr_payroll_community.group_hr_payroll_community_user"/>-->
-
-<!--    <record id="action_hr_payslip_edi_co_report" model="ir.actions.report">-->
-<!--        <field name="name">Edi payslip</field>-->
-<!--        <field name="model">hr.payslip.edi</field>-->
-<!--        <field name="report_type">qweb-pdf</field>-->
-<!--        <field name="report_name">l10n_co_hr_payroll.report_hr_payslip_edi_co_template_translated</field>-->
-<!--        <field name="report_file">l10n_co_hr_payroll.report_hr_payslip_edi_co_template_translated</field>-->
-<!--        <field name="print_report_name">(object.name)</field>-->
-<!--        <field name="attachment">(object.state == 'posted') and ((object.name or 'SLIP').replace('/','_')+'.pdf')-->
-<!--        </field>-->
-<!--        <field name="binding_model_id" ref="model_hr_payslip"/>-->
-<!--        <field name="binding_type">report</field>-->
-<!--        <field name="groups_id" eval="[(4, ref('hr_payroll_community.group_hr_payroll_community_use'))]"/>-->
-<!--    </record>-->
-
-<!--    <record id="action_hr_payslip_edi_co_report"-->
-<!--            string="Edi payslip"-->
-<!--            model="hr.payslip.edi"-->
-<!--            report_type="qweb-pdf"-->
-<!--            name="l10n_co_hr_payroll.report_hr_payslip_edi_co_template_translated"-->
-<!--            paperformat="base.paperformat_us"-->
-<!--            groups="hr_payroll_community.group_hr_payroll_community_user"/>-->
+    <record id="action_hr_payslip_edi_co_report" model="ir.actions.report">
+        <field name="name">Edi payslip</field>
+        <field name="model">hr.payslip.edi</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">l10n_co_hr_payroll.report_hr_payslip_edi_co_template_translated</field>
+        <field name="report_file">l10n_co_hr_payroll.report_hr_payslip_edi_co_template_translated</field>
+        <field name="print_report_name">(object.name)</field>
+        <field name="attachment">(object.state == 'posted') and ((object.name or 'SLIP').replace('/','_')+'.pdf')
+        </field>
+        <field name="binding_model_id" ref="model_hr_payslip_edi"/>
+        <field name="binding_type">report</field>
+        <field name="groups_id" eval="[(4, ref('hr_payroll_community.group_hr_payroll_community_user'))]"/>
+    </record>
 
     <template id="report_hr_payslip_co_template_translated">
         <t t-call="web.html_container">
