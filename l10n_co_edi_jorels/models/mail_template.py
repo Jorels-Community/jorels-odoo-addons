@@ -133,7 +133,8 @@ class MailTemplate(models.Model):
                             attached_zip = f.read()
                             edi_attached_zip_base64 = base64.encodebytes(attached_zip)
                             record_data.setdefault('attachments', [])
-                            if not radian.company_id.edi_include_pdf_attachment:
+                            # if not radian.company_id.edi_include_pdf_attachment:
+                            if 'attachments' not in record_data:
                                 record_data['attachments'] = []
                             record_data['attachments'].append((zip_name, edi_attached_zip_base64))
                             radian.write({
