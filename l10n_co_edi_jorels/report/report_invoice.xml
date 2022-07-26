@@ -23,7 +23,7 @@
     <data>
         <template id="report_invoice_document_custom" inherit_id="account.report_invoice_document">
             <xpath expr="//t[@t-set='address']" position="replace">
-                <t t-set="address" t-if="not o.env.company.ei_enable">
+                <t t-set="address" t-if="not o.company_id.ei_enable">
                     <address t-field="o.partner_id"
                              t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
                     <div t-if="o.partner_id.vat" class="mt16">
@@ -33,7 +33,7 @@
                         <span t-field="o.partner_id.vat"/>
                     </div>
                 </t>
-                <div class="container" t-if="o.env.company.ei_enable">
+                <div class="container" t-if="o.company_id.ei_enable">
                     <div class="row mt32 mb32">
                         <div t-if="o.ei_is_not_test and o.ei_qr_data" class="col-auto mw-100 mb-2">
                             <!-- With OCA -->
@@ -108,13 +108,13 @@
                 </div>
             </xpath>
             <xpath expr="//div[@class='page']/h2/span[1]" position="replace">
-                <span t-if="o.env.company.ei_enable and o.ei_is_not_test and o.move_type == 'out_invoice' and o.state == 'posted'">
+                <span t-if="o.company_id.ei_enable and o.ei_is_not_test and o.move_type == 'out_invoice' and o.state == 'posted'">
                     Electronic Sale Invoice
                 </span>
-                <span t-if="o.env.company.ei_enable and not o.ei_is_not_test and o.move_type == 'out_invoice' and o.state == 'posted'">
+                <span t-if="o.company_id.ei_enable and not o.ei_is_not_test and o.move_type == 'out_invoice' and o.state == 'posted'">
                     Sale Invoice
                 </span>
-                <span t-if="not o.env.company.ei_enable and o.move_type == 'out_invoice' and o.state == 'posted'">
+                <span t-if="not o.company_id.ei_enable and o.move_type == 'out_invoice' and o.state == 'posted'">
                     Invoice
                 </span>
             </xpath>
@@ -128,7 +128,7 @@
                     </p>
                 </div>
                 <div name="order_ref" class="col-auto mw-100 mb-2"
-                     t-if="o.env.company.ei_enable and o.order_ref_number">
+                     t-if="o.company_id.ei_enable and o.order_ref_number">
                     <strong>Order reference:</strong>
                     <p class="m-0">
                         <span t-field="o.order_ref_number"/>
@@ -137,12 +137,12 @@
                     </p>
                 </div>
                 <div name="operation_type" class="col-auto mw-100 mb-2"
-                     t-if="o.env.company.ei_enable and o.ei_operation">
+                     t-if="o.company_id.ei_enable and o.ei_operation">
                     <strong>Operation type:</strong>
                     <p class="m-0" t-field="o.ei_operation"/>
                 </div>
                 <div name="payment_form" class="col-auto mw-100 mb-2"
-                     t-if="o.env.company.ei_enable and o.payment_form_id">
+                     t-if="o.company_id.ei_enable and o.payment_form_id">
                     <strong>Payment form:</strong>
                     <p class="m-0" t-field="o.payment_form_id"/>
                 </div>
@@ -162,12 +162,12 @@
             </xpath>
             <xpath expr="//div[@id='total']/div[1]" position="before">
                 <div t-attf-class="#{'col-7' if report_type != 'html' else 'col-sm-12 col-md-12'}">
-                    <div t-if="o.env.company.ei_enable and o.payment_method_id.id" name="payment_method">
+                    <div t-if="o.company_id.ei_enable and o.payment_method_id.id" name="payment_method">
                         <strong>Payment method:</strong>
                         <span t-field="o.payment_method_id"/>
                     </div>
                     <br/>
-                    <div t-if="o.env.company.ei_enable" name="withholdings_note">
+                    <div t-if="o.company_id.ei_enable" name="withholdings_note">
                         <strong>The withholdings are for informational purposes only.</strong>
                     </div>
                     <br/>
@@ -193,7 +193,7 @@
                 </tr>
             </xpath>
             <xpath expr="//t[@t-call='account.document_tax_totals']" position="after">
-                <tr class="border-black" style="" t-if="o.env.company.ei_enable">
+                <tr class="border-black" style="" t-if="o.company_id.ei_enable">
                     <td>
                         <strong>Total without withholdings</strong>
                     </td>
@@ -203,7 +203,7 @@
                 </tr>
             </xpath>
             <xpath expr="//div[@class='page']" position="inside">
-                <div t-if="o.env.company.ei_enable and o.ei_is_not_test" class="container">
+                <div t-if="o.company_id.ei_enable and o.ei_is_not_test" class="container">
                     <div class="row">
                         <div class="col-12">
                             <div class="mt16 text-center">
