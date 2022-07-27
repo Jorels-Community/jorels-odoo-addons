@@ -245,7 +245,7 @@ class Radian(models.Model):
                     (rec.type == 'customer' and rec.event_id.code == '034')
             ):
                 rec.validate_dian_generic()
-                rec.action_send_email()
+                rec._send_email()
 
         return True
 
