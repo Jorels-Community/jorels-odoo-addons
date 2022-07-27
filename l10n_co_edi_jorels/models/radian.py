@@ -374,11 +374,13 @@ class Radian(models.Model):
                 elif 'is_valid' in response:
                     rec.write_response(response, payload)
                     if response['is_valid']:
-                        self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                        # self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                        _logger.debug("The validation at DIAN has been successful.")
                     elif 'zip_key' in response:
                         if response['zip_key'] is not None:
                             if not rec.edi_is_not_test:
-                                self.env.user.notify_success(message=_("Document sent to DIAN in habilitation."))
+                                # self.env.user.notify_success(message=_("Document sent to DIAN in habilitation."))
+                                _logger.debug("Document sent to DIAN in habilitation.")
                             else:
                                 temp_message = {rec.edi_status_message, rec.edi_errors_messages,
                                                 rec.edi_status_description, rec.edi_status_code}
@@ -449,11 +451,13 @@ class Radian(models.Model):
                     elif 'is_valid' in response:
                         rec.write_response(response, payload)
                         if response['is_valid']:
-                            self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                            # self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                            _logger.debug("The validation at DIAN has been successful.")
                         elif 'zip_key' in response or 'uuid' in response:
                             if response['zip_key'] is not None or response['uuid'] is not None:
                                 if not rec.edi_is_not_test:
-                                    self.env.user.notify_success(message=_("Document sent to DIAN in testing."))
+                                    # self.env.user.notify_success(message=_("Document sent to DIAN in testing."))
+                                    _logger.debug("Document sent to DIAN in testing.")
                                 else:
                                     temp_message = {rec.edi_status_message, rec.edi_errors_messages,
                                                     rec.edi_status_description, rec.edi_status_code}

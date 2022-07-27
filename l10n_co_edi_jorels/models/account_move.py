@@ -1045,11 +1045,13 @@ class AccountMove(models.Model):
                     elif 'is_valid' in response:
                         rec.write_response(response, json.dumps(requests_data, indent=2, sort_keys=False))
                         if response['is_valid']:
-                            self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                            # self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                            _logger.debug("The validation at DIAN has been successful.")
                         elif 'uuid' in response:
                             if response['uuid'] != "":
                                 if not rec.ei_is_not_test:
-                                    self.env.user.notify_success(message=_("Document sent to DIAN in habilitation."))
+                                    # self.env.user.notify_success(message=_("Document sent to DIAN in habilitation."))
+                                    _logger.debug("Document sent to DIAN in habilitation.")
                                 else:
                                     temp_message = {rec.ei_status_message, rec.ei_errors_messages,
                                                     rec.ei_status_description, rec.ei_status_code}
@@ -1084,7 +1086,8 @@ class AccountMove(models.Model):
     def skip_validate_dian(self):
         for rec in self:
             rec.write({'state': 'posted'})
-            self.env.user.notify_warning(message=_("The validation process has been skipped."))
+            # self.env.user.notify_warning(message=_("The validation process has been skipped."))
+            _logger.debug("The validation process has been skipped.")
 
     def skip_validate_dian_production(self):
         for rec in self:
@@ -1122,7 +1125,7 @@ class AccountMove(models.Model):
                         try:
                             to_mass_send.mass_send_print()
                         except Exception as e:
-                            self.env.user.notify_danger(message=_('The invoice email could not be sent'))
+                            # self.env.user.notify_danger(message=_('The invoice email could not be sent'))
                             _logger.debug("The invoice email could not be sent")
                             _logger.error('mass_send_print error: %s' % e)
 
@@ -1188,11 +1191,13 @@ class AccountMove(models.Model):
                         elif 'is_valid' in response:
                             rec.write_response(response, json.dumps(requests_data, indent=2, sort_keys=False))
                             if response['is_valid']:
-                                self.env.user.notify_info(message=_("Validation in DIAN has been successful."))
+                                # self.env.user.notify_info(message=_("Validation in DIAN has been successful."))
+                                _logger.debug("Validation in DIAN has been successful.")
                             elif 'zip_key' in response or 'uuid' in response:
                                 if response['zip_key'] is not None or response['uuid'] is not None:
                                     if not rec.ei_is_not_test:
-                                        self.env.user.notify_info(message=_("Document sent to DIAN in testing."))
+                                        # self.env.user.notify_info(message=_("Document sent to DIAN in testing."))
+                                        _logger.debug("Document sent to DIAN in testing.")
                                     else:
                                         temp_message = {rec.ei_status_message, rec.ei_errors_messages,
                                                         rec.ei_status_description, rec.ei_status_code}
@@ -1252,15 +1257,15 @@ class AccountMove(models.Model):
                             raise UserError(response['detail'])
                         if 'message' in response:
                             if response['message'] == 'Unauthenticated.' or response['message'] == '':
-                                self.env.user.notify_warning(message=_("Authentication error with the API"))
+                                # self.env.user.notify_warning(message=_("Authentication error with the API"))
                                 _logger.debug("Authentication error with the API")
                             else:
                                 if 'errors' in response:
-                                    self.env.user.notify_warning(
-                                        message=response['message'] + '/ errors: ' + str(response['errors']))
+                                    # self.env.user.notify_warning(
+                                    #     message=response['message'] + '/ errors: ' + str(response['errors']))
                                     _logger.debug(response['message'] + '/ errors: ' + str(response['errors']))
                                 else:
-                                    self.env.user.notify_warning(message=response['message'])
+                                    # self.env.user.notify_warning(message=response['message'])
                                     _logger.debug(response['message'])
                         elif response and ('is_valid' in response[0]):
                             success = False
@@ -1315,23 +1320,23 @@ class AccountMove(models.Model):
                                     success = True
                                     break
                             if success:
-                                self.env.user.notify_info(message=_("Validation in DIAN has been successful."))
+                                # self.env.user.notify_info(message=_("Validation in DIAN has been successful."))
                                 _logger.debug("Validation in DIAN has been successful.")
                             else:
-                                self.env.user.notify_warning(message=_("The document has not been validated."))
+                                # self.env.user.notify_warning(message=_("The document has not been validated."))
                                 _logger.debug("The document has not been validated.")
                         else:
-                            self.env.user.notify_warning(message=_("The document could not be consulted."))
+                            # self.env.user.notify_warning(message=_("The document could not be consulted."))
                             _logger.debug("The document could not be consulted.")
                     else:
-                        self.env.user.notify_warning(
-                            message=_("A number is required to verify the status of the document."))
+                        # self.env.user.notify_warning(
+                        #     message=_("A number is required to verify the status of the document."))
                         _logger.debug("A number is required to verify the status of the document.")
                 else:
-                    self.env.user.notify_warning(message=_("This type of document does not need to be sent to DIAN."))
+                    # self.env.user.notify_warning(message=_("This type of document does not need to be sent to DIAN."))
                     _logger.debug("This type of document does not need to be sent to DIAN.")
             except Exception as e:
-                self.env.user.notify_warning(message=_("Failed to process the request"))
+                # self.env.user.notify_warning(message=_("Failed to process the request"))
                 _logger.debug("Failed to process the request: %s", e)
 
     @api.depends('ei_attached_document_base64_bytes')
