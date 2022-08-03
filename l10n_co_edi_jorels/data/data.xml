@@ -20,7 +20,7 @@
 <!--email: info@jorels.com-->
 
 <odoo>
-    <data noupdate="1">
+    <data noupdate="0">
         <function
                 model="res.company"
                 name="init_csv_data"
