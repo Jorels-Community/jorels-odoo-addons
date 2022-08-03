@@ -26,7 +26,7 @@
     'author': "Jorels SAS",
     'license': "AGPL-3",
     'category': 'Invoicing & Payments',
-    'version': '15.0.22.04.12.00.14',
+    'version': '15.0.22.08.03.12.42',
     'website': "https://www.jorels.com",
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
