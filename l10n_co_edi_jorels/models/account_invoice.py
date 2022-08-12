@@ -519,7 +519,7 @@ class AccountInvoice(models.Model):
                             edi_tax_name = invoice_line_tax_id.edi_tax_id.name
                             tax_name = invoice_line_tax_id.name
                             # The information sent to DIAN should not include the withholdings
-                            if edi_tax_name[:4] != 'Rete' and tax_name != 'IVA Excluido':
+                            if edi_tax_name[:4] != 'Rete' and tax_name not in ('IVA Excluido', 'IVA Compra Excluido'):
                                 if invoice_line_tax_id.amount_type == 'percent':
                                     tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                     tax_total.update(
@@ -622,7 +622,7 @@ class AccountInvoice(models.Model):
             if tax_line_id.tax_id.edi_tax_id:
                 edi_tax_name = tax_line_id.tax_id.edi_tax_id.name
                 tax_name = tax_line_id.tax_id.name
-                if tax_name == 'IVA Excluido':
+                if tax_name in ('IVA Excluido', 'IVA Compra Excluido'):
                     amount_excluded = amount_excluded + tax_line_id.base
                 elif edi_tax_name[:4] == 'Rete':
                     amount_tax_withholding = amount_tax_withholding + tax_line_id.amount_total
@@ -630,7 +630,7 @@ class AccountInvoice(models.Model):
                     amount_tax_no_withholding = amount_tax_no_withholding + tax_line_id.amount_total
             else:
                 tax_name = tax_line_id.tax_id.name
-                if tax_name == 'IVA Excluido':
+                if tax_name in ('IVA Excluido', 'IVA Compra Excluido'):
                     amount_excluded = amount_excluded + tax_line_id.base
                 elif tax_name[:3] == 'Rte':
                     amount_tax_withholding = amount_tax_withholding + tax_line_id.amount_total
