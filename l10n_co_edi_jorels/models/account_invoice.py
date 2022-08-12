@@ -142,7 +142,8 @@ class AccountInvoice(models.Model):
         ('standard', 'Standard'),
         ('mandates', 'Mandates'),
         ('transport', 'Transport'),
-        ('exchange', 'Exchange')
+        ('exchange', 'Exchange'),
+        ('iva_free_day', 'Día Sin IVA')
     ], string="Operation type", default=lambda self: self.env.user.company_id.ei_operation, copy=True, readonly=True,
         required=True, states={'draft': [('readonly', False)]})
 
@@ -182,7 +183,8 @@ class AccountInvoice(models.Model):
 
     # Store resolution
     resolution_id = fields.Many2one(string="Resolution", comodel_name='l10n_co_edi_jorels.resolution', copy=False,
-                                    store=True, compute="_compute_resolution", ondelete='RESTRICT')
+                                    store=True, compute="_compute_resolution", ondelete='RESTRICT', readonly=True,
+                                    states={'draft': [('readonly', False)]})
 
     radian_ids = fields.One2many(comodel_name='l10n_co_edi_jorels.radian', inverse_name='invoice_id')
 
@@ -699,7 +701,9 @@ class AccountInvoice(models.Model):
         # Electronic invoicing (Code '01')
         # Export electronic invoicing (Code '02')
         # Credit note (Code '91')
-        # Or Debit note (Code '92')
+        # Debit note (Code '92')
+        # Support document (Code '05')
+        # Credit note for support document (Code '95')
         # The contingency and others are pending review
         type_edi_document = self.get_type_edi_document()
         if type_edi_document != 'none':
@@ -715,6 +719,12 @@ class AccountInvoice(models.Model):
             elif type_edi_document == 'debit_note':
                 # Debit note
                 type_documents_rec = type_documents_env.search([('code', '=', '92')])
+            elif type_edi_document == 'doc_support':
+                # Document support
+                type_documents_rec = type_documents_env.search([('code', '=', '05')])
+            elif type_edi_document == 'note_support':
+                # Note Document Support
+                type_documents_rec = type_documents_env.search([('code', '=', '95')])
             else:
                 raise UserError(_("This type of document does not need to be sent to DIAN"))
         else:
@@ -738,7 +748,7 @@ class AccountInvoice(models.Model):
     @api.depends('journal_id')
     def _compute_resolution(self):
         for rec in self:
-            type_edi_document = rec.get_type_edi_document()
+            type_edi_document = rec.get_type_document()
             if type_edi_document != 'none':
                 if type_edi_document == 'invoice' and rec.journal_id.sequence_id.resolution_id:
                     # Sales invoice
@@ -755,10 +765,11 @@ class AccountInvoice(models.Model):
             else:
                 rec.resolution_id = None
 
-    @api.depends('number', 'reference')
+    @api.depends('number', 'reference', 'journal_id')
     def compute_number_formatted(self):
         for rec in self:
-            if rec.type in ['out_invoice', 'out_refund']:
+            type_edi_document = rec.get_type_edi_document()
+            if type_edi_document != 'none':
                 prefix = rec.resolution_id.resolution_prefix
                 ei_number = ''
                 number_formatted = ''
@@ -781,7 +792,7 @@ class AccountInvoice(models.Model):
                     rec.ei_number = ''
                     rec.number_formatted = ''
                     _logger.debug('Compute number format: Error.')
-            elif rec.type in ['in_invoice', 'in_refund']:
+            elif rec.type in ('in_invoice', 'in_refund'):
                 rec.ei_number = rec.reference
                 rec.number_formatted = rec.reference
             else:
@@ -815,9 +826,10 @@ class AccountInvoice(models.Model):
     @api.depends('ei_type_document_id', 'ei_correction_concept_credit_id', 'ei_correction_concept_debit_id')
     def compute_ei_correction_concept_id(self):
         for rec in self:
-            if rec.ei_type_document_id.id == 5:
+            type_document = rec.get_type_document()
+            if type_document == 'credit_note':
                 rec.ei_correction_concept_id = rec.ei_correction_concept_credit_id.id
-            elif rec.ei_type_document_id.id == 6:
+            elif type_document == 'debit_note':
                 rec.ei_correction_concept_id = rec.ei_correction_concept_debit_id.id
             else:
                 rec.ei_correction_concept_id = None
@@ -830,7 +842,8 @@ class AccountInvoice(models.Model):
             'standard': 10,
             'mandates': 11,
             'transport': 12,
-            'exchange': 25
+            'exchange': 25,
+            'iva_free_day': 27
         }
 
         type_edi_document = self.get_type_edi_document()
@@ -838,6 +851,8 @@ class AccountInvoice(models.Model):
             return 14 if self.ei_is_correction_without_reference else 13
         elif type_edi_document == 'debit_note':
             return 17 if self.ei_is_correction_without_reference else 16
+        elif type_edi_document in ('doc_support', 'note_support'):
+            return 28 if self.partner_id.tax_resident_co else 29
         else:
             return operation[self.ei_operation]
 
@@ -845,7 +860,8 @@ class AccountInvoice(models.Model):
     def get_json_request(self):
         for rec in self:
             # If it is a sales invoice or credit note or debit note.
-            if rec.type == 'out_invoice' or rec.type == 'out_refund':
+            type_edi_document = rec.get_type_edi_document()
+            if type_edi_document != 'none':
                 # Important for compatibility with old fields,
                 # third-party modules or manual changes to the database
                 if not rec.ei_number or not rec.number_formatted:
@@ -944,14 +960,11 @@ class AccountInvoice(models.Model):
                     json_request['legal_monetary_totals'] = rec.get_ei_legal_monetary_totals()
                     json_request['lines'] = rec.get_ei_lines()
                     json_request['payment_forms'] = [rec.get_ei_payment_form()]
-                    if type_edi_document == 'invoice':
+                    if type_edi_document in ('invoice', 'doc_support'):
                         # Sales invoice
                         billing_reference = False
-                    elif type_edi_document == 'credit_note':
+                    elif type_edi_document in ('credit_note', 'note_support', 'debit_note'):
                         # Credit note
-                        billing_reference = True
-                    elif type_edi_document == 'debit_note':
-                        # Debit note
                         billing_reference = True
                 else:
                     raise UserError(_("This type of document does not need to be sent to DIAN"))
@@ -978,6 +991,9 @@ class AccountInvoice(models.Model):
                             }
                         else:
                             raise UserError(_("The reference invoice has not yet been validated before the DIAN"))
+                    elif type_edi_document == 'note_support':
+                        raise UserError(
+                            _("The credit note for document support cannot be a correction without reference"))
 
                 if rec.name or rec.comment:
                     notes = []
@@ -993,6 +1009,22 @@ class AccountInvoice(models.Model):
 
             return json_request
 
+    @api.multi
+    def get_type_document(self):
+        type_document = 'none'
+        for rec in self:
+            if rec.type in ('out_invoice', 'in_invoice'):
+                if ('debit_invoice_id' in rec) and rec.debit_invoice_id:
+                    # Debit note
+                    type_document = 'debit_note'
+                else:
+                    # Sales invoice
+                    type_document = 'invoice'
+            elif rec.type in ('out_refund', 'in_refund'):
+                # Credit note
+                type_document = 'credit_note'
+        return type_document
+
     # TO DO: It can be made more efficient by calling this function fewer times,
     # when the electronic invoice is processed. Ideally, it should be just one time
     @api.multi
@@ -1000,19 +1032,29 @@ class AccountInvoice(models.Model):
         type_edi_document = 'none'
         for rec in self:
             if rec.type == 'out_invoice':
-                if rec.origin:
-                    if rec.debit_invoice_id:
-                        # Debit note
-                        type_edi_document = 'debit_note'
-                    else:
-                        # Sales invoice
-                        type_edi_document = 'invoice'
-                # Sales invoice
+                if ('debit_invoice_id' in rec) and rec.debit_invoice_id:
+                    # Debit note
+                    type_edi_document = 'debit_note'
                 else:
+                    # Sales invoice
                     type_edi_document = 'invoice'
             elif rec.type == 'out_refund':
                 # Credit note
                 type_edi_document = 'credit_note'
+            elif rec.type == 'in_invoice' \
+                    and rec.resolution_id \
+                    and rec.resolution_id.resolution_type_document_id.id == 12:
+                if ('debit_invoice_id' in rec) and rec.debit_invoice_id:
+                    # There is no debit note for document support
+                    raise UserError(_("There is not debit note for electronic document support"))
+                else:
+                    # Document support
+                    type_edi_document = 'doc_support'
+            elif rec.type == 'in_refund' \
+                    and rec.resolution_id \
+                    and rec.resolution_id.resolution_type_document_id.id == 13:
+                # Note Document Support
+                type_edi_document = 'note_support'
         return type_edi_document
 
     @api.multi
@@ -1021,7 +1063,7 @@ class AccountInvoice(models.Model):
             if not rec.company_id.ei_enable:
                 continue
 
-            # raise Warning(json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
+            # raise UserError(json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
             _logger.debug("DIAN Validation Request: %s", json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
 
             try:
@@ -1048,6 +1090,9 @@ class AccountInvoice(models.Model):
                     api_url = api_url + "/" + type_edi_document
 
                     if is_test or not rec.ei_is_not_test:
+                        if type_edi_document in ('doc_support', 'note_support'):
+                            raise UserError(
+                                _("The support document does not support test submissions, only production."))
                         if rec.company_id.test_set_id:
                             test_set_id = rec.company_id.test_set_id
                             params['test_set_id'] = test_set_id
@@ -1129,9 +1174,10 @@ class AccountInvoice(models.Model):
         res = super(AccountInvoice, self).action_invoice_open()
 
         to_edi = self.filtered(lambda inv: inv.company_id.ei_enable
-                                           and inv.type in ('out_invoice', 'out_refund')
+                                           and inv.get_type_edi_document() != 'none'
                                            and not inv.ei_is_valid
-                                           and not inv.is_journal_pos())
+                                           and not inv.is_journal_pos()
+                               )
         if to_edi:
             # Invoices in DIAN cannot be validated with zero total
             to_paid_invoices = to_edi.filtered(lambda inv: inv.state == 'paid')
@@ -1148,7 +1194,8 @@ class AccountInvoice(models.Model):
                 to_production_invoices = to_electronic_invoices.filtered(lambda inv: inv.ei_is_not_test)
                 if to_production_invoices:
                     to_production_invoices.validate_dian_generic(False)
-                    to_mass_send = to_production_invoices.filtered(lambda inv: inv.company_id.enable_mass_send_print)
+                    to_mass_send = to_production_invoices.filtered(
+                        lambda inv: inv.company_id.enable_mass_send_print and inv.type in ('out_invoice', 'out_refund'))
                     if to_mass_send:
                         try:
                             to_mass_send.mass_send_print()
