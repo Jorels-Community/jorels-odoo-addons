@@ -73,7 +73,7 @@ class ResCompany(models.Model):
     # Test
     is_not_test = fields.Boolean(string="Production environment", default=False)
     test_set_id = fields.Char(string="TestSetId")
-    enable_validate_state = fields.Boolean(string="Enable intermediate DIAN Validation status",
+    enable_validate_state = fields.Boolean(string="Enable intermediate 'DIAN Validation' state",
                                            default=True)
     enable_mass_send_print = fields.Boolean(string="Automatic invoice email when validating (In production)",
                                             default=False)
