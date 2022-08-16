@@ -99,7 +99,8 @@
                 </span>
                 <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
                 <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
-                <span t-if="o.type == 'out_refund'">Credit Note</span>
+                <span t-if="o.company_id.ei_enable and o.type == 'out_refund'">Electronic Credit Note</span>
+                <span t-elif="not o.company_id.ei_enable and o.type == 'out_refund'">Credit Note</span>
                 <strong t-if="o.company_id.ei_enable and o.type == 'in_refund' and o.resolution_id and o.resolution_id.resolution_type_document_id.id == 13">
                     Credit note of electronic support document in acquisitions made to those not obliged to invoice
                 </strong>
