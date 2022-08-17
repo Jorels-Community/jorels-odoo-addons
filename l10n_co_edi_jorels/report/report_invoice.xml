@@ -35,7 +35,7 @@
                 </t>
                 <div class="container" t-if="o.company_id.ei_enable">
                     <div class="row mt32 mb32">
-                        <div t-if="o.ei_is_not_test and o.ei_qr_data" class="col-auto mw-100 mb-2">
+                        <div t-if="o.ei_is_valid and o.ei_qr_data" class="col-auto mw-100 mb-2">
                             <!-- With OCA -->
                             <!-- <img t-att-src="'/report/qr/?value=%s&amp;error_correction=%s' % (o.ei_qr_data, 1)" style="width:100;height:100"/>-->
 
@@ -107,16 +107,38 @@
                     </div>
                 </div>
             </xpath>
-            <xpath expr="//div[@class='page']/h2/span[1]" position="replace">
-                <span t-if="o.company_id.ei_enable and o.ei_is_not_test and o.move_type == 'out_invoice' and o.state == 'posted'">
+            <xpath expr="//div[@class='page']/h2[1]" position="replace">
+                <span t-if="o.company_id.ei_enable and o.ei_is_valid and o.move_type == 'out_invoice' and o.state == 'posted'">
                     Electronic Sale Invoice
                 </span>
-                <span t-if="o.company_id.ei_enable and not o.ei_is_not_test and o.move_type == 'out_invoice' and o.state == 'posted'">
+                <span t-elif="o.company_id.ei_enable and not o.ei_is_valid and o.move_type == 'out_invoice' and o.state == 'posted'">
                     Sale Invoice
                 </span>
-                <span t-if="not o.company_id.ei_enable and o.move_type == 'out_invoice' and o.state == 'posted'">
+                <span t-elif="not o.company_id.ei_enable and o.move_type == 'out_invoice' and o.state == 'posted'">
                     Invoice
                 </span>
+                <span t-if="o.move_type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
+                <span t-if="o.move_type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
+                <span t-if="o.move_type == 'out_refund'">Credit Note</span>
+                <strong t-if="o.company_id.ei_enable and o.move_type == 'in_refund' and o.resolution_id and o.resolution_id.resolution_type_document_id.id == 13">
+                    Credit note of electronic support document in acquisitions made to those not obliged to invoice
+                </strong>
+                <strong t-elif="o.company_id.ei_enable and o.move_type == 'in_refund'">
+                    Vendor Electronic Credit Note
+                </strong>
+                <span t-elif="not o.company_id.ei_enable and o.move_type == 'in_refund'">
+                    Vendor Credit Note
+                </span>
+                <strong t-if="o.company_id.ei_enable and o.move_type == 'in_invoice' and o.resolution_id and o.resolution_id.resolution_type_document_id.id == 12">
+                    Electronic support document in acquisitions made to those not obliged to invoice
+                </strong>
+                <strong t-elif="o.company_id.ei_enable and o.move_type == 'in_invoice'">
+                    Vendor Electronic Bill
+                </strong>
+                <span t-elif="not o.company_id.ei_enable and o.move_type == 'in_invoice'">
+                    Vendor Bill
+                </span>
+                <span t-if="o.name != '/'" t-field="o.name"/>
             </xpath>
             <xpath expr="//div[@id='informations']" position="inside">
                 <div name="invoicing_period" class="col-auto mw-100 mb-2" t-if="o.date_start and o.date_end">
@@ -203,46 +225,42 @@
                 </tr>
             </xpath>
             <xpath expr="//div[@class='page']" position="inside">
-                <div t-if="o.company_id.ei_enable and o.ei_is_not_test" class="container">
+                <div t-if="o.company_id.ei_enable" class="container">
                     <div class="row">
                         <div class="col-12">
                             <div class="mt16 text-center">
                                 <div t-if="o.company_id.footer_custom_text">
                                     <span t-field="o.company_id.footer_custom_text" name="footer_custom_text"/>
                                 </div>
-                                <div t-if="o.ei_is_valid">
-                                    <strong t-if="o.move_type == 'out_invoice' and not o.debit_origin_id.id">CUFE:</strong>
-                                    <strong t-if="o.move_type == 'out_invoice' and o.debit_origin_id.id">CUDE:</strong>
-                                    <strong t-if="o.move_type == 'out_refund'">CUDE:</strong>
+                                <div t-if="o.resolution_id and o.ei_uuid">
+                                    <strong t-field="o.resolution_id.resolution_type_document_id.type"/>:
                                     <small t-field="o.ei_uuid"/>
-                                </div>
-                                <div t-else="">
-                                    <span>This document has not been validated in the DIAN</span>
                                 </div>
                                 <div t-if="o.ei_signature">
                                     <strong>Signature:</strong>
                                     <small t-field="o.ei_signature"/>
                                 </div>
-                                <strong>Invoicing authorization number:</strong>
+                                <strong t-if="o.resolution_id.resolution_resolution">Invoicing authorization number:
+                                </strong>
                                 <span t-field="o.resolution_id.resolution_resolution"/>
-                                <strong>Date:</strong>
+                                <strong t-if="o.resolution_id.resolution_resolution_date">Date:</strong>
                                 <span t-field="o.resolution_id.resolution_resolution_date"/>
                                 <br/>
-                                <strong>Authorized range from:</strong>
+                                <strong t-if="o.resolution_id.resolution_from">Authorized range from:</strong>
                                 <span t-field="o.resolution_id.resolution_prefix"/>
                                 <span t-field="o.resolution_id.resolution_from"/>
-                                <strong>to</strong>
+                                <strong t-if="o.resolution_id.resolution_to">to</strong>
                                 <span t-field="o.resolution_id.resolution_prefix"/>
                                 <span t-field="o.resolution_id.resolution_to"/>
-                                <strong>Valid from:</strong>
+                                <strong t-if="o.resolution_id.resolution_date_from">Valid from:</strong>
                                 <span t-field="o.resolution_id.resolution_date_from"/>
-                                <strong>to</strong>
+                                <strong t-if="o.resolution_id.resolution_date_to">to</strong>
                                 <span t-field="o.resolution_id.resolution_date_to"/>
                                 <br/>
-                                <strong>Graphic representation of electronic invoicing printed by computer with own
-                                    software by
+                                <strong t-if="o.ei_is_valid">Graphic representation of electronic invoicing printed by
+                                    computer with own software by
                                 </strong>
-                                <strong t-field="o.company_id.business_name"/>
+                                <strong t-if="o.ei_is_valid" t-field="o.company_id.business_name"/>
                             </div>
                         </div>
                     </div>

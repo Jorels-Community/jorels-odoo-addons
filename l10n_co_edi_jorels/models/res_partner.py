@@ -37,6 +37,7 @@ class ResPartner(models.Model):
     merchant_registration = fields.Char(string="Merchant registration")
     municipality_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.municipalities', string="Municipality",
                                       ondelete='RESTRICT')
+    tax_resident_co = fields.Boolean(string="Tax resident in Colombia?", default=True)
     email_edi = fields.Char("Email for invoicing")
 
     trade_name = fields.Char(string="Trade name", copy=False)
