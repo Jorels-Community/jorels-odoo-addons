@@ -596,6 +596,18 @@ class AccountMove(models.Model):
                     if rec.ei_operation == 'mandates':
                         raise UserError(_("Electronic invoicing does not yet support mandates"))
 
+                    if rec.ei_type_document_id.id == 12:
+                        # Support document
+                        # Form generation transmission (transmission code)
+                        # 1, Por operación
+                        # 2, Acumulado semanal
+                        invoice_temps.update({
+                            'period': {
+                                'date': fields.Date.to_string(rec.invoice_date),
+                                'transmission_code': 1
+                            }
+                        })
+
                     lines.append(invoice_temps)
 
         return lines
