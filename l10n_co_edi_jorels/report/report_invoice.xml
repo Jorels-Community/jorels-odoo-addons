@@ -87,38 +87,40 @@
                 </div>
             </xpath>
             <xpath expr="//div[@class='page']/h2[1]" position="replace">
-                <strong t-if="o.company_id.ei_enable and o.ei_is_valid and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
-                    Electronic Sale Invoice
-                </strong>
-                <strong t-elif="o.company_id.ei_enable and not o.ei_is_valid and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
-                    Sale Invoice
-                </strong>
-                <span t-elif="not o.company_id.ei_enable and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
-                    Invoice
-                </span>
-                <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
-                <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
-                <span t-if="o.company_id.ei_enable and o.type == 'out_refund'">Electronic Credit Note</span>
-                <span t-elif="not o.company_id.ei_enable and o.type == 'out_refund'">Credit Note</span>
-                <strong t-if="o.company_id.ei_enable and o.type == 'in_refund' and o.resolution_id and o.resolution_id.resolution_type_document_id.id == 13">
-                    Credit note of electronic support document in acquisitions made to those not obliged to invoice
-                </strong>
-                <strong t-elif="o.company_id.ei_enable and o.type == 'in_refund'">
-                    Vendor Electronic Credit Note
-                </strong>
-                <span t-elif="not o.company_id.ei_enable and o.type == 'in_refund'">
-                    Vendor Credit Note
-                </span>
-                <strong t-if="o.company_id.ei_enable and o.type == 'in_invoice' and o.resolution_id and o.resolution_id.resolution_type_document_id.id == 12">
-                    Electronic support document in acquisitions made to those not obliged to invoice
-                </strong>
-                <strong t-elif="o.company_id.ei_enable and o.type == 'in_invoice'">
-                    Vendor Electronic Bill
-                </strong>
-                <span t-elif="not o.company_id.ei_enable and o.type == 'in_invoice'">
-                    Vendor Bill
-                </span>
-                <span t-field="o.number"/>
+                <h2>
+                    <strong t-if="o.company_id.ei_enable and o.ei_is_valid and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
+                        Electronic Sale Invoice
+                    </strong>
+                    <strong t-elif="o.company_id.ei_enable and not o.ei_is_valid and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
+                        Sale Invoice
+                    </strong>
+                    <span t-elif="not o.company_id.ei_enable and o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">
+                        Invoice
+                    </span>
+                    <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
+                    <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
+                    <span t-if="o.company_id.ei_enable and o.type == 'out_refund'">Electronic Credit Note</span>
+                    <span t-elif="not o.company_id.ei_enable and o.type == 'out_refund'">Credit Note</span>
+                    <strong t-if="o.company_id.ei_enable and o.type == 'in_refund' and o.resolution_id and o.resolution_id.resolution_type_document_id.id == 13">
+                        Credit note of electronic support document in acquisitions made to those not obliged to invoice
+                    </strong>
+                    <strong t-elif="o.company_id.ei_enable and o.type == 'in_refund'">
+                        Vendor Electronic Credit Note
+                    </strong>
+                    <span t-elif="not o.company_id.ei_enable and o.type == 'in_refund'">
+                        Vendor Credit Note
+                    </span>
+                    <strong t-if="o.company_id.ei_enable and o.type == 'in_invoice' and o.resolution_id and o.resolution_id.resolution_type_document_id.id == 12">
+                        Electronic support document in acquisitions made to those not obliged to invoice
+                    </strong>
+                    <strong t-elif="o.company_id.ei_enable and o.type == 'in_invoice'">
+                        Vendor Electronic Bill
+                    </strong>
+                    <span t-elif="not o.company_id.ei_enable and o.type == 'in_invoice'">
+                        Vendor Bill
+                    </span>
+                    <span t-field="o.number"/>
+                </h2>
             </xpath>
             <xpath expr="//div[@id='informations']" position="inside">
                 <div name="invoicing_period" class="col-auto mw-100 mb-2" t-if="o.date_start and o.date_end">
