@@ -41,6 +41,7 @@
                             <field name="type_regime_id"/>
                             <field name="type_liability_id"/>
                             <field name="municipality_id"/>
+                            <field name="tax_resident_co"/>
                             <field name="email_edi"/>
                             <field name="customer_software_id"/>
                         </group>

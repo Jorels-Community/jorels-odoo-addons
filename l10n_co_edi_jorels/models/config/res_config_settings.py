@@ -40,7 +40,7 @@ class ResConfigSettings(models.TransientModel):
                                  readonly=False)
     test_set_id = fields.Char(related="company_id.test_set_id", string="TestSetId", readonly=False)
     enable_validate_state = fields.Boolean(related="company_id.enable_validate_state",
-                                           string="Intermediate Validation DIAN state",
+                                           string="Enable intermediate 'DIAN Validation' state",
                                            default=True, readonly=False)
     enable_mass_send_print = fields.Boolean(related="company_id.enable_mass_send_print",
                                             string="Automatic invoice email when validating (In production)",

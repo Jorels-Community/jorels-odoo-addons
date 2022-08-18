@@ -97,7 +97,7 @@
                                     <field name="enable_validate_state"/>
                                 </div>
                                 <div class="o_setting_right_pane">
-                                    <label string="Enable intermediate 'DIAN validation' state"
+                                    <label string="Enable intermediate 'DIAN Validation' state"
                                            for="enable_validate_state"/>
                                     <div class="text-muted">Advanced submission and testing options</div>
                                 </div>
