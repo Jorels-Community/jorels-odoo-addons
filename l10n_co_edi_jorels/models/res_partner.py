@@ -67,6 +67,7 @@ class ResPartner(models.Model):
             self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.type_document_identifications')
 
         for rec in self:
+            rec.type_document_identification_id = None
             if rec.l10n_latam_identification_type_id.l10n_co_document_code:
                 values = {
                     'civil_registration': 1,
@@ -83,10 +84,9 @@ class ResPartner(models.Model):
                     'residence_document': None,
                     'diplomatic_card': None,
                 }
-                rec.type_document_identification_id = values[
-                    rec.l10n_latam_identification_type_id.l10n_co_document_code]
-            else:
-                rec.type_document_identification_id = None
+                if rec.l10n_latam_identification_type_id.l10n_co_document_code in values:
+                    rec.type_document_identification_id = values[
+                        rec.l10n_latam_identification_type_id.l10n_co_document_code]
 
     @api.depends('zip', 'country_id')
     def _compute_postal_id(self):
