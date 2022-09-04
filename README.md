@@ -20,7 +20,7 @@ Usar como cualquier otro modulo de Odoo, teniendo en cuenta la reglamentación l
 ## Support
 Email: info@jorels.com
 
-Telegram: https://t.me/Jorels_SAS
+Telegram: @Jorels_SAS
 
 ## Roadmap
 Versión 16 de Odoo
