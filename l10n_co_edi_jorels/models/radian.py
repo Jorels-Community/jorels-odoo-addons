@@ -123,6 +123,16 @@ class Radian(models.Model):
         default=lambda self: self._context.get('type', 'customer'), track_visibility='always')
 
     @api.multi
+    def dian_preview(self):
+        for rec in self:
+            if rec.invoice_id.ei_uuid:
+                return {
+                    'type': 'ir.actions.act_url',
+                    'target': 'new',
+                    'url': 'https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=' + rec.invoice_id.ei_uuid,
+                }
+
+    @api.multi
     def _send_email(self):
         for rec in self:
             mail_template = rec.env.ref('l10n_co_edi_jorels.email_template_radian', False)
