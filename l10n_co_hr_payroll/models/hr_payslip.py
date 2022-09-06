@@ -118,6 +118,16 @@ class HrPayslip(models.Model):
     ], string='Month', compute='_compute_month', store=True, copy=False)
     year = fields.Integer(string='Year', compute='_compute_year', store=True, copy=False)
 
+    @api.multi
+    def dian_preview(self):
+        for rec in self:
+            if rec.edi_uuid:
+                return {
+                    'type': 'ir.actions.act_url',
+                    'target': 'new',
+                    'url': 'https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=' + rec.edi_uuid,
+                }
+
     @api.depends('edi_payload')
     def _compute_edi_payload_html(self):
         hr_payslip_edi_env = self.env['hr.payslip.edi']

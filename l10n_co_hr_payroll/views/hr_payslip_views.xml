@@ -26,6 +26,15 @@
         <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
         <field name="arch" type="xml">
             <data>
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button name="dian_preview" type="object" class="oe_stat_button" icon="fa-globe icon"
+                            attrs="{'invisible': [('edi_uuid', '=', False)]}">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text">DIAN</span>
+                            <span class="o_stat_text">Web View</span>
+                        </div>
+                    </button>
+                </xpath>
                 <xpath expr="//button[@name='action_payslip_done']" position="after">
                     <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
                             attrs="{'invisible': [('state','=','draft')]}"/>
