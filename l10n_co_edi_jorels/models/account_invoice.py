@@ -199,6 +199,16 @@ class AccountInvoice(models.Model):
                 }
 
     @api.multi
+    def dian_pdf_view(self):
+        for rec in self:
+            if rec.ei_uuid:
+                return {
+                    'type': 'ir.actions.act_url',
+                    'target': 'new',
+                    'url': 'https://catalogo-vpfe.dian.gov.co/Document/DownloadPDF?trackId=' + rec.ei_uuid,
+                }
+
+    @api.multi
     def _default_ei_type_environment(self):
         if not self.env['l10n_co_edi_jorels.type_environments'].search_count([]):
             self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.type_environments')

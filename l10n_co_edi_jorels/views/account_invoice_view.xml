@@ -31,7 +31,14 @@
                             attrs="{'invisible': [('ei_uuid', '=', False)]}">
                         <div class="o_field_widget o_stat_info">
                             <span class="o_stat_text">DIAN</span>
-                            <span class="o_stat_text">Preview</span>
+                            <span class="o_stat_text">Web View</span>
+                        </div>
+                    </button>
+                    <button name="dian_pdf_view" type="object" class="oe_stat_button" icon="fa-file-pdf-o icon"
+                            attrs="{'invisible': [('ei_uuid', '=', False)]}">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text">DIAN</span>
+                            <span class="o_stat_text">Pdf View</span>
                         </div>
                     </button>
                 </xpath>
@@ -177,7 +184,14 @@
                                 attrs="{'invisible': [('ei_uuid', '=', False)]}">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_text">DIAN</span>
-                                <span class="o_stat_text">Preview</span>
+                                <span class="o_stat_text">Web View</span>
+                            </div>
+                        </button>
+                        <button name="dian_pdf_view" type="object" class="oe_stat_button" icon="fa-file-pdf-o icon"
+                                attrs="{'invisible': [('ei_uuid', '=', False)]}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">DIAN</span>
+                                <span class="o_stat_text">Pdf View</span>
                             </div>
                         </button>
                     </div>

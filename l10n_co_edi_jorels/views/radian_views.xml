@@ -39,7 +39,7 @@
                                 attrs="{'invisible': [('edi_uuid', '=', False)]}">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_text">DIAN</span>
-                                <span class="o_stat_text">Preview</span>
+                                <span class="o_stat_text">Web view</span>
                             </div>
                         </button>
                     </div>
