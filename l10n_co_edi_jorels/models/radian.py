@@ -383,7 +383,7 @@ class Radian(models.Model):
                 # raise Warning(json.dumps(requests_data, indent=2, sort_keys=False))
 
                 num_attemps = int(self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.num_attemps', '2'))
-                if not rec.ei_is_not_test:
+                if not rec.edi_is_not_test:
                     num_attemps = 1
 
                 for i in range(num_attemps):
