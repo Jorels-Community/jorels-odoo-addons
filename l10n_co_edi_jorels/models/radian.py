@@ -260,7 +260,8 @@ class Radian(models.Model):
                     (rec.type == 'customer' and rec.event_id.code == '034')
             ):
                 rec.validate_dian_generic()
-                rec._send_email()
+                if rec.edi_is_valid and rec.edi_uuid:
+                    rec._send_email()
 
         return True
 
@@ -333,6 +334,12 @@ class Radian(models.Model):
                 json_request['notes'] = notes
 
         return json_request
+
+    @api.multi
+    def validate_dian(self):
+        for rec in self:
+            rec.validate_dian_generic()
+            rec.write({'state': 'posted'})
 
     @api.multi
     def validate_dian_generic(self):
@@ -411,7 +418,10 @@ class Radian(models.Model):
                     raise UserError(_("No logical response was obtained from the API."))
             except Exception as e:
                 _logger.debug("Failed to process the request: %s", e)
-                raise UserError(_("Failed to process the request: %s") % e)
+                if not rec.company_id.ei_always_validate:
+                    raise UserError(_("Failed to process the request: %s") % e)
+                else:
+                    rec.message_post(body=_("DIAN Electronic invoicing: Failed to process the request: %s") % e)
 
     @api.multi
     def status_zip(self):

@@ -60,7 +60,7 @@
                             </div>
                         </div>
 
-                        <h2>Test Environment</h2>
+                        <h2>Environment</h2>
                         <div class="row mt16 o_settings_container">
                             <div class="col-12 col-lg-6 o_setting_box">
                                 <div class="o_setting_left_pane">
@@ -100,6 +100,16 @@
                                     <label string="Enable intermediate 'DIAN Validation' state"
                                            for="enable_validate_state"/>
                                     <div class="text-muted">Advanced submission and testing options</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane">
+                                    <field name="ei_always_validate"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label string="Always validate invoices"
+                                           for="ei_always_validate"/>
+                                    <div class="text-muted">When an error occurs in the DIAN, always validate invoices</div>
                                 </div>
                             </div>
                         </div>

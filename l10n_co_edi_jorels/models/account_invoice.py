@@ -1174,7 +1174,10 @@ class AccountInvoice(models.Model):
                     raise UserError(_("This type of document does not need to be sent to the DIAN"))
             except Exception as e:
                 _logger.debug("Failed to process the request: %s", e)
-                raise UserError(_("Failed to process the request: %s") % e)
+                if not rec.company_id.ei_always_validate:
+                    raise UserError(_("Failed to process the request: %s") % e)
+                else:
+                    rec.message_post(body=_("DIAN Electronic invoicing: Failed to process the request: %s") % e)
 
             if not is_test and not rec.ei_attached_document_base64_bytes:
                 rec.status_document_log()

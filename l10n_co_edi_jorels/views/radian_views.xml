@@ -26,6 +26,9 @@
             <form string="Radian events">
                 <header>
                     <button string="Validate" name="action_post" type="object" states="draft" class="oe_highlight"/>
+                    <button name="validate_dian" type="object" string="Validate DIAN"
+                            class="oe_highlight o_invoice_validate"
+                            attrs="{'invisible': ['|', '|', ('edi_is_valid','=',True),('edi_is_not_test','=',False),('state','!=','posted')]}"/>
                     <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
                             attrs="{'invisible': [('state','=','draft')]}"/>
                     <button string="Set to Draft" name="action_draft" type="object" states="cancel"/>
