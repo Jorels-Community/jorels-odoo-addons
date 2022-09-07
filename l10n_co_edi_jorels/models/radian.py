@@ -382,11 +382,23 @@ class Radian(models.Model):
                 _logger.debug("DIAN Validation Request: %s", json.dumps(requests_data, indent=2, sort_keys=False))
                 # raise Warning(json.dumps(requests_data, indent=2, sort_keys=False))
 
-                response = requests.post(api_url,
-                                         json.dumps(requests_data),
-                                         headers=header,
-                                         params=params).json()
-                _logger.debug('API Response: %s', response)
+                num_attemps = int(self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.num_attemps', '2'))
+                if not rec.ei_is_not_test:
+                    num_attemps = 1
+
+                for i in range(num_attemps):
+                    try:
+                        response = requests.post(api_url,
+                                                 json.dumps(requests_data),
+                                                 headers=header,
+                                                 params=params).json()
+                    except Exception as e:
+                        _logger.warning("Invalid response: %s", e)
+
+                    if 'is_valid' in response and response['is_valid']:
+                        break
+
+                    _logger.debug('API Response: %s', response)
 
                 if 'detail' in response:
                     raise UserError(response['detail'])
