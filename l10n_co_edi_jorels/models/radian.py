@@ -395,10 +395,10 @@ class Radian(models.Model):
                     except Exception as e:
                         _logger.warning("Invalid response: %s", e)
 
+                    _logger.debug('API Response: %s', response)
+
                     if 'is_valid' in response and response['is_valid']:
                         break
-
-                    _logger.debug('API Response: %s', response)
 
                 if 'detail' in response:
                     raise UserError(response['detail'])
