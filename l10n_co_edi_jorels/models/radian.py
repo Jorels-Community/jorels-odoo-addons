@@ -254,14 +254,8 @@ class Radian(models.Model):
             # Posted
             rec.write({'state': 'posted'})
 
-            # Validate DIAN
-            if rec.company_id.ei_enable and not rec.edi_is_valid and not rec.company_id.enable_validate_state and (
-                    (rec.type == 'supplier' and rec.event_id.code in ('030', '031', '032', '033')) or \
-                    (rec.type == 'customer' and rec.event_id.code == '034')
-            ):
-                rec.validate_dian_generic()
-                if rec.edi_is_valid and rec.edi_uuid:
-                    rec._send_email()
+            if not rec.company_id.enable_validate_state:
+                rec.validate_dian()
 
         return True
 
@@ -338,8 +332,13 @@ class Radian(models.Model):
     @api.multi
     def validate_dian(self):
         for rec in self:
-            rec.validate_dian_generic()
-            rec.write({'state': 'posted'})
+            if rec.company_id.ei_enable and not rec.edi_is_valid and (
+                    (rec.type == 'supplier' and rec.event_id.code in ('030', '031', '032', '033')) or \
+                    (rec.type == 'customer' and rec.event_id.code == '034')
+            ):
+                rec.validate_dian_generic()
+                if rec.edi_is_valid and rec.edi_uuid:
+                    rec._send_email()
 
     @api.multi
     def validate_dian_generic(self):
