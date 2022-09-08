@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-07 07:22+0000\n"
-"PO-Revision-Date: 2022-09-07 02:32-0500\n"
+"POT-Creation-Date: 2022-09-08 07:09+0000\n"
+"PO-Revision-Date: 2022-09-08 02:19-0500\n"
 "Last-Translator: <>\n"
 "Language-Team: Jorels SAS\n"
 "MIME-Version: 1.0\n"
@@ -305,13 +305,13 @@ msgstr "No fue obtenido un UUID valido. Intente nuevamente."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1330
-#: code:addons/l10n_co_edi_jorels/models/radian.py:505
+#: code:addons/l10n_co_edi_jorels/models/radian.py:504
 #, python-format
 msgid "A valid Zip key or UUID was not obtained. Try again."
 msgstr "No se obtuvo una clave Zip o UUID válida. Inténtalo de nuevo."
 
 #. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/radian.py:426
+#: code:addons/l10n_co_edi_jorels/models/radian.py:425
 #, python-format
 msgid "A valid Zip key was not obtained. Try again."
 msgstr "No fue obtenida una llave Zip valida. Intente nuevamente."
@@ -323,7 +323,7 @@ msgid "A waypoint doesn't have an associated id number"
 msgstr "Una remesa no tiene un número de identificación asociado"
 
 #. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/radian.py:511
+#: code:addons/l10n_co_edi_jorels/models/radian.py:510
 #, python-format
 msgid "A zip key or UUID is required to check the status of the document."
 msgstr "Se requiere una clave Zip o UUID para verificar el estado del documento."
@@ -456,8 +456,8 @@ msgstr "Conteo de archivos adjuntos"
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1161
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1311
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1385
-#: code:addons/l10n_co_edi_jorels/models/radian.py:407
-#: code:addons/l10n_co_edi_jorels/models/radian.py:486
+#: code:addons/l10n_co_edi_jorels/models/radian.py:406
+#: code:addons/l10n_co_edi_jorels/models/radian.py:485
 #, python-format
 msgid "Authentication error with the API"
 msgstr "Error de autenticación con al API"
@@ -855,7 +855,7 @@ msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1192
-#: code:addons/l10n_co_edi_jorels/models/radian.py:436
+#: code:addons/l10n_co_edi_jorels/models/radian.py:435
 #, python-format
 msgid "DIAN Electronic invoicing: Failed to process the request: %s"
 msgstr "Facturación electrónica DIAN: Fallo al procesar la solicitud: %s"
@@ -995,14 +995,14 @@ msgstr "Rechazo de documento"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1174
-#: code:addons/l10n_co_edi_jorels/models/radian.py:420
+#: code:addons/l10n_co_edi_jorels/models/radian.py:419
 #, python-format
 msgid "Document sent to DIAN in habilitation."
 msgstr "Documento enviado a la DIAN en habilitación."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1324
-#: code:addons/l10n_co_edi_jorels/models/radian.py:499
+#: code:addons/l10n_co_edi_jorels/models/radian.py:498
 #, python-format
 msgid "Document sent to DIAN in testing."
 msgstr "Documento enviado a la DIAN en pruebas."
@@ -1208,8 +1208,8 @@ msgstr "Fallo al procesar la solicitud"
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1190
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1341
-#: code:addons/l10n_co_edi_jorels/models/radian.py:434
-#: code:addons/l10n_co_edi_jorels/models/radian.py:515
+#: code:addons/l10n_co_edi_jorels/models/radian.py:433
+#: code:addons/l10n_co_edi_jorels/models/radian.py:514
 #, python-format
 msgid "Failed to process the request: %s"
 msgstr "Fallo al procesar la solicitud: %s"
@@ -1680,6 +1680,11 @@ msgid "Municipality"
 msgstr "Municipio"
 
 #. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_search
+msgid "My Events"
+msgstr "Mis Eventos"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "NIT:"
 msgstr ""
@@ -1747,7 +1752,7 @@ msgstr "Barrio"
 #: code:addons/l10n_co_edi_jorels/models/radian.py:193
 #: code:addons/l10n_co_edi_jorels/models/radian.py:245
 #: code:addons/l10n_co_edi_jorels/models/radian.py:248
-#: code:addons/l10n_co_edi_jorels/models/radian.py:285
+#: code:addons/l10n_co_edi_jorels/models/radian.py:279
 #, python-format
 msgid "New"
 msgstr "Nuevo"
@@ -1780,8 +1785,8 @@ msgstr "No fue obtenida una respuesta lógica desde la API"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1184
-#: code:addons/l10n_co_edi_jorels/models/radian.py:430
-#: code:addons/l10n_co_edi_jorels/models/radian.py:509
+#: code:addons/l10n_co_edi_jorels/models/radian.py:429
+#: code:addons/l10n_co_edi_jorels/models/radian.py:508
 #, python-format
 msgid "No logical response was obtained from the API."
 msgstr "No fue obtenida una respuesta lógica desde la API."
@@ -1790,6 +1795,12 @@ msgstr "No fue obtenida una respuesta lógica desde la API."
 #: selection:account.invoice,event:0
 msgid "None"
 msgstr "Ninguno"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_account_invoice_filter_inherit_l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_search
+msgid "Not valid in DIAN"
+msgstr "No válido en la DIAN"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__note
@@ -2092,6 +2103,7 @@ msgid "Radian"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:525
 #: model:ir.actions.act_window,name:l10n_co_edi_jorels.action_l10n_co_edi_jorels_radian_customer
 #: model:ir.actions.act_window,name:l10n_co_edi_jorels.action_l10n_co_edi_jorels_radian_supplier
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian
@@ -2100,6 +2112,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_invoice_supplier_view_form_inherit_l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_invoice_view_form_inherit_l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
+#, python-format
 msgid "Radian events"
 msgstr "Eventos del Radian"
 
@@ -2474,8 +2487,8 @@ msgstr "El documento no puede ser consultado."
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1182
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1332
-#: code:addons/l10n_co_edi_jorels/models/radian.py:428
-#: code:addons/l10n_co_edi_jorels/models/radian.py:507
+#: code:addons/l10n_co_edi_jorels/models/radian.py:427
+#: code:addons/l10n_co_edi_jorels/models/radian.py:506
 #, python-format
 msgid "The document could not be validated in DIAN."
 msgstr "El documento no puede ser validado en la DIAN."
@@ -2487,13 +2500,13 @@ msgid "The document has not been validated."
 msgstr "El documento no ha sido validado."
 
 #. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/radian.py:300
+#: code:addons/l10n_co_edi_jorels/models/radian.py:294
 #, python-format
 msgid "The document number (VAT) for user is required for DIAN events."
 msgstr "El número de documento (NIF) para el usuario es obligatorio para Eventos DIAN."
 
 #. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/radian.py:298
+#: code:addons/l10n_co_edi_jorels/models/radian.py:292
 #, python-format
 msgid "The document type for user is required for DIAN events."
 msgstr "El tipo de documento para el usuario es obligatorio para Eventos DIAN."
@@ -2505,7 +2518,7 @@ msgid "The environment has been updated. Sync the resolutions"
 msgstr "El entorno ha sido actualizado. Sincronice las resoluciones"
 
 #. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/radian.py:296
+#: code:addons/l10n_co_edi_jorels/models/radian.py:290
 #, python-format
 msgid "The invoice UUID (CUFE) is required for DIAN events."
 msgstr "El UUID (CUFE) de la factura es obligatorio para Eventos DIAN."
@@ -2529,7 +2542,7 @@ msgid "The invoice must be a sales invoice"
 msgstr "La factura debe ser una factura de venta"
 
 #. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/radian.py:306
+#: code:addons/l10n_co_edi_jorels/models/radian.py:300
 #, python-format
 msgid "The number and prefix are required for DIAN events"
 msgstr "El número y prefijo son obligatorios para Eventos DIAN"
@@ -2541,7 +2554,7 @@ msgid "The reference invoice has not yet been validated before the DIAN"
 msgstr "La factura de referencia no ha sido validada en la DIAN"
 
 #. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/radian.py:294
+#: code:addons/l10n_co_edi_jorels/models/radian.py:288
 #, python-format
 msgid "The rejection concept is required for the DIAN claim event."
 msgstr "El concepto de rechazo es obligatorio para eventos DIAN de Rechazo."
@@ -2553,27 +2566,27 @@ msgid "The support document does not support test submissions, only production."
 msgstr "El documento soporte no soporta envíos de prueba, solo producción."
 
 #. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/radian.py:308
+#: code:addons/l10n_co_edi_jorels/models/radian.py:302
 #, python-format
 msgid "The user and his/her job title (function) is required for DIAN events"
 msgstr "El usuario y el titulo de su trabajo (cargo) es obligatorio para Eventos DIAN"
 
 #. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/radian.py:302
+#: code:addons/l10n_co_edi_jorels/models/radian.py:296
 #, python-format
 msgid "The user first name is required for DIAN events"
 msgstr "El primer nombre del usuario es obligatorio para eventos DIAN"
 
 #. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/radian.py:304
+#: code:addons/l10n_co_edi_jorels/models/radian.py:298
 #, python-format
 msgid "The user surname is required for DIAN events"
 msgstr "El apellido del usuario es obligatorio para eventos DIAN"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1170
-#: code:addons/l10n_co_edi_jorels/models/radian.py:416
-#: code:addons/l10n_co_edi_jorels/models/radian.py:495
+#: code:addons/l10n_co_edi_jorels/models/radian.py:415
+#: code:addons/l10n_co_edi_jorels/models/radian.py:494
 #, python-format
 msgid "The validation at DIAN has been successful."
 msgstr "La validación en la DIAN ha sido exitosa."
@@ -2953,20 +2966,20 @@ msgid "Xml name"
 msgstr "Nombre XML"
 
 #. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/radian.py:286
+#: code:addons/l10n_co_edi_jorels/models/radian.py:280
 #, python-format
 msgid "You cannot delete an event after it has been posted (and received a number). You can set it back to \"Draft\" state and modify its content, then re-confirm it."
 msgstr "No puede eliminar un evento después de que se haya publicado (y recibido un número). Puede volver a establecerlo en el estado \"Borrador\" y modificar su contenido, luego volver a confirmarlo."
 
 #. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/radian.py:284
+#: code:addons/l10n_co_edi_jorels/models/radian.py:278
 #, python-format
 msgid "You cannot delete an event which is not draft or cancelled."
 msgstr "No puede eliminar un evento que no esté borrador o cancelado."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1135
-#: code:addons/l10n_co_edi_jorels/models/radian.py:379
+#: code:addons/l10n_co_edi_jorels/models/radian.py:378
 #, python-format
 msgid "You have not configured a 'TestSetId'."
 msgstr "No tiene configurado un 'TestSetId'."
@@ -3005,8 +3018,8 @@ msgstr "Debe asignar al cliente un tipo de responsabilidad"
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1112
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1284
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1364
-#: code:addons/l10n_co_edi_jorels/models/radian.py:360
-#: code:addons/l10n_co_edi_jorels/models/radian.py:458
+#: code:addons/l10n_co_edi_jorels/models/radian.py:359
+#: code:addons/l10n_co_edi_jorels/models/radian.py:457
 #, python-format
 msgid "You must configure a token"
 msgstr "Debe configurar un token"

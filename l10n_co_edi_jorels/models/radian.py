@@ -512,3 +512,24 @@ class Radian(models.Model):
             except Exception as e:
                 _logger.debug("Failed to process the request: %s", e)
                 raise UserError(_("Failed to process the request: %s") % e)
+
+    @api.multi
+    def button_open_form_current(self):
+        view = self.env.ref('l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form')
+        context = self.env.context
+        rec_id = 0
+        for rec in self:
+            rec_id = rec.id
+
+        return {
+            'name': _('Radian events'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'l10n_co_edi_jorels.radian',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'current',
+            'res_id': rec_id,
+            'context': context,
+        }
