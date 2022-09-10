@@ -129,6 +129,8 @@
                 <field name="date"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="state"/>
+                <button type="object" name="button_open_form_current"
+                        icon="/web/static/src/img/expand.gif"/>
             </tree>
         </field>
     </record>
@@ -154,6 +156,12 @@
                 <filter name="filter_cancel"
                         string="Cancelled"
                         domain="[('state','=','cancel')]"/>
+                <separator/>
+                <filter name="not_valid_dian"
+                        string="Not valid in DIAN"
+                        domain="[('edi_is_valid','=',False)]"/>
+                <separator/>
+                <filter domain="[('user_id','=',uid)]" name="myevents" help="My Events"/>
                 <group expand="0" string="Invoice">
                     <filter name="groupby_move" context="{'group_by' : 'move_id'}" string="Invoice"/>
                 </group>

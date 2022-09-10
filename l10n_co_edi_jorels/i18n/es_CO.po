@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 13.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-14 17:13+0000\n"
-"PO-Revision-Date: 2022-08-14 12:27-0500\n"
+"POT-Creation-Date: 2022-09-10 06:34+0000\n"
+"PO-Revision-Date: 2022-09-10 01:42-0500\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "MIME-Version: 1.0\n"
@@ -59,37 +59,36 @@ msgstr "<br/>Cuando cambia el entorno, esto es automatico"
 #: model:mail.template,body_html:l10n_co_edi_jorels.email_template_radian
 msgid ""
 "<div style=\"margin: 0px; padding: 0px;\">\n"
-"                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;"
-"\">\n"
-"                        Dear ${object.move_id.partner_id.name}\n"
-"                        % if object.move_id.partner_id.parent_id:\n"
-"                            (${object.move_id.partner_id.parent_id.name})\n"
-"                        % endif\n"
-"                        <br/>\n"
-"                        <br/>\n"
-"                        Here is your\n"
-"                        Radian event\n"
-"                        <strong>${object.event_id.name}</strong>\n"
-"                        with number\n"
-"                        <strong>${object.name}</strong>\n"
-"                        (with invoice: ${object.move_id.ei_number})\n"
-"                        % if object.company_id.business_name:\n"
-"                            from ${object.company_id.business_name}.\n"
-"                        % else:\n"
-"                            from ${object.company_id.name}.\n"
-"                        % endif\n"
-"                        <br/>\n"
-"                        <br/>\n"
-"                        Do not hesitate to contact us if you have any "
+"                <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"                    Dear ${object.move_id.partner_id.name}\n"
+"                    % if object.move_id.partner_id.parent_id:\n"
+"                        (${object.move_id.partner_id.parent_id.name})\n"
+"                    % endif\n"
+"                    <br/>\n"
+"                    <br/>\n"
+"                    Here is your\n"
+"                    Radian event\n"
+"                    <strong>${object.event_id.name}</strong>\n"
+"                    with number\n"
+"                    <strong>${object.name}</strong>\n"
+"                    (with invoice: ${object.move_id.ei_number})\n"
+"                    % if object.company_id.business_name:\n"
+"                        from ${object.company_id.business_name}.\n"
+"                    % else:\n"
+"                        from ${object.company_id.name}.\n"
+"                    % endif\n"
+"                    <br/>\n"
+"                    <br/>\n"
+"                    Do not hesitate to contact us if you have any "
 "question.\n"
-"                    </p>\n"
-"                </div>\n"
-"            "
+"                </p>\n"
+"            </div>\n"
+"        "
 msgstr ""
 "<div style=\"margin: 0px; padding: 0px;\">\n"
 "                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;"
 "\">\n"
-"                        Estimado ${object.move_id.partner_id.name}\n"
+"                        Querido ${object.move_id.partner_id.name}\n"
 "                        % if object.move_id.partner_id.parent_id:\n"
 "                            (${object.move_id.partner_id.parent_id.name})\n"
 "                        % endif\n"
@@ -109,7 +108,7 @@ msgstr ""
 "                        <br/>\n"
 "                        <br/>\n"
 "                        No dude en ponerse en contacto con nosotros si "
-"tiene alguna inquietud.\n"
+"tiene alguna pregunta.\n"
 "                    </p>\n"
 "                </div>\n"
 "            "
@@ -159,6 +158,33 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
 msgid "<span class=\"o_form_label\">Top invoice note</span>"
 msgstr "<span class=\"o_form_label\">Nota superior de la factura</span>"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
+msgid ""
+"<span class=\"o_stat_text\">DIAN</span>\n"
+"                                <span class=\"o_stat_text\">Web view</span>"
+msgstr ""
+"<span class=\"o_stat_text\">DIAN</span>\n"
+"                                <span class=\"o_stat_text\">Vista Web</span>"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+msgid ""
+"<span class=\"o_stat_text\">DIAN</span>\n"
+"                            <span class=\"o_stat_text\">Pdf View</span>"
+msgstr ""
+"<span class=\"o_stat_text\">DIAN</span>\n"
+"                            <span class=\"o_stat_text\">Vista Pdf</span>"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+msgid ""
+"<span class=\"o_stat_text\">DIAN</span>\n"
+"                            <span class=\"o_stat_text\">Web View</span>"
+msgstr ""
+"<span class=\"o_stat_text\">DIAN</span>\n"
+"                            <span class=\"o_stat_text\">Vista Web</span>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
@@ -380,6 +406,13 @@ msgstr "Todos los productos deben tener asignada una referencia interna"
 #, python-format
 msgid "All taxes must be assigned a tax type (DIAN)."
 msgstr "Todos los impuestos deben tener asignado un tipo de impuesto (DIAN)."
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__ei_always_validate
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings__ei_always_validate
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
+msgid "Always validate invoices"
+msgstr "Siempre validar facturas"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__resolution_id
@@ -814,6 +847,13 @@ msgid "D.I.E.:"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "DIAN Electronic invoicing: Failed to process the request: %s"
+msgstr "Facturación electrónica DIAN: Fallo al procesar la solicitud: %s"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_tree
 msgid "DIAN Events"
 msgstr "Eventos DIAN"
@@ -994,6 +1034,11 @@ msgstr "Respuesta Edi"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
+msgid "Electronic Credit Note"
+msgstr "Nota Crédito Electrónica"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "Electronic Sale Invoice"
 msgstr "Factura Electrónica de Venta"
 
@@ -1092,6 +1137,11 @@ msgstr "Fecha final"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_customer_software__rejection_event_endswith
 msgid "Ends with"
 msgstr "Termina con"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
+msgid "Environment"
+msgstr "Entorno"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_type_environments
@@ -1629,6 +1679,11 @@ msgid "Municipality"
 msgstr "Municipio"
 
 #. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_search
+msgid "My Events"
+msgstr "Mis Eventos"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "NIT:"
 msgstr ""
@@ -1734,6 +1789,12 @@ msgstr "No se obtuvo ninguna respuesta lógica de la API."
 #: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__account_move__event__none
 msgid "None"
 msgstr "Ninguno"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_account_invoice_filter_inherit_l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_search
+msgid "Not valid in DIAN"
+msgstr "No válido en la DIAN"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__note
@@ -2018,6 +2079,7 @@ msgid "Radian"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #: model:ir.actions.act_window,name:l10n_co_edi_jorels.action_l10n_co_edi_jorels_radian_customer
 #: model:ir.actions.act_window,name:l10n_co_edi_jorels.action_l10n_co_edi_jorels_radian_supplier
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian
@@ -2025,6 +2087,7 @@ msgstr ""
 #: model:ir.ui.menu,name:l10n_co_edi_jorels.menu_l10n_co_edi_jorels_radian_tree
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
+#, python-format
 msgid "Radian events"
 msgstr "Eventos del Radian"
 
@@ -2342,11 +2405,6 @@ msgstr "Impuestos sin retenciones"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__resolution_technical_key
 msgid "Technical key"
 msgstr "Llave técnica"
-
-#. module: l10n_co_edi_jorels
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
-msgid "Test Environment"
-msgstr "Entorno de prueba"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__test_set_id
@@ -2793,6 +2851,7 @@ msgstr "Validar"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
 msgid "Validate DIAN"
 msgstr "Validar DIAN"
 
@@ -2846,6 +2905,11 @@ msgstr "Mensajes del sitio web"
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__website_message_ids
 msgid "Website communication history"
 msgstr "Historial de comunicaciones del sitio web"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
+msgid "When an error occurs in the DIAN, always validate invoices"
+msgstr "Cuando un error ocurre en la DIAN, siempre validar las facturas"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_amount_tax_withholding

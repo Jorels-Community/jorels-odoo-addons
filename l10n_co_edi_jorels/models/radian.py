@@ -248,14 +248,8 @@ class Radian(models.Model):
             # Posted
             rec.write({'state': 'posted'})
 
-            # Validate DIAN
-            if rec.company_id.ei_enable and not rec.edi_is_valid and (
-                    (rec.type == 'supplier' and rec.event_id.code in ('030', '031', '032', '033')) or \
-                    (rec.type == 'customer' and rec.event_id.code == '034')
-            ):
-                rec.validate_dian_generic()
-                if rec.edi_is_valid and rec.edi_uuid:
-                    rec._send_email()
+            if not rec.company_id.enable_validate_state:
+                rec.validate_dian()
 
         return True
 
@@ -325,11 +319,15 @@ class Radian(models.Model):
 
         return json_request
 
-    @api.multi
     def validate_dian(self):
         for rec in self:
-            rec.validate_dian_generic()
-            rec.write({'state': 'posted'})
+            if rec.company_id.ei_enable and not rec.edi_is_valid and (
+                    (rec.type == 'supplier' and rec.event_id.code in ('030', '031', '032', '033')) or \
+                    (rec.type == 'customer' and rec.event_id.code == '034')
+            ):
+                rec.validate_dian_generic()
+                if rec.edi_is_valid and rec.edi_uuid:
+                    rec._send_email()
 
     def validate_dian_generic(self):
         for rec in self:
@@ -371,11 +369,23 @@ class Radian(models.Model):
                 _logger.debug("DIAN Validation Request: %s", json.dumps(requests_data, indent=2, sort_keys=False))
                 # raise Warning(json.dumps(requests_data, indent=2, sort_keys=False))
 
-                response = requests.post(api_url,
-                                         json.dumps(requests_data),
-                                         headers=header,
-                                         params=params).json()
-                _logger.debug('API Response: %s', response)
+                num_attemps = int(self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.num_attemps', '2'))
+                if not rec.edi_is_not_test:
+                    num_attemps = 1
+
+                for i in range(num_attemps):
+                    try:
+                        response = requests.post(api_url,
+                                                 json.dumps(requests_data),
+                                                 headers=header,
+                                                 params=params).json()
+                    except Exception as e:
+                        _logger.warning("Invalid response: %s", e)
+
+                    _logger.debug('API Response: %s', response)
+
+                    if 'is_valid' in response and response['is_valid']:
+                        break
 
                 if 'detail' in response:
                     raise UserError(response['detail'])
@@ -489,3 +499,23 @@ class Radian(models.Model):
             except Exception as e:
                 _logger.debug("Failed to process the request: %s", e)
                 raise UserError(_("Failed to process the request: %s") % e)
+
+    def button_open_form_current(self):
+        view = self.env.ref('l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form')
+        context = self.env.context
+        rec_id = 0
+        for rec in self:
+            rec_id = rec.id
+
+        return {
+            'name': _('Radian events'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'l10n_co_edi_jorels.radian',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'current',
+            'res_id': rec_id,
+            'context': context,
+        }
