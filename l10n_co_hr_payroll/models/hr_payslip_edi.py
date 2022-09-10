@@ -19,17 +19,15 @@
 #   email: info@jorels.com
 #
 import ast
+import datetime as dt
 import json
 import logging
-
 from copy import deepcopy
-import datetime as dt
 
 import babel
-
 import requests
 from odoo import api, fields, models, tools, _
-from odoo.exceptions import UserError, Warning
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -140,6 +138,15 @@ class HrPayslipEdi(models.Model):
     year = fields.Integer(string='Year', index=True, copy=False, required=True, readonly=True,
                           states={'draft': [('readonly', False)]},
                           default=lambda self: fields.Date.context_today(self).year)
+
+    def dian_preview(self):
+        for rec in self:
+            if rec.edi_uuid:
+                return {
+                    'type': 'ir.actions.act_url',
+                    'target': 'new',
+                    'url': 'https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=' + rec.edi_uuid,
+                }
 
     @api.depends('edi_payload')
     def _compute_edi_payload_html(self):
