@@ -36,6 +36,10 @@ class ResConfigSettings(models.TransientModel):
     # Api key
     api_key = fields.Char(related="company_id.api_key", string="Api key", readonly=False)
 
+    ei_always_validate = fields.Boolean(related="company_id.ei_always_validate",
+                                        string="Always validate invoices",
+                                        default=False, readonly=False)
+
     # Test
     is_not_test = fields.Boolean(related="company_id.is_not_test", string="Production environment", default=False,
                                  readonly=False)
@@ -214,4 +218,5 @@ class ResConfigSettings(models.TransientModel):
         res['enable_mass_send_print'] = self.env.company.enable_mass_send_print
         res['ei_include_pdf_attachment'] = self.env.company.ei_include_pdf_attachment
         res['ei_enable'] = self.env.company.ei_enable
+        res['ei_always_validate'] = self.env.company.ei_always_validate
         return res

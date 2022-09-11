@@ -70,6 +70,8 @@ class ResCompany(models.Model):
     # Api key
     api_key = fields.Char(string="Api key")
 
+    ei_always_validate = fields.Boolean(string="Always validate invoices", default=False)
+
     # Test
     is_not_test = fields.Boolean(string="Production environment", default=False)
     test_set_id = fields.Char(string="TestSetId")
