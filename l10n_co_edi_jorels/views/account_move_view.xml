@@ -183,6 +183,21 @@
             </field>
         </record>
 
+        <!-- Search view -->
+        <record id="view_account_invoice_filter_inherit_l10n_co_edi_jorels" model="ir.ui.view">
+            <field name="name">account.invoice.select.inherit.l10n_co_edi_jorels</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='myinvoices']" position="after">
+                    <separator/>
+                    <filter name="not_valid_dian"
+                            string="Not valid in DIAN"
+                            domain="[('ei_is_valid','=',False)]"/>
+                </xpath>
+            </field>
+        </record>
+
         <record id="action_is_attached_document_matched" model="ir.actions.server">
             <field name="name">Review attached document</field>
             <field name="model_id" ref="account.model_account_move"/>
