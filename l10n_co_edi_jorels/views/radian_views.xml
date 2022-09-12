@@ -34,6 +34,15 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="dian_preview" type="object" class="oe_stat_button" icon="fa-globe icon"
+                                attrs="{'invisible': [('edi_uuid', '=', False)]}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">DIAN</span>
+                                <span class="o_stat_text">Web view</span>
+                            </div>
+                        </button>
+                    </div>
                     <h1 class="mt0">
                         <div attrs="{'invisible': [('name','=',False)]}">
                             <field name="name" class="oe_inline"/>
