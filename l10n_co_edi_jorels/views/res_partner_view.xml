@@ -26,8 +26,7 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='name']" position="after">
-                    <br/>
+                <xpath expr="//field[@name='name' and @id='individual']" position="after">
                     <field name="trade_name" placeholder="Trade name"/>
                 </xpath>
                 <xpath expr="//field[@name='vat']" position="after">
