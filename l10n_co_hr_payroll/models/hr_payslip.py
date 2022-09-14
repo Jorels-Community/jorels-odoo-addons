@@ -316,6 +316,7 @@ class HrPayslip(models.Model):
 
         return res
 
+    @api.multi
     def compute_totals(self):
         for rec in self:
             # The date is the sending date
