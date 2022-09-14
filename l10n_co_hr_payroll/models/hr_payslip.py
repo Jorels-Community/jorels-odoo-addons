@@ -297,13 +297,22 @@ class HrPayslip(models.Model):
             rec.update({'input_line_ids': input_line_list})
             rec.update({'worked_days_line_ids': worked_days_line_list})
 
-        # Sequences
-        for rec in self:
+            # Sequences
             if not rec.number:
                 rec.number = _('New')
 
         res = super(HrPayslip, self).compute_sheet()
+        self.compute_totals()
 
+        # The sheet and the totals are calculated again,
+        # just in case the totals obtained initially are used to calculate some salary rule.
+        # Especially the field worked_days_total
+        res = super(HrPayslip, self).compute_sheet()
+        self.compute_totals()
+
+        return res
+
+    def compute_totals(self):
         for rec in self:
             # The date is the sending date
             rec.date = fields.Date.context_today(self)
@@ -327,8 +336,6 @@ class HrPayslip(models.Model):
             rec.total_amount = accrued_total_amount - deductions_total_amount
 
             rec.edi_payload = json.dumps(rec.get_json_request(), indent=4, sort_keys=False)
-
-        return res
 
     @api.model
     def calculate_time_worked(self, start, end):

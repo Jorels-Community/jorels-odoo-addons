@@ -50,7 +50,7 @@
                         <field name="accrued_total_amount" widget="monetary" readonly="True"/>
                         <field name="deductions_total_amount" widget="monetary" readonly="True"/>
                         <field name="total_amount" widget="monetary" readonly="True"/>
-                        <field name="others_total_amount" widget="monetary" readonly="True"/>
+                        <field name="others_total_amount" widget="monetary" readonly="True" invisible="1"/>
                         <field name="currency_id" invisible="1"/>
                     </group>
                     <group>
