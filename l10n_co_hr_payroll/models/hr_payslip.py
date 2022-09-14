@@ -253,7 +253,6 @@ class HrPayslip(models.Model):
                         'incapacities_working',
                         'legal_strikes'
                 ):
-                    # rec.worked_days_total -= abs(quantity)
                     worked_days_line_list.append((0, 0, {
                         'name': res_item['name'],
                         'payslip_id': rec.id,
@@ -1136,7 +1135,6 @@ class HrPayslip(models.Model):
             rec.worked_days_total = self.calculate_time_worked(rec.date_from, rec.date_to)
             for list_with_days in [
                 vacation_common,
-                vacation_compensated,
                 licensings_maternity_or_paternity_leaves,
                 licensings_permit_or_paid_licenses,
                 licensings_suspension_or_unpaid_leaves,
