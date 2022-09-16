@@ -1245,7 +1245,10 @@ class AccountInvoice(models.Model):
                 if to_production_invoices:
                     to_production_invoices.validate_dian_generic(False)
                     to_mass_send = to_production_invoices.filtered(
-                        lambda inv: inv.company_id.enable_mass_send_print and inv.type in ('out_invoice', 'out_refund'))
+                        lambda inv: inv.company_id.enable_mass_send_print
+                                    and inv.type in ('out_invoice', 'out_refund')
+                                    and inv.ei_is_valid
+                    )
                     if to_mass_send:
                         try:
                             to_mass_send.mass_send_print()
