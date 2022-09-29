@@ -54,7 +54,7 @@
                 <xpath expr="//button[@name='action_invoice_open']" position="after">
                     <button name="validate_dian" type="object" string="Validate DIAN"
                             class="oe_highlight o_invoice_validate"
-                            attrs="{'invisible': ['|', '|', ('ei_is_valid','=',True),('ei_is_not_test','=',False),('state','!=','open')]}"/>
+                            attrs="{'invisible': ['|', '|', ('ei_is_valid','=',True),('ei_is_not_test','=',False),('state','=','draft')]}"/>
                     <button name="skip_validate_dian" type="object" string="Skip DIAN validation"
                             class="oe_highlight o_invoice_validate" groups="base.group_no_one"
                             attrs="{'invisible': ['|',('ei_is_not_test','=',True),('state','!=','validate')]}"/>
@@ -63,9 +63,9 @@
                             attrs="{'invisible': ['|',('ei_is_not_test','=',False),('state','!=','validate')]}"/>
                     <button name="validate_dian_test" type="object" string="Validate DIAN Test"
                             class="oe_highlight o_invoice_validate" groups="base.group_no_one"
-                            attrs="{'invisible': ['|', '|', ('ei_is_valid','=',True),('ei_is_not_test','=',True),('state','!=','open')]}"/>
+                            attrs="{'invisible': ['|', '|', ('ei_is_valid','=',True),('ei_is_not_test','=',True),('state','=','draft')]}"/>
                     <button name="status_document" type="object" string="Consult DIAN" groups="base.group_no_one"
-                            attrs="{'invisible': [('state','!=','open'),('state','!=','paid')]}"/>
+                            attrs="{'invisible': [('state','=','draft')]}"/>
                 </xpath>
                 <xpath expr="//field[@name='date_due']" position="after">
                     <field name="date_start" groups="l10n_co_edi_jorels.group_invoice_period_enable"/>
