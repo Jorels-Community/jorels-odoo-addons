@@ -60,13 +60,18 @@ class MailTemplate(models.Model):
                         and invoice.state not in ('draft', 'validate')\
                         and invoice.ei_uuid:
 
-                    pdf_name = invoice.ei_uuid + '.pdf'
+                    if invoice.ei_zip_name:
+                        attached_document_name = 'ad' + invoice.ei_zip_name[1:-4]
+                    else:
+                        attached_document_name = invoice.ei_uuid
+
+                    pdf_name = attached_document_name + '.pdf'
                     pdf_path = Path(tempfile.gettempdir()) / pdf_name
 
-                    xml_name = invoice.ei_uuid + '.xml'
+                    xml_name = attached_document_name + '.xml'
                     xml_path = Path(tempfile.gettempdir()) / xml_name
 
-                    zip_name = invoice.ei_uuid + '.zip'
+                    zip_name = attached_document_name + '.zip'
                     zip_path = Path(tempfile.gettempdir()) / zip_name
 
                     zip_archive = zipfile.ZipFile(zip_path, 'w')
@@ -109,13 +114,18 @@ class MailTemplate(models.Model):
                         and radian.state == 'posted'\
                         and radian.edi_uuid:
 
-                    # pdf_name = radian.edi_uuid + '.pdf'
+                    if radian.edi_zip_name:
+                        attached_document_name = 'ad' + radian.edi_zip_name[1:-4]
+                    else:
+                        attached_document_name = radian.edi_uuid
+
+                    # pdf_name = attached_document_name + '.pdf'
                     # pdf_path = Path(tempfile.gettempdir()) / pdf_name
 
-                    xml_name = radian.edi_uuid + '.xml'
+                    xml_name = attached_document_name + '.xml'
                     xml_path = Path(tempfile.gettempdir()) / xml_name
 
-                    zip_name = radian.edi_uuid + '.zip'
+                    zip_name = attached_document_name + '.zip'
                     zip_path = Path(tempfile.gettempdir()) / zip_name
 
                     zip_archive = zipfile.ZipFile(zip_path, 'w')
