@@ -91,18 +91,18 @@
                             <field name="ei_status_description"/>
                             <field name="ei_status_message"/>
                             <field name="ei_errors_messages"/>
-                            <field name="ei_xml_name"/>
-                            <field name="ei_zip_name"/>
+                            <field name="ei_xml_name" invisible="1"/>
+                            <field name="ei_zip_name" invisible="1"/>
                             <field name="ei_signature"/>
                             <field name="ei_qr_code"/>
                             <field name="ei_qr_data"/>
                             <field name="ei_qr_link" widget="url"/>
                             <field name="ei_pdf_download_link" widget="url"/>
-                            <field name="ei_xml_base64_bytes"/>
+                            <field name="ei_xml_base64_bytes" filename="ei_xml_name"/>
                             <field name="ei_application_response_base64_bytes"/>
                             <field name="ei_attached_document_base64_bytes"/>
                             <field name="ei_pdf_base64_bytes"/>
-                            <field name="ei_zip_base64_bytes"/>
+                            <field name="ei_zip_base64_bytes" filename="ei_zip_name"/>
                             <field name="ei_type_environment"/>
                             <field name="ei_attached_zip_base64_bytes"/>
                             <field name="ei_payload" groups="base.group_no_one"/>
@@ -245,18 +245,18 @@
                             <field name="ei_status_description"/>
                             <field name="ei_status_message"/>
                             <field name="ei_errors_messages"/>
-                            <field name="ei_xml_name"/>
-                            <field name="ei_zip_name"/>
+                            <field name="ei_xml_name" invisible="1"/>
+                            <field name="ei_zip_name" invisible="1"/>
                             <field name="ei_signature"/>
                             <field name="ei_qr_code"/>
                             <field name="ei_qr_data"/>
                             <field name="ei_qr_link" widget="url"/>
                             <field name="ei_pdf_download_link" widget="url"/>
-                            <field name="ei_xml_base64_bytes"/>
+                            <field name="ei_xml_base64_bytes" filename="ei_xml_name"/>
                             <field name="ei_application_response_base64_bytes"/>
                             <field name="ei_attached_document_base64_bytes"/>
                             <field name="ei_pdf_base64_bytes"/>
-                            <field name="ei_zip_base64_bytes"/>
+                            <field name="ei_zip_base64_bytes" filename="ei_zip_name"/>
                             <field name="ei_type_environment"/>
                             <field name="ei_attached_zip_base64_bytes"/>
                             <field name="ei_payload" groups="base.group_no_one"/>
