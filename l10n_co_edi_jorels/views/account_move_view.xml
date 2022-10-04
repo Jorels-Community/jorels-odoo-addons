@@ -57,7 +57,7 @@
                 <xpath expr="//button[@name='action_post']" position="after">
                     <button name="validate_dian" type="object" string="Validate DIAN"
                             class="oe_highlight o_invoice_validate"
-                            attrs="{'invisible': ['|','|','|',('ei_is_valid','=',True),('ei_is_not_test','=',False),('state','!=','posted'),('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
+                            attrs="{'invisible': ['|','|','|',('ei_is_valid','=',True),('ei_is_not_test','=',False),('state','=','draft'),('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
                     <button name="skip_validate_dian" type="object" string="Skip DIAN validation"
                             class="oe_highlight o_invoice_validate" groups="base.group_no_one"
                             attrs="{'invisible': ['|','|',('ei_is_not_test','=',True),('state','!=','validate'),('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
@@ -66,9 +66,9 @@
                             attrs="{'invisible': ['|','|',('ei_is_not_test','=',False),('state','!=','validate'),('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
                     <button name="validate_dian_test" type="object" string="Validate DIAN Test"
                             class="oe_highlight o_invoice_validate" groups="base.group_no_one"
-                            attrs="{'invisible': ['|','|','|',('ei_is_valid','=',True),('ei_is_not_test','=',True),('state','!=','posted'),('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
+                            attrs="{'invisible': ['|','|','|',('ei_is_valid','=',True),('ei_is_not_test','=',True),('state','=','draft'),('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
                     <button name="status_document" type="object" string="Consult DIAN" groups="base.group_no_one"
-                            attrs="{'invisible': ['|',('state','!=','posted'),('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
+                            attrs="{'invisible': ['|',('state','=','draft'),('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
                 </xpath>
                 <xpath expr="//field[@name='invoice_date']" position="after">
                     <field name="date_start" groups="l10n_co_edi_jorels.group_invoice_period_enable"/>
