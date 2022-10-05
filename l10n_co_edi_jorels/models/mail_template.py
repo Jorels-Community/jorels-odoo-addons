@@ -58,13 +58,18 @@ class MailTemplate(models.Model):
                         and move.state not in ('draft', 'validate')\
                         and move.ei_uuid:
 
-                    pdf_name = move.ei_uuid + '.pdf'
+                    if move.ei_zip_name:
+                        attached_document_name = 'ad' + move.ei_zip_name[1:-4]
+                    else:
+                        attached_document_name = move.ei_uuid
+
+                    pdf_name = attached_document_name + '.pdf'
                     pdf_path = Path(tempfile.gettempdir()) / pdf_name
 
-                    xml_name = move.ei_uuid + '.xml'
+                    xml_name = attached_document_name + '.xml'
                     xml_path = Path(tempfile.gettempdir()) / xml_name
 
-                    zip_name = move.ei_uuid + '.zip'
+                    zip_name = attached_document_name + '.zip'
                     zip_path = Path(tempfile.gettempdir()) / zip_name
 
                     zip_archive = zipfile.ZipFile(zip_path, 'w')
@@ -105,13 +110,18 @@ class MailTemplate(models.Model):
                         and radian.state == 'posted'\
                         and radian.edi_uuid:
 
-                    # pdf_name = radian.edi_uuid + '.pdf'
+                    if radian.edi_zip_name:
+                        attached_document_name = 'ad' + radian.edi_zip_name[1:-4]
+                    else:
+                        attached_document_name = radian.edi_uuid
+
+                    # pdf_name = attached_document_name + '.pdf'
                     # pdf_path = Path(tempfile.gettempdir()) / pdf_name
 
-                    xml_name = radian.edi_uuid + '.xml'
+                    xml_name = attached_document_name + '.xml'
                     xml_path = Path(tempfile.gettempdir()) / xml_name
 
-                    zip_name = radian.edi_uuid + '.zip'
+                    zip_name = attached_document_name + '.zip'
                     zip_path = Path(tempfile.gettempdir()) / zip_name
 
                     zip_archive = zipfile.ZipFile(zip_path, 'w')
