@@ -744,7 +744,7 @@ class AccountInvoice(models.Model):
         if type_edi_document != 'none':
             if type_edi_document == 'invoice':
                 # Sales invoice
-                if not self.journal_id.is_out_country:
+                if not self.is_out_country:
                     type_documents_rec = type_documents_env.search([('code', '=', '01')])
                 else:
                     type_documents_rec = type_documents_env.search([('code', '=', '02')])
