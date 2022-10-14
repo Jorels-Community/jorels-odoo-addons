@@ -282,7 +282,6 @@ class AccountInvoice(models.Model):
                 rec.ei_is_restored = response['is_restored']
                 rec.ei_algorithm = response['algorithm']
                 rec.ei_class = response['class']
-                rec.ei_number = response['number']
                 rec.ei_uuid = response['uuid']
                 rec.ei_issue_date = response['issue_date']
                 rec.ei_expedition_date = response['expedition_date']
