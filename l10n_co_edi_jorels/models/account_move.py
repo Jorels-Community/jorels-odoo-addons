@@ -1072,8 +1072,11 @@ class AccountMove(models.Model):
             _logger.debug("DIAN Validation Request: %s", json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
 
             try:
+                if rec.state == 'draft':
+                    raise UserError(_("The invoice must first be validated in Odoo, before being sent to the DIAN."))
+
                 type_edi_document = rec.get_type_edi_document()
-                if type_edi_document != 'none':
+                if type_edi_document != 'none' and not rec.ei_is_valid and not rec.is_journal_pos():
                     requests_data = rec.get_json_request()
 
                     if rec.company_id.api_key:
@@ -1155,7 +1158,7 @@ class AccountMove(models.Model):
                     else:
                         raise UserError(_("No logical response was obtained from the API."))
                 else:
-                    raise UserError(_("This type of document does not need to be sent to the DIAN"))
+                    _logger.debug("This document does not need to be sent to the DIAN")
             except Exception as e:
                 _logger.debug("Failed to process the request: %s", e)
                 if not rec.company_id.ei_always_validate:
@@ -1171,12 +1174,10 @@ class AccountMove(models.Model):
     def validate_dian(self):
         for rec in self:
             rec.validate_dian_generic(False)
-            rec.write({'state': 'posted'})
 
     def validate_dian_test(self):
         for rec in self:
             rec.validate_dian_generic(True)
-            rec.write({'state': 'posted'})
 
     def skip_validate_dian(self):
         for rec in self:
