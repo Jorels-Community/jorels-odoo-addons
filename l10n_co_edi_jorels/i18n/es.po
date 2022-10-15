@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 13.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-10 06:34+0000\n"
-"PO-Revision-Date: 2022-09-10 01:42-0500\n"
+"POT-Creation-Date: 2022-10-15 19:05+0000\n"
+"PO-Revision-Date: 2022-10-15 14:16-0500\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: es\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/config/res_company.py:0
@@ -59,31 +59,32 @@ msgstr "<br/>Cuando cambia el entorno, esto es automatico"
 #: model:mail.template,body_html:l10n_co_edi_jorels.email_template_radian
 msgid ""
 "<div style=\"margin: 0px; padding: 0px;\">\n"
-"                <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
-"                    Dear ${object.move_id.partner_id.name}\n"
-"                    % if object.move_id.partner_id.parent_id:\n"
-"                        (${object.move_id.partner_id.parent_id.name})\n"
-"                    % endif\n"
-"                    <br/>\n"
-"                    <br/>\n"
-"                    Here is your\n"
-"                    Radian event\n"
-"                    <strong>${object.event_id.name}</strong>\n"
-"                    with number\n"
-"                    <strong>${object.name}</strong>\n"
-"                    (with invoice: ${object.move_id.ei_number})\n"
-"                    % if object.company_id.business_name:\n"
-"                        from ${object.company_id.business_name}.\n"
-"                    % else:\n"
-"                        from ${object.company_id.name}.\n"
-"                    % endif\n"
-"                    <br/>\n"
-"                    <br/>\n"
-"                    Do not hesitate to contact us if you have any "
+"                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;"
+"\">\n"
+"                        Dear ${object.move_id.partner_id.name}\n"
+"                        % if object.move_id.partner_id.parent_id:\n"
+"                            (${object.move_id.partner_id.parent_id.name})\n"
+"                        % endif\n"
+"                        <br/>\n"
+"                        <br/>\n"
+"                        Here is your\n"
+"                        Radian event\n"
+"                        <strong>${object.event_id.name}</strong>\n"
+"                        with number\n"
+"                        <strong>${object.edi_number}</strong>\n"
+"                        (with invoice: ${object.move_id.number_formatted})\n"
+"                        % if object.company_id.business_name:\n"
+"                            from ${object.company_id.business_name}.\n"
+"                        % else:\n"
+"                            from ${object.company_id.name}.\n"
+"                        % endif\n"
+"                        <br/>\n"
+"                        <br/>\n"
+"                        Do not hesitate to contact us if you have any "
 "question.\n"
-"                </p>\n"
-"            </div>\n"
-"        "
+"                    </p>\n"
+"                </div>\n"
+"            "
 msgstr ""
 "<div style=\"margin: 0px; padding: 0px;\">\n"
 "                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;"
@@ -98,8 +99,8 @@ msgstr ""
 "                        Evento del Radian\n"
 "                        <strong>${object.event_id.name}</strong>\n"
 "                        con número\n"
-"                        <strong>${object.name}</strong>\n"
-"                        (con factura: ${object.move_id.ei_number})\n"
+"                        <strong>${object.edi_number}</strong>\n"
+"                        (con factura: ${object.move_id.number_formatted})\n"
 "                        % if object.company_id.business_name:\n"
 "                            de ${object.company_id.business_name}.\n"
 "                        % else:\n"
@@ -1165,9 +1166,9 @@ msgstr "Evento"
 #. module: l10n_co_edi_jorels
 #: model:mail.template,subject:l10n_co_edi_jorels.email_template_radian
 msgid ""
-"Evento;${object.move_id.ei_number or ''};${object.company_id.vat_formatted "
-"or ''};${object.company_id.business_name or object.company_id.name or ''};"
-"${object.name or ''};${object.event_id.code or ''}"
+"Evento;${object.move_id.number_formatted or ''};${object.company_id."
+"vat_formatted or ''};${object.company_id.business_name or object.company_id."
+"name or ''};${object.edi_number or ''};${object.event_id.code or ''}"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
@@ -2531,6 +2532,15 @@ msgid "The invoice must be a sales invoice"
 msgstr "La factura debe ser una factura de venta"
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
+msgid ""
+"The invoice must first be validated in Odoo, before being sent to the DIAN."
+msgstr ""
+"La factura debe ser primero validada en Odoo, antes de ser enviada a la "
+"DIAN."
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The number and prefix are required for DIAN events"
@@ -2605,6 +2615,20 @@ msgstr "La remesa %s no tiene peso"
 #, python-format
 msgid "There is not debit note for electronic document support"
 msgstr "No hay nota débito para documento soporte electrónico"
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
+msgid "This is a export journal but the client's country is Colombia"
+msgstr "Este es diario de exportación pero el país del cliente es Colombia"
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
+msgid ""
+"This is a national journal but the client's country is outside Colombia"
+msgstr ""
+"Esta es un diario nacional pero el país del cliente está fuera de Colombia"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
