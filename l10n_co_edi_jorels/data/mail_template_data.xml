@@ -131,7 +131,7 @@
             <field name="email_from">{{ (object.company_id.email_edi_formatted) }}</field>
             <field name="email_to">{{ (object.move_id.partner_id.email_edi) }}</field>
             <field name="partner_to">{{ object.move_id.partner_id.id }}</field>
-            <field name="subject">Evento;{{object.move_id.ei_number or ''}};{{object.company_id.vat_formatted or ''}};{{object.company_id.business_name or object.company_id.name or ''}};{{object.name or ''}};{{object.event_id.code or ''}}</field>
+            <field name="subject">Evento;{{object.move_id.number_formatted or ''}};{{object.company_id.vat_formatted or ''}};{{object.company_id.business_name or object.company_id.name or ''}};{{object.edi_number or ''}};{{object.event_id.code or ''}}</field>
             <field name="body_html" type="html">
                 <div style="margin: 0px; padding: 0px;">
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
@@ -152,11 +152,11 @@
                         <t t-else="">
                             Radian event
                         </t>
-                        <t t-if="object.name">
-                            with number <strong t-out="object.name or ''">E0310</strong>
+                        <t t-if="object.edi_number">
+                            with number <strong t-out="object.edi_number or ''">E0310</strong>
                         </t>
-                        <t t-if="object.move_id and object.move_id.ei_number">
-                            (with invoice: <t t-out="object.move_id.ei_number or ''">INV0</t>)
+                        <t t-if="object.move_id and object.move_id.number_formatted">
+                            (with invoice: <t t-out="object.move_id.number_formatted or ''">INV0</t>)
                         </t>
                         <t t-if="object.company_id.business_name">
                             from <t t-out="object.company_id.business_name or ''">YourCompany</t>.
