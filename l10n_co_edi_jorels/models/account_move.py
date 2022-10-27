@@ -871,11 +871,24 @@ class AccountMove(models.Model):
                 json_request = {
                     'number': rec.ei_number,
                     'type_document_code': rec.get_ei_type_document_id(),
-                    'resolution_code': rec.resolution_id.resolution_id,
                     'sync': rec.get_ei_sync(),
                     'customer': rec.get_ei_customer(),
                     'operation_code': rec.get_operation_code()
                 }
+
+                if rec.get_type_edi_document() == 'invoice':
+                    json_request['resolution'] = {
+                        'prefix': rec.resolution_id.resolution_prefix,
+                        'resolution': rec.resolution_id.resolution_resolution,
+                        'resolution_date': fields.Date.to_string(rec.resolution_id.resolution_resolution_date),
+                        'technical_key': rec.resolution_id.resolution_technical_key,
+                        'number_from': rec.resolution_id.resolution_from,
+                        'number_to': rec.resolution_id.resolution_to,
+                        'date_from': fields.Date.to_string(rec.resolution_id.resolution_date_from),
+                        'date_to': fields.Date.to_string(rec.resolution_id.resolution_date_to)
+                    }
+                else:
+                    json_request['resolution_code'] = rec.resolution_id.resolution_id
 
                 # Due date
                 if rec.invoice_date_due:
