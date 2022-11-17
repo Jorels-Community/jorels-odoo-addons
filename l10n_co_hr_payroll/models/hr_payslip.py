@@ -1153,6 +1153,9 @@ class HrPayslip(models.Model):
                     rec.worked_days_total -= dict_with_days['quantity']
             basic['worked_days'] = rec.worked_days_total
 
+            if 'worker_salary' not in basic:
+                basic['worker_salary'] = 0.0
+
             # Complete json request
             earn = {
                 "basic": basic
