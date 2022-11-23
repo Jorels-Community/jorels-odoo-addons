@@ -60,17 +60,23 @@ class ResCompany(models.Model):
                         query = query + field_name + ","
                     query = query + "create_uid,create_date,write_uid,write_date) values("
                     for field_name in field_names:
-                        query = query + "$$" + row[field_name] + "$$,"
+                        val = "$$" + row[field_name] + "$$"
+                        if val == "$$$$":
+                            val = 'NULL'
+                        query = query + val + ','
                     query = query + str(self.env.user.id) + ',NOW(),' + str(
                         self.env.user.id) + ',NOW()) ON CONFLICT(id) DO UPDATE SET '
 
                     # Update
                     for field_name in field_names:
-                        query = query + field_name + "=$$" + row[field_name] + "$$,"
+                        val = "$$" + row[field_name] + "$$"
+                        if val == "$$$$":
+                            val = 'NULL'
+                        query = query + field_name + "=" + val + ","
                     query = query + "write_uid=" + str(self.env.user.id) + ",write_date=NOW()"
 
                     # Execute query
-                    #_logger.debug(query)
+                    # _logger.debug(query)
                     self._cr.execute(query)
 
                     # Count
