@@ -21,6 +21,7 @@
 #
 
 import logging
+import re
 
 from odoo import fields, models, api
 
@@ -61,6 +62,29 @@ class ResPartner(models.Model):
                                            string="Postal department", compute="_compute_postal_id", store=True)
     postal_municipality_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.municipalities', copy=True,
                                              string="Postal municipality", compute="_compute_postal_id", store=True)
+
+    edi_sanitize_vat = fields.Char('Sanitized vat', compute='_compute_edi_sanitize_vat', store=True, readonly=True)
+
+    @classmethod
+    def _edi_sanitize_vat(cls, vat, type_document_identification_id):
+        sanitize_vat = vat and re.sub(r'\W+', '', vat).upper() or False
+        if sanitize_vat:
+            if type_document_identification_id in (1, 2, 3, 4, 5, 6, 10):
+                id_number = ''.join([i for i in sanitize_vat if i.isdigit()])
+            else:
+                id_number = sanitize_vat
+
+            # If it is Nit remove the check digit
+            if type_document_identification_id == 6:
+                return id_number[:-1]
+            else:
+                return id_number
+
+    @api.depends('vat', 'type_document_identification_id')
+    def _compute_edi_sanitize_vat(self):
+        """Sanitize vat in colombia for document type"""
+        for rec in self:
+            rec.edi_sanitize_vat = rec._edi_sanitize_vat(rec.vat, rec.type_document_identification_id.id)
 
     @api.depends('l10n_co_document_type')
     def _compute_type_document_identification_id(self):
