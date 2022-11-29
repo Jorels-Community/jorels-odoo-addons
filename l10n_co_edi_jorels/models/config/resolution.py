@@ -197,24 +197,6 @@ class Resolution(models.Model):
                     if val != 'company_id':
                         requests_data[val[len_prefix:]] = vals[val]
 
-                if not requests_data['prefix']:
-                    requests_data['prefix'] = ''
-
-                if not requests_data['resolution']:
-                    requests_data['resolution'] = ''
-
-                if not requests_data['resolution_date']:
-                    requests_data['resolution_date'] = ''
-
-                if not requests_data['technical_key']:
-                    requests_data['technical_key'] = ''
-
-                if not requests_data['date_from']:
-                    requests_data['date_from'] = ''
-
-                if not requests_data['date_to']:
-                    requests_data['date_to'] = ''
-
                 _logger.debug("Request update resolution DIAN: %s",
                               json.dumps(requests_data, indent=2, sort_keys=False))
 
