@@ -27,7 +27,7 @@
             <field name="inherit_id" ref="base.sequence_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='implementation']" position="after">
-                    <field name="resolution_id"/>
+                    <field name="resolution_id" domain="[('company_id','=',company_id)]"/>
                 </xpath>
             </field>
         </record>

@@ -43,8 +43,9 @@
                         </group>
                         <group name="group_right">
                             <field name="resolution_id"/>
-                            <field name="resolution_number"/>
-                            <field name="resolution_next_consecutive"/>
+                            <field name="resolution_number" invisible="1"/>
+                            <field name="resolution_next_consecutive" invisible="1"/>
+                            <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
                             <field name="resolution_message"/>
                         </group>
                     </group>
@@ -68,8 +69,7 @@
                 <field name="resolution_to"/>
                 <field name="resolution_date_from"/>
                 <field name="resolution_date_to"/>
-                <field name="resolution_number"/>
-                <field name="resolution_next_consecutive"/>
+                <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
             </tree>
         </field>
     </record>
