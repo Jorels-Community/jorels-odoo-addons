@@ -59,6 +59,8 @@
                                 <strong>Liability type:</strong>
                                 <span t-field="o.company_id.type_liability_id"/>
                                 <br/>
+                                <strong>Operation type:</strong>
+                                <span t-field="o.ei_operation"/>
                                 <br/>
                                 <span t-field="o.company_id.report_custom_text"/>
                             </div>
@@ -161,15 +163,38 @@
                         <span t-field="o.order_ref_date"/>
                     </p>
                 </div>
-                <div name="operation_type" class="col-auto mw-100 mb-2"
-                     t-if="o.company_id.ei_enable and o.ei_operation">
-                    <strong>Operation type:</strong>
-                    <p class="m-0" t-field="o.ei_operation"/>
-                </div>
                 <div name="payment_form" class="col-auto mw-100 mb-2"
                      t-if="o.company_id.ei_enable and o.payment_form_id">
                     <strong>Payment form:</strong>
                     <p class="m-0" t-field="o.payment_form_id"/>
+                </div>
+            </xpath>
+            <xpath expr="//div[@name='invoice_date']" position="replace">
+                <div class="col-auto col-3 mw-100 mb-2" t-if="o.invoice_date" name="invoice_date">
+                    <t t-if="o.company_id.ei_enable and o.move_type in ('out_invoice', 'out_refund')">
+                        <strong>Issue Date:</strong>
+                    </t>
+                    <t t-elif="o.move_type == 'out_invoice'">
+                        <strong>Invoice Date:</strong>
+                    </t>
+                    <t t-elif="o.move_type == 'out_refund'">
+                        <strong>Credit Note Date:</strong>
+                    </t>
+                    <t t-elif="o.move_type == 'out_receipt'">
+                        <strong>Receipt Date:</strong>
+                    </t>
+                    <t t-else="">
+                        <strong>Date:</strong>
+                    </t>
+                    <p t-if="o.company_id.ei_enable and o.ei_issue_datetime and o.move_type in ('out_invoice', 'out_refund')"
+                       class="m-0" t-field="o.ei_issue_datetime"/>
+                    <p t-else="" class="m-0" t-field="o.invoice_date"/>
+
+                    <t t-if="o.company_id.ei_enable and o.ei_expedition_date and o.move_type in ('out_invoice', 'out_refund')">
+                        <strong>Expedition date:</strong>
+                    </t>
+                    <p t-if="o.company_id.ei_enable and o.ei_expedition_date and o.move_type in ('out_invoice', 'out_refund')"
+                       class="m-0" t-field="o.ei_expedition_date"/>
                 </div>
             </xpath>
             <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[1]" position="before">

@@ -64,6 +64,7 @@ class AccountMove(models.Model):
     ei_uuid = fields.Char(string="UUID", copy=False, readonly=True, states={'draft': [('readonly', False)]})
     ei_issue_date = fields.Date(string="Issue date", copy=False, readonly=True,
                                 states={'draft': [('readonly', False)]})
+    ei_issue_datetime = fields.Char(string="Issue datetime", copy=False, readonly=True)
     ei_expedition_date = fields.Char("Expedition date", copy=False, readonly=True)
     ei_zip_key = fields.Char(string="Zip key", copy=False, readonly=True, states={'draft': [('readonly', False)]})
     ei_status_code = fields.Char(string="Status code", copy=False, readonly=True)
@@ -278,6 +279,7 @@ class AccountMove(models.Model):
                 rec.ei_class = response['class']
                 rec.ei_uuid = response['uuid']
                 rec.ei_issue_date = response['issue_date']
+                rec.ei_issue_datetime = response['issue_date']
                 rec.ei_expedition_date = response['expedition_date']
                 rec.ei_zip_key = response['zip_key']
                 rec.ei_status_code = response['status_code']
@@ -1401,6 +1403,7 @@ class AccountMove(models.Model):
                                         rec.ei_uuid = json_request['uuid']
                                     if json_request['issue_date']:
                                         rec.ei_issue_date = json_request['issue_date']
+                                        rec.ei_issue_datetime = json_request['issue_date']
                                     if json_request['zip_key']:
                                         rec.ei_zip_key = json_request['zip_key']
                                     if json_request['xml_name']:
