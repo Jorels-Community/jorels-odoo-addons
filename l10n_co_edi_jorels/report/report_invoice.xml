@@ -189,12 +189,14 @@
                     <p t-if="o.company_id.ei_enable and o.ei_issue_datetime and o.move_type in ('out_invoice', 'out_refund')"
                        class="m-0" t-field="o.ei_issue_datetime"/>
                     <p t-else="" class="m-0" t-field="o.invoice_date"/>
-
-                    <t t-if="o.company_id.ei_enable and o.ei_expedition_date and o.move_type in ('out_invoice', 'out_refund')">
+                </div>
+                <div class="col-auto col-3 mw-100 mb-2"
+                     t-if="o.company_id.ei_enable and o.ei_expedition_date and o.move_type in ('out_invoice', 'out_refund')"
+                     name="expedition_date">
+                    <t>
                         <strong>Expedition date:</strong>
                     </t>
-                    <p t-if="o.company_id.ei_enable and o.ei_expedition_date and o.move_type in ('out_invoice', 'out_refund')"
-                       class="m-0" t-field="o.ei_expedition_date"/>
+                    <p class="m-0" t-field="o.ei_expedition_date"/>
                 </div>
             </xpath>
             <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[1]" position="before">
