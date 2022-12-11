@@ -899,6 +899,10 @@ class AccountMove(models.Model):
                 if rec.invoice_date_due:
                     json_request['due_date'] = fields.Date.to_string(rec.invoice_date_due)
 
+                # Issue date
+                if rec.invoice_date:
+                    json_request['date'] = fields.Date.to_string(rec.invoice_date)
+
                 # Period
                 if rec.date_start and rec.date_end:
                     json_request['period'] = {
