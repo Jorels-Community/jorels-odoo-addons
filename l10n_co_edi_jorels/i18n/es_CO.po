@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-11 04:16+0000\n"
-"PO-Revision-Date: 2022-12-10 23:36-0500\n"
+"POT-Creation-Date: 2022-12-11 07:23+0000\n"
+"PO-Revision-Date: 2022-12-11 02:28-0500\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "Language: es_CO\n"
@@ -27,7 +27,7 @@ msgstr " - Facturación electrónica"
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid ""
 "<br/>\n"
-"                                <strong>Liability type:</strong>"
+"                            <strong>Liability type:</strong>"
 msgstr ""
 "<br/>\n"
 "                                <strong>Tipo de responsabilidad:</strong>"
@@ -36,7 +36,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid ""
 "<br/>\n"
-"                                <strong>Operation type:</strong>"
+"                            <strong>Operation type:</strong>"
 msgstr ""
 "<br/>\n"
 "                                <strong>Tipo de operación:</strong>"
@@ -45,7 +45,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid ""
 "<br/>\n"
-"                                <strong>Organization type:</strong>"
+"                            <strong>Organization type:</strong>"
 msgstr ""
 "<br/>\n"
 "                                <strong>Tipo de organización:</strong>"
@@ -54,7 +54,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid ""
 "<br/>\n"
-"                                <strong>Regime type:</strong>"
+"                            <strong>Regime type:</strong>"
 msgstr ""
 "<br/>\n"
 "                                <strong>Tipo de regimen:</strong>"
@@ -265,28 +265,13 @@ msgstr "<span>a</span>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
-msgid "<strong>Credit Note Date:</strong>"
-msgstr "<strong>Fecha nota crédito:</strong>"
-
-#. module: l10n_co_edi_jorels
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "<strong>Currency</strong>"
 msgstr "<strong>Moneda</strong>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
-msgid "<strong>Date:</strong>"
-msgstr "<strong>Fecha:</strong>"
-
-#. module: l10n_co_edi_jorels
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "<strong>Expedition date:</strong>"
 msgstr "<strong>Fecha de expedición:</strong>"
-
-#. module: l10n_co_edi_jorels
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
-msgid "<strong>Invoice Date:</strong>"
-msgstr "<strong>Fecha factura:</strong>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -317,11 +302,6 @@ msgstr "<strong>Forma de pago:</strong>"
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "<strong>Payment method:</strong>"
 msgstr "<strong>Método de pago:</strong>"
-
-#. module: l10n_co_edi_jorels
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
-msgid "<strong>Receipt Date:</strong>"
-msgstr "<strong>Fecha recibo:</strong>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -2544,11 +2524,6 @@ msgstr ""
 #: model:ir.model,name:l10n_co_edi_jorels.model_account_tax
 msgid "Tax"
 msgstr "Impuesto"
-
-#. module: l10n_co_edi_jorels
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
-msgid "Tax ID"
-msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
