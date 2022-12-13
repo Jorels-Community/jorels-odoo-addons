@@ -78,7 +78,8 @@ class ResPartner(models.Model):
                 return id_number[:-1]
             else:
                 return id_number
-
+        else:
+            return None
 
     @api.depends('vat', 'type_document_identification_id')
     def _compute_edi_sanitize_vat(self):
