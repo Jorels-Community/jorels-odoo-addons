@@ -56,7 +56,7 @@ class Radian(models.Model):
                                            ondelete='RESTRICT', states={'draft': [('readonly', False)]}, tracking=True,
                                            copy=False)
     company_id = fields.Many2one('res.company', string='Company', readonly=True, copy=False,
-                                 default=lambda self: self.env['res.company']._company_default_get(),
+                                 default=lambda self: self.env.company,
                                  states={'draft': [('readonly', False)]})
     move_id = fields.Many2one(comodel_name="account.move", string="Invoice", required=True, readonly=True,
                               states={'draft': [('readonly', False)]}, copy=True,
@@ -65,14 +65,10 @@ class Radian(models.Model):
 
     # Storing synchronous and production modes
     edi_sync = fields.Boolean(string="Sync", copy=False, readonly=True,
-                              default=lambda self: self.env[
-                                  'res.company'
-                              ]._company_default_get().is_not_test, store=True,
+                              default=lambda self: self.env.company.is_not_test, store=True,
                               compute="_compute_edi_is_not_test")
     edi_is_not_test = fields.Boolean(string="In production", copy=False, readonly=True,
-                                     default=lambda self: self.env[
-                                         'res.company'
-                                     ]._company_default_get().is_not_test, store=True,
+                                     default=lambda self: self.env.company.is_not_test, store=True,
                                      compute="_compute_edi_is_not_test")
 
     # Edi response fields
@@ -169,7 +165,7 @@ class Radian(models.Model):
     def _default_edi_type_environment(self):
         if not self.env['l10n_co_edi_jorels.type_environments'].search_count([]):
             self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.type_environments')
-        return 1 if self.env['res.company']._company_default_get().is_not_test else 2
+        return 1 if self.env.company.is_not_test else 2
 
     @api.depends("edi_type_environment")
     def _compute_edi_is_not_test(self):

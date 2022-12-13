@@ -57,10 +57,18 @@ class Resolution(models.Model):
 
     resolution_message = fields.Char(string="Message", readonly=True)
 
+    company_id = fields.Many2one('res.company', string='Company', readonly=False, copy=False, required=True,
+                                 default=lambda self: self.env.company)
+
     def _compute_name(self):
         for rec in self:
-            rec.name = str(rec.resolution_id) + ' - ' + \
-                       rec.resolution_type_document_id.name + ' [' + rec.resolution_type_document_id.code + ']'
+            if rec.resolution_id:
+                rec.name = str(rec.resolution_id) + ' - ' + \
+                           rec.resolution_type_document_id.name + \
+                           ' [' + rec.resolution_type_document_id.code + ']'
+            else:
+                rec.name = rec.resolution_type_document_id.name
+
 
     @api.model
     def create(self, vals):

@@ -28,9 +28,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='group_alias_edit']" position="after">
                     <group string="Electronic invoicing" attrs="{'invisible': [('type', 'not in', ('sale','purchase','general'))]}">
-                        <field name="resolution_invoice_id"/>
-                        <field name="resolution_credit_note_id"/>
-                        <field name="resolution_debit_note_id"/>
+                        <field name="resolution_invoice_id" domain="[('company_id','=',company_id)]"/>
+                        <field name="resolution_credit_note_id" domain="[('company_id','=',company_id)]"/>
+                        <field name="resolution_debit_note_id" domain="[('company_id','=',company_id)]"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='type']" position="after">

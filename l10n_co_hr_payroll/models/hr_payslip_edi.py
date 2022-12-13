@@ -56,7 +56,7 @@ class HrPayslipEdi(models.Model):
     employee_id = fields.Many2one('hr.employee', string='Employee', required=True, readonly=True,
                                   states={'draft': [('readonly', False)]})
     company_id = fields.Many2one('res.company', string='Company', readonly=True, copy=False,
-                                 default=lambda self: self.env['res.company']._company_default_get(),
+                                 default=lambda self: self.env.company,
                                  states={'draft': [('readonly', False)]})
     number = fields.Char(string='Reference', readonly=True, copy=False, states={'draft': [('readonly', False)]})
     name = fields.Char(string='Edi Payslip Name', compute='_compute_name', store=True)

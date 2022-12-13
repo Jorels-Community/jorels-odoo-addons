@@ -120,8 +120,10 @@ class ResConfigSettings(models.TransientModel):
                         resolution['date_to'] = 'NULL'
 
                     # Syncing Odoo with API
-                    resolution_search = self.env['l10n_co_edi_jorels.resolution'].search(
-                        [('resolution_id', '=', resolution['id'])])
+                    resolution_search = self.env['l10n_co_edi_jorels.resolution'].search([
+                        ('resolution_id', '=', resolution['id']),
+                        ('company_id', '=', self.env.company.id)
+                    ])
 
                     # TO DO: Update with UPDATE if it already exists
                     # If it is not already in the database then add it
@@ -141,11 +143,12 @@ class ResConfigSettings(models.TransientModel):
                             "resolution_id," \
                             "resolution_number," \
                             "resolution_next_consecutive," \
+                            "company_id," \
                             "create_uid," \
                             "create_date," \
                             "write_uid," \
                             "write_date" \
-                            ") VALUES (TRUE, %d, '%s', NULLIF('%s','None'), %s, NULLIF('%s','None'), %d, %d, %s, %s, %d, %d, '%s', %d, %s, %d, %s)" %
+                            ") VALUES (TRUE, %d, '%s', NULLIF('%s','None'), %s, NULLIF('%s','None'), %d, %d, %s, %s, %d, %d, '%s', %d, %d, %s, %d, %s)" %
                             (
                                 resolution['type_document_id'],
                                 resolution['prefix'],
@@ -159,6 +162,7 @@ class ResConfigSettings(models.TransientModel):
                                 resolution['id'],
                                 resolution['number'],
                                 resolution['next_consecutive'],
+                                self.env.company.id,
                                 self.env.user.id,
                                 'NOW()',
                                 self.env.user.id,

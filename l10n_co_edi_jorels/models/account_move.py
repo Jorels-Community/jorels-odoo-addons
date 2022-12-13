@@ -52,7 +52,7 @@ class AccountMove(models.Model):
     # They allow to store synchronous and production modes used when invoicing
     ei_sync = fields.Boolean(string="Sync", default=False, copy=False, readonly=True)
     ei_is_not_test = fields.Boolean(string="In production", copy=False, readonly=True,
-                                    default=lambda self: self.env['res.company']._company_default_get().is_not_test,
+                                    default=lambda self: self.env.company.is_not_test,
                                     store=True, compute="_compute_ei_is_not_test")
 
     # API Response:
@@ -209,7 +209,7 @@ class AccountMove(models.Model):
     def _default_ei_type_environment(self):
         if not self.env['l10n_co_edi_jorels.type_environments'].search_count([]):
             self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.type_environments')
-        return 1 if self.env['res.company']._company_default_get().is_not_test else 2
+        return 1 if self.env.company.is_not_test else 2
 
     @api.depends("ei_type_environment")
     def _compute_ei_is_not_test(self):
