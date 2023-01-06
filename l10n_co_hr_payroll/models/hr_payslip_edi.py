@@ -953,9 +953,9 @@ class HrPayslipEdi(models.Model):
             "health": _("Health"),
             "_earn_vacation_common": _("Vacation common"),
             "_earn_vacation_compensated": _("Vacation compensated"),
-            "_earn_licensings_maternity_or_paternity_leaves": _("Maternity or paternity leaves"),
-            "_earn_licensings_permit_or_paid_licenses": _("Permit or paid licenses"),
-            "_earn_licensings_suspension_or_unpaid_leaves": _("Suspension or unpaid leaves"),
+            "_earn_licensings_licensings_maternity_or_paternity_leaves": _("Maternity or paternity leaves"),
+            "_earn_licensings_licensings_permit_or_paid_licenses": _("Permit or paid licenses"),
+            "_earn_licensings_licensings_suspension_or_unpaid_leaves": _("Suspension or unpaid leaves"),
             "_payroll_reference": _("Reference"),
             "issue_date": _("Issue date"),
         }

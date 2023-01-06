@@ -972,13 +972,13 @@ class HrPayslip(models.Model):
                             })
                     elif line_id.salary_rule_id.earn_category == 'licensings_permit_or_paid_licenses':
                         if line_id.edi_quantity and line_id.total:
-                            licensings_maternity_or_paternity_leaves.append({
+                            licensings_permit_or_paid_licenses.append({
                                 "quantity": abs(line_id.edi_quantity),
                                 "payment": abs(line_id.total)
                             })
                     elif line_id.salary_rule_id.earn_category == 'licensings_suspension_or_unpaid_leaves':
                         if line_id.edi_quantity:
-                            licensings_maternity_or_paternity_leaves.append({
+                            licensings_suspension_or_unpaid_leaves.append({
                                 "quantity": abs(line_id.edi_quantity)
                             })
                     elif line_id.salary_rule_id.earn_category == 'other_concepts':
