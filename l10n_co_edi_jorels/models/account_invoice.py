@@ -179,7 +179,7 @@ class AccountInvoice(models.Model):
     payment_method_id = fields.Many2one(string="Payment method", comodel_name='l10n_co_edi_jorels.payment_methods',
                                         default=lambda self: self._default_payment_method_id(), copy=True,
                                         readonly=True, states={'draft': [('readonly', False)]},
-                                        domain=[('scope', '=', '')], ondelete='RESTRICT')
+                                        domain=[('scope', '=', False)], ondelete='RESTRICT')
 
     # Store resolution
     resolution_id = fields.Many2one(string="Resolution", comodel_name='l10n_co_edi_jorels.resolution', copy=False,
