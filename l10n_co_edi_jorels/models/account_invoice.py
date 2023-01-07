@@ -958,6 +958,10 @@ class AccountInvoice(models.Model):
                 if rec.date_due:
                     json_request['due_date'] = fields.Date.to_string(rec.date_due)
 
+                # Issue date
+                if rec.date_invoice:
+                    json_request['date'] = fields.Date.to_string(rec.date_invoice)
+
                 # Period
                 if rec.date_start and rec.date_end:
                     json_request['period'] = {
