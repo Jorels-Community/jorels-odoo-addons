@@ -85,6 +85,7 @@
                             <field name="ei_number"/>
                             <field name="ei_uuid"/>
                             <field name="ei_issue_date"/>
+                            <field name="ei_issue_datetime"/>
                             <field name="ei_expedition_date"/>
                             <field name="ei_zip_key" attrs="{'invisible':[('ei_is_not_test','=',True)]}"/>
                             <field name="ei_status_code"/>
@@ -239,6 +240,7 @@
                             <field name="ei_number"/>
                             <field name="ei_uuid"/>
                             <field name="ei_issue_date"/>
+                            <field name="ei_issue_datetime"/>
                             <field name="ei_expedition_date"/>
                             <field name="ei_zip_key" attrs="{'invisible':[('ei_is_not_test','=',True)]}"/>
                             <field name="ei_status_code"/>
