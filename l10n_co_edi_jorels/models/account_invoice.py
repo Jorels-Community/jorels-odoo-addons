@@ -218,8 +218,8 @@ class AccountInvoice(models.Model):
         return self.ei_is_valid \
             and self.type in ('out_invoice', 'out_refund') \
             and self.state not in ('draft', 'validate') \
-            and self.ei_uuid \
-            and self.ei_attached_document_base64_bytes
+            and bool(self.ei_uuid) \
+            and bool(self.ei_attached_document_base64_bytes)
 
     @api.multi
     def _send_edi_email(self):
