@@ -90,6 +90,9 @@ class ResCompany(models.Model):
     # Enable/disable electronic invoicing for company
     ei_enable = fields.Boolean(string="Enable electronic invoicing for this company", default=True)
 
+    # Ignore email edi
+    ei_ignore_edi_email_check = fields.Boolean(string="Ignore edi email check", default=False)
+
     def _compute_vat_formatted(self):
         for rec in self:
             type_document_identification_id = self.get_type_document_identification_id()

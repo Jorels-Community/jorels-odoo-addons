@@ -371,6 +371,8 @@ class AccountInvoice(models.Model):
 
                 if rec_partner.email_edi:
                     email_edi = rec_partner.email_edi
+                elif rec.company_id.ei_ignore_edi_email_check and rec_partner.email:
+                    email_edi = rec_partner.email
                 else:
                     raise UserError(_("The client must have an email where to send the invoice."))
 
