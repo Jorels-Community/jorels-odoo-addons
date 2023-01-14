@@ -190,7 +190,8 @@ class Resolution(models.Model):
 
                 len_prefix = len('resolution_')
                 for val in vals:
-                    requests_data[val[len_prefix:]] = vals[val]
+                    if val != 'company_id':
+                        requests_data[val[len_prefix:]] = vals[val]
 
                 if not requests_data['prefix']:
                     requests_data['prefix'] = ''
