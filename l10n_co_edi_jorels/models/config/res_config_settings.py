@@ -63,6 +63,10 @@ class ResConfigSettings(models.TransientModel):
     ei_enable = fields.Boolean(related="company_id.ei_enable",
                                string="Enable electronic invoicing for this company", default=True, readonly=False)
 
+    # Ignore email edi
+    ei_ignore_edi_email_check = fields.Boolean(related="company_id.ei_ignore_edi_email_check",
+                                               string="Ignore edi email check", default=False, readonly=False)
+
     # Update resolutions on Odoo database
     @api.model
     def action_update_resolutions(self):
