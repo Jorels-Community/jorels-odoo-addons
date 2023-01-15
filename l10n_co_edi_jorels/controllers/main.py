@@ -41,7 +41,7 @@ class Webhooks(http.Controller):
         # data = json.loads(request.httprequest.args)
         data = json.loads(request.httprequest.data)
 
-        # request.env['account.invoice'].sudo().create({
+        # request.env['account.move'].sudo().create({
         #     'partner_id': partner_id,
         #     'journal_id': journal_id,
         #     'type': 'in_invoice',
