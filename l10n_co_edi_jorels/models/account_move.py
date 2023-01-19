@@ -391,13 +391,18 @@ class AccountMove(models.Model):
                         else:
                             raise UserError(_("You must assign the client a country"))
 
-                        if rec_partner.country_id.code == 'CO' and rec.is_out_country:
-                            raise UserError(_("This is an export invoice but the client's country is Colombia"))
+                        if rec_partner.country_id.code == 'CO':
+                            if rec.is_out_country:
+                                raise UserError(_("This is an export invoice but the client's country is Colombia"))
 
-                        if rec_partner.municipality_id and rec_partner.country_id.code == 'CO':
-                            customer_data['municipality_code'] = rec_partner.municipality_id.id
-                        elif rec_partner.country_id.code == 'CO':
-                            raise UserError(_("You must assign the client a municipality"))
+                            if rec_partner.municipality_id:
+                                customer_data['municipality_code'] = rec_partner.municipality_id.id
+                            elif rec_partner.postal_municipality_id:
+                                municipality_rec = self.env['l10n_co_edi_jorels.municipalities'].search(
+                                    [('code', '=', rec_partner.postal_municipality_id.code)])
+                                customer_data['municipality_code'] = municipality_rec.id
+                            else:
+                                raise UserError(_("You must assign the client a municipality"))
 
                         if rec_partner.type_regime_id:
                             customer_data['regime_code'] = rec_partner.type_regime_id.id
