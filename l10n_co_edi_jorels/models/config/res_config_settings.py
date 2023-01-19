@@ -122,8 +122,7 @@ class ResConfigSettings(models.TransientModel):
 
                     # Syncing Odoo with API
                     resolution_search = self.env['l10n_co_edi_jorels.resolution'].search([
-                        ('resolution_id', '=', resolution['id']),
-                        ('company_id', '=', self.env['res.company']._company_default_get().id)
+                        ('resolution_id', '=', resolution['id'])
                     ])
 
                     # TO DO: Update with UPDATE if it already exists
