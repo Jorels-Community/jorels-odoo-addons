@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-15 19:57+0000\n"
-"PO-Revision-Date: 2022-10-15 15:06-0500\n"
+"POT-Creation-Date: 2023-01-20 22:42+0000\n"
+"PO-Revision-Date: 2023-01-20 18:08-0500\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "Language: es\n"
@@ -24,10 +24,19 @@ msgid " - Electronic invoicing"
 msgstr " - Facturación electrónica"
 
 #. module: l10n_co_edi_jorels
+#: model:mail.template,subject:l10n_co_edi_jorels.email_template_edi
+msgid ""
+"${object.company_id.vat_formatted or ''};${object.company_id.business_name "
+"or object.company_id.name or ''};${object.number_formatted or ''};${object."
+"ei_type_document_id.code or ''};${object.company_id.trade_name or object."
+"company_id.business_name or object.company_id.name or ''};"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid ""
 "<br/>\n"
-"                                <strong>Liability type:</strong>"
+"                            <strong>Liability type:</strong>"
 msgstr ""
 "<br/>\n"
 "                                <strong>Tipo de responsabilidad:</strong>"
@@ -36,7 +45,16 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid ""
 "<br/>\n"
-"                                <strong>Organization type:</strong>"
+"                            <strong>Operation type:</strong>"
+msgstr ""
+"<br/>\n"
+"                            <strong>Tipo de operación:</strong>"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
+msgid ""
+"<br/>\n"
+"                            <strong>Organization type:</strong>"
 msgstr ""
 "<br/>\n"
 "                                <strong>Tipo de organización:</strong>"
@@ -45,15 +63,109 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid ""
 "<br/>\n"
-"                                <strong>Regime type:</strong>"
+"                            <strong>Regime type:</strong>"
 msgstr ""
 "<br/>\n"
-"                                <strong>Tipo de regimen:</strong>"
+"                                <strong>Tipo de régimen:</strong>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
 msgid "<br/>When changing the environment, this is automatic"
 msgstr "<br/>Cuando cambia el entorno, esto es automatico"
+
+#. module: l10n_co_edi_jorels
+#: model:mail.template,body_html:l10n_co_edi_jorels.email_template_edi
+msgid ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;"
+"\">\n"
+"                        Dear\n"
+"                        % if object.partner_id.parent_id:\n"
+"                            ${object.partner_id.name} (${object.partner_id."
+"parent_id.name}),\n"
+"                        % else:\n"
+"                            ${object.partner_id.name},\n"
+"                        % endif\n"
+"                        <br/><br/>\n"
+"                        Here is your\n"
+"                        % if object.name:\n"
+"                            invoice <strong>${object.name}</strong>\n"
+"                        % else:\n"
+"                        invoice\n"
+"                        %endif\n"
+"                        % if object.invoice_origin:\n"
+"                            (with reference: ${object.invoice_origin})\n"
+"                        % endif\n"
+"                        amounting in <strong>${format_amount(object."
+"amount_total, object.currency_id)}</strong>\n"
+"                        from ${object.company_id.name}.\n"
+"                        % if object.payment_state in ('paid', "
+"'in_payment'):\n"
+"                            This invoice is already paid.\n"
+"                        % else:\n"
+"                            Please remit payment at your earliest "
+"convenience.\n"
+"                            % if object.payment_reference:\n"
+"                                <br/><br/>\n"
+"                                Please use the following communication for "
+"your payment: <strong>${object.payment_reference}</strong>.\n"
+"                            % endif\n"
+"                        % endif\n"
+"                        <br/><br/>\n"
+"                        Do not hesitate to contact us if you have any "
+"questions.\n"
+"                        % if object.invoice_user_id.signature:\n"
+"                            <br/>\n"
+"                            ${object.invoice_user_id.signature | safe}\n"
+"                        % endif\n"
+"                    </p>\n"
+"                </div>\n"
+"            "
+msgstr ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;"
+"\">\n"
+"                        Querido\n"
+"                        % if object.partner_id.parent_id:\n"
+"                            ${object.partner_id.name} (${object.partner_id."
+"parent_id.name}),\n"
+"                        % else:\n"
+"                            ${object.partner_id.name},\n"
+"                        % endif\n"
+"                        <br/><br/>\n"
+"                        Aquí está su\n"
+"                        % if object.name:\n"
+"                            factura <strong>${object.name}</strong>\n"
+"                        % else:\n"
+"                        factura\n"
+"                        %endif\n"
+"                        % if object.invoice_origin:\n"
+"                            (con referencia: ${object.invoice_origin})\n"
+"                        % endif\n"
+"                        por un valor de <strong>${format_amount(object."
+"amount_total, object.currency_id)}</strong>\n"
+"                        de ${object.company_id.name}.\n"
+"                        % if object.payment_state in ('paid', "
+"'in_payment'):\n"
+"                            Esta factura ya se encuentra pagada.\n"
+"                        % else:\n"
+"                            Por favor remita su pago tan pronto como le sea "
+"posible.\n"
+"                            % if object.payment_reference:\n"
+"                                <br/><br/>\n"
+"                                Por favor use la siguiente referencia para "
+"su pago: <strong>${object.payment_reference}</strong>.\n"
+"                            % endif\n"
+"                        % endif\n"
+"                        <br/><br/>\n"
+"                        No dude en contactarnos si tiene alguna inquietud.\n"
+"                        % if object.invoice_user_id.signature:\n"
+"                            <br/>\n"
+"                            ${object.invoice_user_id.signature | safe}\n"
+"                        % endif\n"
+"                    </p>\n"
+"                </div>\n"
+"            "
 
 #. module: l10n_co_edi_jorels
 #: model:mail.template,body_html:l10n_co_edi_jorels.email_template_radian
@@ -210,18 +322,23 @@ msgstr "<strong>Moneda</strong>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
+msgid "<strong>Expedition date:</strong>"
+msgstr "<strong>Fecha de expedición:</strong>"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "<strong>Invoicing period:</strong>"
 msgstr "<strong>Periodo de facturación:</strong>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
-msgid "<strong>NIT:</strong>"
-msgstr ""
+msgid "<strong>Issue Date:</strong>"
+msgstr "<strong>Fecha de emisión:</strong>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
-msgid "<strong>Operation type:</strong>"
-msgstr "<strong>Tipo de operación:</strong>"
+msgid "<strong>NIT:</strong>"
+msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -474,6 +591,7 @@ msgstr "Rango autorizado desde:"
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__enable_mass_send_print
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings__enable_mass_send_print
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
 msgid "Automatic invoice email when validating (In production)"
 msgstr "Email de la factura automático al validar (En producción)"
 
@@ -592,6 +710,7 @@ msgstr "Compañías"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__company_id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__company_id
 msgid "Company"
 msgstr "Compañia"
 
@@ -603,7 +722,7 @@ msgstr "Nombre de la compañía para facturar"
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_res_config_settings
 msgid "Config Settings"
-msgstr "Opciones de configuración"
+msgstr "Opciones de Configuración"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
@@ -1441,8 +1560,24 @@ msgstr "Si se encuentra marcado, algunos mensajes tienen error de envío."
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
+msgid ""
+"If there is no edi email, the contact's email is used as edi\n"
+"                                        email"
+msgstr ""
+"Si no hay edi email, el email del contacto es usado como edi\n"
+"                                        email"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
 msgid "If you don't have one, write to"
 msgstr "Si no tiene una, escriba a"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__ei_ignore_edi_email_check
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings__ei_ignore_edi_email_check
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
+msgid "Ignore edi email check"
+msgstr "Ignorar la verificación del edi email"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_is_not_test
@@ -1472,9 +1607,25 @@ msgid "Invoice resolution"
 msgstr "Resolución de facturación"
 
 #. module: l10n_co_edi_jorels
+#: model:mail.template,report_name:l10n_co_edi_jorels.email_template_edi
+msgid ""
+"Invoice_${(object.name or '').replace('/','_')}${object.state == 'draft' "
+"and '_draft' or ''}"
+msgstr ""
+"Factura_${(object.name or '').replace('/','_')}${object.state == 'draft' "
+"and '_borrador' or ''}"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "Invoicing authorization number:"
 msgstr "Número de autorización de facturación:"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__is_edi_mail_sent
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__is_edi_mail_sent
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__is_edi_mail_sent
+msgid "Is Edi Mail Sent"
+msgstr "Ha sido enviado el correo EDI"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_is_follower
@@ -1515,6 +1666,20 @@ msgstr "¿Es válido?"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_issue_date
 msgid "Issue date"
 msgstr "Fecha de emisión"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_issue_datetime
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_issue_datetime
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_issue_datetime
+msgid "Issue datetime"
+msgstr "Fecha y hora de emisión"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_bank_statement_line__is_edi_mail_sent
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_move__is_edi_mail_sent
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_payment__is_edi_mail_sent
+msgid "It indicates that the edi document has been sent."
+msgstr "Esto indica que el documento edi ha sido enviado."
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_account_journal
@@ -2277,6 +2442,11 @@ msgid "Replace with log DIAN"
 msgstr "Reemplazar con log DIAN"
 
 #. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
+msgid "Requires the module: Account Invoice Mass Sending"
+msgstr "Requiere el módulo: Account Invoice Mass Sending"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__resolution_id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__resolution_id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__resolution_id
@@ -2323,6 +2493,12 @@ msgid "Salesperson"
 msgstr "Vendedor"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_partner__edi_sanitize_vat
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_users__edi_sanitize_vat
+msgid "Sanitized vat"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_payment_methods__scope
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_coverages__scope
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_document_identifications__scope
@@ -2348,6 +2524,11 @@ msgstr "Segundo apellido"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__access_token
 msgid "Security Token"
 msgstr "Token de seguridad"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.actions.server,name:l10n_co_edi_jorels.action_send_edi_by_email
+msgid "Send Edi by Email"
+msgstr "Enviar Edi por Email"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
@@ -2514,11 +2695,6 @@ msgstr "Impuesto"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
-msgid "Tax ID"
-msgstr ""
-
-#. module: l10n_co_edi_jorels
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "Tax ID:"
 msgstr ""
 
@@ -2660,12 +2836,6 @@ msgstr "El entorno ha sido actualizado. Sincronice las resoluciones"
 #, python-format
 msgid "The invoice UUID (CUFE) is required for DIAN events."
 msgstr "El UUID (CUFE) de la factura es obligatorio para Eventos DIAN."
-
-#. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
-#, python-format
-msgid "The invoice email could not be sent"
-msgstr "El email de la factura no pudo ser enviado"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
