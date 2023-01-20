@@ -219,7 +219,7 @@ class AccountMove(models.Model):
 
     def _send_edi_email(self):
         for rec in self:
-            mail_template = rec.env.ref('l10n_co_edi_jorels.email_template_edi_invoice', False)
+            mail_template = rec.env.ref('l10n_co_edi_jorels.email_template_edi', False)
             ctx = dict(active_model='account.move')
             if mail_template and rec.is_to_send_edi_email():
                 mail_template.with_context(ctx).send_mail(res_id=rec.id, force_send=True,
