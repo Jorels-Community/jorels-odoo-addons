@@ -167,6 +167,18 @@
                                     <div class="text-muted">Include PDF attachment on electronic invoice email</div>
                                 </div>
                             </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane">
+                                    <field name="ei_ignore_edi_email_check"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label string="Ignore edi email check"
+                                           for="ei_ignore_edi_email_check"/>
+                                    <div class="text-muted">If there is no edi email, the contact's email is used as edi
+                                        email
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </xpath>
