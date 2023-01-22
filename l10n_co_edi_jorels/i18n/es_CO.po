@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-11 07:23+0000\n"
-"PO-Revision-Date: 2022-12-11 02:28-0500\n"
+"POT-Creation-Date: 2023-01-22 08:48+0000\n"
+"PO-Revision-Date: 2023-01-22 04:17-0500\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "Language: es_CO\n"
@@ -164,6 +164,121 @@ msgstr ""
 "                        </t>\n"
 "                        <br/><br/>\n"
 "                        No dude en contactarnos si tiene alguna inquietud.\n"
+"                    </p>\n"
+"                </div>\n"
+"            "
+
+#. module: l10n_co_edi_jorels
+#: model:mail.template,body_html:l10n_co_edi_jorels.email_template_edi
+msgid ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;"
+"\">\n"
+"                        Dear\n"
+"                        <t t-if=\"object.partner_id.parent_id\">\n"
+"                            <t t-out=\"object.partner_id.name or "
+"''\">Brandon Freeman</t> (<t t-out=\"object.partner_id.parent_id.name or "
+"''\">Azure Interior</t>),\n"
+"                        </t>\n"
+"                        <t t-else=\"\">\n"
+"                            <t t-out=\"object.partner_id.name or "
+"''\">Brandon Freeman</t>,\n"
+"                        </t>\n"
+"                        <br/><br/>\n"
+"                        Here is your\n"
+"                        <t t-if=\"object.name\">\n"
+"                            invoice <strong t-out=\"object.name or "
+"''\">INV/2021/05/0005</strong>\n"
+"                        </t>\n"
+"                        <t t-else=\"\">\n"
+"                            invoice\n"
+"                        </t>\n"
+"                        <t t-if=\"object.invoice_origin\">\n"
+"                            (with reference: <t t-out=\"object."
+"invoice_origin or ''\">SUB003</t>)\n"
+"                        </t>\n"
+"                        amounting in <strong t-out=\"format_amount(object."
+"amount_total, object.currency_id) or ''\">$ 143,750.00</strong>\n"
+"                        from <t t-out=\"object.company_id.name or "
+"''\">YourCompany</t>.\n"
+"                        <t t-if=\"object.payment_state in ('paid', "
+"'in_payment')\">\n"
+"                            This invoice is already paid.\n"
+"                        </t>\n"
+"                        <t t-else=\"\">\n"
+"                            Please remit payment at your earliest "
+"convenience.\n"
+"                            <t t-if=\"object.payment_reference\">\n"
+"                                <br/><br/>\n"
+"                                Please use the following communication for "
+"your payment: <strong t-out=\"object.payment_reference or "
+"''\">INV/2021/05/0005</strong>.\n"
+"                            </t>\n"
+"                        </t>\n"
+"                        <br/><br/>\n"
+"                        Do not hesitate to contact us if you have any "
+"questions.\n"
+"                        <t t-if=\"object.invoice_user_id.signature\">\n"
+"                            <br/>\n"
+"                            <t t-out=\"object.invoice_user_id.signature or "
+"''\">--<br/>Mitchell Admin</t>\n"
+"                        </t>\n"
+"                    </p>\n"
+"                </div>\n"
+"            "
+msgstr ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;"
+"\">\n"
+"                        Querido\n"
+"                        <t t-if=\"object.partner_id.parent_id\">\n"
+"                            <t t-out=\"object.partner_id.name or "
+"''\">Brandon Freeman</t> (<t t-out=\"object.partner_id.parent_id.name or "
+"''\">Azure Interior</t>),\n"
+"                        </t>\n"
+"                        <t t-else=\"\">\n"
+"                            <t t-out=\"object.partner_id.name or "
+"''\">Brandon Freeman</t>,\n"
+"                        </t>\n"
+"                        <br/><br/>\n"
+"                        Aquí está su\n"
+"                        <t t-if=\"object.name\">\n"
+"                            factura <strong t-out=\"object.name or "
+"''\">INV/2021/05/0005</strong>\n"
+"                        </t>\n"
+"                        <t t-else=\"\">\n"
+"                            factura\n"
+"                        </t>\n"
+"                        <t t-if=\"object.invoice_origin\">\n"
+"                            (con referencia: <t t-out=\"object."
+"invoice_origin or ''\">SUB003</t>)\n"
+"                        </t>\n"
+"                        por un valor de <strong t-"
+"out=\"format_amount(object.amount_total, object.currency_id) or ''\">$ "
+"143,750.00</strong>\n"
+"                        de <t t-out=\"object.company_id.name or "
+"''\">YourCompany</t>.\n"
+"                        <t t-if=\"object.payment_state in ('paid', "
+"'in_payment')\">\n"
+"                            Esta factura ya se encuentra pagada.\n"
+"                        </t>\n"
+"                        <t t-else=\"\">\n"
+"                            Por favor remita su pago tan pronto como le sea "
+"posible.\n"
+"                            <t t-if=\"object.payment_reference\">\n"
+"                                <br/><br/>\n"
+"                                Por favor use la siguiente referencia al "
+"realizar su pago: <strong t-out=\"object.payment_reference or "
+"''\">INV/2021/05/0005</strong>.\n"
+"                            </t>\n"
+"                        </t>\n"
+"                        <br/><br/>\n"
+"                        No dude en contactarnos si tiene alguna inquietud.\n"
+"                        <t t-if=\"object.invoice_user_id.signature\">\n"
+"                            <br/>\n"
+"                            <t t-out=\"object.invoice_user_id.signature or "
+"''\">--<br/>Mitchell Admin</t>\n"
+"                        </t>\n"
 "                    </p>\n"
 "                </div>\n"
 "            "
@@ -533,6 +648,7 @@ msgstr "Rango autorizado desde:"
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__enable_mass_send_print
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings__enable_mass_send_print
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
 msgid "Automatic invoice email when validating (In production)"
 msgstr "Email de la factura automático al validar (En producción)"
 
@@ -651,6 +767,7 @@ msgstr "Compañías"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__company_id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__company_id
 msgid "Company"
 msgstr "Compañia"
 
@@ -1113,6 +1230,11 @@ msgid "Edi Response"
 msgstr "Respuesta Edi"
 
 #. module: l10n_co_edi_jorels
+#: model:mail.template,name:l10n_co_edi_jorels.email_template_edi
+msgid "Edi: Send by email"
+msgstr "Edi: Enviar por email"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "Electronic Credit Note"
 msgstr "Nota crédito electrónica"
@@ -1450,8 +1572,24 @@ msgstr "Si se encuentra marcado, algunos mensajes tienen error de envío."
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
+msgid ""
+"If there is no edi email, the contact's email is used as edi\n"
+"                                        email"
+msgstr ""
+"Si no hay edi email, el email del contacto es usado como edi\n"
+"                                        email"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
 msgid "If you don't have one, write to"
 msgstr "Si no tiene una, escriba a"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__ei_ignore_edi_email_check
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings__ei_ignore_edi_email_check
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
+msgid "Ignore edi email check"
+msgstr "Ignorar la verificación del edi email"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_is_not_test
@@ -1481,9 +1619,25 @@ msgid "Invoice resolution"
 msgstr "Resolución de facturación"
 
 #. module: l10n_co_edi_jorels
+#: model:mail.template,report_name:l10n_co_edi_jorels.email_template_edi
+msgid ""
+"Invoice_{{ (object.name or '').replace('/','_') }}{{ object.state == "
+"'draft' and '_draft' or '' }}"
+msgstr ""
+"Factura_{{ (object.name or '').replace('/','_') }}{{ object.state == "
+"'draft' and '_borrador' or '' }}"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "Invoicing authorization number:"
 msgstr "Número de autorización de facturación:"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__is_edi_mail_sent
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__is_edi_mail_sent
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__is_edi_mail_sent
+msgid "Is Edi Mail Sent"
+msgstr "Ha sido enviado el correo EDI"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_is_follower
@@ -1531,6 +1685,13 @@ msgstr "Fecha de emisión"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__ei_issue_datetime
 msgid "Issue datetime"
 msgstr "Fecha y hora de emisión"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_bank_statement_line__is_edi_mail_sent
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_move__is_edi_mail_sent
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_payment__is_edi_mail_sent
+msgid "It indicates that the edi document has been sent."
+msgstr "Esto indica que el documento edi ha sido enviado."
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_account_journal
@@ -1863,11 +2024,6 @@ msgstr "Barrio"
 #, python-format
 msgid "New"
 msgstr "Nuevo"
-
-#. module: l10n_co_edi_jorels
-#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_calendar_event_id
-msgid "Next Activity Calendar Event"
-msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_date_deadline
@@ -2284,6 +2440,11 @@ msgid "Replace with log DIAN"
 msgstr "Reemplazar con log DIAN"
 
 #. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
+msgid "Requires the module: Account Invoice Mass Sending"
+msgstr "Requiere el módulo: Account Invoice Mass Sending"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__resolution_id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__resolution_id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__resolution_id
@@ -2361,6 +2522,11 @@ msgstr "Segundo apellido"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__access_token
 msgid "Security Token"
 msgstr "Token de seguridad"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.actions.server,name:l10n_co_edi_jorels.action_send_edi_by_email
+msgid "Send Edi by Email"
+msgstr "Enviar Edi por Email"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
@@ -3230,3 +3396,12 @@ msgstr "la compañía principal"
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "to"
 msgstr "a"
+
+#. module: l10n_co_edi_jorels
+#: model:mail.template,subject:l10n_co_edi_jorels.email_template_edi
+msgid ""
+"{{object.company_id.vat_formatted or ''}};{{object.company_id.business_name "
+"or object.company_id.name or ''}};{{object.number_formatted or ''}};"
+"{{object.ei_type_document_id.code or ''}};{{object.company_id.trade_name or "
+"object.company_id.business_name or object.company_id.name or ''}};"
+msgstr ""
