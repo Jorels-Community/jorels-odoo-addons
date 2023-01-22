@@ -188,6 +188,9 @@ class AccountMove(models.Model):
 
     radian_ids = fields.One2many(comodel_name='l10n_co_edi_jorels.radian', inverse_name='move_id')
 
+    is_edi_mail_sent = fields.Boolean(readonly=True, default=False, copy=False,
+                                      help="It indicates that the edi document has been sent.")
+
     def dian_preview(self):
         for rec in self:
             if rec.ei_uuid:
@@ -205,6 +208,23 @@ class AccountMove(models.Model):
                     'target': 'new',
                     'url': 'https://catalogo-vpfe.dian.gov.co/Document/DownloadPDF?trackId=' + rec.ei_uuid,
                 }
+
+    def is_to_send_edi_email(self):
+        self.ensure_one()
+        return self.ei_is_valid \
+            and self.move_type in ('out_invoice', 'out_refund') \
+            and self.state not in ('draft', 'validate') \
+            and self.ei_uuid \
+            and self.ei_attached_document_base64_bytes
+
+    def _send_edi_email(self):
+        for rec in self:
+            mail_template = rec.env.ref('l10n_co_edi_jorels.email_template_edi_invoice', False)
+            ctx = dict(active_model='account.move')
+            if mail_template and rec.is_to_send_edi_email():
+                mail_template.with_context(ctx).send_mail(res_id=rec.id, force_send=True,
+                                                          notif_layout='mail.mail_notification_light')
+        return True
 
     def _default_ei_type_environment(self):
         if not self.env['l10n_co_edi_jorels.type_environments'].search_count([]):
@@ -1193,6 +1213,12 @@ class AccountMove(models.Model):
                 rec.status_document_log()
                 if not rec.ei_attached_document_base64_bytes:
                     _logger.error('Unable to obtain an attached document.')
+            if not rec.is_edi_mail_sent and rec.company_id.enable_mass_send_print and rec.is_to_send_edi_email():
+                try:
+                    rec.mass_send_print()
+                except Exception:
+                    rec._send_edi_email()
+                rec.write({'is_edi_mail_sent': True})
 
     def validate_dian(self):
         for rec in self:
@@ -1240,18 +1266,6 @@ class AccountMove(models.Model):
                 to_production_invoices = to_electronic_invoices.filtered(lambda inv: inv.ei_is_not_test)
                 if to_production_invoices:
                     to_production_invoices.validate_dian_generic(False)
-                    to_mass_send = to_production_invoices.filtered(
-                        lambda inv: inv.company_id.enable_mass_send_print
-                                    and inv.move_type in ('out_invoice', 'out_refund')
-                                    and inv.ei_is_valid
-                    )
-                    if to_mass_send:
-                        try:
-                            to_mass_send.mass_send_print()
-                        except Exception as e:
-                            # self.env.user.notify_danger(message=_('The invoice email could not be sent'))
-                            _logger.debug("The invoice email could not be sent")
-                            _logger.error('mass_send_print error: %s' % e)
 
                 # Test invoices
                 to_test_invoices = to_electronic_invoices.filtered(lambda inv: not inv.ei_is_not_test)
