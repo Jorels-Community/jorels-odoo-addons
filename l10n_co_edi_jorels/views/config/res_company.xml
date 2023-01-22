@@ -36,7 +36,7 @@
                     <page string="Electronic invoicing">
                         <group>
                             <field name="business_name"/>
-                            <field name="type_document_identification_id" domain="[('scope','=','')]"/>
+                            <field name="type_document_identification_id" domain="[('scope','=',False)]"/>
                             <field name="type_organization_id"/>
                             <field name="type_regime_id"/>
                             <field name="type_liability_id"/>
