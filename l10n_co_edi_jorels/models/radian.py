@@ -133,7 +133,7 @@ class Radian(models.Model):
             ctx = dict(active_model='l10n_co_edi_jorels.radian')
             if mail_template:
                 mail_template.with_context(ctx).send_mail(res_id=rec.id, force_send=True,
-                                                          notif_layout='mail.mail_notification_light')
+                                                          email_layout_xmlid='mail.mail_notification_light')
         return True
 
     def action_send_email(self):
@@ -147,7 +147,7 @@ class Radian(models.Model):
             default_res_id=self.id,
             default_template_id=mail_template and mail_template.id or False,
             force_email=True,
-            custom_layout="mail.mail_notification_light",
+            default_email_layout_xmlid="mail.mail_notification_light",
         )
         return {
             'type': 'ir.actions.act_window',

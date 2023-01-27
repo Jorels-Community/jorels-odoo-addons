@@ -224,7 +224,7 @@ class AccountMove(models.Model):
             ctx = dict(active_model='account.move')
             if mail_template and rec.is_to_send_edi_email():
                 mail_template.with_context(ctx).send_mail(res_id=rec.id, force_send=True,
-                                                          notif_layout='mail.mail_notification_light')
+                                                          email_layout_xmlid='mail.mail_notification_light')
         return True
 
     def _default_ei_type_environment(self):
