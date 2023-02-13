@@ -324,7 +324,11 @@ class HrPayslip(models.Model):
 
             for line_id in rec.line_ids:
                 if line_id.salary_rule_id.type_concept == 'earn':
-                    accrued_total_amount += abs(line_id.total)
+                    if line_id.salary_rule_id.earn_category not in (
+                            'licensings_suspension_or_unpaid_leaves',
+                            'legal_strikes'
+                    ):
+                        accrued_total_amount += abs(line_id.total)
                 elif line_id.salary_rule_id.type_concept == 'deduction':
                     deductions_total_amount += abs(line_id.total)
                 elif line_id.salary_rule_id.type_concept == 'other':
