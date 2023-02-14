@@ -275,8 +275,7 @@ class AccountMove(models.Model):
         self.ensure_one()
         try:
             return bool(self.env['pos.config'].search([
-                ('invoice_journal_id.id', '=', self.journal_id.id),
-                ('module_account', '=', True)
+                ('invoice_journal_id.id', '=', self.journal_id.id)
             ]))
         except KeyError:
             return False
