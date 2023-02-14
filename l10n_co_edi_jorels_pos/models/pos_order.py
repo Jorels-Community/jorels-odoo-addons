@@ -35,7 +35,7 @@ class PosOrder(models.Model):
     _inherit = 'pos.order'
 
     ei_is_dian_document = fields.Boolean("Is it a DIAN electronic document?", default=False)
-    to_electronic_invoice = fields.Boolean('To electronic invoice')
+    to_electronic_invoice = fields.Boolean('To electronic invoice', copy=False)
 
     def get_invoice(self):
         self.ensure_one()
