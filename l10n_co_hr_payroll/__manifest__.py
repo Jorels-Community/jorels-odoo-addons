@@ -26,7 +26,7 @@
     'summary': 'Nómina electrónica DIAN para Colombia por Jorels SAS',
     'description': "Electronic payroll management for companies in Colombia",
     'author': 'Jorels SAS',
-    'license': 'AGPL-3',
+    'license': 'LGPL-3',
     'category': 'Human Resources',
     'version': '16.0.23.02.13.16.06',
     'website': "https://www.jorels.com",
