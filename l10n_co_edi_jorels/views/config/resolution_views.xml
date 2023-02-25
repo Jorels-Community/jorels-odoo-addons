@@ -28,8 +28,7 @@
                 <sheet>
                     <group name="group_top">
                         <group name="group_left">
-                            <field name="resolution_api_sync" attrs="{'readonly': [('id','!=',False)]}"
-                                   groups="base.group_no_one"/>
+                            <field name="resolution_api_sync" attrs="{'readonly': [('id','!=',False)]}"/>
                             <field name="resolution_type_document_id"/>
                             <field name="resolution_prefix"/>
                             <field name="resolution_resolution"/>
