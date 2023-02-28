@@ -81,21 +81,21 @@
                                 <field name="edi_algorithm"/>
                                 <field name="edi_class"/>
                                 <field name="edi_number"/>
-                                <field name="edi_uuid"/>
+                                <field name="edi_uuid" class="text-break"/>
                                 <field name="edi_issue_date"/>
                                 <field name="edi_expedition_date"/>
-                                <field name="edi_zip_key"/>
+                                <field name="edi_zip_key" class="text-break"/>
                                 <field name="edi_status_code"/>
-                                <field name="edi_status_description"/>
-                                <field name="edi_status_message"/>
-                                <field name="edi_errors_messages"/>
+                                <field name="edi_status_description" class="text-break"/>
+                                <field name="edi_status_message" class="text-break"/>
+                                <field name="edi_errors_messages" class="text-break"/>
                                 <field name="edi_xml_name" invisible="1"/>
                                 <field name="edi_zip_name" invisible="1"/>
-                                <field name="edi_signature"/>
-                                <field name="edi_qr_code"/>
-                                <field name="edi_qr_data"/>
-                                <field name="edi_qr_link" widget="url"/>
-                                <field name="edi_pdf_download_link" widget="url"/>
+                                <field name="edi_signature" class="text-break"/>
+                                <field name="edi_qr_code" class="text-break"/>
+                                <field name="edi_qr_data" class="text-break"/>
+                                <field name="edi_qr_link" widget="url" class="text-break"/>
+                                <field name="edi_pdf_download_link" widget="url" class="text-break"/>
                                 <field name="edi_xml_base64" filename="edi_xml_name"/>
                                 <field name="edi_application_response_base64"/>
                                 <field name="edi_attached_document_base64"/>
@@ -103,7 +103,7 @@
                                 <field name="edi_zip_base64" filename="edi_zip_name"/>
                                 <field name="edi_type_environment"/>
                                 <field name="edi_attached_zip_base64"/>
-                                <field name="edi_payload" groups="base.group_no_one"/>
+                                <field name="edi_payload" groups="base.group_no_one" class="text-break"/>
                             </group>
                         </page>
                     </notebook>
