@@ -252,21 +252,21 @@
                             <field name="edi_algorithm" readonly="True"/>
                             <field name="edi_class" readonly="True"/>
                             <field name="edi_number" readonly="True"/>
-                            <field name="edi_uuid" readonly="True"/>
+                            <field name="edi_uuid" readonly="True" class="text-break"/>
                             <field name="edi_issue_date" readonly="True"/>
                             <field name="edi_expedition_date" readonly="True"/>
-                            <field name="edi_zip_key" readonly="True"/>
+                            <field name="edi_zip_key" readonly="True" class="text-break"/>
                             <field name="edi_status_code" readonly="True"/>
-                            <field name="edi_status_description" readonly="True"/>
-                            <field name="edi_status_message" readonly="True"/>
-                            <field name="edi_errors_messages" readonly="True"/>
+                            <field name="edi_status_description" readonly="True" class="text-break"/>
+                            <field name="edi_status_message" readonly="True" class="text-break"/>
+                            <field name="edi_errors_messages" readonly="True" class="text-break"/>
                             <field name="edi_xml_name" readonly="True"/>
                             <field name="edi_zip_name" readonly="True"/>
-                            <field name="edi_signature" readonly="True"/>
-                            <field name="edi_qr_code" readonly="True"/>
-                            <field name="edi_qr_data" readonly="True"/>
-                            <field name="edi_qr_link" widget="url" readonly="True"/>
-                            <field name="edi_pdf_download_link" widget="url" readonly="True"/>
+                            <field name="edi_signature" readonly="True" class="text-break"/>
+                            <field name="edi_qr_code" readonly="True" class="text-break"/>
+                            <field name="edi_qr_data" readonly="True" class="text-break"/>
+                            <field name="edi_qr_link" widget="url" readonly="True" class="text-break"/>
+                            <field name="edi_pdf_download_link" widget="url" readonly="True" class="text-break"/>
                             <field name="edi_xml_base64" readonly="True"/>
                             <field name="edi_application_response_base64" readonly="True"/>
                             <field name="edi_attached_document_base64" readonly="True"/>
@@ -278,7 +278,7 @@
                     <page string="Edi Payload">
                         <group>
                             <field name="edi_payload_html" readonly="True"/>
-                            <field name="edi_payload" readonly="True" groups="base.group_no_one"/>
+                            <field name="edi_payload" readonly="True" groups="base.group_no_one" class="text-break"/>
                         </group>
                     </page>
                 </xpath>
