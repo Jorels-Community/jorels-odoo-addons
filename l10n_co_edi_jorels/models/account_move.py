@@ -542,9 +542,26 @@ class AccountMove(models.Model):
                         base_amount = 0
                         allowance_charge_reason = ""
 
-                    products.update({'price_code': 1})  # Commercial value ('01')
-
                     taxable_amount = invoice_line_id.price_subtotal
+
+                    # If it is a commercial sample the taxable amount is zero and not discount
+                    commercial_sample = False
+                    if not taxable_amount and not discount:
+                        # Use the following code, as an example, to configure the tax for a commercial sample.
+                        # For this you must install the account_tax_python module and
+                        # select the "Tax computation" field as "Python code" in the tax form.
+                        #
+                        # In the "Python code" field, in the tax form; for 19% tax:
+                        #
+                        # if price_unit:
+                        #     result = price_unit * quantity * 0.19
+                        # else:
+                        #     result = product.lst_price * quantity * 0.19
+                        #
+                        commercial_sample = True
+                        products.update({'price_code': 1})  # Commercial value ('01')
+                        taxable_amount = invoice_line_id.product_id.lst_price * invoice_line_id.quantity
+                        products.update({'price_value': invoice_line_id.product_id.lst_price})
 
                     allowance_charges.update({'base_value': base_amount})
                     allowance_charges.update({'value': amount})
@@ -558,7 +575,8 @@ class AccountMove(models.Model):
                             edi_tax_name = invoice_line_tax_id.edi_tax_id.name
                             tax_name = invoice_line_tax_id.name
                             # The information sent to DIAN should not include the withholdings
-                            if edi_tax_name[:4] != 'Rete' and tax_name not in ('IVA Excluido', 'IVA Compra Excluido'):
+                            if edi_tax_name[:4] != 'Rete' \
+                                    and not tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')):
                                 if invoice_line_tax_id.amount_type == 'percent':
                                     tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                     tax_total.update(
@@ -576,6 +594,22 @@ class AccountMove(models.Model):
                                     tax_total.update({'unit_value': invoice_line_tax_id.amount})
                                     tax_total.update({'base_uom': "1.000000"})
                                     tax_totals['tax_totals'].append(tax_total)
+                                elif invoice_line_tax_id.amount_type == 'code':
+                                    # For now, only compatible with percentage taxes
+                                    if commercial_sample:
+                                        tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
+                                        tax_total.update({'tax_value': invoice_line_id.price_total})
+                                        tax_total.update({'taxable_value': taxable_amount})
+                                        tax_total.update(
+                                            {'percent': invoice_line_id.price_total / taxable_amount * 100})
+                                        tax_totals['tax_totals'].append(tax_total)
+                                    else:
+                                        tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
+                                        tax_total.update(
+                                            {'tax_value': (taxable_amount * invoice_line_tax_id.amount) / 100.0})
+                                        tax_total.update({'taxable_value': taxable_amount})
+                                        tax_total.update({'percent': invoice_line_tax_id.amount})
+                                        tax_totals['tax_totals'].append(tax_total)
                                 else:
                                     raise UserError(_("Electronic invoicing is not yet compatible with this tax type."))
                         else:
@@ -591,8 +625,6 @@ class AccountMove(models.Model):
                     # Taxes are attached inside this json
                     if tax_totals['tax_totals']:
                         invoice_temps.update({'tax_totals': tax_totals['tax_totals']})
-                    else:
-                        invoice_temps.pop("price_code")
 
                     # Transport compatibility
                     if rec.ei_operation == 'transport':
@@ -672,12 +704,17 @@ class AccountMove(models.Model):
             for invoice_line_id in rec.invoice_line_ids:
                 if invoice_line_id.account_id:
                     taxable_amount = invoice_line_id.price_subtotal
+
+                    # If it is a commercial sample the taxable amount is zero and not discount
+                    if not taxable_amount and not invoice_line_id.discount:
+                        taxable_amount = invoice_line_id.product_id.lst_price * invoice_line_id.quantity
+
                     for invoice_line_tax_id in invoice_line_id.tax_ids:
                         if invoice_line_tax_id.edi_tax_id.id:
                             edi_tax_name = invoice_line_tax_id.edi_tax_id.name
                             tax_name = invoice_line_tax_id.name
                             tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
-                            if tax_name in ('IVA Excluido', 'IVA Compra Excluido'):
+                            if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')):
                                 amount_excluded = amount_excluded + taxable_amount
                             elif edi_tax_name[:4] == 'Rete':
                                 amount_tax_withholding = amount_tax_withholding + tax_amount
@@ -686,7 +723,7 @@ class AccountMove(models.Model):
                         else:
                             tax_name = invoice_line_tax_id.name
                             tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
-                            if tax_name in ('IVA Excluido', 'IVA Compra Excluido'):
+                            if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')):
                                 amount_excluded = amount_excluded + taxable_amount
                             elif tax_name[:3] == 'Rte':
                                 amount_tax_withholding = amount_tax_withholding + tax_amount
