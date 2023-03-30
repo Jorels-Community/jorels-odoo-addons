@@ -588,9 +588,11 @@ class AccountInvoice(models.Model):
                         if invoice_line_tax_id.edi_tax_id.id:
                             edi_tax_name = invoice_line_tax_id.edi_tax_id.name
                             tax_name = invoice_line_tax_id.name
+                            dian_report_tax_base = invoice_line_tax_id.dian_report_tax_base or 'auto'
                             # The information sent to DIAN should not include the withholdings
                             if edi_tax_name[:4] != 'Rete' \
-                                    and not tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')):
+                                    and not tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido'))\
+                                    and not (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
                                 if invoice_line_tax_id.amount_type == 'percent':
                                     tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                     tax_total.update(
@@ -719,7 +721,9 @@ class AccountInvoice(models.Model):
             if tax_line_id.tax_id.edi_tax_id:
                 edi_tax_name = tax_line_id.tax_id.edi_tax_id.name
                 tax_name = tax_line_id.tax_id.name
-                if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')):
+                dian_report_tax_base = tax_line_id.tax_id.dian_report_tax_base or 'auto'
+                if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
+                        (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
                     amount_excluded = amount_excluded + tax_line_id.base
                 elif edi_tax_name[:4] == 'Rete':
                     amount_tax_withholding = amount_tax_withholding + tax_line_id.amount_total
@@ -727,7 +731,9 @@ class AccountInvoice(models.Model):
                     amount_tax_no_withholding = amount_tax_no_withholding + tax_line_id.amount_total
             else:
                 tax_name = tax_line_id.tax_id.name
-                if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')):
+                dian_report_tax_base = tax_line_id.tax_id.dian_report_tax_base or 'auto'
+                if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
+                        (tax_name.startswith('IVA') and dian_report_tax_base == 'no_report'):
                     amount_excluded = amount_excluded + tax_line_id.base
                 elif tax_name[:3] == 'Rte':
                     amount_tax_withholding = amount_tax_withholding + tax_line_id.amount_total

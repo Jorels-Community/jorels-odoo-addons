@@ -28,6 +28,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="edi_tax_id"/>
+                    <field name="dian_report_tax_base"/>
                 </xpath>
             </field>
         </record>
