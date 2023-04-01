@@ -558,9 +558,9 @@ class AccountInvoice(models.Model):
 
                     taxable_amount = invoice_line_id.price_subtotal
 
-                    # If it is a commercial sample the taxable amount is zero and not discount
+                    # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
                     commercial_sample = False
-                    if not taxable_amount and not discount:
+                    if not taxable_amount and not discount and invoice_line_id.product_id.lst_price:
                         # Use the following code, as an example, to configure the tax for a commercial sample.
                         # For this you must install the account_tax_python module and
                         # select the "Tax computation" field as "Python code" in the tax form.
@@ -596,7 +596,7 @@ class AccountInvoice(models.Model):
                                 if invoice_line_tax_id.amount_type == 'percent':
                                     tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                     tax_total.update(
-                                        {'tax_value': (taxable_amount * invoice_line_tax_id.amount) / 100.0})
+                                        {'tax_value': taxable_amount * invoice_line_tax_id.amount / 100.0})
                                     tax_total.update({'taxable_value': taxable_amount})
                                     tax_total.update({'percent': invoice_line_tax_id.amount})
                                     tax_totals['tax_totals'].append(tax_total)
@@ -622,7 +622,7 @@ class AccountInvoice(models.Model):
                                     else:
                                         tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                         tax_total.update(
-                                            {'tax_value': (taxable_amount * invoice_line_tax_id.amount) / 100.0})
+                                            {'tax_value': taxable_amount * invoice_line_tax_id.amount / 100.0})
                                         tax_total.update({'taxable_value': taxable_amount})
                                         tax_total.update({'percent': invoice_line_tax_id.amount})
                                         tax_totals['tax_totals'].append(tax_total)
@@ -718,10 +718,11 @@ class AccountInvoice(models.Model):
         amount_tax_no_withholding = 0
         amount_excluded = 0
         for tax_line_id in self.tax_line_ids:
+            tax_name = tax_line_id.tax_id.name
+            dian_report_tax_base = tax_line_id.tax_id.dian_report_tax_base or 'auto'
+
             if tax_line_id.tax_id.edi_tax_id:
                 edi_tax_name = tax_line_id.tax_id.edi_tax_id.name
-                tax_name = tax_line_id.tax_id.name
-                dian_report_tax_base = tax_line_id.tax_id.dian_report_tax_base or 'auto'
                 if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
                         (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
                     amount_excluded = amount_excluded + tax_line_id.base
@@ -730,8 +731,6 @@ class AccountInvoice(models.Model):
                 else:
                     amount_tax_no_withholding = amount_tax_no_withholding + tax_line_id.amount_total
             else:
-                tax_name = tax_line_id.tax_id.name
-                dian_report_tax_base = tax_line_id.tax_id.dian_report_tax_base or 'auto'
                 if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
                         (tax_name.startswith('IVA') and dian_report_tax_base == 'no_report'):
                     amount_excluded = amount_excluded + tax_line_id.base
