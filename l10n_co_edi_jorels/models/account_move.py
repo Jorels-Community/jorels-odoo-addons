@@ -543,9 +543,9 @@ class AccountMove(models.Model):
 
                     taxable_amount = invoice_line_id.price_subtotal
 
-                    # If it is a commercial sample the taxable amount is zero and not discount
+                    # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
                     commercial_sample = False
-                    if not taxable_amount and not discount:
+                    if not taxable_amount and not discount and invoice_line_id.product_id.lst_price:
                         # Use the following code, as an example, to configure the tax for a commercial sample.
                         # For this you must install the account_tax_python module and
                         # select the "Tax computation" field as "Python code" in the tax form.
@@ -581,7 +581,7 @@ class AccountMove(models.Model):
                                 if invoice_line_tax_id.amount_type == 'percent':
                                     tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                     tax_total.update(
-                                        {'tax_value': (taxable_amount * invoice_line_tax_id.amount) / 100.0})
+                                        {'tax_value': taxable_amount * invoice_line_tax_id.amount / 100.0})
                                     tax_total.update({'taxable_value': taxable_amount})
                                     tax_total.update({'percent': invoice_line_tax_id.amount})
                                     tax_totals['tax_totals'].append(tax_total)
@@ -607,7 +607,7 @@ class AccountMove(models.Model):
                                     else:
                                         tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                         tax_total.update(
-                                            {'tax_value': (taxable_amount * invoice_line_tax_id.amount) / 100.0})
+                                            {'tax_value': taxable_amount * invoice_line_tax_id.amount / 100.0})
                                         tax_total.update({'taxable_value': taxable_amount})
                                         tax_total.update({'percent': invoice_line_tax_id.amount})
                                         tax_totals['tax_totals'].append(tax_total)
@@ -705,17 +705,25 @@ class AccountMove(models.Model):
             for invoice_line_id in rec.invoice_line_ids:
                 if invoice_line_id.account_id:
                     taxable_amount = invoice_line_id.price_subtotal
+                    discount = bool(invoice_line_id.discount)
 
-                    # If it is a commercial sample the taxable amount is zero and not discount
-                    if not taxable_amount and not invoice_line_id.discount:
+                    # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
+                    if not taxable_amount and not discount and invoice_line_id.product_id.lst_price:
                         taxable_amount = invoice_line_id.product_id.lst_price * invoice_line_id.quantity
 
                     for invoice_line_tax_id in invoice_line_id.tax_ids:
+                        tax_name = invoice_line_tax_id.name
+                        dian_report_tax_base = invoice_line_tax_id.dian_report_tax_base or 'auto'
+
+                        if invoice_line_tax_id.amount_type == 'fixed':
+                            # For fixed amount type
+                            tax_amount = invoice_line_id.quantity * invoice_line_tax_id.amount
+                        else:
+                            # For percent and code amount type
+                            tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
+
                         if invoice_line_tax_id.edi_tax_id.id:
                             edi_tax_name = invoice_line_tax_id.edi_tax_id.name
-                            tax_name = invoice_line_tax_id.name
-                            tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
-                            dian_report_tax_base = invoice_line_tax_id.dian_report_tax_base or 'auto'
                             if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
                                     (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
                                 amount_excluded = amount_excluded + taxable_amount
@@ -724,9 +732,6 @@ class AccountMove(models.Model):
                             else:
                                 amount_tax_no_withholding = amount_tax_no_withholding + tax_amount
                         else:
-                            tax_name = invoice_line_tax_id.name
-                            tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
-                            dian_report_tax_base = invoice_line_tax_id.dian_report_tax_base or 'auto'
                             if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
                                     (tax_name.startswith('IVA') and dian_report_tax_base == 'no_report'):
                                 amount_excluded = amount_excluded + taxable_amount
