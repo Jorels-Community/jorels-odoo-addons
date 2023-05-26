@@ -310,8 +310,12 @@ class HrPayslip(models.Model):
         # The sheet and the totals are calculated again,
         # just in case the totals obtained initially are used to calculate some salary rule.
         # Especially the field worked_days_total
-        res = super(HrPayslip, self).compute_sheet()
-        self.compute_totals()
+        try:
+            if int(self.env['ir.config_parameter'].sudo().get_param('jorels.payroll.recompute_sheet', 1)):
+                res = super(HrPayslip, self).compute_sheet()
+                self.compute_totals()
+        except ValueError as e:
+            raise UserError("The system parameter 'jorels.payroll.recompute_sheet' is misconfigured. Use only 0 or 1")
 
         return res
 
