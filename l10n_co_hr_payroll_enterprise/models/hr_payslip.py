@@ -1616,48 +1616,27 @@ class HrPayslip(models.Model):
                 raise UserError(_("Failed to process the request: %s") % e)
 
     def refund_sheet(self):
-        # The following line is commented, because if applied, the sequence is incorrectly calculated
-        # and the relationship to the original payroll would not be taken by default
-        # res = super(HrPayslip, self).refund_sheet()
-        copied_payslip = None
+        self.ensure_one()
+        res = super(HrPayslip, self).refund_sheet()
+
         for payslip in self:
             if payslip.credit_note:
                 raise UserError(_("A adjustment note should not be made to a adjustment note"))
 
-            copied_payslip = payslip.copy({'credit_note': True,
-                                           'name': _('Refund: ') + payslip.name,
-                                           'origin_payslip_id': payslip.id,
-                                           'number': _('New'),
-                                           })
-            # It is important to call compute_sheet here,
-            # so that the accounting of the adjustment notes works well.
-            copied_payslip.compute_sheet()
-            copied_payslip.action_payslip_done()
+            # Only compatible with one record (one payslip), with ensure_one()
+            copied_payslips_ids = res['domain'][0][2]
+            copied_payslip = self.env['hr.payslip'].search([('id', 'in', copied_payslips_ids)])[0]
+
+            copied_payslip.write({
+                'origin_payslip_id': payslip.id,
+                'number': _('New'),
+            })
 
             if payslip.edi_payload and not copied_payslip.edi_payload:
                 payload = copied_payslip.get_json_request()
                 copied_payslip.write({'edi_payload': json.dumps(payload, indent=2, sort_keys=False)})
 
-        formview_ref = self.env.ref('hr_payroll.view_hr_payslip_form', False)
-        treeview_ref = self.env.ref('hr_payroll.view_hr_payslip_tree', False)
-
-        if copied_payslip is not None:
-            domain = "[('id', 'in', %s)]" % copied_payslip.ids
-        else:
-            domain = "[(credit_note, '=', True)]"
-
-        return {
-            'name': ("Refund Payslip"),
-            'view_mode': 'tree, form',
-            'view_id': False,
-            'res_model': 'hr.payslip',
-            'type': 'ir.actions.act_window',
-            'target': 'current',
-            'domain': domain,
-            'views': [(treeview_ref and treeview_ref.id or False, 'tree'),
-                      (formview_ref and formview_ref.id or False, 'form')],
-            'context': {}
-        }
+        return res
 
     # @api.depends('state')
     # def _compute_color(self):
