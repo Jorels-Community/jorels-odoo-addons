@@ -22,13 +22,13 @@
 
 
 {
-    'name': 'Nómina electrónica DIAN para Colombia por Jorels SAS',
-    'summary': 'Nómina electrónica DIAN para Colombia por Jorels SAS',
-    'description': "Electronic payroll management for companies in Colombia",
+    'name': 'Nómina electrónica DIAN para Colombia por Jorels SAS (Enterprise)',
+    'summary': 'Nómina electrónica DIAN para Colombia por Jorels SAS (Enterprise)',
+    'description': "Electronic payroll management for companies in Colombia (Enterprise)",
     'author': 'Jorels SAS',
     'license': 'LGPL-3',
     'category': 'Human Resources',
-    'version': '16.0.23.02.13.16.06',
+    'version': '16.0.23.05.27.05.06',
     'website': "https://www.jorels.com",
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
