@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--Jorels S.A.S. - Copyright (C) 2019-2023-->
 
-<!--This file is part of l10n_co_hr_payroll.-->
+<!--This file is part of l10n_co_hr_payroll_enterprise.-->
 
 <!--This program is free software: you can redistribute it and/or modify-->
 <!--it under the terms of the GNU Lesser General Public License as published by-->
@@ -23,35 +23,35 @@
         <field name="name">Edi payslip</field>
         <field name="model">hr.payslip</field>
         <field name="report_type">qweb-pdf</field>
-        <field name="report_name">l10n_co_hr_payroll.report_hr_payslip_co_template_translated</field>
-        <field name="report_file">l10n_co_hr_payroll.report_hr_payslip_co_template_translated</field>
+        <field name="report_name">l10n_co_hr_payroll_enterprise.report_hr_payslip_co_template_translated</field>
+        <field name="report_file">l10n_co_hr_payroll_enterprise.report_hr_payslip_co_template_translated</field>
         <field name="print_report_name">(object.name)</field>
         <field name="attachment">(object.state == 'posted') and ((object.name or 'SLIP').replace('/','_')+'.pdf')
         </field>
         <field name="binding_model_id" ref="model_hr_payslip"/>
         <field name="binding_type">report</field>
-        <field name="groups_id" eval="[(4, ref('hr_payroll_community.group_hr_payroll_community_user'))]"/>
+        <field name="groups_id" eval="[(4, ref('hr_payroll.group_hr_payroll_user'))]"/>
     </record>
 
     <record id="action_hr_payslip_edi_co_report" model="ir.actions.report">
         <field name="name">Edi payslip</field>
         <field name="model">hr.payslip.edi</field>
         <field name="report_type">qweb-pdf</field>
-        <field name="report_name">l10n_co_hr_payroll.report_hr_payslip_edi_co_template_translated</field>
-        <field name="report_file">l10n_co_hr_payroll.report_hr_payslip_edi_co_template_translated</field>
+        <field name="report_name">l10n_co_hr_payroll_enterprise.report_hr_payslip_edi_co_template_translated</field>
+        <field name="report_file">l10n_co_hr_payroll_enterprise.report_hr_payslip_edi_co_template_translated</field>
         <field name="print_report_name">(object.name)</field>
         <field name="attachment">(object.state == 'posted') and ((object.name or 'SLIP').replace('/','_')+'.pdf')
         </field>
         <field name="binding_model_id" ref="model_hr_payslip_edi"/>
         <field name="binding_type">report</field>
-        <field name="groups_id" eval="[(4, ref('hr_payroll_community.group_hr_payroll_community_user'))]"/>
+        <field name="groups_id" eval="[(4, ref('hr_payroll.group_hr_payroll_user'))]"/>
     </record>
 
     <template id="report_hr_payslip_co_template_translated">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-set="lang" t-value="es_CO"/>
-                <t t-call="l10n_co_hr_payroll.report_hr_payslip_co_template" t-lang="lang"/>
+                <t t-call="l10n_co_hr_payroll_enterprise.report_hr_payslip_co_template" t-lang="lang"/>
             </t>
         </t>
     </template>
@@ -60,7 +60,7 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-set="lang" t-value="es_CO"/>
-                <t t-call="l10n_co_hr_payroll.report_hr_payslip_edi_co_template" t-lang="lang"/>
+                <t t-call="l10n_co_hr_payroll_enterprise.report_hr_payslip_edi_co_template" t-lang="lang"/>
             </t>
         </t>
     </template>

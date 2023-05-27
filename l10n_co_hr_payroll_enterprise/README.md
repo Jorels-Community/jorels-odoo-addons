@@ -1,10 +1,10 @@
 ![Jorels](https://www.jorels.com/web/image/res.company/1/logo)
 ### Jorels SAS - Copyright (2019-2023)
 
-# Electronic payroll for Colombia
+# Electronic payroll for Colombia (Enterprise)
 
 ## Module name
-l10n_co_hr_payroll
+l10n_co_hr_payroll_enterprise
 
 ## Support
 
@@ -24,4 +24,4 @@ Under LGPL (Lesser General Public License)
 Tested in production on Odoo 12, 13, 14, 15 y 16.
 
 ## Description
-Odoo module for electronic payroll for Colombia
+Odoo module for electronic payroll for Colombia (Enterprise)

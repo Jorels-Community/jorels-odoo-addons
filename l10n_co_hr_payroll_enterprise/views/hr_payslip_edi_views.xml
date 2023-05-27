@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--Jorels S.A.S. - Copyright (C) 2019-2023-->
 
-<!--This file is part of l10n_co_hr_payroll.-->
+<!--This file is part of l10n_co_hr_payroll_enterprise.-->
 
 <!--This program is free software: you can redistribute it and/or modify-->
 <!--it under the terms of the GNU Lesser General Public License as published by-->
@@ -161,6 +161,6 @@
     <menuitem action="action_view_hr_payslip_edi"
               id="menu_payslip_edi_tree"
               name="Edi Payslips"
-              parent="hr_payroll_community.menu_hr_payroll_community_root"
-              groups="hr_payroll_community.group_hr_payroll_community_user"/>
+              parent="hr_payroll.menu_hr_payroll_root"
+              groups="hr_payroll.group_hr_payroll_user"/>
 </odoo>

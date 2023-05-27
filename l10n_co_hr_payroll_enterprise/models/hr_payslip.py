@@ -2,7 +2,7 @@
 #
 #   Jorels S.A.S. - Copyright (C) 2019-2023
 #
-#   This file is part of l10n_co_hr_payroll.
+#   This file is part of l10n_co_hr_payroll_enterprise.
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Lesser General Public License as published by
@@ -1638,8 +1638,8 @@ class HrPayslip(models.Model):
                 payload = copied_payslip.get_json_request()
                 copied_payslip.write({'edi_payload': json.dumps(payload, indent=2, sort_keys=False)})
 
-        formview_ref = self.env.ref('hr_payroll_community.view_hr_payslip_form', False)
-        treeview_ref = self.env.ref('hr_payroll_community.view_hr_payslip_tree', False)
+        formview_ref = self.env.ref('hr_payroll.view_hr_payslip_form', False)
+        treeview_ref = self.env.ref('hr_payroll.view_hr_payslip_tree', False)
 
         if copied_payslip is not None:
             domain = "[('id', 'in', %s)]" % copied_payslip.ids
