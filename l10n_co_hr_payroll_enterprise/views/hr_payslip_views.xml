@@ -39,7 +39,7 @@
                     <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
                             attrs="{'invisible': [('state','=','draft')]}"/>
                 </xpath>
-                <xpath expr="//field[@name='number']" position="before">
+                <xpath expr="//field[@name='contract_id']" position="before">
                     <field name="date"/>
                     <field name="payment_date"/>
                     <field name="payment_form_id"/>
