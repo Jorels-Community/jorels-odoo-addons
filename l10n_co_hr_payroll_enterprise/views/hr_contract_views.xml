@@ -26,11 +26,13 @@
         <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='hr_responsible_id']" position="after">
-                <field name="type_worker_id"/>
-                <field name="subtype_worker_id"/>
-                <field name="high_risk_pension"/>
-                <field name="integral_salary"/>
-                <field name="type_contract_id"/>
+                <group string="Edi (DIAN)">
+                    <field name="type_worker_id"/>
+                    <field name="subtype_worker_id"/>
+                    <field name="high_risk_pension"/>
+                    <field name="integral_salary"/>
+                    <field name="type_contract_id"/>
+                </group>
             </xpath>
         </field>
     </record>

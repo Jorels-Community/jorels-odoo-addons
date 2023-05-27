@@ -161,6 +161,6 @@
     <menuitem action="action_view_hr_payslip_edi"
               id="menu_payslip_edi_tree"
               name="Edi Payslips"
-              parent="hr_payroll.menu_hr_payroll_root"
+              parent="hr_payroll.menu_hr_payroll_payslips"
               groups="hr_payroll.group_hr_payroll_user"/>
 </odoo>
