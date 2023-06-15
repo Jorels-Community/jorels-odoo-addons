@@ -59,6 +59,17 @@
                     <field colspan="4" name="edi_percent_python_compute"
                            attrs="{'invisible':[('edi_percent_select','!=','code')], 'required':[('edi_percent_select','=','code')]}"/>
                 </xpath>
+                <xpath expr="//page[@name='description']" position="before">
+                    <page name="inputs" string="Inputs">
+                        <field name="input_ids" mode="tree">
+                            <tree string="Input Data" editable="bottom">
+                                <field name="input_type_id"/>
+                                <field name="name"/>
+                                <field name="code"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
             </data>
         </field>
     </record>
