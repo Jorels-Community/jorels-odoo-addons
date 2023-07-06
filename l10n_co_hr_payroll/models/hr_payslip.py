@@ -1159,7 +1159,7 @@ class HrPayslip(models.Model):
             ]:
                 for dict_with_days in list_with_days:
                     rec.worked_days_total -= dict_with_days['quantity']
-            basic['worked_days'] = rec.worked_days_total
+            basic['worked_days'] = rec.worked_days_total if rec.worked_days_total > 0 else 0
 
             if 'worker_salary' not in basic:
                 basic['worker_salary'] = 0.0
