@@ -71,6 +71,7 @@ class HrPayslip(models.Model):
     edi_number = fields.Char("Number", copy=False)
     edi_uuid = fields.Char("UUID", copy=False)
     edi_issue_date = fields.Date("Date", copy=False)
+    edi_issue_datetime = fields.Char(string="Issue datetime", copy=False, readonly=True)
     edi_expedition_date = fields.Char("Expedition date", copy=False)
     edi_zip_key = fields.Char("Zip key", copy=False)
     edi_status_code = fields.Char("Status code", copy=False)
@@ -1382,6 +1383,7 @@ class HrPayslip(models.Model):
             rec.edi_number = response['number']
             rec.edi_uuid = response['uuid']
             rec.edi_issue_date = response['issue_date']
+            rec.edi_issue_datetime = response['issue_date']
             rec.edi_expedition_date = response['expedition_date']
             rec.edi_zip_key = response['zip_key']
             rec.edi_status_code = response['status_code']
