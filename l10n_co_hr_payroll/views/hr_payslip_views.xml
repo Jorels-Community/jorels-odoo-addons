@@ -38,7 +38,7 @@
                 <xpath expr="//button[@name='action_payslip_done']" position="after">
                     <button name="validate_dian" type="object" string="Validate DIAN"
                             class="oe_highlight o_payslip_validate"
-                            attrs="{'invisible': ['|', '|', ('edi_is_valid','=',True),('edi_is_not_test','=',False),('state','=','draft')]}"/>
+                            attrs="{'invisible': ['|', ('edi_is_valid','=',True),('state','=','draft')]}"/>
                     <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
                             attrs="{'invisible': [('state','=','draft')]}"/>
                 </xpath>
@@ -318,5 +318,13 @@
                 </xpath>
             </data>
         </field>
+    </record>
+
+    <record id="action_status_document_log" model="ir.actions.server">
+        <field name="name">Replace with log DIAN</field>
+        <field name="model_id" ref="hr_payroll.model_hr_payslip"/>
+        <field name="binding_model_id" ref="hr_payroll.model_hr_payslip"/>
+        <field name="state">code</field>
+        <field name="code">records.status_document_log()</field>
     </record>
 </odoo>
