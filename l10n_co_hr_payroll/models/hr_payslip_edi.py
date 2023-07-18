@@ -34,6 +34,7 @@ _logger = logging.getLogger(__name__)
 
 class HrPayslipEdi(models.Model):
     _name = "hr.payslip.edi"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = "Payslip Edi"
 
     note = fields.Text(string='Internal Note', readonly=True, states={'draft': [('readonly', False)]})
@@ -609,7 +610,15 @@ class HrPayslipEdi(models.Model):
                     raise UserError(_("No logical response was obtained from the API."))
             except Exception as e:
                 _logger.debug("Failed to process the request: %s", e)
-                raise UserError(_("Failed to process the request: %s") % e)
+                if not rec.company_id.edi_payroll_always_validate:
+                    raise UserError(_("Failed to process the request: %s") % e)
+                else:
+                    rec.message_post(body=_("DIAN Electronic payroll: Failed to process the request: %s") % e)
+
+    @api.multi
+    def validate_dian(self):
+        for rec in self:
+            rec.validate_dian_generic()
 
     @api.multi
     def action_payslip_done(self):
@@ -624,7 +633,9 @@ class HrPayslipEdi(models.Model):
                 rec.compute_sheet()
             rec.write({'state': 'done'})
 
-            if rec.company_id.edi_payroll_enable and rec.company_id.edi_payroll_consolidated_enable:
+            if rec.company_id.edi_payroll_enable \
+                    and rec.company_id.edi_payroll_consolidated_enable \
+                    and not rec.company_id.edi_payroll_enable_validate_state:
                 rec.validate_dian_generic()
 
         return True
