@@ -360,6 +360,9 @@ class HrPayslip(models.Model):
 
     def get_json_request(self):
         for rec in self:
+            # Force compute edi payroll period
+            rec.contract_id._compute_payroll_period_id()
+
             if not rec.number:
                 raise UserError(_("The payroll must have a consecutive number, 'Reference' field"))
             if not rec.contract_id.payroll_period_id:
