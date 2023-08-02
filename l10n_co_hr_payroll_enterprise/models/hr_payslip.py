@@ -426,6 +426,9 @@ class HrPayslip(models.Model):
                 else:
                     raise UserError(_("The sequence must have a prefix"))
 
+            # Force compute edi payroll period
+            rec.contract_id._compute_payroll_period_id()
+
             information = {
                 "payroll_period_code": rec.contract_id.payroll_period_id.id,
                 "currency_code": 35,
