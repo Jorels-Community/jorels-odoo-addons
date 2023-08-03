@@ -4,18 +4,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 15.0\n"
+"Project-Id-Version: Odoo Server 14.0+e-20220805\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-26 06:41+0000\n"
-"PO-Revision-Date: 2022-07-26 01:43-0500\n"
+"POT-Creation-Date: 2023-08-03 03:50+0000\n"
+"PO-Revision-Date: 2023-08-02 23:52-0500\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: es\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_res_config_settings__daily_overtime
@@ -113,8 +113,8 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll_enterprise.res_config_settings_view_form_l10n_co_hr_payroll
 msgid ""
 "<span class=\"fa fa-lg fa-building-o\" title=\"Values set here are company-"
-"specific.\" aria-label=\"Values set here are company-specific.\" groups="
-"\"base.group_multi_company\" role=\"img\"/>"
+"specific.\" aria-label=\"Values set here are company-specific.\" "
+"groups=\"base.group_multi_company\" role=\"img\"/>"
 msgstr ""
 "<span class=\\\"fa fa-lg fa-building-o\\\" title=\\\"Los valores "
 "establecidos aquí son específicos de la empresa.\\\" aria-label=\\\"Los "
@@ -167,6 +167,20 @@ msgstr "<span class=\\\"o_form_label\\\">Porcentajes de recargo</span>"
 #. module: l10n_co_hr_payroll_enterprise
 #: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll_enterprise.res_config_settings_view_form_l10n_co_hr_payroll
 msgid "<span class=\"o_form_label\">TestSetID</span>"
+msgstr ""
+
+#. module: l10n_co_hr_payroll_enterprise
+#: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll_enterprise.view_hr_payslip_edi_form
+msgid ""
+"<span class=\"o_stat_text\">DIAN</span>\n"
+"                                <span class=\"o_stat_text\">Web View</span>"
+msgstr ""
+
+#. module: l10n_co_hr_payroll_enterprise
+#: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll_enterprise.hr_payslip_view_form_l10n_co_hr_payroll
+msgid ""
+"<span class=\"o_stat_text\">DIAN</span>\n"
+"                            <span class=\"o_stat_text\">Web View</span>"
 msgstr ""
 
 #. module: l10n_co_hr_payroll_enterprise
@@ -253,8 +267,6 @@ msgstr "Fecha de ingreso"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__advances
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__advances
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__advances
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__advances
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__advances
@@ -265,7 +277,6 @@ msgstr "Anticipos"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__afc
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__afc
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__afc
 #, python-format
@@ -310,7 +321,6 @@ msgstr "Auxilio"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__assistances
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__assistances
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__assistances
 #, python-format
@@ -337,7 +347,6 @@ msgid "Authentication error with the API"
 msgstr "Error de autenticación con la API"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__edi_quantity_select__auto
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__edi_quantity_select__auto
 msgid "Auto"
 msgstr ""
@@ -350,7 +359,6 @@ msgstr "Banco"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__basic
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__basic
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__basic
 #, python-format
@@ -359,7 +367,6 @@ msgstr "Basico"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__bonuses
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__bonuses
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__bonuses
 #, python-format
@@ -384,6 +391,7 @@ msgid "Class"
 msgstr "Clase"
 
 #. module: l10n_co_hr_payroll_enterprise
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_rule_input__code
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_deduction_line__code
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_earn_line__code
 msgid "Code"
@@ -396,7 +404,6 @@ msgstr "Nómina colombiana"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__commissions
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__commissions
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__commissions
 #, python-format
@@ -415,7 +422,6 @@ msgstr "Compañía"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__company_withdrawal_bonus
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__company_withdrawal_bonus
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__company_withdrawal_bonus
 #, python-format
@@ -424,7 +430,6 @@ msgstr "Bonificación de retiro"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__compensation
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__compensation
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__compensation
 #, python-format
@@ -438,14 +443,12 @@ msgid "Compensations"
 msgstr "Compensaciones"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__compensations_extraordinary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__compensations_extraordinary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__compensations_extraordinary
 msgid "Compensations extraordinary"
 msgstr "Compensaciones extraordinarias"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__compensations_ordinary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__compensations_ordinary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__compensations_ordinary
 msgid "Compensations ordinary"
@@ -453,7 +456,6 @@ msgstr "Compensaciones ordinarias"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__complementary_plans
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__complementary_plans
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__complementary_plans
 #, python-format
@@ -501,7 +503,6 @@ msgstr "Tipo de contrato"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__cooperative
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__cooperative
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__cooperative
 #, python-format
@@ -521,6 +522,7 @@ msgstr "¡Crea tu primer Edi Payslip!"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_edi__create_uid
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_rule_input__create_uid
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_deduction_line__create_uid
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_earn_line__create_uid
 msgid "Created by"
@@ -528,6 +530,7 @@ msgstr "Creado por"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_edi__create_date
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_rule_input__create_date
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_deduction_line__create_date
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_earn_line__create_date
 msgid "Created on"
@@ -552,14 +555,12 @@ msgid "DIAN settings"
 msgstr "Ajustes DIAN"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__daily_overtime
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__daily_overtime
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__daily_overtime
 msgid "Daily overtime"
 msgstr "Horas extras diurnas"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__daily_surcharge_hours_sundays_holidays
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__daily_surcharge_hours_sundays_holidays
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__daily_surcharge_hours_sundays_holidays
 msgid "Daily surcharge hours on sundays and holidays"
@@ -587,7 +588,6 @@ msgstr "Fecha de emisión"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__debt
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__debt
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__debt
 #, python-format
@@ -602,7 +602,6 @@ msgstr "Diciembre"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__type_concept__deduction
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__type_concept__deduction
 #, python-format
 msgid "Deduction"
@@ -614,15 +613,14 @@ msgid "Deduction Details"
 msgstr "Detalles de Deducciones"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_line__deduction_category
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__deduction_category
 msgid "Deduction category"
 msgstr "Categoría de la deducción"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model,name:l10n_co_hr_payroll_enterprise.model_l10n_co_hr_payroll_enterprise_deduction_line
+#: model:ir.model,name:l10n_co_hr_payroll_enterprise.model_l10n_co_hr_payroll_deduction_line
 msgid "Deduction details"
-msgstr "Detalles de la deducción"
+msgstr "Detalles de deducciones"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip__deduction_ids
@@ -642,8 +640,6 @@ msgid "Deductions total"
 msgstr "Total de deducciones"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__edi_percent_select__default
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__edi_quantity_select__default
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__edi_percent_select__default
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__edi_quantity_select__default
 msgid "Default"
@@ -651,6 +647,7 @@ msgstr "Defecto"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_rule_input__name
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_deduction_line__name
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_earn_line__name
 #, python-format
@@ -658,9 +655,16 @@ msgid "Description"
 msgstr "Descripción"
 
 #. module: l10n_co_hr_payroll_enterprise
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_contract__display_name
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip__display_name
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_edi__display_name
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_line__display_name
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_rule_input__display_name
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__display_name
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_deduction_line__display_name
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_earn_line__display_name
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_res_company__display_name
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_res_config_settings__display_name
 msgid "Display Name"
 msgstr "Nombre Público"
 
@@ -669,20 +673,6 @@ msgstr "Nombre Público"
 #, python-format
 msgid "Document number"
 msgstr "Número de identificación"
-
-#. module: l10n_co_hr_payroll_enterprise
-#: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip.py:0
-#: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#, python-format
-msgid "Document sent to DIAN in habilitation."
-msgstr "Documento enviado a la DIAN en habilitación."
-
-#. module: l10n_co_hr_payroll_enterprise
-#: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip.py:0
-#: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#, python-format
-msgid "Document sent to DIAN in testing."
-msgstr "Documento enviado a la DIAN en pruebas."
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
@@ -702,7 +692,6 @@ msgstr "Borrador"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__type_concept__earn
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__type_concept__earn
 #, python-format
 msgid "Earn"
@@ -714,15 +703,14 @@ msgid "Earn Details"
 msgstr "Detalles de Devengados"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_line__earn_category
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__earn_category
 msgid "Earn category"
 msgstr "Categoría de devengado"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model,name:l10n_co_hr_payroll_enterprise.model_l10n_co_hr_payroll_enterprise_earn_line
+#: model:ir.model,name:l10n_co_hr_payroll_enterprise.model_l10n_co_hr_payroll_earn_line
 msgid "Earn details"
-msgstr "Detalles de devengado"
+msgstr "Detalles de devengados"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip__earn_ids
@@ -775,7 +763,6 @@ msgid "Edi Response"
 msgstr "Respuesta Edi"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_line__edi_is_detailed
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__edi_is_detailed
 msgid "Edi detailed"
 msgstr "Detalle Edi"
@@ -787,14 +774,12 @@ msgid "Edi payslip"
 msgstr "Nómina Edi"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_line__edi_quantity_select
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__edi_quantity_select
 msgid "Edi quantity"
 msgstr "Cantidad Edi"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__education
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__education
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__education
 #, python-format
@@ -898,7 +883,6 @@ msgstr "Hora final"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__endowment
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__endowment
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__endowment
 #, python-format
@@ -949,20 +933,17 @@ msgid "First name"
 msgstr "Primer Nombre"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_line__edi_percent_fix
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__edi_percent_fix
 msgid "Fixed Percent"
 msgstr "Porcentaje Fijo"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__edi_percent_select__fix
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__edi_percent_select__fix
 msgid "Fixed percent"
 msgstr "Porcentaje Fijo"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__health
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__health
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__health
 #, python-format
@@ -977,7 +958,6 @@ msgid "High risk pension"
 msgstr "Alto riesgo de pensión"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__hours_night_surcharge
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__hours_night_surcharge
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__hours_night_surcharge
 msgid "Hours night surcharge"
@@ -990,11 +970,18 @@ msgid "Html payload"
 msgstr ""
 
 #. module: l10n_co_hr_payroll_enterprise
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_contract__id
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip__id
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_edi__id
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_line__id
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_rule_input__id
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__id
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_deduction_line__id
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_earn_line__id
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_res_company__id
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_res_config_settings__id
 msgid "ID"
-msgstr "Identificación"
+msgstr "ID"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip__edi_is_not_test
@@ -1009,21 +996,18 @@ msgid "Incapacities"
 msgstr "Incapacidades"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__incapacities_common
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__incapacities_common
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__incapacities_common
 msgid "Incapacities common"
 msgstr "Incapacidades comunes"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__incapacities_professional
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__incapacities_professional
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__incapacities_professional
 msgid "Incapacities professional"
 msgstr "Incapacidades profesionales"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__incapacities_working
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__incapacities_working
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__incapacities_working
 msgid "Incapacities working"
@@ -1045,6 +1029,17 @@ msgstr "Indica que esta nómina Edi tiene una nota de ajuste de otra"
 #, python-format
 msgid "Information"
 msgstr "Información"
+
+#. module: l10n_co_hr_payroll_enterprise
+#: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll_enterprise.hr_salary_rule_view_form_l10n_co_hr_payroll
+msgid "Input Data"
+msgstr "Datos de entrada"
+
+#. module: l10n_co_hr_payroll_enterprise
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__input_ids
+#: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll_enterprise.hr_salary_rule_view_form_l10n_co_hr_payroll
+msgid "Inputs"
+msgstr "Entradas"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
@@ -1119,14 +1114,22 @@ msgstr ""
 "Manténgalo vacío para usar el período de la fecha de validación (Nómina)."
 
 #. module: l10n_co_hr_payroll_enterprise
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_contract____last_update
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip____last_update
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_edi____last_update
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_line____last_update
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_rule_input____last_update
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_salary_rule____last_update
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_deduction_line____last_update
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_earn_line____last_update
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_res_company____last_update
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_res_config_settings____last_update
 msgid "Last Modified on"
 msgstr "Última Modificación el"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_edi__write_uid
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_rule_input__write_uid
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_deduction_line__write_uid
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_earn_line__write_uid
 msgid "Last Updated by"
@@ -1134,6 +1137,7 @@ msgstr "Última actualización por"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_edi__write_date
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_rule_input__write_date
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_deduction_line__write_date
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_earn_line__write_date
 msgid "Last Updated on"
@@ -1141,7 +1145,6 @@ msgstr "Última actualización el"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__layoffs
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__layoffs
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__layoffs
 #, python-format
@@ -1149,7 +1152,6 @@ msgid "Layoffs"
 msgstr "Cesantias"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__layoffs_interest
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__layoffs_interest
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__layoffs_interest
 msgid "Layoffs interest"
@@ -1157,7 +1159,6 @@ msgstr "Interés de cesantías"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__legal_strikes
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__legal_strikes
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__legal_strikes
 #, python-format
@@ -1166,7 +1167,6 @@ msgstr "Huelgas legales"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__libranzas
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__libranzas
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__libranzas
 #, python-format
@@ -1180,21 +1180,18 @@ msgid "Licensings"
 msgstr "Licencias"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__licensings_maternity_or_paternity_leaves
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__licensings_maternity_or_paternity_leaves
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__licensings_maternity_or_paternity_leaves
 msgid "Licensings maternity or paternity leaves"
 msgstr "Licencias de maternidad o paternidad"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__licensings_permit_or_paid_licenses
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__licensings_permit_or_paid_licenses
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__licensings_permit_or_paid_licenses
 msgid "Licensings permit or paid licenses"
 msgstr "Licencias remuneradas"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__licensings_suspension_or_unpaid_leaves
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__licensings_suspension_or_unpaid_leaves
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__licensings_suspension_or_unpaid_leaves
 msgid "Licensings suspension or unpaid leaves"
@@ -1257,14 +1254,12 @@ msgid "No logical response was obtained from the API."
 msgstr "No se obtuvo ninguna respuesta lógica de la API."
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__assistances_non_salary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__assistances_non_salary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__assistances_non_salary
 msgid "Non salary assistances"
 msgstr "Auxilios no salariales"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__bonuses_non_salary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__bonuses_non_salary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__bonuses_non_salary
 msgid "Non salary bonuses"
@@ -1277,7 +1272,6 @@ msgid "Non salary food payment"
 msgstr "Bono Alimentación (No Salarial)"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__other_concepts_non_salary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__other_concepts_non_salary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__other_concepts_non_salary
 msgid "Non salary other concepts"
@@ -1349,23 +1343,20 @@ msgid "Origin payslip"
 msgstr "Nómina de origen"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__type_concept__other
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__type_concept__other
 msgid "Other"
 msgstr "Otro"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__other_concepts
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__other_concepts
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__other_concepts
 #, python-format
 msgid "Other concepts"
-msgstr "Otro"
+msgstr "Otros conceptos"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__other_deductions
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__other_deductions
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__other_deductions
 #, python-format
@@ -1390,7 +1381,6 @@ msgid "Overtime and surcharges type"
 msgstr "Tipo de horas extra y/o recargos"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__overtime_night_hours
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__overtime_night_hours
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__overtime_night_hours
 msgid "Overtime night hours"
@@ -1506,6 +1496,11 @@ msgid "Payslip Edi"
 msgstr "Nómina Edi"
 
 #. module: l10n_co_hr_payroll_enterprise
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_rule_input__input_type_id
+msgid "Payslip Input Type"
+msgstr "Tipo de entrada de nómina"
+
+#. module: l10n_co_hr_payroll_enterprise
 #: model:ir.model,name:l10n_co_hr_payroll_enterprise.model_hr_payslip_line
 msgid "Payslip Line"
 msgstr "Línea de nómina"
@@ -1518,7 +1513,6 @@ msgstr "Nóminas"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__pension_fund
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__pension_fund
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__pension_fund
 #, python-format
@@ -1527,7 +1521,6 @@ msgstr "Fondos de pensión"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__pension_security_fund
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__pension_security_fund
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__pension_security_fund
 #, python-format
@@ -1535,14 +1528,12 @@ msgid "Pension security fund"
 msgstr "Fondo de seguridad pensional"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__pension_security_fund_subsistence
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__pension_security_fund_subsistence
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__pension_security_fund_subsistence
 msgid "Pension security fund subsistence"
 msgstr "Fondo de seguridad pensional de subsistencia"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_line__edi_percent_select
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__edi_percent_select
 msgid "Percent Type"
 msgstr "Tipo de porcentaje"
@@ -1584,7 +1575,6 @@ msgstr "Prefijo"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__primas
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__primas
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__primas
 #, python-format
@@ -1592,7 +1582,6 @@ msgid "Primas"
 msgstr "Prima legal"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__primas_non_salary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__primas_non_salary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__primas_non_salary
 msgid "Primas non salary"
@@ -1611,9 +1600,7 @@ msgid "Provider"
 msgstr "Proveedor"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_line__edi_percent_python_compute
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__edi_percent_python_compute
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__edi_percent_select__code
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__edi_percent_select__code
 msgid "Python Code"
 msgstr "Código Python"
@@ -1652,8 +1639,6 @@ msgstr "Referencia"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__refund
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__refund
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__refund
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__refund
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__refund
@@ -1664,11 +1649,16 @@ msgid "Refund"
 msgstr "Reintegro"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip.py:0
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
 #, python-format
 msgid "Refund: "
-msgstr "Reintegro: "
+msgstr "Reembolso: "
+
+#. module: l10n_co_hr_payroll_enterprise
+#: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip.py:0
+#, python-format
+msgid "Refund: %(payslip)s"
+msgstr "Reembolso: %(payslip)s"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_edi__state__cancel
@@ -1685,7 +1675,7 @@ msgstr "Redondeo"
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_deduction_line__rule_input_id
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_earn_line__rule_input_id
 msgid "Rule input"
-msgstr "Regla de entrada"
+msgstr "Entrada de regla"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_res_company__smmlv_value
@@ -1703,6 +1693,12 @@ msgstr "Salario"
 #: model:ir.model,name:l10n_co_hr_payroll_enterprise.model_hr_salary_rule
 msgid "Salary Rule"
 msgstr "Regla de Salario"
+
+#. module: l10n_co_hr_payroll_enterprise
+#: model:ir.model,name:l10n_co_hr_payroll_enterprise.model_hr_rule_input
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_rule_input__input_id
+msgid "Salary Rule Input"
+msgstr "Entrada de regla salarial"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
@@ -1723,14 +1719,12 @@ msgid "Sanctions"
 msgstr "Sanciones"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__sanctions_private
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__sanctions_private
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__sanctions_private
 msgid "Sanctions private"
 msgstr "Sanciones privadas"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__sanctions_public
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__sanctions_public
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__sanctions_public
 msgid "Sanctions public"
@@ -1844,21 +1838,18 @@ msgid "Subtype worker"
 msgstr "Subtipo de trabajador"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__sunday_holiday_daily_overtime
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__sunday_holiday_daily_overtime
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__sunday_holiday_daily_overtime
 msgid "Sunday and Holiday daily overtime"
 msgstr "Horas extras diarias dominicales y festivas"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__sunday_holidays_night_surcharge_hours
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__sunday_holidays_night_surcharge_hours
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__sunday_holidays_night_surcharge_hours
 msgid "Sunday and holidays night surcharge hours"
 msgstr "Horas recargo nocturno dominicales y festivas"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__sunday_night_overtime_holidays
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__sunday_night_overtime_holidays
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__sunday_night_overtime_holidays
 msgid "Sunday night overtime and holidays"
@@ -1878,7 +1869,6 @@ msgstr "Licencia No Remunerada"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__sustainment_support
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__sustainment_support
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__sustainment_support
 #, python-format
@@ -1891,11 +1881,10 @@ msgstr "Apoyo a Sostenimiento"
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_edi__edi_sync
 #, python-format
 msgid "Sync"
-msgstr "Sincronizar"
+msgstr "Sincrono"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__tax_lien
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__tax_lien
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__tax_lien
 #, python-format
@@ -1904,7 +1893,6 @@ msgstr "Embargo fiscal"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__telecommuting
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__telecommuting
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__telecommuting
 #, python-format
@@ -1947,19 +1935,18 @@ msgid "The Origin payslip is required for adjusment notes."
 msgstr "La nómina de origen es obligatoria para notas de ajuste."
 
 #. module: l10n_co_hr_payroll_enterprise
+#: model:ir.model.fields,help:l10n_co_hr_payroll_enterprise.field_hr_rule_input__code
 #: model:ir.model.fields,help:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_deduction_line__code
 #: model:ir.model.fields,help:l10n_co_hr_payroll_enterprise.field_l10n_co_hr_payroll_earn_line__code
 msgid "The code that can be used in the salary rules"
 msgstr "El código puede ser usado en las reglas salariales"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields,help:l10n_co_hr_payroll_enterprise.field_hr_payslip_line__edi_quantity_select
 #: model:ir.model.fields,help:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__edi_quantity_select
 msgid "The computation method for rule Edi quantity."
 msgstr "Método de calculo para la cantidad Edi de la regla."
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields,help:l10n_co_hr_payroll_enterprise.field_hr_payslip_line__edi_percent_select
 #: model:ir.model.fields,help:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__edi_percent_select
 msgid "The computation method for the rule percent."
 msgstr "El método de calculo para el porcentaje de la regla."
@@ -2111,16 +2098,7 @@ msgid "The time worked cannot be negative."
 msgstr "El tiempo trabajado no puede ser negativo."
 
 #. module: l10n_co_hr_payroll_enterprise
-#: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip.py:0
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#, python-format
-msgid "The validation at DIAN has been successful."
-msgstr "La validación en la DIAN ha sido exitosa."
-
-#. module: l10n_co_hr_payroll_enterprise
-#: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__third_party_payments
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__third_party_payments
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__third_party_payments
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__third_party_payments
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__third_party_payments
@@ -2155,7 +2133,6 @@ msgstr ""
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__trade_unions
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__trade_unions
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__trade_unions
 #, python-format
@@ -2169,21 +2146,18 @@ msgid "Transports"
 msgstr "Transporte"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__transports_assistance
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__transports_assistance
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__transports_assistance
 msgid "Transports assistance"
 msgstr "Auxilio de Transporte"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__transports_non_salary_viatic
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__transports_non_salary_viatic
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__transports_non_salary_viatic
 msgid "Transports non salary viatic"
 msgstr "Viáticos de transporte no salariales"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__transports_viatic
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__transports_viatic
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__transports_viatic
 msgid "Transports viatic"
@@ -2196,7 +2170,6 @@ msgid "Trm"
 msgstr ""
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_payslip_line__type_concept
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll_enterprise.field_hr_salary_rule__type_concept
 msgid "Type concept"
 msgstr "Tipo de concepto"
@@ -2239,7 +2212,6 @@ msgstr "Vacaciones"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__vacation_common
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__vacation_common
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__vacation_common
 #, python-format
@@ -2248,7 +2220,6 @@ msgstr "Vacaciones comunes"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__vacation_compensated
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__vacation_compensated
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__vacation_compensated
 #, python-format
@@ -2263,7 +2234,6 @@ msgstr "Viatico"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__voluntary_pension
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__voluntary_pension
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__voluntary_pension
 #, python-format
@@ -2272,7 +2242,6 @@ msgstr "Pensión voluntaria"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__vouchers
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__vouchers
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__vouchers
 #, python-format
@@ -2280,21 +2249,18 @@ msgid "Vouchers"
 msgstr "Vales"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__vouchers_non_salary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__vouchers_non_salary
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__vouchers_non_salary
 msgid "Vouchers non salary"
 msgstr "Vales no salariales"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__vouchers_non_salary_food
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__vouchers_non_salary_food
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__vouchers_non_salary_food
 msgid "Vouchers non salary food"
 msgstr "Vales no salariales de alimentación"
 
 #. module: l10n_co_hr_payroll_enterprise
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__earn_category__vouchers_salary_food
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__earn_category__vouchers_salary_food
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_earn_line__category__vouchers_salary_food
 msgid "Vouchers salary food"
@@ -2313,7 +2279,6 @@ msgstr "Fecha de retiro"
 
 #. module: l10n_co_hr_payroll_enterprise
 #: code:addons/l10n_co_hr_payroll_enterprise/models/hr_payslip_edi.py:0
-#: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_payslip_line__deduction_category__withholding_source
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__hr_salary_rule__deduction_category__withholding_source
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll_enterprise.selection__l10n_co_hr_payroll_deduction_line__category__withholding_source
 #, python-format
