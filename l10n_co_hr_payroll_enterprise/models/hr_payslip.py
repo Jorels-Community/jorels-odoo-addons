@@ -38,32 +38,36 @@ _logger = logging.getLogger(__name__)
 class HrPayslip(models.Model):
     _inherit = 'hr.payslip'
 
-    origin_payslip_id = fields.Many2one(comodel_name="hr.payslip", string="Origin payslip", readonly=True,
-                                        states={'draft': [('readonly', False)]}, copy=False)
+    origin_payslip_id = fields.Many2one(comodel_name="hr.payslip", string="Origin payslip", readonly=True, copy=False,
+                                        states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
 
     # They allow storing synchronous and production modes used when invoicing
     edi_sync = fields.Boolean(string="Sync", default=False, copy=False)
     edi_is_not_test = fields.Boolean(string="In production", default=False, copy=False)
 
     # Edi fields
-    date = fields.Date('Date Account', states={'draft': [('readonly', False)]}, readonly=True,
-                       help="Keep empty to use the period of the validation(Payslip) date.")
-    payment_date = fields.Date("Payment date", required=True, readonly=True, states={'draft': [('readonly', False)]},
+    date = fields.Date('Date Account', states={'draft': [('readonly', False)], 'verify': [('readonly', False)]},
+                       readonly=True, help="Keep empty to use the period of the validation(Payslip) date.")
+    payment_date = fields.Date("Payment date", required=True, readonly=True,
+                               states={'draft': [('readonly', False)], 'verify': [('readonly', False)]},
                                default=lambda self: fields.Date.to_string(
                                    (datetime.now() + relativedelta(months=+1, day=1, days=-1)).date()))
     payment_form_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_forms", string="Payment form", default=1,
-                                      readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+                                      readonly=True, copy=True,
+                                      states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
     payment_method_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_methods", string="Payment method",
-                                        default=1, readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+                                        default=1, readonly=True, copy=True,
+                                        states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
     accrued_total_amount = fields.Monetary("Accrued", currency_field='currency_id', readonly=True, copy=True)
     deductions_total_amount = fields.Monetary("Deductions", currency_field='currency_id', readonly=True, copy=True)
     others_total_amount = fields.Monetary("Others", currency_field='currency_id', readonly=True, copy=True)
     total_amount = fields.Monetary("Total", currency_field='currency_id', readonly=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Currency', readonly=False, compute='_compute_currency')
     earn_ids = fields.One2many('l10n_co_hr_payroll.earn.line', 'payslip_id', string='Earn lines', readonly=True,
-                               copy=True, states={'draft': [('readonly', False)]})
+                               copy=True, states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
     deduction_ids = fields.One2many('l10n_co_hr_payroll.deduction.line', 'payslip_id', string='Deduction lines',
-                                    copy=True, readonly=True, states={'draft': [('readonly', False)]})
+                                    copy=True, readonly=True,
+                                    states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
     worked_days_total = fields.Integer("Worked days", default=0)
 
     # Edi response fields
