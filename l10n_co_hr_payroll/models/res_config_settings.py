@@ -94,3 +94,11 @@ class ResConfigSettings(models.TransientModel):
     edi_payroll_consolidated_enable = fields.Boolean(related="company_id.edi_payroll_consolidated_enable",
                                                      string="Enable consolidated electronic payroll for this company",
                                                      default=False, readonly=False)
+
+    # DIAN validation
+    edi_payroll_always_validate = fields.Boolean(related="company_id.edi_payroll_always_validate",
+                                                 string="Always validate payslips",
+                                                 default=False, readonly=False)
+    edi_payroll_enable_validate_state = fields.Boolean(related="company_id.edi_payroll_enable_validate_state",
+                                                       string="Enable intermediate 'DIAN Validation' state for payroll",
+                                                       default=False, readonly=False)
