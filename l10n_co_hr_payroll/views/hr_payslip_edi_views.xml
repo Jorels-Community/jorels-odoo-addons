@@ -29,7 +29,7 @@
                             class="oe_highlight"/>
                     <button name="validate_dian" type="object" string="Validate DIAN"
                             class="oe_highlight o_payslip_validate"
-                            attrs="{'invisible': ['|', '|', ('edi_is_valid','=',True),('edi_is_not_test','=',False),('state','=','draft')]}"/>
+                            attrs="{'invisible': ['|', ('edi_is_valid','=',True),('state','=','draft')]}"/>
                     <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
                             attrs="{'invisible': [('state','=','draft')]}"/>
                     <button string="Refund" name="refund_sheet" states="confirm,done" type='object'/>
@@ -157,6 +157,15 @@
             </tree>
         </field>
     </record>
+
+    <record id="action_edi_status_document_log" model="ir.actions.server">
+        <field name="name">Replace with log DIAN</field>
+        <field name="model_id" ref="l10n_co_hr_payroll.model_hr_payslip_edi"/>
+        <field name="binding_model_id" ref="l10n_co_hr_payroll.model_hr_payslip_edi"/>
+        <field name="state">code</field>
+        <field name="code">records.status_document_log()</field>
+    </record>
+
     <record id="action_view_hr_payslip_edi" model="ir.actions.act_window">
         <field name="name">Edi Payslips</field>
         <field name="res_model">hr.payslip.edi</field>
@@ -167,6 +176,7 @@
             </p>
         </field>
     </record>
+
     <menuitem action="action_view_hr_payslip_edi"
               id="menu_payslip_edi_tree"
               name="Edi Payslips"
