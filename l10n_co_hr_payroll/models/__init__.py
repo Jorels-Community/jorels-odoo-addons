@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 #   l10n_co_hr_payroll
-#   Copyright (C) 2022  Jorels SAS
+#   Copyright (C) 2023  Jorels SAS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published
@@ -21,6 +21,7 @@
 
 from . import res_company
 from . import res_config_settings
+from . import edi
 from . import earn_line
 from . import deduction_line
 from . import hr_contract
