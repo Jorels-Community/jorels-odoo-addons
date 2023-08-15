@@ -95,6 +95,7 @@
                                 <field name="edi_number" readonly="True"/>
                                 <field name="edi_uuid" readonly="True" class="text-break"/>
                                 <field name="edi_issue_date" readonly="True"/>
+                                <field name="edi_issue_datetime"/>
                                 <field name="edi_expedition_date" readonly="True"/>
                                 <field name="edi_zip_key" readonly="True" class="text-break"/>
                                 <field name="edi_status_code" readonly="True"/>
