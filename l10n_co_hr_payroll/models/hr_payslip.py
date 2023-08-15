@@ -36,7 +36,8 @@ _logger = logging.getLogger(__name__)
 
 
 class HrPayslip(models.Model):
-    _inherit = 'hr.payslip'
+    _name = 'hr.payslip'
+    _inherit = ['hr.payslip', 'mail.thread', 'mail.activity.mixin']
 
     origin_payslip_id = fields.Many2one(comodel_name="hr.payslip", string="Origin payslip", readonly=True,
                                         states={'draft': [('readonly', False)]}, copy=False)
@@ -1518,7 +1519,14 @@ class HrPayslip(models.Model):
                     raise UserError(_("No logical response was obtained from the API."))
             except Exception as e:
                 _logger.debug("Failed to process the request: %s", e)
-                raise UserError(_("Failed to process the request: %s") % e)
+                if not rec.company_id.edi_payroll_always_validate:
+                    raise UserError(_("Failed to process the request: %s") % e)
+                else:
+                    rec.message_post(body=_("DIAN Electronic payroll: Failed to process the request: %s") % e)
+
+    def validate_dian(self):
+        for rec in self:
+            rec.validate_dian_generic()
 
     def action_payslip_done(self):
         for rec in self:
@@ -1534,7 +1542,9 @@ class HrPayslip(models.Model):
         res = super(HrPayslip, self).action_payslip_done()
 
         for rec in self:
-            if rec.company_id.edi_payroll_enable and not rec.company_id.edi_payroll_consolidated_enable:
+            if rec.company_id.edi_payroll_enable \
+                    and not rec.company_id.edi_payroll_consolidated_enable \
+                    and not rec.company_id.edi_payroll_enable_validate_state:
                 rec.validate_dian_generic()
 
         return res
