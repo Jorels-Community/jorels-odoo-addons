@@ -18,6 +18,7 @@
 #
 #   email: info@jorels.com
 #
+
 import ast
 import calendar
 import json
@@ -1670,13 +1671,110 @@ class HrPayslip(models.Model):
             'context': {}
         }
 
-    # @api.depends('state')
-    # def _compute_color(self):
-    #     for rec in self:
-    #         switcher = {
-    #             'draft': 11,
-    #             'verify': 2,
-    #             'cancel': 1,
-    #             'done': 0
-    #         }
-    #         rec.color = switcher.get(rec.state, 11)
+    def status_document_log(self):
+        for rec in self:
+            if not rec.company_id.edi_payroll_enable or rec.company_id.edi_payroll_consolidated_enable:
+                continue
+
+            try:
+                # This line ensures that the electronic fields of the payroll are updated in Odoo,
+                # before the request
+                requests_data = rec.get_json_request()
+                _logger.debug('Payload data: %s', requests_data)
+
+                sequence_prefix = requests_data['sequence']['prefix']
+                sequence_number = requests_data['sequence']['number']
+                sequence_formatted = sequence_prefix + str(sequence_number)
+
+                if sequence_formatted:
+                    requests_data = {}
+                    _logger.debug('API Requests: %s', requests_data)
+
+                    if rec.company_id.api_key:
+                        token = rec.company_id.api_key
+                    else:
+                        raise UserError(_("You must configure a token"))
+
+                    api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
+                                                                               'https://edipo.jorels.com')
+                    params = {'token': token}
+                    header = {"accept": "application/json", "Content-Type": "application/json"}
+
+                    api_url = api_url + "/logs/" + sequence_formatted
+
+                    _logger.debug('API URL: %s', api_url)
+
+                    response = requests.post(api_url,
+                                             json.dumps(requests_data),
+                                             headers=header,
+                                             params=params).json()
+                    _logger.debug('API Response: %s', response)
+
+                    if 'detail' in response:
+                        raise UserError(response['detail'])
+                    if 'message' in response:
+                        if response['message'] == 'Unauthenticated.' or response['message'] == '':
+                            self.env.user.notify_warning(message=_("Authentication error with the API"))
+                            _logger.debug("Authentication error with the API")
+                        else:
+                            if 'errors' in response:
+                                self.env.user.notify_warning(
+                                    message=response['message'] + '/ errors: ' + str(response['errors']))
+                                _logger.debug(response['message'] + '/ errors: ' + str(response['errors']))
+                            else:
+                                self.env.user.notify_warning(message=response['message'])
+                                _logger.debug(response['message'])
+                    elif response and ('is_valid' in response[0]):
+                        success = False
+                        for log in response:
+                            if log['is_valid']:
+                                json_request = json.loads(json.dumps(log))
+                                rec.edi_is_valid = json_request['is_valid']
+                                if json_request['algorithm']:
+                                    rec.edi_algorithm = json_request['algorithm']
+                                if json_request['uuid']:
+                                    rec.edi_uuid = json_request['uuid']
+                                if json_request['issue_date']:
+                                    rec.edi_issue_date = json_request['issue_date']
+                                    rec.edi_issue_datetime = json_request['issue_date']
+                                if json_request['zip_key']:
+                                    rec.edi_zip_key = json_request['zip_key']
+                                if json_request['xml_name']:
+                                    rec.edi_xml_name = json_request['xml_name']
+                                if json_request['zip_name']:
+                                    rec.edi_zip_name = json_request['zip_name']
+                                if json_request['xml_base64_bytes']:
+                                    rec.edi_xml_base64 = json_request['xml_base64_bytes']
+                                if json_request['qr_data']:
+                                    rec.edi_qr_data = json_request['qr_data']
+                                if json_request['application_response_base64_bytes']:
+                                    rec.edi_application_response_base64 = json_request[
+                                        'application_response_base64_bytes']
+                                if json_request['attached_document_base64_bytes']:
+                                    rec.edi_attached_document_base64 = json_request['attached_document_base64_bytes']
+                                if json_request['pdf_base64_bytes']:
+                                    rec.edi_pdf_base64 = json_request['pdf_base64_bytes']
+                                if json_request['zip_base64_bytes']:
+                                    rec.edi_zip_base64 = json_request['zip_base64_bytes']
+                                if json_request['signature']:
+                                    rec.edi_signature = json_request['signature']
+
+                                success = True
+                                break
+                        if success:
+                            self.env.user.notify_info(message=_("Validation in DIAN has been successful."))
+                            _logger.debug("Validation in DIAN has been successful.")
+                        else:
+                            self.env.user.notify_warning(message=_("The document has not been validated."))
+                            _logger.debug("The document has not been validated.")
+                    else:
+                        self.env.user.notify_warning(message=_("The document could not be consulted."))
+                        _logger.debug("The document could not be consulted.")
+                else:
+                    self.env.user.notify_warning(
+                        message=_("A number is required to verify the status of the document."))
+                    _logger.debug("A number is required to verify the status of the document.")
+            except Exception as e:
+                self.env.user.notify_warning(message=_("Failed to process the request"))
+                _logger.debug("Failed to process the request: %s", e)
+
