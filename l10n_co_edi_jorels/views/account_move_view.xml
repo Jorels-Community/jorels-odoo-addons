@@ -47,12 +47,12 @@
                     <field name="payment_method_id"/>
                     <field name="ei_operation"
                            attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
-                    <field name="ei_correction_concept_credit_id"
-                           attrs="{'invisible':[('move_type','not in',('out_refund', 'in_refund'))]}"/>
-                    <field name="ei_correction_concept_debit_id"
-                           attrs="{'invisible':['|',('move_type','not in',('out_invoice', 'in_invoice')),('debit_origin_id','=',False)]}"/>
                     <field name="ei_is_correction_without_reference"
-                           attrs="{'invisible':[('move_type','not in',('out_refund', 'in_refund'))]}"/>
+                           attrs="{'invisible': ['&amp;','|',('move_type','not in',('out_invoice', 'in_invoice')),('debit_origin_id','!=',False),'|',('move_type','not in',('out_refund', 'in_refund')),('reversed_entry_id','!=',False)]}"/>
+                    <field name="ei_correction_concept_credit_id"
+                           attrs="{'invisible': ['|',('move_type','not in',('out_refund', 'in_refund')),'&amp;',('reversed_entry_id','=',False), ('ei_is_correction_without_reference','=',False)]}"/>
+                    <field name="ei_correction_concept_debit_id"
+                           attrs="{'invisible': ['|',('move_type','not in',('out_invoice', 'in_invoice')),'&amp;',('debit_origin_id','=',False), ('ei_is_correction_without_reference','=',False)]}"/>
                 </xpath>
                 <xpath expr="//button[@name='action_post']" position="after">
                     <button name="validate_dian" type="object" string="Validate DIAN"
