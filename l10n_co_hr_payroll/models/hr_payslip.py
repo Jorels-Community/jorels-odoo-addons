@@ -1570,9 +1570,12 @@ class HrPayslip(models.Model):
 
                     api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
                                                                                'https://edipo.jorels.com')
+
+                    rec.edi_is_not_test = rec.edi_is_not_test or rec.company_id.edi_payroll_is_not_test
+
                     params = {
                         'token': token,
-                        'environment': rec.edi_type_environment.id
+                        'environment': 1 if rec.edi_is_not_test else 2
                     }
                     header = {"accept": "application/json", "Content-Type": "application/json"}
 
@@ -1679,11 +1682,11 @@ class HrPayslip(models.Model):
             try:
                 # This line ensures that the electronic fields of the payroll are updated in Odoo,
                 # before the request
-                requests_data = rec.get_json_request()
-                _logger.debug('Payload data: %s', requests_data)
+                payload = rec.get_json_request()
+                _logger.debug('Payload data: %s', payload)
 
-                sequence_prefix = requests_data['sequence']['prefix']
-                sequence_number = requests_data['sequence']['number']
+                sequence_prefix = payload['sequence']['prefix']
+                sequence_number = payload['sequence']['number']
                 sequence_formatted = sequence_prefix + str(sequence_number)
 
                 if sequence_formatted:
@@ -1728,37 +1731,7 @@ class HrPayslip(models.Model):
                         success = False
                         for log in response:
                             if log['is_valid']:
-                                json_request = json.loads(json.dumps(log))
-                                rec.edi_is_valid = json_request['is_valid']
-                                if json_request['algorithm']:
-                                    rec.edi_algorithm = json_request['algorithm']
-                                if json_request['uuid']:
-                                    rec.edi_uuid = json_request['uuid']
-                                if json_request['issue_date']:
-                                    rec.edi_issue_date = json_request['issue_date']
-                                    rec.edi_issue_datetime = json_request['issue_date']
-                                if json_request['zip_key']:
-                                    rec.edi_zip_key = json_request['zip_key']
-                                if json_request['xml_name']:
-                                    rec.edi_xml_name = json_request['xml_name']
-                                if json_request['zip_name']:
-                                    rec.edi_zip_name = json_request['zip_name']
-                                if json_request['xml_base64_bytes']:
-                                    rec.edi_xml_base64 = json_request['xml_base64_bytes']
-                                if json_request['qr_data']:
-                                    rec.edi_qr_data = json_request['qr_data']
-                                if json_request['application_response_base64_bytes']:
-                                    rec.edi_application_response_base64 = json_request[
-                                        'application_response_base64_bytes']
-                                if json_request['attached_document_base64_bytes']:
-                                    rec.edi_attached_document_base64 = json_request['attached_document_base64_bytes']
-                                if json_request['pdf_base64_bytes']:
-                                    rec.edi_pdf_base64 = json_request['pdf_base64_bytes']
-                                if json_request['zip_base64_bytes']:
-                                    rec.edi_zip_base64 = json_request['zip_base64_bytes']
-                                if json_request['signature']:
-                                    rec.edi_signature = json_request['signature']
-
+                                rec.write_response(log, payload)
                                 success = True
                                 break
                         if success:
