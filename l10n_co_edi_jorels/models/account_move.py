@@ -1065,8 +1065,9 @@ class AccountMove(models.Model):
                     elif type_edi_document == 'debit_note':
                         # Debit note
                         if self.is_debit_note_module():
-                            invoice_env = self.env['account.move']
-                            invoice_rec = invoice_env.search([('id', '=', rec.debit_origin_id.id)])
+                            if not rec.ei_is_correction_without_reference:
+                                invoice_env = self.env['account.move']
+                                invoice_rec = invoice_env.search([('id', '=', rec.debit_origin_id.id)])
                             billing_reference = True
                         else:
                             raise UserError(_("The debit notes module has not been installed."))
@@ -1116,7 +1117,7 @@ class AccountMove(models.Model):
         type_document = 'none'
         for rec in self:
             if rec.type in ('out_invoice', 'in_invoice'):
-                if ('debit_origin_id' in rec) and rec.debit_origin_id:
+                if (('debit_origin_id' in rec) and rec.debit_origin_id) or rec.ei_is_correction_without_reference:
                     # Debit note
                     type_document = 'debit_note'
                 else:
@@ -1133,7 +1134,7 @@ class AccountMove(models.Model):
         type_edi_document = 'none'
         for rec in self:
             if rec.type == 'out_invoice':
-                if ('debit_origin_id' in rec) and rec.debit_origin_id:
+                if (('debit_origin_id' in rec) and rec.debit_origin_id) or rec.ei_is_correction_without_reference:
                     # Debit note
                     type_edi_document = 'debit_note'
                 else:
@@ -1145,7 +1146,7 @@ class AccountMove(models.Model):
             elif rec.type == 'in_invoice' \
                     and rec.resolution_id \
                     and rec.resolution_id.resolution_type_document_id.id == 12:
-                if ('debit_origin_id' in rec) and rec.debit_origin_id:
+                if (('debit_origin_id' in rec) and rec.debit_origin_id) or rec.ei_is_correction_without_reference:
                     # There is no debit note for document support
                     raise UserError(_("There is not debit note for electronic document support"))
                 else:
