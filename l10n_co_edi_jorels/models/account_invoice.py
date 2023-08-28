@@ -1075,6 +1075,7 @@ class AccountInvoice(models.Model):
                 # json_request y billing_reference
                 billing_reference = False
                 type_edi_document = rec.get_type_edi_document()
+                invoice_rec = None
                 if type_edi_document != 'none':
                     json_request['legal_monetary_totals'] = rec.get_ei_legal_monetary_totals()
                     json_request['lines'] = rec.get_ei_lines()
@@ -1082,9 +1083,20 @@ class AccountInvoice(models.Model):
                     if type_edi_document in ('invoice', 'doc_support'):
                         # Sales invoice
                         billing_reference = False
-                    elif type_edi_document in ('credit_note', 'note_support', 'debit_note'):
+                    elif type_edi_document in ('credit_note', 'note_support'):
                         # Credit note
+                        invoice_env = self.env['account.invoice']
+                        invoice_rec = invoice_env.search([('id', '=', rec.refund_invoice_id.id)])
                         billing_reference = True
+                    elif type_edi_document == 'debit_note':
+                        # Debit note
+                        if self.is_debit_note_module():
+                            if not rec.ei_is_correction_without_reference:
+                                invoice_env = self.env['account.invoice']
+                                invoice_rec = invoice_env.search([('id', '=', rec.debit_invoice_id.id)])
+                            billing_reference = True
+                        else:
+                            raise UserError(_("The debit notes module has not been installed."))
                 else:
                     raise UserError(_("This type of document does not need to be sent to DIAN"))
 
@@ -1101,7 +1113,6 @@ class AccountInvoice(models.Model):
                         raise UserError(_("You need to select a correction code first"))
 
                     if not rec.ei_is_correction_without_reference:
-                        invoice_rec = self.env['account.invoice'].search([('number', '=', rec.origin)])
                         if invoice_rec and invoice_rec.ei_uuid:
                             json_request["reference"] = {
                                 "number": invoice_rec.number_formatted,
@@ -1133,7 +1144,7 @@ class AccountInvoice(models.Model):
         type_document = 'none'
         for rec in self:
             if rec.type in ('out_invoice', 'in_invoice'):
-                if ('debit_invoice_id' in rec) and rec.debit_invoice_id:
+                if (('debit_invoice_id' in rec) and rec.debit_invoice_id) or rec.ei_is_correction_without_reference:
                     # Debit note
                     type_document = 'debit_note'
                 else:
@@ -1151,7 +1162,7 @@ class AccountInvoice(models.Model):
         type_edi_document = 'none'
         for rec in self:
             if rec.type == 'out_invoice':
-                if ('debit_invoice_id' in rec) and rec.debit_invoice_id:
+                if (('debit_invoice_id' in rec) and rec.debit_invoice_id) or rec.ei_is_correction_without_reference:
                     # Debit note
                     type_edi_document = 'debit_note'
                 else:
@@ -1163,7 +1174,7 @@ class AccountInvoice(models.Model):
             elif rec.type == 'in_invoice' \
                     and rec.resolution_id \
                     and rec.resolution_id.resolution_type_document_id.id == 12:
-                if ('debit_invoice_id' in rec) and rec.debit_invoice_id:
+                if (('debit_invoice_id' in rec) and rec.debit_invoice_id) or rec.ei_is_correction_without_reference:
                     # There is no debit note for document support
                     raise UserError(_("There is not debit note for electronic document support"))
                 else:
@@ -1310,6 +1321,11 @@ class AccountInvoice(models.Model):
     def skip_validate_dian_production(self):
         for rec in self:
             rec.skip_validate_dian()
+
+    @api.multi
+    def is_debit_note_module(self):
+        self.ensure_one()
+        return True if hasattr(self, 'debit_invoice_id') else False
 
     @api.multi
     def action_invoice_open(self):
