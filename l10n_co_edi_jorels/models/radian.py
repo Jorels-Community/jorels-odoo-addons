@@ -226,6 +226,9 @@ class Radian(models.Model):
     @api.multi
     def action_post(self):
         for rec in self:
+            if rec.state != 'draft':
+                continue
+
             if rec.type == 'customer' and rec.invoice_id.type not in ('out_invoice', 'out_refund'):
                 raise UserError(_("The invoice must be a sales invoice"))
             if rec.type == 'supplier' and rec.invoice_id.type not in ('in_invoice', 'in_refund'):
@@ -332,6 +335,10 @@ class Radian(models.Model):
     @api.multi
     def validate_dian(self):
         for rec in self:
+            if rec.state != 'posted':
+                continue
+
+            # TODO: Validate in order, to avoid conflicts
             if rec.company_id.ei_enable and not rec.edi_is_valid and (
                     (rec.type == 'supplier' and rec.event_id.code in ('030', '031', '032', '033')) or \
                     (rec.type == 'customer' and rec.event_id.code == '034')
@@ -428,11 +435,12 @@ class Radian(models.Model):
                 else:
                     raise UserError(_("No logical response was obtained from the API."))
             except Exception as e:
-                _logger.debug("Failed to process the request: %s", e)
+                _logger.debug("Failed to process the request for document: %s: %s", (rec.name, e))
                 if not rec.company_id.ei_always_validate:
-                    raise UserError(_("Failed to process the request: %s") % e)
+                    raise UserError(_("Failed to process the request for document: %s: %s") % (rec.name, e))
                 else:
-                    rec.message_post(body=_("DIAN Electronic invoicing: Failed to process the request: %s") % e)
+                    rec.message_post(body=_("DIAN Electronic invoicing: "
+                                            "Failed to process the request for document: %s: %s") % (rec.name, e))
 
     @api.multi
     def status_zip(self):

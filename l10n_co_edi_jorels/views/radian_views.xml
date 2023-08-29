@@ -161,6 +161,11 @@
                         string="Not valid in DIAN"
                         domain="[('edi_is_valid','=',False)]"/>
                 <separator/>
+                <filter name="my_pending_events"
+                        string="My pending events"
+                        domain="['&amp;',('edi_is_valid','=',False),'|',('state','=','draft'),('state','=','posted')]"
+                />
+                <separator/>
                 <filter domain="[('user_id','=',uid)]" name="myevents" help="My Events"/>
                 <group expand="0" string="Invoice">
                     <filter name="groupby_invoice" context="{'group_by' : 'invoice_id'}" string="Invoice"/>
@@ -168,6 +173,23 @@
                 <group expand="0" string="Event">
                     <filter name="groupby_event" context="{'group_by' : 'event_id'}" string="Event"/>
                 </group>
+                <separator/>
+                <filter name="filter_030"
+                        string="Acknowledgment of receipt"
+                        domain="[('event_id.code','=','030')]"/>
+                <filter name="filter_031"
+                        string="Claim"
+                        domain="[('event_id.code','=','031')]"/>
+                <filter name="filter_032"
+                        string="Receipt of goods/services"
+                        domain="[('event_id.code','=','032')]"/>
+                <filter name="filter_033"
+                        string="Express acceptance"
+                        domain="[('event_id.code','=','033')]"/>
+                <filter name="filter_034"
+                        string="Tacit acceptance"
+                        domain="[('event_id.code','=','034')]"/>
+                <separator/>
             </search>
         </field>
     </record>
@@ -180,7 +202,7 @@
         <field name="view_mode">tree,form</field>
         <field eval="False" name="view_id"/>
         <field name="domain">[('type','=','supplier')]</field>
-        <field name="context">{'default_type': 'supplier', 'type': 'supplier', 'search_default_groupby_invoice': 1}
+        <field name="context">{'default_type': 'supplier', 'type': 'supplier', 'search_default_my_pending_events': 1}
         </field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -216,7 +238,7 @@
         <field name="view_mode">tree,form</field>
         <field eval="False" name="view_id"/>
         <field name="domain">[('type','=','customer')]</field>
-        <field name="context">{'default_type': 'customer', 'type': 'customer', 'search_default_groupby_invoice': 1}
+        <field name="context">{'default_type': 'customer', 'type': 'customer', 'search_default_my_pending_events': 1}
         </field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -250,5 +272,21 @@
         <field name="binding_model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
         <field name="state">code</field>
         <field name="code">records._send_email()</field>
+    </record>
+
+    <record id="action_radian_post" model="ir.actions.server">
+        <field name="name">Confirm draft events</field>
+        <field name="model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
+        <field name="binding_model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
+        <field name="state">code</field>
+        <field name="code">records.action_post()</field>
+    </record>
+
+    <record id="action_radian_validate_dian" model="ir.actions.server">
+        <field name="name">Validate DIAN</field>
+        <field name="model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
+        <field name="binding_model_id" ref="l10n_co_edi_jorels.model_l10n_co_edi_jorels_radian"/>
+        <field name="state">code</field>
+        <field name="code">records.validate_dian()</field>
     </record>
 </odoo>
