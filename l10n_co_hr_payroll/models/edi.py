@@ -36,9 +36,11 @@ class Edi(models.Model):
     _name = "l10n_co_hr_payroll.edi"
     _description = "Payroll Edi"
 
-    # They allow storing synchronous and production modes used when invoicing
-    edi_sync = fields.Boolean(string="Sync", default=False, copy=False)
-    edi_is_not_test = fields.Boolean(string="In production", default=False, copy=False)
+    # They allow storing synchronous and production modes
+    edi_sync = fields.Boolean(string="Sync", default=False, copy=False, readonly=True)
+    edi_is_not_test = fields.Boolean(string="In production", copy=False, readonly=True,
+                                     default=lambda self: self.env[
+                                         'res.company']._company_default_get().edi_payroll_is_not_test)
 
     # Edi fields
     payment_form_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_forms", string="Payment form", default=1,
@@ -52,37 +54,45 @@ class Edi(models.Model):
     worked_days_total = fields.Integer("Worked days", default=0)
 
     # Edi response fields
-    edi_is_valid = fields.Boolean("Is valid?", copy=False)
-    edi_is_restored = fields.Boolean("Is restored?", copy=False)
-    edi_algorithm = fields.Char("Algorithm", copy=False)
-    edi_class = fields.Char("Class", copy=False)
-    edi_number = fields.Char("Number", copy=False)
-    edi_uuid = fields.Char("UUID", copy=False)
-    edi_issue_date = fields.Date("Date", copy=False)
+    edi_is_valid = fields.Boolean(string="Valid", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    edi_is_restored = fields.Boolean(string="Is restored?", copy=False, readonly=True)
+    edi_algorithm = fields.Char(string="Algorithm", copy=False, readonly=True)
+    edi_class = fields.Char(string="Class", copy=False, readonly=True)
+    edi_number = fields.Char(string="Number", copy=False, readonly=True)
+    edi_uuid = fields.Char(string="UUID", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    edi_issue_date = fields.Date(string="Issue date", copy=False, readonly=True,
+                                 states={'draft': [('readonly', False)]})
     edi_issue_datetime = fields.Char(string="Issue datetime", copy=False, readonly=True)
-    edi_expedition_date = fields.Char("Expedition date", copy=False)
-    edi_zip_key = fields.Char("Zip key", copy=False)
-    edi_status_code = fields.Char("Status code", copy=False)
-    edi_status_description = fields.Char("Status description", copy=False)
-    edi_status_message = fields.Char("Status message", copy=False)
-    edi_errors_messages = fields.Char("Error messages", copy=False)
-    edi_xml_name = fields.Char("XML name", copy=False)
-    edi_zip_name = fields.Char("Zip name", copy=False)
-    edi_signature = fields.Char("Signature", copy=False)
-    edi_qr_code = fields.Char("QR code", copy=False)
-    edi_qr_data = fields.Char("QR data", copy=False)
-    edi_qr_link = fields.Char("QR link", copy=False)
-    edi_pdf_download_link = fields.Char("PDF link", copy=False)
-    edi_xml_base64 = fields.Binary("XML", copy=False)
-    edi_application_response_base64 = fields.Binary("Application response", copy=False)
-    edi_attached_document_base64 = fields.Binary("Attached document", copy=False)
-    edi_pdf_base64 = fields.Binary("PDF", copy=False)
-    edi_zip_base64 = fields.Binary("Zip", copy=False)
+    edi_expedition_date = fields.Char(string="Expedition date", copy=False, readonly=True)
+    edi_zip_key = fields.Char(string="Zip key", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    edi_status_code = fields.Char(string="Status code", copy=False, readonly=True)
+    edi_status_description = fields.Char(string="Status description", copy=False, readonly=True)
+    edi_status_message = fields.Char(string="Status message", copy=False, readonly=True)
+    edi_errors_messages = fields.Text(string="Message", copy=False, readonly=True)
+    edi_xml_name = fields.Char(string="Xml name", copy=False, readonly=True)
+    edi_zip_name = fields.Char(string="Zip name", copy=False, readonly=True)
+    edi_signature = fields.Char(string="Signature", copy=False, readonly=True)
+    edi_qr_code = fields.Char(string="QR code", copy=False, readonly=True)
+    edi_qr_data = fields.Text(string="QR data", copy=False, readonly=True)
+    edi_qr_link = fields.Char(string="QR link", copy=False, readonly=True)
+    edi_pdf_download_link = fields.Char(string="PDF link", copy=False, readonly=True)
+    edi_xml_base64 = fields.Binary(string='XML', copy=False, readonly=True)
+    edi_application_response_base64 = fields.Binary(string="Application response", copy=False, readonly=True)
+    edi_attached_document_base64 = fields.Binary(string="Attached document", copy=False, readonly=True,
+                                                 states={'draft': [('readonly', False)]})
+    edi_pdf_base64 = fields.Binary(string='Pdf document', copy=False, readonly=True,
+                                   states={'draft': [('readonly', False)]})
+    edi_zip_base64 = fields.Binary(string='Zip document', copy=False, readonly=True)
     edi_type_environment = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_environments",
-                                           string="Type environment", copy=False)
-    edi_payload = fields.Text("Payload", copy=False)
+                                           string="Type environment", copy=False, readonly=True,
+                                           states={'draft': [('readonly', False)]},
+                                           default=lambda self: self._default_edi_type_environment())
+    edi_payload = fields.Text("Payload", copy=False, readonly=True)
 
     edi_payload_html = fields.Html("Html payload", copy=False, compute="_compute_edi_payload_html", store=True)
+
+    def _default_edi_type_environment(self):
+        return 1 if self.env['res.company']._company_default_get().edi_payroll_is_not_test else 2
 
     def _compute_currency(self):
         for rec in self:
@@ -95,6 +105,15 @@ class Edi(models.Model):
                     'type': 'ir.actions.act_url',
                     'target': 'new',
                     'url': 'https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=' + rec.edi_uuid,
+                }
+
+    def dian_pdf_view(self):
+        for rec in self:
+            if rec.edi_uuid:
+                return {
+                    'type': 'ir.actions.act_url',
+                    'target': 'new',
+                    'url': 'https://catalogo-vpfe.dian.gov.co/Document/DownloadPayrollPDF/' + rec.edi_uuid,
                 }
 
     @api.depends('edi_payload')
