@@ -224,5 +224,21 @@
             <field name="state">code</field>
             <field name="code">records._send_edi_email()</field>
         </record>
+
+        <record id="action_create_radian_default_events" model="ir.actions.server">
+            <field name="name">Create radian default events</field>
+            <field name="model_id" ref="l10n_co_edi_jorels.model_account_move"/>
+            <field name="binding_model_id" ref="l10n_co_edi_jorels.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code">records.create_radian_default_events()</field>
+        </record>
+
+        <record id="action_invoice_validate_dian" model="ir.actions.server">
+            <field name="name">Validate DIAN</field>
+            <field name="model_id" ref="l10n_co_edi_jorels.model_account_move"/>
+            <field name="binding_model_id" ref="l10n_co_edi_jorels.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code">records.validate_dian()</field>
+        </record>
     </data>
 </odoo>

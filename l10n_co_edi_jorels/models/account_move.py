@@ -863,7 +863,7 @@ class AccountMove(models.Model):
                     rec.resolution_id = rec.journal_id.sequence_id.resolution_id.id
                 else:
                     rec.resolution_id = None
-                    _logger.debug("This type of document does not have a DIAN resolution assigned")
+                    _logger.debug("This type of document does not have a DIAN resolution assigned: %s" % rec.name)
             else:
                 rec.resolution_id = None
 
@@ -945,7 +945,8 @@ class AccountMove(models.Model):
 
                 # Check resolution
                 if not rec.resolution_id:
-                    raise UserError(_("This type of document does not have a DIAN resolution assigned"))
+                    raise UserError(
+                        _("This type of document does not have a DIAN resolution assigned: %s") % rec.name)
 
                 json_request = {
                     'number': rec.ei_number,
@@ -1254,11 +1255,12 @@ class AccountMove(models.Model):
                 else:
                     _logger.debug("This document does not need to be sent to the DIAN")
             except Exception as e:
-                _logger.debug("Failed to process the request: %s", e)
+                _logger.debug("Failed to process the request for document: %s: %s", (rec.name, e))
                 if not rec.company_id.ei_always_validate:
-                    raise UserError(_("Failed to process the request: %s") % e)
+                    raise UserError(_("Failed to process the request for document: %s: %s") % (rec.name, e))
                 else:
-                    rec.message_post(body=_("DIAN Electronic invoicing: Failed to process the request: %s") % e)
+                    rec.message_post(body=_("DIAN Electronic invoicing: "
+                                            "Failed to process the request for document: %s: %s") % (rec.name, e))
 
             if not is_test and not rec.ei_attached_document_base64_bytes:
                 rec.status_document_log()
@@ -1274,7 +1276,8 @@ class AccountMove(models.Model):
 
     def validate_dian(self):
         for rec in self:
-            rec.validate_dian_generic(False)
+            if rec.state != 'draft':
+                rec.validate_dian_generic(False)
 
     def validate_dian_test(self):
         for rec in self:
@@ -1563,3 +1566,49 @@ class AccountMove(models.Model):
             _logger.debug("Mail event. Invoice: %s, Event: %s" % (rec.number_formatted, rec.event))
 
         return res
+
+    def create_radian_default_events(self):
+        search_env = self.env['l10n_co_edi_jorels.radian']
+
+        for rec in self:
+            if rec.type in ('out_invoice', 'out_refund') and rec.payment_form_id.id == 2:
+                event_type = 'customer'
+
+                # Tacit acceptance
+                search_rec = search_env.search([('move_id', '=', rec.id), ('event_id', '=', 7)])
+                if not search_rec:
+                    search_env.create({
+                        'move_id': rec.id,
+                        'event_id': 7,
+                        'type': event_type,
+                    })
+
+            if rec.type in ('in_invoice', 'in_refund') and rec.payment_form_id.id == 2:
+                event_type = 'supplier'
+
+                # Acknowledgment of receipt of the Electronic Bill of Sale
+                search_rec = search_env.search([('move_id', '=', rec.id), ('event_id', '=', 3)])
+                if not search_rec:
+                    search_env.create({
+                        'move_id': rec.id,
+                        'event_id': 3,
+                        'type': event_type,
+                    })
+
+                # Receipt of the good and/or provision of the service
+                search_rec = search_env.search([('move_id', '=', rec.id), ('event_id', '=', 5)])
+                if not search_rec:
+                    search_env.create({
+                        'move_id': rec.id,
+                        'event_id': 5,
+                        'type': event_type,
+                    })
+
+                # Express acceptance
+                search_rec = search_env.search([('move_id', '=', rec.id), ('event_id', '=', 6)])
+                if not search_rec:
+                    search_env.create({
+                        'move_id': rec.id,
+                        'event_id': 6,
+                        'type': event_type,
+                    })
