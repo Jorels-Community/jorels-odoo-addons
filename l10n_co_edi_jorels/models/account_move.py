@@ -1569,7 +1569,7 @@ class AccountMove(models.Model):
         search_env = self.env['l10n_co_edi_jorels.radian']
 
         for rec in self:
-            if rec.type in ('out_invoice', 'out_refund') and rec.payment_form_id.id == 2:
+            if rec.move_type in ('out_invoice', 'out_refund') and rec.payment_form_id.id == 2:
                 event_type = 'customer'
 
                 # Tacit acceptance
@@ -1581,7 +1581,7 @@ class AccountMove(models.Model):
                         'type': event_type,
                     })
 
-            if rec.type in ('in_invoice', 'in_refund') and rec.payment_form_id.id == 2:
+            if rec.move_type in ('in_invoice', 'in_refund') and rec.payment_form_id.id == 2:
                 event_type = 'supplier'
 
                 # Acknowledgment of receipt of the Electronic Bill of Sale
