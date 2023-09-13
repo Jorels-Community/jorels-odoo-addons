@@ -24,7 +24,7 @@
     'summary': 'Facturación electrónica DIAN para Colombia por Jorels SAS',
     'description': "Electronic invoicing management for companies in Colombia",
     'author': "Jorels SAS",
-    'license': "AGPL-3",
+    'license': "LGPL-3",
     'category': 'Invoicing & Payments',
     'version': '15.0.22.08.03.12.42',
     'website': "https://www.jorels.com",
