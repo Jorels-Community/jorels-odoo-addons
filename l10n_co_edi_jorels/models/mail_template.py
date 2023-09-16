@@ -31,8 +31,8 @@ from odoo import models, api
 class MailTemplate(models.Model):
     _inherit = 'mail.template'
 
-    def generate_email(self, res_ids, fields=None):
-        res = super().generate_email(res_ids, fields)
+    def generate_email(self, res_ids, fields):
+        res = super(MailTemplate, self).generate_email(res_ids, fields)
 
         self.ensure_one()
 
@@ -48,6 +48,7 @@ class MailTemplate(models.Model):
                 inv_default_template = self.env.ref('account.email_template_edi_invoice')
                 ei_template = self.env.ref('l10n_co_edi_jorels.email_template_edi')
                 if self.id in (ei_template.id, inv_default_template.id):
+
                     if not move.company_id.ei_enable:
                         continue
 
@@ -75,7 +76,7 @@ class MailTemplate(models.Model):
                         zip_archive = zipfile.ZipFile(zip_path, 'w')
 
                         pdf_handle = open(pdf_path, 'wb')
-                        pdf_handle.write(base64.decodebytes(res_t["attachments"][0][1]))
+                        pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
                         pdf_handle.close()
                         zip_archive.write(pdf_path, arcname=pdf_name)
 
@@ -98,6 +99,7 @@ class MailTemplate(models.Model):
 
         elif self.model == 'l10n_co_edi_jorels.radian':
             for radian in records:
+
                 if not radian.company_id.ei_enable:
                     continue
 
@@ -110,7 +112,7 @@ class MailTemplate(models.Model):
 
                 if radian.edi_is_valid \
                         and radian.state == 'posted'\
-                        and radian.edi_uuid \
+                        and radian.edi_uuid\
                         and radian.edi_attached_document_base64:
 
                     if radian.edi_zip_name:
@@ -130,7 +132,7 @@ class MailTemplate(models.Model):
                     zip_archive = zipfile.ZipFile(zip_path, 'w')
 
                     # pdf_handle = open(pdf_path, 'wb')
-                    # pdf_handle.write(base64.decodebytes(res_t["attachments"][0][1]))
+                    # pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
                     # pdf_handle.close()
                     # zip_archive.write(pdf_path, arcname=pdf_name)
 
