@@ -111,8 +111,8 @@ class MailTemplate(models.Model):
                 # attachments = []
 
                 if radian.edi_is_valid \
-                        and radian.state == 'posted' \
-                        and radian.edi_uuid \
+                        and radian.state == 'posted'\
+                        and radian.edi_uuid\
                         and radian.edi_attached_document_base64:
 
                     if radian.edi_zip_name:

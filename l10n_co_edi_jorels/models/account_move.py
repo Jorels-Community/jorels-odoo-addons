@@ -336,7 +336,6 @@ class AccountMove(models.Model):
                 rec.ei_qr_image = qr_image
         except Exception as e:
             _logger.debug("Write response: %s", e)
-            raise UserError("Write response: %s" % e)
 
     def get_type_document_identification_id(self):
         for rec in self:
@@ -764,11 +763,11 @@ class AccountMove(models.Model):
 
                         rec.value_letters = num2words(integer_part, lang=lang).upper() + ' ' + \
                                             rec.currency_id.currency_unit_label.upper()
-
                         if decimal_part:
                             rec.value_letters = rec.value_letters + ', ' + \
                                                 num2words(decimal_part, lang=lang).upper() + ' ' + \
                                                 rec.currency_id.currency_subunit_label.upper() + '.'
+
         return res
 
     def get_ei_payment_form(self):
@@ -854,12 +853,8 @@ class AccountMove(models.Model):
                 elif type_edi_document == 'credit_note' and rec.journal_id.refund_sequence_id.resolution_id:
                     # Credit note
                     rec.resolution_id = rec.journal_id.refund_sequence_id.resolution_id.id
-                # TO DO: Debit note sequence is missing in the same journal as the invoice and credit note
-                # elif type_edi_document == 'debit_note' and rec.journal_id.debitnote_sequence_id.resolution_id:
-                # At the moment, for the credit note to work, an alternative journal must be used
                 elif type_edi_document == 'debit_note' and rec.journal_id.sequence_id.resolution_id:
                     # Debit note
-                    # rec.resolution_id = rec.journal_id.debitnote_sequence_id.resolution_id.id
                     rec.resolution_id = rec.journal_id.sequence_id.resolution_id.id
                 else:
                     rec.resolution_id = None
