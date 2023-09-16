@@ -91,6 +91,7 @@ class HrPayslip(models.Model):
         return fields.Datetime.to_string(date_hours)
 
     def compute_sheet(self):
+
         for rec in self:
             # Read all codes
             all_earn_code_list = []
