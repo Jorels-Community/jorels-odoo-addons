@@ -1,2 +1,16 @@
 /.idea/
+/update_from_csv/.idea/modules.xml
+/update_from_csv/.idea/.gitignore
+/update_from_csv/.idea/markdown.xml
+/update_from_csv/.idea/misc.xml
+/update_from_csv/.idea/inspectionProfiles/profiles_settings.xml
+/update_from_csv/.idea/update_from_csv.iml
+/update_from_csv/.idea/vcs.xml
+/update_from_csv/.idea/workspace.xml
 /.run/odoo-bin.run.xml
+l10n_co_edi_jorels/controllers/__pycache__/
+l10n_co_edi_jorels/models/__pycache__/
+l10n_co_edi_jorels/models/config/__pycache__/
+l10n_co_edi_jorels/models/listings/__pycache__/
+l10n_co_hr_payroll/models/__pycache__/
+update_from_csv/models/__pycache__/
