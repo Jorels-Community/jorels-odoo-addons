@@ -26,7 +26,7 @@
     'description': "CIIU'S para Colombia by Jorels",
     'author': "Jorels SAS",
     'license': "LGPL-3",
-    'version': '14.0.22.03.10.00.23',
+    'version': '14.0.22.03.10.00.39',
     'website': "https://www.jorels.com",
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
