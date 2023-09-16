@@ -21,13 +21,13 @@
 #
 
 {
-    'name': 'Facturación electrónica POS para Colombia por Jorels',
-    'summary': 'Facturación electrónica POS para Colombia por Jorels',
+    'name': 'Free POS electronic invoice for Colombia by Jorels',
+    'summary': 'Free POS electronic invoice for Colombia by Jorels',
     'description': "Free POS electronic invoice for Colombia by Jorels",
     'author': 'Jorels SAS',
     'license': 'LGPL-3',
     'category': 'Point of Sale',
-    'version': '14.0.22.03.07.11.36',
+    'version': '14.0.22.07.23.02.58',
     'website': 'https://www.jorels.com',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
