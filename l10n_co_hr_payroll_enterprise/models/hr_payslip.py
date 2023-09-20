@@ -38,32 +38,36 @@ _logger = logging.getLogger(__name__)
 class HrPayslip(models.Model):
     _inherit = 'hr.payslip'
 
-    origin_payslip_id = fields.Many2one(comodel_name="hr.payslip", string="Origin payslip", readonly=True,
-                                        states={'draft': [('readonly', False)]}, copy=False)
+    origin_payslip_id = fields.Many2one(comodel_name="hr.payslip", string="Origin payslip", readonly=True, copy=False,
+                                        states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
 
     # They allow storing synchronous and production modes used when invoicing
     edi_sync = fields.Boolean(string="Sync", default=False, copy=False)
     edi_is_not_test = fields.Boolean(string="In production", default=False, copy=False)
 
     # Edi fields
-    date = fields.Date('Date Account', states={'draft': [('readonly', False)]}, readonly=True,
-                       help="Keep empty to use the period of the validation(Payslip) date.")
-    payment_date = fields.Date("Payment date", required=True, readonly=True, states={'draft': [('readonly', False)]},
+    date = fields.Date('Date Account', states={'draft': [('readonly', False)], 'verify': [('readonly', False)]},
+                       readonly=True, help="Keep empty to use the period of the validation(Payslip) date.")
+    payment_date = fields.Date("Payment date", required=True, readonly=True,
+                               states={'draft': [('readonly', False)], 'verify': [('readonly', False)]},
                                default=lambda self: fields.Date.to_string(
                                    (datetime.now() + relativedelta(months=+1, day=1, days=-1)).date()))
     payment_form_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_forms", string="Payment form", default=1,
-                                      readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+                                      readonly=True, copy=True,
+                                      states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
     payment_method_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_methods", string="Payment method",
-                                        default=1, readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+                                        default=1, readonly=True, copy=True,
+                                        states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
     accrued_total_amount = fields.Monetary("Accrued", currency_field='currency_id', readonly=True, copy=True)
     deductions_total_amount = fields.Monetary("Deductions", currency_field='currency_id', readonly=True, copy=True)
     others_total_amount = fields.Monetary("Others", currency_field='currency_id', readonly=True, copy=True)
     total_amount = fields.Monetary("Total", currency_field='currency_id', readonly=True, copy=True)
     currency_id = fields.Many2one('res.currency', string='Currency', readonly=False, compute='_compute_currency')
     earn_ids = fields.One2many('l10n_co_hr_payroll.earn.line', 'payslip_id', string='Earn lines', readonly=True,
-                               copy=True, states={'draft': [('readonly', False)]})
+                               copy=True, states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
     deduction_ids = fields.One2many('l10n_co_hr_payroll.deduction.line', 'payslip_id', string='Deduction lines',
-                                    copy=True, readonly=True, states={'draft': [('readonly', False)]})
+                                    copy=True, readonly=True,
+                                    states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
     worked_days_total = fields.Integer("Worked days", default=0)
 
     # Edi response fields
@@ -74,6 +78,7 @@ class HrPayslip(models.Model):
     edi_number = fields.Char("Number", copy=False)
     edi_uuid = fields.Char("UUID", copy=False)
     edi_issue_date = fields.Date("Date", copy=False)
+    edi_issue_datetime = fields.Char(string="Issue datetime", copy=False, readonly=True)
     edi_expedition_date = fields.Char("Expedition date", copy=False)
     edi_zip_key = fields.Char("Zip key", copy=False)
     edi_status_code = fields.Char("Status code", copy=False)
@@ -176,7 +181,7 @@ class HrPayslip(models.Model):
 
             # Remove records with codes duplicated
             earn_code_list = []
-            [earn_code_list.append(x) for x in all_earn_code_list if x not in earn_code_list]
+            [earn_code_list.append(code) for code in all_earn_code_list if code not in earn_code_list]
 
             # Remove records with codes duplicated
             deduction_code_list = []
@@ -186,7 +191,8 @@ class HrPayslip(models.Model):
             earn_list = []
             for earn_id in rec.earn_ids:
                 earn_list.append({
-                    'name': earn_id.rule_input_id.name,
+                    'input_type_id': earn_id.rule_input_id.input_type_id.id,
+                    'name': earn_id.name,
                     'sequence': earn_id.sequence,
                     'code': earn_id.code,
                     'amount': abs(earn_id.amount),
@@ -199,7 +205,8 @@ class HrPayslip(models.Model):
             deduction_list = []
             for deduction_id in rec.deduction_ids:
                 deduction_list.append({
-                    'name': deduction_id.rule_input_id.name,
+                    'input_type_id': deduction_id.rule_input_id.input_type_id.id,
+                    'name': deduction_id.name,
                     'sequence': deduction_id.sequence,
                     'code': deduction_id.code,
                     'amount': abs(deduction_id.amount)
@@ -208,18 +215,19 @@ class HrPayslip(models.Model):
             # Remove input line records with codes in earn and deduction code list
             input_line_list = []
             for input_line in rec.input_line_ids:
-                if input_line.code in earn_code_list or input_line.code in deduction_code_list:
+                if (input_line.input_type_id.code in earn_code_list
+                        or input_line.input_type_id.code in deduction_code_list):
                     input_line_list.append((2, input_line.id))
 
             # Remove worked days line records with codes in earn code list
             worked_days_line_list = []
             for worked_days_line in rec.worked_days_line_ids:
-                if worked_days_line.code in earn_code_list:
+                if worked_days_line.work_entry_type_id.code in earn_code_list:
                     worked_days_line_list.append((2, worked_days_line.id))
 
             # Prepare earn input lines
             for code in earn_code_list:
-                filter_list = list(filter(lambda x: x["code"] == code, earn_list))
+                filter_list = list(filter(lambda earn_detail: earn_detail["code"] == code, earn_list))
                 amount = 0
                 quantity = 0
                 total = 0
@@ -232,13 +240,43 @@ class HrPayslip(models.Model):
 
                 # Prepare input lines
                 input_line_list.append((0, 0, {
-                    'name': res_item['name'],
+                    'input_type_id': res_item['input_type_id'],
                     'payslip_id': rec.id,
                     'sequence': res_item['sequence'],
-                    'code': res_item['code'],
                     'amount': abs(total),
                     'contract_id': rec.contract_id.id
                 }))
+
+                # Search or create work entry type for code
+                work_entry_type_id = self.env['hr.work.entry.type'].search([('code', '=', code)])
+                if not work_entry_type_id and res_item['category'] in (
+                        'vacation_common',
+                        'vacation_compensated',
+                        'licensings_maternity_or_paternity_leaves',
+                        'licensings_permit_or_paid_licenses',
+                        'licensings_suspension_or_unpaid_leaves',
+                        'incapacities_common',
+                        'incapacities_professional',
+                        'incapacities_working',
+                        'legal_strikes',
+                        'daily_overtime',
+                        'overtime_night_hours',
+                        'hours_night_surcharge',
+                        'sunday_holiday_daily_overtime',
+                        'daily_surcharge_hours_sundays_holidays',
+                        'sunday_night_overtime_holidays',
+                        'sunday_holidays_night_surcharge_hours'
+                ):
+                    self.env['hr.work.entry.type'].create({
+                        'name': res_item['name'],
+                        'code': res_item['code'],
+                        'sequence': res_item['sequence'],
+                        'round_days': 'NO'
+                    })
+
+                work_entry_type_id = self.env['hr.work.entry.type'].search([('code', '=', code)])
+                if work_entry_type_id:
+                    work_entry_type_id = work_entry_type_id[0]
 
                 # Prepare worked days lines
                 if res_item['category'] in (
@@ -253,11 +291,12 @@ class HrPayslip(models.Model):
                         'legal_strikes'
                 ):
                     worked_days_line_list.append((0, 0, {
+                        'work_entry_type_id': work_entry_type_id.id,
                         'name': res_item['name'],
                         'payslip_id': rec.id,
                         'sequence': res_item['sequence'],
-                        'code': res_item['code'],
                         'number_of_days': abs(quantity),
+                        'number_of_hours': 0,
                         'contract_id': rec.contract_id.id
                     }))
                 elif res_item['category'] in (
@@ -270,17 +309,18 @@ class HrPayslip(models.Model):
                         'sunday_holidays_night_surcharge_hours'
                 ):
                     worked_days_line_list.append((0, 0, {
+                        'work_entry_type_id': work_entry_type_id.id,
                         'name': res_item['name'],
                         'payslip_id': rec.id,
                         'sequence': res_item['sequence'],
-                        'code': res_item['code'],
+                        'number_of_days': 0,
                         'number_of_hours': abs(quantity),
                         'contract_id': rec.contract_id.id
                     }))
 
             # Prepare deduction input lines
             for code in deduction_code_list:
-                filter_list = list(filter(lambda x: x["code"] == code, deduction_list))
+                filter_list = list(filter(lambda deduction_detail: deduction_detail["code"] == code, deduction_list))
                 amount = 0
                 for filter_item in filter_list:
                     amount += filter_item['amount']
@@ -288,10 +328,9 @@ class HrPayslip(models.Model):
                 res_item = filter_list[0]
 
                 input_line_list.append((0, 0, {
-                    'name': res_item['name'],
+                    'input_type_id': res_item['input_type_id'],
                     'payslip_id': rec.id,
                     'sequence': res_item['sequence'],
-                    'code': res_item['code'],
                     'amount': -abs(amount),
                     'contract_id': rec.contract_id.id
                 }))
@@ -360,6 +399,9 @@ class HrPayslip(models.Model):
 
     def get_json_request(self):
         for rec in self:
+            # Force compute edi payroll period
+            rec.contract_id._compute_payroll_period_id()
+
             if not rec.number:
                 raise UserError(_("The payroll must have a consecutive number, 'Reference' field"))
             if not rec.contract_id.payroll_period_id:
@@ -1156,6 +1198,8 @@ class HrPayslip(models.Model):
             ]:
                 for dict_with_days in list_with_days:
                     rec.worked_days_total -= dict_with_days['quantity']
+            if rec.worked_days_total < 0:
+                rec.worked_days_total = 0
             basic['worked_days'] = rec.worked_days_total
 
             if 'worker_salary' not in basic:
@@ -1376,6 +1420,7 @@ class HrPayslip(models.Model):
             rec.edi_number = response['number']
             rec.edi_uuid = response['uuid']
             rec.edi_issue_date = response['issue_date']
+            rec.edi_issue_datetime = response['issue_date']
             rec.edi_expedition_date = response['expedition_date']
             rec.edi_zip_key = response['zip_key']
             rec.edi_status_code = response['status_code']

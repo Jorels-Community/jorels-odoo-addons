@@ -37,7 +37,7 @@
                 </xpath>
                 <xpath expr="//button[@name='action_payslip_done']" position="after">
                     <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
-                            attrs="{'invisible': [('state','=','draft')]}"/>
+                            attrs="{'invisible': [('state','in',('draft', 'verify'))]}"/>
                 </xpath>
                 <xpath expr="//field[@name='contract_id']" position="before">
                     <field name="date"/>
@@ -254,6 +254,7 @@
                             <field name="edi_number" readonly="True"/>
                             <field name="edi_uuid" readonly="True"/>
                             <field name="edi_issue_date" readonly="True"/>
+                            <field name="edi_issue_datetime"/>
                             <field name="edi_expedition_date" readonly="True"/>
                             <field name="edi_zip_key" readonly="True"/>
                             <field name="edi_status_code" readonly="True"/>

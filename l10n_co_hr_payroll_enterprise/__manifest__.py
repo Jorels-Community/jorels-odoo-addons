@@ -28,7 +28,7 @@
     'author': 'Jorels SAS',
     'license': 'LGPL-3',
     'category': 'Human Resources',
-    'version': '15.0.23.09.06.15.59',
+    'version': '15.0.23.06.15.17.58',
     'website': "https://www.jorels.com",
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',

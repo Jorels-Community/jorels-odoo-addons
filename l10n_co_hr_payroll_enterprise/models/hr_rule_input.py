@@ -20,13 +20,16 @@
 #   email: info@jorels.com
 #
 
-from . import res_company
-from . import res_config_settings
-from . import hr_rule_input
-from . import earn_line
-from . import deduction_line
-from . import hr_contract
-from . import hr_salary_rule
-from . import hr_payslip
-from . import hr_payslip_line
-from . import hr_payslip_edi
+
+from odoo import fields, models
+
+
+class HrRuleInput(models.Model):
+    _name = 'hr.rule.input'
+    _description = 'Salary Rule Input'
+
+    input_type_id = fields.Many2one('hr.payslip.input.type', string='Payslip Input Type', required=True)
+
+    name = fields.Char(related='input_type_id.name', readonly=True)
+    code = fields.Char(related='input_type_id.code', readonly=True)
+    input_id = fields.Many2one('hr.salary.rule', string='Salary Rule Input', required=True)

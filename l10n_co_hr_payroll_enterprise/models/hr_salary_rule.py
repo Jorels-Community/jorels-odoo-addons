@@ -30,6 +30,8 @@ from odoo.tools.safe_eval import safe_eval
 class HrSalaryRule(models.Model):
     _inherit = 'hr.salary.rule'
 
+    input_ids = fields.One2many('hr.rule.input', 'input_id', string='Inputs', copy=True)
+
     type_concept = fields.Selection([
         ('earn', 'Earn'),
         ('deduction', 'Deduction'),
