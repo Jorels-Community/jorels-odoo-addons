@@ -201,7 +201,8 @@
         <field name="view_mode">tree,form</field>
         <field eval="False" name="view_id"/>
         <field name="domain">[('type','=','supplier')]</field>
-        <field name="context">{'default_type': 'supplier', 'type': 'supplier', 'search_default_my_pending_events': 1}</field>
+        <field name="context">{'default_type': 'supplier', 'type': 'supplier', 'search_default_my_pending_events': 1}
+        </field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Radian event!
@@ -235,7 +236,8 @@
         <field name="view_mode">tree,form</field>
         <field eval="False" name="view_id"/>
         <field name="domain">[('type','=','customer')]</field>
-        <field name="context">{'default_type': 'customer', 'type': 'customer', 'search_default_my_pending_events': 1}</field>
+        <field name="context">{'default_type': 'customer', 'type': 'customer', 'search_default_my_pending_events': 1}
+        </field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Radian event!
