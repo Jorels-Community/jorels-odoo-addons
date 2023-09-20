@@ -3,7 +3,7 @@ Jorels SAS
 
 Desarrollo
 ==========
-Jorge Sanabria (2021-2022). Desarrollo del código fuente del módulo
+Jorge Sanabria (2021-2022). Desarrollo del código fuente del modulo
 
 Aportes de conocimiento
 =======================

@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
 #
-#   l10n_co_edi_jorels
-#   Copyright (C) 2022  Jorels SAS
+# Jorels S.A.S. - Copyright (2019-2022)
 #
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published
-#   by the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
+# This file is part of l10n_co_edi_jorels.
 #
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
+# l10n_co_edi_jorels is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# l10n_co_edi_jorels is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
 #
-#   email: info@jorels.com
+# You should have received a copy of the GNU Lesser General Public License
+# along with l10n_co_edi_jorels.  If not, see <https://www.gnu.org/licenses/>.
+#
+# email: info@jorels.com
 #
 
 import base64
@@ -273,10 +274,11 @@ class AccountMove(models.Model):
     def is_journal_pos(self):
         self.ensure_one()
         try:
-            return bool(self.env['pos.config'].search([
+            journal_pos_rec = self.env['pos.config'].search([
                 ('invoice_journal_id.id', '=', self.journal_id.id),
                 ('module_account', '=', True)
-            ]))
+            ])
+            return bool(journal_pos_rec)
         except KeyError:
             return False
 
@@ -337,7 +339,6 @@ class AccountMove(models.Model):
                 rec.ei_qr_image = qr_image
         except Exception as e:
             _logger.debug("Write response: %s", e)
-            raise UserError("Write response: %s" % e)
 
     def get_type_document_identification_id(self):
         for rec in self:
@@ -765,11 +766,11 @@ class AccountMove(models.Model):
 
                         rec.value_letters = num2words(integer_part, lang=lang).upper() + ' ' + \
                                             rec.currency_id.currency_unit_label.upper()
-
                         if decimal_part:
                             rec.value_letters = rec.value_letters + ', ' + \
                                                 num2words(decimal_part, lang=lang).upper() + ' ' + \
                                                 rec.currency_id.currency_subunit_label.upper() + '.'
+
         return res
 
     def get_ei_payment_form(self):
@@ -855,13 +856,12 @@ class AccountMove(models.Model):
                 elif type_edi_document == 'credit_note' and rec.journal_id.resolution_credit_note_id:
                     # Credit note
                     rec.resolution_id = rec.journal_id.resolution_credit_note_id.id
-                # At the moment, for the credit note to work, an alternative journal must be used
                 elif type_edi_document == 'debit_note' and rec.journal_id.resolution_debit_note_id:
                     # Debit note
                     rec.resolution_id = rec.journal_id.resolution_debit_note_id.id
                 else:
                     rec.resolution_id = None
-                    _logger.debug("This type of document does not have a DIAN resolution assigned")
+                    _logger.debug("This type of document does not have a DIAN resolution assigned: %s" % rec.name)
             else:
                 rec.resolution_id = None
 
@@ -943,7 +943,8 @@ class AccountMove(models.Model):
 
                 # Check resolution
                 if not rec.resolution_id:
-                    raise UserError(_("This type of document does not have a DIAN resolution assigned"))
+                    raise UserError(
+                        _("This type of document does not have a DIAN resolution assigned: %s") % rec.name)
 
                 json_request = {
                     'number': rec.ei_number,
@@ -1063,8 +1064,9 @@ class AccountMove(models.Model):
                     elif type_edi_document == 'debit_note':
                         # Debit note
                         if self.is_debit_note_module():
-                            invoice_env = self.env['account.move']
-                            invoice_rec = invoice_env.search([('id', '=', rec.debit_origin_id.id)])
+                            if not rec.ei_is_correction_without_reference:
+                                invoice_env = self.env['account.move']
+                                invoice_rec = invoice_env.search([('id', '=', rec.debit_origin_id.id)])
                             billing_reference = True
                         else:
                             raise UserError(_("The debit notes module has not been installed."))
@@ -1114,7 +1116,7 @@ class AccountMove(models.Model):
         type_document = 'none'
         for rec in self:
             if rec.move_type in ('out_invoice', 'in_invoice'):
-                if ('debit_origin_id' in rec) and rec.debit_origin_id:
+                if (('debit_origin_id' in rec) and rec.debit_origin_id) or rec.ei_is_correction_without_reference:
                     # Debit note
                     type_document = 'debit_note'
                 else:
@@ -1131,7 +1133,7 @@ class AccountMove(models.Model):
         type_edi_document = 'none'
         for rec in self:
             if rec.move_type == 'out_invoice':
-                if ('debit_origin_id' in rec) and rec.debit_origin_id:
+                if (('debit_origin_id' in rec) and rec.debit_origin_id) or rec.ei_is_correction_without_reference:
                     # Debit note
                     type_edi_document = 'debit_note'
                 else:
@@ -1143,7 +1145,7 @@ class AccountMove(models.Model):
             elif rec.move_type == 'in_invoice' \
                     and rec.resolution_id \
                     and rec.resolution_id.resolution_type_document_id.id == 12:
-                if ('debit_origin_id' in rec) and rec.debit_origin_id:
+                if (('debit_origin_id' in rec) and rec.debit_origin_id) or rec.ei_is_correction_without_reference:
                     # There is no debit note for document support
                     raise UserError(_("There is not debit note for electronic document support"))
                 else:
@@ -1253,16 +1255,18 @@ class AccountMove(models.Model):
                 else:
                     _logger.debug("This document does not need to be sent to the DIAN")
             except Exception as e:
-                _logger.debug("Failed to process the request: %s", e)
+                _logger.debug("Failed to process the request for document: %s: %s", (rec.name, e))
                 if not rec.company_id.ei_always_validate:
-                    raise UserError(_("Failed to process the request: %s") % e)
+                    raise UserError(_("Failed to process the request for document: %s: %s") % (rec.name, e))
                 else:
-                    rec.message_post(body=_("DIAN Electronic invoicing: Failed to process the request: %s") % e)
+                    rec.message_post(body=_("DIAN Electronic invoicing: "
+                                            "Failed to process the request for document: %s: %s") % (rec.name, e))
 
             if not is_test and not rec.ei_attached_document_base64_bytes:
                 rec.status_document_log()
                 if not rec.ei_attached_document_base64_bytes:
                     _logger.error('Unable to obtain an attached document.')
+
             if not rec.is_edi_mail_sent and rec.company_id.enable_mass_send_print and rec.is_to_send_edi_email():
                 try:
                     rec.mass_send_print()
@@ -1272,7 +1276,8 @@ class AccountMove(models.Model):
 
     def validate_dian(self):
         for rec in self:
-            rec.validate_dian_generic(False)
+            if rec.state != 'draft':
+                rec.validate_dian_generic(False)
 
     def validate_dian_test(self):
         for rec in self:
@@ -1564,3 +1569,49 @@ class AccountMove(models.Model):
             _logger.debug("Mail event. Invoice: %s, Event: %s" % (rec.number_formatted, rec.event))
 
         return res
+
+    def create_radian_default_events(self):
+        search_env = self.env['l10n_co_edi_jorels.radian']
+
+        for rec in self:
+            if rec.move_type in ('out_invoice', 'out_refund') and rec.payment_form_id.id == 2:
+                event_type = 'customer'
+
+                # Tacit acceptance
+                search_rec = search_env.search([('move_id', '=', rec.id), ('event_id', '=', 7)])
+                if not search_rec:
+                    search_env.create({
+                        'move_id': rec.id,
+                        'event_id': 7,
+                        'type': event_type,
+                    })
+
+            if rec.move_type in ('in_invoice', 'in_refund') and rec.payment_form_id.id == 2:
+                event_type = 'supplier'
+
+                # Acknowledgment of receipt of the Electronic Bill of Sale
+                search_rec = search_env.search([('move_id', '=', rec.id), ('event_id', '=', 3)])
+                if not search_rec:
+                    search_env.create({
+                        'move_id': rec.id,
+                        'event_id': 3,
+                        'type': event_type,
+                    })
+
+                # Receipt of the good and/or provision of the service
+                search_rec = search_env.search([('move_id', '=', rec.id), ('event_id', '=', 5)])
+                if not search_rec:
+                    search_env.create({
+                        'move_id': rec.id,
+                        'event_id': 5,
+                        'type': event_type,
+                    })
+
+                # Express acceptance
+                search_rec = search_env.search([('move_id', '=', rec.id), ('event_id', '=', 6)])
+                if not search_rec:
+                    search_env.create({
+                        'move_id': rec.id,
+                        'event_id': 6,
+                        'type': event_type,
+                    })

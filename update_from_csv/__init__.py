@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2022)
+# Jorels S.A.S. - Copyright (2019-2021)
 #
 # This file is part of update_from_csv.
 #

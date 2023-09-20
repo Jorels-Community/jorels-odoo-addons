@@ -23,7 +23,7 @@ Email: info@jorels.com
 Telegram: @Jorels_SAS
 
 ## Roadmap
-Versión 16 de Odoo
+Trabajando en la migración a la versión 15 de Odoo
 
 ## Contributing
 Colaboradores varios citados en cada proyecto.
@@ -35,4 +35,4 @@ Jorels SAS
 LGPL v3 y AGPL v3, dependiendo el modulo.
 
 ## Project status
-Actualmente los modulos funcionan perfectamente en Odoo 12, 13, 14 y 15.
+Actualmente las ramas 12, 13 y 14 estan en producción y funcionan perfectamente.

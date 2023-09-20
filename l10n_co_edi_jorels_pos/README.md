@@ -16,5 +16,5 @@ el CUFE, CUDE, resolución de facturación, nombre del cliente, documento, Nit d
 Se ha personalizado la interfaz de clientes para poder ingresar desde el POS todos los detalles del cliente exigidos por
 la DIAN, como tipo de responsabilidad, tipo de regimen, correo de facturación electrónica, municipalidad, etc.
 
-Este módulo es totalmente compatible con el módulo de facturación electrónica de Jorels y se encuentra liberado 
-bajo licencia AGPL v3.
+Este módulo es totalmente compatible con el módulo de facturación electrónica de Jorels y al igual que este último, se 
+encuentra liberado bajo licencia LGPL.
