@@ -1,6 +1,29 @@
-Update from CSV
-===============
+![Jorels](https://www.jorels.com/web/image/res.company/1/logo)
+### Jorels SAS - Copyright (2019-2023)
 
+# Update from CSV
+
+## Module name
+update_from_csv
+
+## Support
+
+[info@jorels.com](mailto:info@jorels.com)
+
+[Telegram: @Jorels_SAS](https://t.me/Jorels_SAS)
+
+[https://www.jorels.com](https://www.jorels.com)
+
+## Authors and acknowledgment
+Jorels SAS
+
+## License
+Under LGPL (Lesser General Public License)
+
+## Project status
+Tested in production on Odoo 12, 13, 14, 15 y 16.
+
+## Description
 Update from csv, insert values, using function; without external_id's. For example:
 
     <?xml version="1.0" encoding="utf-8"?>
@@ -42,7 +65,3 @@ For fleet.vehicle.model.csv:
     .
     .
     .
-
-
-![Jorels](https://www.jorels.com/web/image/res.company/1/logo)
-Under LGPL v3 License by Jorels SAS
