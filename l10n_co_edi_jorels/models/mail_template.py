@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
 #
-#   Jorels S.A.S. - Copyright (C) 2019-2023
+# Jorels S.A.S. - Copyright (2019-2022)
 #
-#   This file is part of l10n_co_edi_jorels.
+# This file is part of l10n_co_edi_jorels.
 #
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Lesser General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
+# l10n_co_edi_jorels is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Lesser General Public License for more details.
+# l10n_co_edi_jorels is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
 #
-#   You should have received a copy of the GNU Lesser General Public License
-#   along with this program. If not, see <https://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU Lesser General Public License
+# along with l10n_co_edi_jorels.  If not, see <https://www.gnu.org/licenses/>.
 #
-#   email: info@jorels.com
+# email: info@jorels.com
 #
 
 import base64
@@ -32,7 +32,9 @@ class MailTemplate(models.Model):
     _inherit = 'mail.template'
 
     def generate_email(self, res_ids, fields):
-        res = super().generate_email(res_ids, fields)
+        res = super(MailTemplate, self).generate_email(res_ids, fields)
+
+        self.ensure_one()
 
         multi_mode = True
         if isinstance(res_ids, int):
@@ -46,6 +48,7 @@ class MailTemplate(models.Model):
                 inv_default_template = self.env.ref('account.email_template_edi_invoice')
                 ei_template = self.env.ref('l10n_co_edi_jorels.email_template_edi')
                 if self.id in (ei_template.id, inv_default_template.id):
+
                     if not move.company_id.ei_enable:
                         continue
 
@@ -73,7 +76,7 @@ class MailTemplate(models.Model):
                         zip_archive = zipfile.ZipFile(zip_path, 'w')
 
                         pdf_handle = open(pdf_path, 'wb')
-                        pdf_handle.write(base64.decodebytes(res_t["attachments"][0][1]))
+                        pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
                         pdf_handle.close()
                         zip_archive.write(pdf_path, arcname=pdf_name)
 
@@ -96,6 +99,7 @@ class MailTemplate(models.Model):
 
         elif self.model == 'l10n_co_edi_jorels.radian':
             for radian in records:
+
                 if not radian.company_id.ei_enable:
                     continue
 
@@ -108,7 +112,7 @@ class MailTemplate(models.Model):
 
                 if radian.edi_is_valid \
                         and radian.state == 'posted'\
-                        and radian.edi_uuid \
+                        and radian.edi_uuid\
                         and radian.edi_attached_document_base64:
 
                     if radian.edi_zip_name:
@@ -128,7 +132,7 @@ class MailTemplate(models.Model):
                     zip_archive = zipfile.ZipFile(zip_path, 'w')
 
                     # pdf_handle = open(pdf_path, 'wb')
-                    # pdf_handle.write(base64.decodebytes(res_t["attachments"][0][1]))
+                    # pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
                     # pdf_handle.close()
                     # zip_archive.write(pdf_path, arcname=pdf_name)
 

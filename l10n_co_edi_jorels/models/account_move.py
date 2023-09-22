@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
 #
-#   Jorels S.A.S. - Copyright (C) 2019-2023
+# Jorels S.A.S. - Copyright (2019-2022)
 #
-#   This file is part of l10n_co_edi_jorels.
+# This file is part of l10n_co_edi_jorels.
 #
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Lesser General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
+# l10n_co_edi_jorels is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Lesser General Public License for more details.
+# l10n_co_edi_jorels is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
 #
-#   You should have received a copy of the GNU Lesser General Public License
-#   along with this program. If not, see <https://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU Lesser General Public License
+# along with l10n_co_edi_jorels.  If not, see <https://www.gnu.org/licenses/>.
 #
-#   email: info@jorels.com
+# email: info@jorels.com
 #
 
 import base64
@@ -274,9 +274,10 @@ class AccountMove(models.Model):
     def is_journal_pos(self):
         self.ensure_one()
         try:
-            return bool(self.env['pos.config'].search([
+            journal_pos_rec = self.env['pos.config'].search([
                 ('invoice_journal_id.id', '=', self.journal_id.id)
-            ]))
+            ])
+            return bool(journal_pos_rec)
         except KeyError:
             return False
 
@@ -337,7 +338,6 @@ class AccountMove(models.Model):
                 rec.ei_qr_image = qr_image
         except Exception as e:
             _logger.debug("Write response: %s", e)
-            raise UserError("Write response: %s" % e)
 
     def get_type_document_identification_id(self):
         for rec in self:
@@ -765,11 +765,11 @@ class AccountMove(models.Model):
 
                         rec.value_letters = num2words(integer_part, lang=lang).upper() + ' ' + \
                                             rec.currency_id.currency_unit_label.upper()
-
                         if decimal_part:
                             rec.value_letters = rec.value_letters + ', ' + \
                                                 num2words(decimal_part, lang=lang).upper() + ' ' + \
                                                 rec.currency_id.currency_subunit_label.upper() + '.'
+
         return res
 
     def get_ei_payment_form(self):
@@ -855,7 +855,6 @@ class AccountMove(models.Model):
                 elif type_edi_document == 'credit_note' and rec.journal_id.resolution_credit_note_id:
                     # Credit note
                     rec.resolution_id = rec.journal_id.resolution_credit_note_id.id
-                # At the moment, for the credit note to work, an alternative journal must be used
                 elif type_edi_document == 'debit_note' and rec.journal_id.resolution_debit_note_id:
                     # Debit note
                     rec.resolution_id = rec.journal_id.resolution_debit_note_id.id
@@ -1266,6 +1265,7 @@ class AccountMove(models.Model):
                 rec.status_document_log()
                 if not rec.ei_attached_document_base64_bytes:
                     _logger.error('Unable to obtain an attached document.')
+
             if not rec.is_edi_mail_sent and rec.company_id.enable_mass_send_print and rec.is_to_send_edi_email():
                 try:
                     rec.mass_send_print()
@@ -1573,7 +1573,7 @@ class AccountMove(models.Model):
         search_env = self.env['l10n_co_edi_jorels.radian']
 
         for rec in self:
-            if rec.type in ('out_invoice', 'out_refund') and rec.payment_form_id.id == 2:
+            if rec.move_type in ('out_invoice', 'out_refund') and rec.payment_form_id.id == 2:
                 event_type = 'customer'
 
                 # Tacit acceptance
@@ -1585,7 +1585,7 @@ class AccountMove(models.Model):
                         'type': event_type,
                     })
 
-            if rec.type in ('in_invoice', 'in_refund') and rec.payment_form_id.id == 2:
+            if rec.move_type in ('in_invoice', 'in_refund') and rec.payment_form_id.id == 2:
                 event_type = 'supplier'
 
                 # Acknowledgment of receipt of the Electronic Bill of Sale
