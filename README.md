@@ -1,3 +1,6 @@
+![Jorels](https://www.jorels.com/web/image/res.company/1/logo)
+### Jorels SAS - Copyright (2019-2023)
+
 # Jorels Odoo Addons
 
 Jorels Odoo Addons
