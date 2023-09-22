@@ -1,24 +1,32 @@
-![Jorels](https://www.jorels.com/web/image/res.company/1/logo)
-### Jorels SAS - Copyright (2019-2023)
-
 # Jorels Odoo Addons
 
+Jorels Odoo Addons
+
+## Name
+Jorels Odoo Addons
+
+## Description
+Modulos de Odoo de código y licencia abierta.
+
+## Installation
+Instalar normalmente como cualquier otro modulo de Odoo.
+
+## Usage
+Usar como cualquier otro módulo de Odoo, teniendo en cuenta la reglamentación legal que corresponda en las configuraciones de Odoo.
+
 ## Support
+Email: info@jorels.com
 
-[info@jorels.com](mailto:info@jorels.com)
+Telegram: @Jorels_SAS
 
-[Telegram: @Jorels_SAS](https://t.me/Jorels_SAS)
-
-[https://www.jorels.com](https://www.jorels.com)
+## Contributing
+Colaboradores varios citados en cada proyecto.
 
 ## Authors and acknowledgment
 Jorels SAS
 
 ## License
-Under LGPL (Lesser General Public License)
+LGPL v3 y AGPL v3, dependiendo el módulo.
 
 ## Project status
-Tested in production on Odoo 12, 13, 14, 15 y 16.
-
-## Description
-Jorels Odoo Addons
+En producción y funcionan perfectamente.
