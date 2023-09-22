@@ -1,20 +1,27 @@
-# l10n_co_edi_jorels_pos
+![Jorels](https://www.jorels.com/web/image/res.company/1/logo)
+### Jorels SAS - Copyright (2019-2023)
 
-Modulo POS de facturación electrónica libre por Jorels SAS
-----------------------------------------------------------
+# POS Electronic invoicing for Colombia
 
-Con este módulo puedes facturar electrónicamente con la DIAN desde el POS. Adicionalmente puedes elegir entre usar el 
-recibo de siempre, la factura normal no electrónica o bien si el cliente lo desea emitir la factura electrónica 
-correspondiente. 
+## Module name
+l10n_co_edi_jorels_pos
 
-Esto se consigue, pues es posible elegir un diario diferente para la facturación normal y otro para la factura 
-electrónica; logrando así una independencia entre las secuencias.
+## Support
 
-El ticket de venta se ha personalizado para asemejarse a una factura electrónica, incluyendo los parámetros de ley como 
-el CUFE, CUDE, resolución de facturación, nombre del cliente, documento, Nit de la empresa, etc.
+[info@jorels.com](mailto:info@jorels.com)
 
-Se ha personalizado la interfaz de clientes para poder ingresar desde el POS todos los detalles del cliente exigidos por
-la DIAN, como tipo de responsabilidad, tipo de regimen, correo de facturación electrónica, municipalidad, etc.
+[Telegram: @Jorels_SAS](https://t.me/Jorels_SAS)
 
-Este módulo es totalmente compatible con el módulo de facturación electrónica de Jorels y al igual que este último, se 
-encuentra liberado bajo licencia LGPL.
+[https://www.jorels.com](https://www.jorels.com)
+
+## Authors and acknowledgment
+Jorels SAS
+
+## License
+Under LGPL (Lesser General Public License)
+
+## Project status
+Tested in production on Odoo 12, 13, 14, 15 y 16.
+
+## Description
+Odoo module for POS electronic invoicing for Colombia
