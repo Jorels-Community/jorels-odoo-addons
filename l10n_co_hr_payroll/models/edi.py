@@ -359,11 +359,13 @@ class Edi(models.Model):
                 elif 'is_valid' in response:
                     rec.write_response(response, payload)
                     if response['is_valid']:
-                        self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                        # self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                        _logger.debug("The validation at DIAN has been successful.")
                     elif 'zip_key' in response:
                         if response['zip_key'] is not None:
                             if not rec.edi_is_not_test:
-                                self.env.user.notify_success(message=_("Document sent to DIAN in habilitation."))
+                                # self.env.user.notify_success(message=_("Document sent to DIAN in habilitation."))
+                                _logger.debug("Document sent to DIAN in habilitation.")
                             else:
                                 temp_message = {rec.edi_status_message, rec.edi_errors_messages,
                                                 rec.edi_status_description, rec.edi_status_code}
@@ -434,11 +436,13 @@ class Edi(models.Model):
                     elif 'is_valid' in response:
                         rec.write_response(response, payload)
                         if response['is_valid']:
-                            self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                            # self.env.user.notify_success(message=_("The validation at DIAN has been successful."))
+                            _logger.debug("The validation at DIAN has been successful.")
                         elif 'zip_key' in response or 'uuid' in response:
                             if response['zip_key'] is not None or response['uuid'] is not None:
                                 if not rec.edi_is_not_test:
-                                    self.env.user.notify_success(message=_("Document sent to DIAN in testing."))
+                                    # self.env.user.notify_success(message=_("Document sent to DIAN in testing."))
+                                    _logger.debug("Document sent to DIAN in testing.")
                                 else:
                                     temp_message = {rec.edi_status_message, rec.edi_errors_messages,
                                                     rec.edi_status_description, rec.edi_status_code}
@@ -493,15 +497,15 @@ class Edi(models.Model):
                         raise UserError(response['detail'])
                     if 'message' in response:
                         if response['message'] == 'Unauthenticated.' or response['message'] == '':
-                            self.env.user.notify_warning(message=_("Authentication error with the API"))
+                            # self.env.user.notify_warning(message=_("Authentication error with the API"))
                             _logger.debug("Authentication error with the API")
                         else:
                             if 'errors' in response:
-                                self.env.user.notify_warning(
-                                    message=response['message'] + '/ errors: ' + str(response['errors']))
+                                # self.env.user.notify_warning(
+                                #     message=response['message'] + '/ errors: ' + str(response['errors']))
                                 _logger.debug(response['message'] + '/ errors: ' + str(response['errors']))
                             else:
-                                self.env.user.notify_warning(message=response['message'])
+                                # self.env.user.notify_warning(message=response['message'])
                                 _logger.debug(response['message'])
                     elif response and ('is_valid' in response[0]):
                         success = False
@@ -511,20 +515,20 @@ class Edi(models.Model):
                                 success = True
                                 break
                         if success:
-                            self.env.user.notify_info(message=_("Validation in DIAN has been successful."))
+                            # self.env.user.notify_info(message=_("Validation in DIAN has been successful."))
                             _logger.debug("Validation in DIAN has been successful.")
                         else:
-                            self.env.user.notify_warning(message=_("The document has not been validated."))
+                            # self.env.user.notify_warning(message=_("The document has not been validated."))
                             _logger.debug("The document has not been validated.")
                     else:
-                        self.env.user.notify_warning(message=_("The document could not be consulted."))
+                        # self.env.user.notify_warning(message=_("The document could not be consulted."))
                         _logger.debug("The document could not be consulted.")
                 else:
-                    self.env.user.notify_warning(
-                        message=_("A number is required to verify the status of the document."))
+                    # self.env.user.notify_warning(
+                    #     message=_("A number is required to verify the status of the document."))
                     _logger.debug("A number is required to verify the status of the document.")
             except Exception as e:
-                self.env.user.notify_warning(message=_("Failed to process the request"))
+                # self.env.user.notify_warning(message=_("Failed to process the request"))
                 _logger.debug("Failed to process the request: %s", e)
 
     @api.model
