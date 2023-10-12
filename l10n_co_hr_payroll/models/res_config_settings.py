@@ -109,4 +109,6 @@ class ResConfigSettings(models.TransientModel):
         res['edi_payroll_is_not_test'] = self.env.company.edi_payroll_is_not_test
         res['edi_payroll_enable'] = self.env.company.edi_payroll_enable
         res['edi_payroll_consolidated_enable'] = self.env.company.edi_payroll_consolidated_enable
+        res['edi_payroll_always_validate'] = self.env.company.edi_payroll_always_validate
+        res['edi_payroll_enable_validate_state'] = self.env.company.edi_payroll_enable_validate_state
         return res
