@@ -30,6 +30,7 @@ _logger = logging.getLogger(__name__)
 class Taxes(models.Model):
     _name = "l10n_co_edi_jorels.taxes"
     _inherit = "l10n_co_edi_jorels.languages"
-    _description = "Taxes"
+    _description = "DIAN Taxes"
+    _order = "code"
 
     description = fields.Char(string="Description", required=True, readonly=True)

@@ -32,5 +32,17 @@
                 </xpath>
             </field>
         </record>
+
+
+        <record id="view_tax_tree_inherit_l10n_co_edi_jorels" model="ir.ui.view">
+            <field name="name">account.tax.tree.inherit.l10n_co_edi_jorels</field>
+            <field name="model">account.tax</field>
+            <field name="inherit_id" ref="account.view_tax_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="edi_tax_id"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
