@@ -479,6 +479,7 @@ class AccountMove(models.Model):
 
     def get_ei_lines(self):
         lines = []
+        round_curr = self.currency_id.round
         for rec in self:
             for invoice_line_id in rec.invoice_line_ids:
                 if invoice_line_id.account_id:
@@ -581,34 +582,36 @@ class AccountMove(models.Model):
                                 if invoice_line_tax_id.amount_type == 'percent':
                                     tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                     tax_total.update(
-                                        {'tax_value': taxable_amount * invoice_line_tax_id.amount / 100.0})
-                                    tax_total.update({'taxable_value': taxable_amount})
+                                        {'tax_value': round_curr(taxable_amount * invoice_line_tax_id.amount / 100.0)})
+                                    tax_total.update({'taxable_value': round_curr(taxable_amount)})
                                     tax_total.update({'percent': invoice_line_tax_id.amount})
                                     tax_totals['tax_totals'].append(tax_total)
                                 elif invoice_line_tax_id.amount_type == 'fixed':
                                     tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                     tax_total.update(
-                                        {'tax_value': invoice_line_id.quantity * invoice_line_tax_id.amount})
+                                        {'tax_value': round_curr(
+                                            invoice_line_id.quantity * invoice_line_tax_id.amount)})
                                     tax_total.update({'taxable_value': invoice_line_id.quantity})
                                     # "886","number of international units","NIU"
                                     tax_total.update({'uom_code': 886})
-                                    tax_total.update({'unit_value': invoice_line_tax_id.amount})
+                                    tax_total.update({'unit_value': round_curr(invoice_line_tax_id.amount)})
                                     tax_total.update({'base_uom': "1.000000"})
                                     tax_totals['tax_totals'].append(tax_total)
                                 elif invoice_line_tax_id.amount_type == 'code':
                                     # For now, only compatible with percentage taxes
                                     if commercial_sample:
                                         tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
-                                        tax_total.update({'tax_value': invoice_line_id.price_total})
-                                        tax_total.update({'taxable_value': taxable_amount})
+                                        tax_total.update({'tax_value': round_curr(invoice_line_id.price_total)})
+                                        tax_total.update({'taxable_value': round_curr(taxable_amount)})
                                         tax_total.update(
                                             {'percent': invoice_line_id.price_total / taxable_amount * 100})
                                         tax_totals['tax_totals'].append(tax_total)
                                     else:
                                         tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                         tax_total.update(
-                                            {'tax_value': taxable_amount * invoice_line_tax_id.amount / 100.0})
-                                        tax_total.update({'taxable_value': taxable_amount})
+                                            {'tax_value': round_curr(
+                                                taxable_amount * invoice_line_tax_id.amount / 100.0)})
+                                        tax_total.update({'taxable_value': round_curr(taxable_amount)})
                                         tax_total.update({'percent': invoice_line_tax_id.amount})
                                         tax_totals['tax_totals'].append(tax_total)
                                 else:
