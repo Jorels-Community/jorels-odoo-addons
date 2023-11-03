@@ -35,7 +35,7 @@
                 </xpath>
                 <xpath expr="//page[@name='accounting']" position="after">
                     <page string="Electronic invoicing" name="electronic_invoicing"
-                          attrs="{'invisible': [('is_company','=',False),('parent_id','!=',False)]}"
+                          invisible="not is_company and parent_id"
                           groups="account.group_account_invoice">
                         <group>
                             <field name="type_regime_id"/>
@@ -47,7 +47,7 @@
                         </group>
                     </page>
                     <page string="Electronic invoicing" name="electronic_invoicing_disabled"
-                          attrs="{'invisible': ['|',('is_company','=',True),('parent_id','=',False)]}"
+                          invisible="is_company or not parent_id"
                           groups="account.group_account_invoice">
                         <div>
                             <p>The configuration related to electronic invoicing is managed in
@@ -63,9 +63,9 @@
                             <field name="postal_municipality_id"/>
                             <field name="type_document_identification_id" invisible="1"/>
                             <field name="first_name"/>
-                            <field name="other_names" attrs="{'invisible': [('is_company','=',True)]}"/>
-                            <field name="surname" attrs="{'invisible': [('is_company','=',True)]}"/>
-                            <field name="second_surname" attrs="{'invisible': [('is_company','=',True)]}"/>
+                            <field name="other_names" invisible="is_company"/>
+                            <field name="surname" invisible="is_company"/>
+                            <field name="second_surname" invisible="is_company"/>
                         </group>
                     </page>
                 </xpath>

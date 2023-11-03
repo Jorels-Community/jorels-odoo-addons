@@ -42,24 +42,19 @@ class Radian(models.Model):
     ], string='Status', required=True, readonly=True, copy=False, tracking=True, default='draft')
     date = fields.Date("Date", required=True, readonly=True, default=fields.Date.context_today, copy=False)
     event_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.events", string="Event", required=True, readonly=True,
-                               tracking=True, ondelete='RESTRICT', states={'draft': [('readonly', False)]},
+                               tracking=True, ondelete='RESTRICT',
                                domain=[('code', 'in', ('030', '031', '032', '033', '034'))])
     name = fields.Char(string="Reference", compute="_compute_name", store=True, copy=False, readonly=True,
                        default=lambda self: _("New"))
-    number = fields.Integer(string="Number", readonly=True, states={'draft': [('readonly', False)]}, tracking=True,
-                            copy=False)
-    prefix = fields.Char(string="Prefix", readonly=True, states={'draft': [('readonly', False)]}, tracking=True,
-                         copy=False)
-    note = fields.Text(string="Note", readonly=True, states={'draft': [('readonly', False)]})
+    number = fields.Integer(string="Number", readonly=True, tracking=True, copy=False)
+    prefix = fields.Char(string="Prefix", readonly=True, tracking=True, copy=False)
+    note = fields.Text(string="Note", readonly=True)
     rejection_concept_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.rejection_concepts",
                                            string="Rejection concept", required=False, readonly=True,
-                                           ondelete='RESTRICT', states={'draft': [('readonly', False)]}, tracking=True,
-                                           copy=False)
+                                           ondelete='RESTRICT', tracking=True, copy=False)
     company_id = fields.Many2one('res.company', string='Company', readonly=True, copy=False,
-                                 default=lambda self: self.env.company,
-                                 states={'draft': [('readonly', False)]})
-    move_id = fields.Many2one(comodel_name="account.move", string="Invoice", required=True, readonly=True,
-                              states={'draft': [('readonly', False)]}, copy=True,
+                                 default=lambda self: self.env.company)
+    move_id = fields.Many2one(comodel_name="account.move", string="Invoice", required=True, readonly=True, copy=True,
                               domain=[('move_type', 'in', ('in_invoice', 'in_refund', 'out_invoice', 'out_refund'))],
                               tracking=True)
 
@@ -72,15 +67,15 @@ class Radian(models.Model):
                                      compute="_compute_edi_is_not_test")
 
     # Edi response fields
-    edi_is_valid = fields.Boolean("Is valid?", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    edi_is_valid = fields.Boolean("Is valid?", copy=False, readonly=True)
     edi_is_restored = fields.Boolean("Is restored?", copy=False, readonly=True)
     edi_algorithm = fields.Char("Algorithm", copy=False, readonly=True)
     edi_class = fields.Char("Class", copy=False, readonly=True)
     edi_number = fields.Char("Number", copy=False, readonly=True)
-    edi_uuid = fields.Char("UUID", copy=False, readonly=True, states={'draft': [('readonly', False)]})
-    edi_issue_date = fields.Date("Date", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    edi_uuid = fields.Char("UUID", copy=False, readonly=True)
+    edi_issue_date = fields.Date("Date", copy=False, readonly=True)
     edi_expedition_date = fields.Char("Expedition date", copy=False, readonly=True)
-    edi_zip_key = fields.Char("Zip key", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    edi_zip_key = fields.Char("Zip key", copy=False, readonly=True)
     edi_status_code = fields.Char("Status code", copy=False, readonly=True)
     edi_status_description = fields.Char("Status description", copy=False, readonly=True)
     edi_status_message = fields.Char("Status message", copy=False, readonly=True)
@@ -94,28 +89,24 @@ class Radian(models.Model):
     edi_pdf_download_link = fields.Char("PDF link", copy=False, readonly=True)
     edi_xml_base64 = fields.Binary("XML", copy=False, readonly=True)
     edi_application_response_base64 = fields.Binary("Application response", copy=False, readonly=True)
-    edi_attached_document_base64 = fields.Binary("Attached document", copy=False, readonly=True,
-                                                 states={'draft': [('readonly', False)]})
-    edi_pdf_base64 = fields.Binary("PDF", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    edi_attached_document_base64 = fields.Binary("Attached document", copy=False, readonly=True)
+    edi_pdf_base64 = fields.Binary("PDF", copy=False, readonly=True)
     edi_zip_base64 = fields.Binary("Zip document", copy=False, readonly=True)
     edi_type_environment = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_environments",
                                            string="Type environment", copy=False, readonly=True,
-                                           states={'draft': [('readonly', False)]},
                                            default=lambda self: self._default_edi_type_environment())
     edi_payload = fields.Text("Payload", copy=False, readonly=True)
 
     # For mail attached
-    edi_attached_zip_base64 = fields.Binary('Attached zip', attachment=True, copy=False, readonly=True,
-                                            states={'draft': [('readonly', False)]})
+    edi_attached_zip_base64 = fields.Binary('Attached zip', attachment=True, copy=False, readonly=True)
 
-    user_id = fields.Many2one('res.users', string='Salesperson', tracking=True,
-                              readonly=True, states={'draft': [('readonly', False)]},
+    user_id = fields.Many2one('res.users', string='Salesperson', tracking=True, readonly=True,
                               default=lambda self: self.env.user, copy=False)
 
     type = fields.Selection([
         ('customer', 'Customer Event'),
         ('supplier', 'Supplier Event'),
-    ], readonly=True, states={'draft': [('readonly', False)]}, index=True, change_default=True,
+    ], readonly=True, index=True, change_default=True,
         default=lambda self: self._context.get('type', 'customer'), tracking=True)
 
     def dian_preview(self):
