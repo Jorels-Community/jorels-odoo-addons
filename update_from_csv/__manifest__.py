@@ -28,7 +28,7 @@
     'website': "https://www.jorels.com",
     'license': 'LGPL-3',
     'category': 'Tools',
-    'version': '16.0.0.1',
+    'version': '17.0.0.1',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
     'depends': ['base'],
