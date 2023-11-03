@@ -31,15 +31,13 @@
                     <h2>
                         <field name="type_concept" class="oe_edit_only"/>
                     </h2>
-                    <label for="earn_category"
-                           attrs="{'invisible': [('type_concept','!=','earn')]}"/>
+                    <label for="earn_category" invisible="type_concept != 'earn'"/>
                     <h2>
-                        <field name="earn_category" attrs="{'invisible': [('type_concept','!=','earn')]}"/>
+                        <field name="earn_category" invisible="type_concept != 'earn'"/>
                     </h2>
-                    <label for="deduction_category"
-                           attrs="{'invisible': [('type_concept','!=','deduction')]}"/>
+                    <label for="deduction_category" invisible="type_concept != 'deduction'"/>
                     <h2>
-                        <field name="deduction_category" attrs="{'invisible': [('type_concept','!=','deduction')]}"/>
+                        <field name="deduction_category" invisible="type_concept != 'deduction'"/>
                     </h2>
                 </xpath>
                 <xpath expr="//field[@name='appears_on_payslip']" position="after">
@@ -53,11 +51,11 @@
                     <separator colspan="4" string="Edi Percent"/>
                     <field name="edi_percent_select"/>
                     <newline/>
-                    <field name="edi_percent_fix"
-                           attrs="{'invisible':[('edi_percent_select','!=','fix')], 'required':[('edi_percent_select','=','fix')]}"/>
+                    <field name="edi_percent_fix" invisible="edi_percent_select != 'fix'"
+                           required="edi_percent_select == 'fix'"/>
                     <newline/>
-                    <field colspan="4" name="edi_percent_python_compute"
-                           attrs="{'invisible':[('edi_percent_select','!=','code')], 'required':[('edi_percent_select','=','code')]}"/>
+                    <field colspan="4" name="edi_percent_python_compute" invisible="edi_percent_select != 'code'"
+                           required="edi_percent_select == 'code'"/>
                 </xpath>
             </data>
         </field>

@@ -44,9 +44,9 @@ class Edi(models.Model):
 
     # Edi fields
     payment_form_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_forms", string="Payment form", default=1,
-                                      readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+                                      readonly=True, copy=True)
     payment_method_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_methods", string="Payment method",
-                                        default=1, readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+                                        default=1, readonly=True, copy=True)
     accrued_total_amount = fields.Monetary("Accrued", currency_field='currency_id', readonly=True, copy=True)
     deductions_total_amount = fields.Monetary("Deductions", currency_field='currency_id', readonly=True, copy=True)
     total_amount = fields.Monetary("Total", currency_field='currency_id', readonly=True, copy=True)
@@ -54,17 +54,16 @@ class Edi(models.Model):
     worked_days_total = fields.Integer("Worked days", default=0)
 
     # Edi response fields
-    edi_is_valid = fields.Boolean(string="Valid", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    edi_is_valid = fields.Boolean(string="Valid", copy=False, readonly=True)
     edi_is_restored = fields.Boolean(string="Is restored?", copy=False, readonly=True)
     edi_algorithm = fields.Char(string="Algorithm", copy=False, readonly=True)
     edi_class = fields.Char(string="Class", copy=False, readonly=True)
     edi_number = fields.Char(string="Number", copy=False, readonly=True)
-    edi_uuid = fields.Char(string="UUID", copy=False, readonly=True, states={'draft': [('readonly', False)]})
-    edi_issue_date = fields.Date(string="Issue date", copy=False, readonly=True,
-                                 states={'draft': [('readonly', False)]})
+    edi_uuid = fields.Char(string="UUID", copy=False, readonly=True)
+    edi_issue_date = fields.Date(string="Issue date", copy=False, readonly=True)
     edi_issue_datetime = fields.Char(string="Issue datetime", copy=False, readonly=True)
     edi_expedition_date = fields.Char(string="Expedition date", copy=False, readonly=True)
-    edi_zip_key = fields.Char(string="Zip key", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    edi_zip_key = fields.Char(string="Zip key", copy=False, readonly=True)
     edi_status_code = fields.Char(string="Status code", copy=False, readonly=True)
     edi_status_description = fields.Char(string="Status description", copy=False, readonly=True)
     edi_status_message = fields.Char(string="Status message", copy=False, readonly=True)
@@ -78,14 +77,11 @@ class Edi(models.Model):
     edi_pdf_download_link = fields.Char(string="PDF link", copy=False, readonly=True)
     edi_xml_base64 = fields.Binary(string='XML', copy=False, readonly=True)
     edi_application_response_base64 = fields.Binary(string="Application response", copy=False, readonly=True)
-    edi_attached_document_base64 = fields.Binary(string="Attached document", copy=False, readonly=True,
-                                                 states={'draft': [('readonly', False)]})
-    edi_pdf_base64 = fields.Binary(string='Pdf document', copy=False, readonly=True,
-                                   states={'draft': [('readonly', False)]})
+    edi_attached_document_base64 = fields.Binary(string="Attached document", copy=False, readonly=True)
+    edi_pdf_base64 = fields.Binary(string='Pdf document', copy=False, readonly=True)
     edi_zip_base64 = fields.Binary(string='Zip document', copy=False, readonly=True)
     edi_type_environment = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_environments",
                                            string="Type environment", copy=False, readonly=True,
-                                           states={'draft': [('readonly', False)]},
                                            default=lambda self: self._default_edi_type_environment())
     edi_payload = fields.Text("Payload", copy=False, readonly=True)
 
