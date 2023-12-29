@@ -34,7 +34,7 @@ class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
     # Api key
-    api_key = fields.Char(related="company_id.api_key", string="Api key", readonly=False)
+    api_key = fields.Char(related="company_id.api_key", string="Edipo api key", readonly=False)
 
     ei_always_validate = fields.Boolean(related="company_id.ei_always_validate",
                                         string="Always validate invoices",
@@ -66,6 +66,9 @@ class ResConfigSettings(models.TransientModel):
     # Ignore email edi
     ei_ignore_edi_email_check = fields.Boolean(related="company_id.ei_ignore_edi_email_check",
                                                string="Ignore edi email check", default=False, readonly=False)
+
+    # Api key
+    nimbus_api_key = fields.Char(related="company_id.nimbus_api_key", string="Nimbus api key", readonly=False)
 
     # Update resolutions on Odoo database
     @api.model
