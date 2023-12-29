@@ -1446,7 +1446,7 @@ class AccountMove(models.Model):
                         if 'message' in response:
                             if response['message'] == 'Unauthenticated.' or response['message'] == '':
                                 self.env.user.notify_warning(message=_("Authentication error with the API"))
-                                _logger.debug("Authentication error with the API")
+                                _logger.debug(_("Authentication error with the API"))
                             else:
                                 if 'errors' in response:
                                     self.env.user.notify_warning(
@@ -1610,3 +1610,81 @@ class AccountMove(models.Model):
                         'event_id': 6,
                         'type': event_type,
                     })
+
+    def get_uuid_from_nimbus(self):
+        for rec in self:
+            if not rec.company_id.ei_enable:
+                continue
+
+            try:
+                type_edi_document = rec.get_type_edi_document()
+                if type_edi_document == 'none' and rec.type in ('in_invoice', 'in_refund'):
+                    if rec.type == 'in_invoice':
+                        if ((('debit_origin_id' in rec) and rec.debit_origin_id)
+                                or rec.ei_is_correction_without_reference):
+                            # Supplier Debit Note
+                            nimbus_type_document_code = '192'
+                        elif rec.is_out_country:
+                            # Supplier Export Invoice
+                            nimbus_type_document_code = '102'
+                        else:
+                            # Supplier Invoice
+                            nimbus_type_document_code = '101'
+                    elif rec.type == 'in_refund':
+                        # Supplier Credit Note
+                        nimbus_type_document_code = '191'
+                    else:
+                        _logger.debug(_("This type of document does not is a Nimbus compatible document"))
+                        continue
+
+                    if rec.number_formatted:
+                        if rec.company_id.nimbus_api_key:
+                            token = rec.company_id.nimbus_api_key
+                        else:
+                            raise UserError(_("You must configure a Nimbus token"))
+
+                        api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.nimbus.api_url',
+                                                                                   'https://nimbus.jorels.com')
+
+                        header = {
+                            "accept": "application/json",
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer " + token
+                        }
+
+                        api_url = "{}/edi/{}/{}/{}".format(
+                            api_url,
+                            rec.partner_id.edi_sanitize_vat,
+                            nimbus_type_document_code,
+                            rec.ref
+                        )
+
+                        _logger.debug('API URL: %s', api_url)
+
+                        response = requests.get(api_url, headers=header).json()
+                        _logger.debug('Nimbus API Response: %s', response)
+
+                        if 'detail' in response:
+                            raise UserError(response['detail'])
+                        elif 'is_valid' in response:
+                            if response['is_valid']:
+                                rec.ei_is_valid = response['is_valid']
+                                rec.ei_uuid = response['uuid']
+                                # rec.ei_issue_date = response['date_issue']
+                                # rec.ei_issue_datetime = response['date_issue']
+                                # TODO: Quedan campos pendientes de agregar
+                            else:
+                                rec.message_post(body=_("There is no associated document in Nimbus"))
+                                _logger.debug(_('There is no associated document in Nimbus'))
+                        else:
+                            rec.message_post(body=_("No logical response was obtained from the Nimbus API"))
+                            _logger.debug(_("No logical response was obtained from the Nimbus API"))
+                    else:
+                        rec.message_post(body=_("A Edi number is required to check the document in Nimbus"))
+                        _logger.debug(_("A Edi number is required to check the document in Nimbus"))
+                else:
+                    rec.message_post(body=_("This type of document does not is a Nimbus compatible document"))
+                    _logger.debug(_("This type of document does not is a Nimbus compatible document"))
+            except Exception as e:
+                rec.message_post(body=_("Failed to process the Nimbus request: %s: %s") % (rec.name, e))
+                _logger.debug("Failed to process the Nimbus request: %s", e)
