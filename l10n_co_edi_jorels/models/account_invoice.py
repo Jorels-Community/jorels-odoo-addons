@@ -1697,7 +1697,12 @@ class AccountInvoice(models.Model):
                             "Authorization": "Bearer " + token
                         }
 
-                        api_url = api_url + "/edi/" + nimbus_type_document_code + "/" + rec.reference
+                        api_url = "{}/edi/{}/{}/{}".format(
+                            api_url,
+                            rec.partner_id.edi_sanitize_vat,
+                            nimbus_type_document_code,
+                            rec.reference
+                        )
 
                         _logger.debug('API URL: %s', api_url)
 
