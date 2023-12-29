@@ -241,5 +241,13 @@
             <field name="state">code</field>
             <field name="code">records.validate_dian()</field>
         </record>
+
+        <record id="action_get_uuid_from_nimbus" model="ir.actions.server">
+            <field name="name">Get Edi UUID from Nimbus</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code">records.get_uuid_from_nimbus()</field>
+        </record>
     </data>
 </odoo>
