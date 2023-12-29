@@ -37,14 +37,31 @@
                             <div class="col-12 col-lg-6 o_setting_box">
                                 <div class="o_setting_left_pane"/>
                                 <div class="o_setting_right_pane">
-                                    <span class="o_form_label">Put here your API Key</span>
-                                    <div class="text-muted">If you don't have one, write to
+                                    <span class="o_form_label">Put here your Edipo API Key</span>
+                                    <div class="text-muted">Send EDI documents with Jorels through Edipo.
+                                        If you don't have a Edipo api key, please write to
                                         <a href="mailto:info@jorels.com">info@jorels.com</a>
                                     </div>
                                     <div class="content-group">
                                         <div class="row mt16">
                                             <label for="api_key" class="col-lg-3 o_light_label"/>
                                             <field name="api_key" password="True"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <span class="o_form_label">Put here your Nimbus API Key</span>
+                                    <div class="text-muted">Receive EDI documents with Jorels through Nimbus.
+                                        If you don't have a Nimbus api key, please write to
+                                        <a href="mailto:info@jorels.com">info@jorels.com</a>
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="row mt16">
+                                            <label for="nimbus_api_key" class="col-lg-3 o_light_label"/>
+                                            <field name="nimbus_api_key" password="True"/>
                                         </div>
                                     </div>
                                 </div>

@@ -69,7 +69,7 @@ class ResCompany(models.Model):
     # email -> email
 
     # Api key
-    api_key = fields.Char(string="Api key")
+    api_key = fields.Char(string="Edipo api key")
 
     ei_always_validate = fields.Boolean(string="Always validate invoices", default=False)
 
@@ -93,6 +93,9 @@ class ResCompany(models.Model):
 
     # Ignore email edi
     ei_ignore_edi_email_check = fields.Boolean(string="Ignore edi email check", default=False)
+
+    # Nimbus api key
+    nimbus_api_key = fields.Char(string="Nimbus api key")
 
     def _compute_vat_formatted(self):
         for rec in self:
