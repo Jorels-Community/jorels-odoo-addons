@@ -32,7 +32,7 @@ class PosSession(models.Model):
     _inherit = 'pos.session'
 
     def _pos_ui_models_to_load(self):
-        result = super()._pos_ui_models_to_load()
+        result = super(PosSession, self)._pos_ui_models_to_load()
 
         result.append('l10n_co_edi_jorels.type_regimes')
         result.append('l10n_co_edi_jorels.type_liabilities')
@@ -72,12 +72,14 @@ class PosSession(models.Model):
     def _loader_params_res_partner(self):
         result = super(PosSession, self)._loader_params_res_partner()
 
-        result['search_params']['fields'].append('company_type')
-        result['search_params']['fields'].append('l10n_latam_identification_type_id')
-        result['search_params']['fields'].append('type_regime_id')
-        result['search_params']['fields'].append('type_liability_id')
-        result['search_params']['fields'].append('municipality_id')
-        result['search_params']['fields'].append('email_edi')
+        result["search_params"]["fields"].extend([
+            'company_type',
+            'l10n_latam_identification_type_id',
+            'type_regime_id',
+            'type_liability_id',
+            'municipality_id',
+            'email_edi'
+        ])
 
         return result
 
@@ -100,10 +102,3 @@ class PosSession(models.Model):
 
     def _get_pos_ui_l10n_latam_identification_type(self, params):
         return self.env['l10n_latam.identification.type'].search_read(**params['search_params'])
-
-    # def _get_pos_ui_res_partner(self, params):
-    #     result = super(PosSession, self)._get_pos_ui_res_partner()
-    #     return self.env['res.partner'].with_context(**params['context']).search_read(**params['search_params'])
-
-    # def _get_pos_ui_res_company(self, params):
-    #     return self.env['res.company'].with_context(**params['context']).search_read(**params['search_params'])
