@@ -184,9 +184,13 @@
         </field>
     </record>
 
-    <menuitem action="action_view_hr_payslip_edi"
-              id="menu_payslip_edi_tree"
+    <menuitem id="menu_payslip_edi"
               name="Edi Payslips"
               parent="hr_payroll_community.menu_hr_payroll_community_root"
+              groups="hr_payroll_community.group_hr_payroll_community_user"/>
+    <menuitem action="action_view_hr_payslip_edi"
+              id="menu_payslip_edi_tree"
+              name="All Edi Payslips"
+              parent="l10n_co_hr_payroll.menu_payslip_edi"
               groups="hr_payroll_community.group_hr_payroll_community_user"/>
 </odoo>
