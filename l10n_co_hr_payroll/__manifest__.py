@@ -26,7 +26,7 @@
     'author': 'Jorels SAS',
     'license': 'AGPL-3',
     'category': 'Human Resources',
-    'version': '12.21.12.05.1',
+    'version': '12.0.24.01.310116',
     'website': "https://www.jorels.com",
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
