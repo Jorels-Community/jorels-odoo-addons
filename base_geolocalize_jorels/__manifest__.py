@@ -22,12 +22,15 @@
 
 {
     'name': 'Partners Geolocation with Jorels SAS',
-    'version': '16.0.24.01.261811',
+    'summary': 'Partners Geolocation with Jorels SAS',
+    'description': "Partners Geolocation with Jorels SAS",
+    'author': "Jorels SAS",
+    'license': "LGPL-3",
     'category': 'Customizations',
-    'author': 'Jorels SAS',
-    'license': 'LGPL-3',
+    'version': '16.0.24.01.261811',
     'website': 'https://www.jorels.com',
-    'description': """Partners Geolocation with Jorels SAS""",
+    'images': ['static/images/main_screenshot.png'],
+    'support': 'info@jorels.com',
     'depends': [
         'base',
         'base_geolocalize',
