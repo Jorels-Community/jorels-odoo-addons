@@ -26,6 +26,7 @@
     'description': "Freight route with Jorels SAS",
     'author': "Jorels SAS",
     'website': "https://www.jorels.com",
+    'images': ['static/images/main_screenshot.png'],
     'license': "LGPL-3",
     'category': 'Services',
     'version': '16.0.0.1',
