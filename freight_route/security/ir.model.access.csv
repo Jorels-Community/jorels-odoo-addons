@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+freight_route_waypoint_user,freight_route_waypoint_user,model_freight_route_waypoint,freight_route_group_user,1,1,0,0
+freight_route_waypoint_manager,freight_route_waypoint_manager,model_freight_route_waypoint,freight_route_group_manager,1,1,1,1
+freight_route_manifest_user,freight_route_manifest_user,model_freight_route_manifest,freight_route_group_user,1,1,0,0
+freight_route_manifest_manager,freight_route_manifest_manager,model_freight_route_manifest,freight_route_group_manager,1,1,1,1

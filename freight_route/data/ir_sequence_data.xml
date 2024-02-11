@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Jorels S.A.S. - Copyright (2024)-->
+
+<!--This file is part of freight_route.-->
+
+<!--freight_route is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--freight_route is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with freight_route.  If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<odoo>
+    <!-- 1 to production   -->
+    <data noupdate="1">
+
+        <!-- Sequences for freight_route.manifest -->
+        <record id="seq_freight_route_manifest" model="ir.sequence">
+            <field name="name">Manifest sequence</field>
+            <field name="code">freight_route.manifest.sequence</field>
+            <field name="prefix">MS</field>
+            <field name="padding">1</field>
+            <field name="company_id" eval="False"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <!-- Sequences for freight_route.carry -->
+        <record id="seq_freight_route_waypoint_carry" model="ir.sequence">
+            <field name="name">Carry sequence</field>
+            <field name="code">freight_route.waypoint.carry.sequence</field>
+            <field name="prefix">CARR</field>
+            <field name="padding">1</field>
+            <field name="company_id" eval="False"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <!-- Sequences for freight_route.waypoint -->
+        <record id="seq_freight_route_waypoint_delivery" model="ir.sequence">
+            <field name="name">Delivery sequence</field>
+            <field name="code">freight_route.waypoint.delivery.sequence</field>
+            <field name="prefix">DS</field>
+            <field name="padding">1</field>
+            <field name="company_id" eval="False"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="seq_freight_route_waypoint_delivery_cash" model="ir.sequence">
+            <field name="name">Delivery cash sequence</field>
+            <field name="code">freight_route.waypoint.delivery.cash.sequence</field>
+            <field name="prefix">DCAS</field>
+            <field name="padding">1</field>
+            <field name="company_id" eval="False"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="seq_freight_route_waypoint_delivery_credit" model="ir.sequence">
+            <field name="name">Delivery credit sequence</field>
+            <field name="code">freight_route.waypoint.delivery.credit.sequence</field>
+            <field name="prefix">DCRE</field>
+            <field name="padding">1</field>
+            <field name="company_id" eval="False"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+        <record id="seq_freight_route_waypoint_delivery_cod" model="ir.sequence">
+            <field name="name">Delivery Cash on Delivery sequence</field>
+            <field name="code">freight_route.waypoint.delivery.cod.sequence</field>
+            <field name="prefix">DCOD</field>
+            <field name="padding">1</field>
+            <field name="company_id" eval="False"/>
+            <field name="implementation">no_gap</field>
+        </record>
+
+    </data>
+</odoo>
