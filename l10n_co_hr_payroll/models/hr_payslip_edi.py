@@ -90,7 +90,7 @@ class HrPayslipEdi(models.Model):
             if (not rec.employee_id) or (not rec.month) or (not rec.year):
                 return
 
-            employee = self.employee_id
+            employee = rec.employee_id
 
             date_ym = dt.date(rec.year, int(rec.month), 1)
             locale = self.env.context.get('lang') or 'en_US'
@@ -268,17 +268,21 @@ class HrPayslipEdi(models.Model):
 
     def validate_dian_generic(self):
         for rec in self:
-            if not rec.company_id.edi_payroll_enable or not rec.company_id.edi_payroll_consolidated_enable:
+            if not rec.company_id.edi_payroll_enable or not rec.company_id.edi_payroll_consolidated_enable or rec.edi_is_valid:
                 continue
             requests_data = rec.get_json_request()
             rec._validate_dian_generic(requests_data)
 
     def validate_dian(self):
         for rec in self:
-            rec.validate_dian_generic()
+            if rec.state == 'done':
+                rec.validate_dian_generic()
 
     def action_payslip_done(self):
         for rec in self:
+            if rec.state != 'draft':
+                continue
+
             if not rec.number or rec.number in ('New', _('New')):
                 if rec.credit_note:
                     rec.number = self.env['ir.sequence'].next_by_code('salary.slip.edi.note')
