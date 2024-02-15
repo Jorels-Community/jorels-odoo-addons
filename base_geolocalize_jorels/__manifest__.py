@@ -27,7 +27,7 @@
     'author': "Jorels SAS",
     'license': "LGPL-3",
     'category': 'Customizations',
-    'version': '16.0.24.01.261811',
+    'version': '15.0.24.01.261811',
     'website': 'https://www.jorels.com',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
