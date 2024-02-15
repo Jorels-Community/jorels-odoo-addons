@@ -173,6 +173,22 @@
         <field name="code">records.status_document_log()</field>
     </record>
 
+    <record id="action_edi_payroll_confirm" model="ir.actions.server">
+        <field name="name">Confirm Draft Payrolls</field>
+        <field name="model_id" ref="l10n_co_hr_payroll.model_hr_payslip_edi"/>
+        <field name="binding_model_id" ref="l10n_co_hr_payroll.model_hr_payslip_edi"/>
+        <field name="state">code</field>
+        <field name="code">records.action_payslip_done()</field>
+    </record>
+
+    <record id="action_edi_payroll_validate_dian" model="ir.actions.server">
+        <field name="name">Validate DIAN</field>
+        <field name="model_id" ref="l10n_co_hr_payroll.model_hr_payslip_edi"/>
+        <field name="binding_model_id" ref="l10n_co_hr_payroll.model_hr_payslip_edi"/>
+        <field name="state">code</field>
+        <field name="code">records.validate_dian()</field>
+    </record>
+
     <record id="action_view_hr_payslip_edi" model="ir.actions.act_window">
         <field name="name">Edi Payslips</field>
         <field name="res_model">hr.payslip.edi</field>
