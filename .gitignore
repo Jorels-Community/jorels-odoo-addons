@@ -14,3 +14,5 @@ l10n_co_edi_jorels/models/config/__pycache__/
 l10n_co_edi_jorels/models/listings/__pycache__/
 l10n_co_hr_payroll/models/__pycache__/
 update_from_csv/models/__pycache__/
+.vscode
+__pycache__

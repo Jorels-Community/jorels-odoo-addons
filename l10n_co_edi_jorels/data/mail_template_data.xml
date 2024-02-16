@@ -65,17 +65,16 @@
                         Do not hesitate to contact us if you have any questions.
                         <t t-if="object.invoice_user_id.signature">
                             <br />
-                            <t t-out="object.invoice_user_id.signature or ''">--<br/>Mitchell Admin</t>
+                                <t t-out="object.invoice_user_id.signature or ''">--<br/>Mitchell Admin</t>
                         </t>
                     </p>
                 </div>
             </field>
-            <field name="report_template" ref="account.account_invoices"/>
-            <field name="report_name">Invoice_{{ (object.name or '').replace('/','_') }}{{ object.state == 'draft' and '_draft' or '' }}</field>
+            <field name="report_template_ids" eval="[(4, ref('account.account_invoices'))]"/>
             <field name="lang">{{ object.partner_id.lang }}</field>
             <field name="auto_delete" eval="True"/>
         </record>
-
+        
         <!-- Credit note template -->
         <record id="account.email_template_edi_credit_note" model="mail.template">
             <field name="name">Credit note: Send by email</field>
@@ -116,8 +115,7 @@
                     </p>
                 </div>
             </field>
-            <field name="report_template" ref="account.account_invoices"/>
-            <field name="report_name">Credit_note_{{ (object.name or '').replace('/','_') }}{{ object.state == 'draft' and '_draft' or '' }}</field>
+            <field name="report_template_ids" eval="[(4, ref('account.account_invoices'))]"/>
             <field name="lang">{{ object.partner_id.lang }}</field>
             <field name="auto_delete" eval="True"/>
         </record>
@@ -221,8 +219,7 @@
                     </p>
                 </div>
             </field>
-            <field name="report_template" ref="account.account_invoices"/>
-            <field name="report_name">Invoice_{{ (object.name or '').replace('/','_') }}{{ object.state == 'draft' and '_draft' or '' }}</field>
+            <field name="report_template_ids" eval="[(4, ref('account.account_invoices'))]"/>
             <field name="lang">{{ object.partner_id.lang }}</field>
             <field name="auto_delete" eval="False"/>
         </record>
