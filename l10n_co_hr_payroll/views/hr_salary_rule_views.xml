@@ -23,7 +23,7 @@
         <field name="name">hr.salary.rule.form.l10n_co_hr_payroll.inherit</field>
         <field name="model">hr.salary.rule</field>
         <field name="priority">20</field>
-        <field name="inherit_id" ref="hr_payroll_community.hr_salary_rule_form"/>
+        <field name="inherit_id" ref="hr_payroll_community.hr_salary_rule_view_form"/>
         <field name="arch" type="xml">
             <data>
                 <xpath expr="//group[1]" position="before">
