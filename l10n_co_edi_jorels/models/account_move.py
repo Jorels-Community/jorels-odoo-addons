@@ -635,21 +635,21 @@ class AccountMove(models.Model):
                     if rec.ei_operation == 'transport':
                         if 'waypoint_id' not in invoice_line_id:
                             raise UserError(_("Transport compatibility is only available with "
-                                              "Jorels SAS Freight Transport Module"))
+                                              "Jorels SAS Freight Route Module"))
 
                         if invoice_line_id.waypoint_id:
                             # Check field values
-                            if not invoice_line_id.waypoint_id.name_seq:
+                            if not invoice_line_id.waypoint_id.number:
                                 raise UserError(_("A waypoint doesn't have an associated id number"))
-                            if not invoice_line_id.waypoint_id.rndc_ingresoid:
+                            if not invoice_line_id.waypoint_id.rndc_entry_code:
                                 raise UserError(_("Waypoint doesn't have an rndc ingress id: %s")
-                                                % invoice_line_id.waypoint_id.name_seq)
+                                                % invoice_line_id.waypoint_id.number)
                             if not invoice_line_id.waypoint_id.total:
                                 raise UserError(_("The waypoint %s doesn't have an total")
-                                                % invoice_line_id.waypoint_id.name_seq)
+                                                % invoice_line_id.waypoint_id.number)
                             if not invoice_line_id.waypoint_id.weight:
                                 raise UserError(_("The waypoint %s doesn't have an weight")
-                                                % invoice_line_id.waypoint_id.name_seq)
+                                                % invoice_line_id.waypoint_id.number)
 
                             # Transport remittance registered in the RNDC
                             invoice_temps.update({'sector_code': 2})
@@ -661,10 +661,10 @@ class AccountMove(models.Model):
                             # "686","gallon","GLL"
                             item_properties = [{
                                 'name': '01',
-                                'value': invoice_line_id.waypoint_id.rndc_ingresoid
+                                'value': invoice_line_id.waypoint_id.rndc_entry_code
                             }, {
                                 'name': '02',
-                                'value': invoice_line_id.waypoint_id.name_seq
+                                'value': invoice_line_id.waypoint_id.number
                             }, {
                                 'name': '03',
                                 'value': invoice_line_id.waypoint_id.total,

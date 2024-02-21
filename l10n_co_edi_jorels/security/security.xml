@@ -24,7 +24,7 @@
         <field name="name">Electronic invoicing</field>
     </record>
 
-    <!-- Travel Route User Group -->
+    <!-- Freight Route User Group -->
     <record id="l10n_co_edi_jorels_group_user" model="res.groups">
         <field name="name">User</field>
         <field name="category_id"
@@ -33,7 +33,7 @@
                eval="[(4, ref('base.group_user'))]"/>
     </record>
 
-    <!-- Travel Route Manager Group -->
+    <!-- Freight Route Manager Group -->
     <record id="l10n_co_edi_jorels_group_manager" model="res.groups">
         <field name="name">Manager</field>
         <field name="category_id"
