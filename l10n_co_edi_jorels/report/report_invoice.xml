@@ -195,8 +195,9 @@
                     <span t-esc="num_item"/>
                 </td>
             </xpath>
-            <xpath expr="//div[@id='total']/div[1]" position="before">
-                <div t-attf-class="#{'col-7' if report_type != 'html' else 'col-sm-12 col-md-12'}">
+            <xpath expr="//div[@id='right-elements']" position="before">
+                <div id="left-elements" t-attf-class="#{'col-7' if report_type != 'html' else 'col-12 col-md-5'} float-start">
+                <!-- <div t-attf-class="#{'col-7' if report_type != 'html' else 'col-sm-12 col-md-12'}"> -->
                     <div t-if="o.company_id.ei_enable and o.payment_method_id.id" name="payment_method">
                         <strong>Payment method:</strong>
                         <span t-field="o.payment_method_id"/>
@@ -213,8 +214,8 @@
                     <br/>
                 </div>
             </xpath>
-            <xpath expr="//div[@id='total']/div[2]" position="attributes">
-                <attribute name="t-attf-class">#{'col-5' if report_type != 'html' else 'col-sm-7 col-md-5'}
+            <xpath expr="//div[@id='right-elements']" position="attributes">
+                <attribute name="t-attf-class">#{'col-5' if report_type != 'html' else 'col-12 col-md-5'} float-end
                 </attribute>
             </xpath>
             <xpath expr="//t[@t-set='tax_totals']" position="before">
