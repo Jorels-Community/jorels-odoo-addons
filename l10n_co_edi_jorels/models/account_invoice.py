@@ -655,6 +655,9 @@ class AccountInvoice(models.Model):
                             # Check field values
                             if not invoice_line_id.waypoint_id.name_seq:
                                 raise UserError(_("A waypoint doesn't have an associated id number"))
+                            if not invoice_line_id.waypoint_id.rndc_ingresoid:
+                                raise UserError(_("Waypoint doesn't have an rndc ingress id: %s")
+                                                % invoice_line_id.waypoint_id.name_seq)
                             if not invoice_line_id.waypoint_id.total:
                                 raise UserError(_("The waypoint %s doesn't have an total")
                                                 % invoice_line_id.waypoint_id.name_seq)
@@ -671,6 +674,9 @@ class AccountInvoice(models.Model):
                             # "767","kilogram","KGM"
                             # "686","gallon","GLL"
                             item_properties = [{
+                                'name': '01',
+                                'value': invoice_line_id.waypoint_id.rndc_ingresoid
+                            }, {
                                 'name': '02',
                                 'value': invoice_line_id.waypoint_id.name_seq
                             }, {
@@ -679,15 +685,7 @@ class AccountInvoice(models.Model):
                                 'uom_code': '767',
                                 'quantity': invoice_line_id.waypoint_id.weight
                             }]
-
-                            if invoice_line_id.waypoint_id.rndc_ingresoid:
-                                item_properties.append({
-                                    'name': '01',
-                                    'value': invoice_line_id.waypoint_id.rndc_ingresoid
-                                })
-
                             invoice_temps.update({'item_properties': item_properties})
-
                         else:
                             # Additional service
                             invoice_temps.update({'sector_code': 1})
