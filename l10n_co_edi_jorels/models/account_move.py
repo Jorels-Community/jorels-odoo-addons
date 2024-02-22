@@ -601,8 +601,11 @@ class AccountMove(models.Model):
                                         tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                         tax_total.update({'tax_value': round_curr(invoice_line_id.price_total)})
                                         tax_total.update({'taxable_value': round_curr(taxable_amount)})
+                                        # The tax is rounded to 0 decimal places, integers. In case of rounding issues,
+                                        # it is expected that this will be sufficient to correct the problem and at the
+                                        # same time cover all possible percentage tax values for Colombia.
                                         tax_total.update(
-                                            {'percent': invoice_line_id.price_total / taxable_amount * 100})
+                                            {'percent': round(invoice_line_id.price_total / taxable_amount * 100)})
                                         tax_totals['tax_totals'].append(tax_total)
                                     else:
                                         tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
