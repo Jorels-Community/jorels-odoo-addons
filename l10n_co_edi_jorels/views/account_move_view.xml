@@ -156,17 +156,19 @@
                                     </h1>
                                     <group>
                                         <group name="group-left">
-                                            <field name="type" invisible="1"/>
-                                            <field name="move_id" invisible="1"/>
-                                            <field name="event_id"/>
+                                            <field name="type" invisible="1" />
+                                            <field name="move_id" invisible="1" />
+                                            <field name="event_id" readonly="state != 'draft'" />
                                             <field name="rejection_concept_id"
-                                                   invisible="event_id != 4"/>
+                                                invisible="event_id != 4"
+                                                readonly="state != 'draft'" />
                                         </group>
                                         <group name="group-right">
-                                            <field name="date"/>
-                                            <field name="user_id"/>
-                                            <field name="company_id" groups="base.group_multi_company"/>
-                                            <field name="note"/>
+                                            <field name="date" />
+                                            <field name="user_id" readonly="state != 'draft'" />
+                                            <field name="company_id" readonly="state != 'draft'"
+                                                groups="base.group_multi_company" />
+                                            <field name="note" readonly="state != 'draft'" />
                                         </group>
                                     </group>
                                 </sheet>
