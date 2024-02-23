@@ -1,0 +1,7 @@
+"id","code","name","driver"
+"1","C","Cédula Ciudadanía","true"
+"2","N","NIT","false"
+"3","P","Pasaporte","false"
+"4","E","Cédula Extranjería","true"
+"5","T","Tarjeta Identidad","false"
+"6","U","NUIP","true"

@@ -1,0 +1,6 @@
+"id","code","name"
+1,"C","Cambio de Conductor"
+2,"V","Cambio de Cabezote/Vehículo"
+3,"R","Cambio de Remolque/Semirremolque"
+4,"T","Cambio Total (Vehículo y Remolque)"
+5,"F","Fin del Viaje/Pérdida Total de la Carga"
