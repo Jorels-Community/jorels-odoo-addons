@@ -19,5 +19,14 @@
 #
 # email: info@jorels.com
 #
+# Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from . import listings
+from odoo import fields, models
+
+
+class FleetVehicleModelBrand(models.Model):
+    _inherit = 'fleet.vehicle.model.brand'
+    _order = 'code asc'
+    _sql_constraints = [('code_unique', 'unique (code)', 'The code must be unique per model brand!')]
+
+    code = fields.Char(string='Code', index=True, readonly=True)

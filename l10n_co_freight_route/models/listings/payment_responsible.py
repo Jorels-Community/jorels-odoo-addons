@@ -20,4 +20,12 @@
 # email: info@jorels.com
 #
 
-from . import listings
+from odoo import fields, models
+
+
+class PaymentResponsible(models.Model):
+    _name = 'l10n_co_freight_route.payment_responsible'
+    _description = 'Payment responsible'
+
+    code = fields.Char(string="Code", required=True)
+    name = fields.Char(string='Name', required=True)

@@ -20,4 +20,12 @@
 # email: info@jorels.com
 #
 
-from . import listings
+from odoo import fields, models
+
+
+class FulfilledType(models.Model):
+    _name = 'l10n_co_freight_route.fulfilled_type'
+    _description = 'Fulfilled type'
+
+    code = fields.Char(string="Code", required=True)
+    name = fields.Char(string='Name', required=True)

@@ -20,4 +20,12 @@
 # email: info@jorels.com
 #
 
-from . import listings
+from odoo import fields, models
+
+
+class LicenseCategory(models.Model):
+    _name = 'l10n_co_freight_route.license_category'
+    _description = 'License category'
+
+    code = fields.Char(string="Code", required=True)
+    name = fields.Char(string='Name', required=True)

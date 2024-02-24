@@ -19,5 +19,13 @@
 #
 # email: info@jorels.com
 #
+# Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from . import listings
+from odoo import fields, models
+
+
+class FleetVehicleModel(models.Model):
+    _inherit = 'fleet.vehicle.model'
+    _order = 'code asc'
+
+    code = fields.Char(string='Code', index=True, readonly=True)

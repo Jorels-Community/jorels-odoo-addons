@@ -20,4 +20,20 @@
 # email: info@jorels.com
 #
 
-from . import listings
+from odoo import fields, models
+
+
+class CancellationReason(models.Model):
+    _name = 'l10n_co_freight_route.cancellation_reason'
+    _description = 'Cancellation reason'
+
+    code = fields.Char(string="Code", required=True)
+    name = fields.Char(string='Name', required=True)
+
+    cargo = fields.Boolean(string="Cargo", required=True)
+    trip = fields.Boolean(string="Trip", required=True)
+    shipment = fields.Boolean(string="Shipment", required=True)
+    manifest = fields.Boolean(string="Manifest", required=True)
+    initial_fulfill_shipment = fields.Boolean(string="Initial fulfill shipment", required=True)
+    fulfill_shipment = fields.Boolean(string="Fulfill shipment", required=True)
+    fulfill_manifest = fields.Boolean(string="Fulfill manifest", required=True)

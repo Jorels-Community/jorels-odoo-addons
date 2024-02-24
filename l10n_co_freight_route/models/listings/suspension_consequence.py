@@ -20,4 +20,12 @@
 # email: info@jorels.com
 #
 
-from . import listings
+from odoo import fields, models
+
+
+class SuspensionConsequence(models.Model):
+    _name = 'l10n_co_freight_route.suspension_consequence'
+    _description = 'Suspension consequence'
+
+    code = fields.Char(string="Code", required=True)
+    name = fields.Char(string='Name', required=True)

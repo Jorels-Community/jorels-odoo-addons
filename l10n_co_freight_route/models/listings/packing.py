@@ -20,4 +20,17 @@
 # email: info@jorels.com
 #
 
-from . import listings
+from odoo import fields, models
+
+
+class Packing(models.Model):
+    _name = 'l10n_co_freight_route.packing'
+    _description = 'Packing'
+
+    code = fields.Char(string="Code", required=True)
+    name = fields.Char(string='Name', required=True)
+
+    description = fields.Char(string='Description', required=True)
+    definition = fields.Char(string='Definition', required=True)
+    minimum_empty_weight = fields.Integer(string="Minimum empty weight", required=True)
+    maximum_empty_weight = fields.Integer(string="Maximum empty weight", required=True)

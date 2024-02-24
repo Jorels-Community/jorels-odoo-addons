@@ -19,13 +19,13 @@
 #
 # email: info@jorels.com
 #
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, fields, models, tools
+from odoo import fields, models
 
 
-class FleetVehicleModel(models.Model):
-    _inherit = 'fleet.vehicle.model'
-    _order = 'code asc'
+class SuspensionReason(models.Model):
+    _name = 'l10n_co_freight_route.suspension_reason'
+    _description = 'Suspension reason'
 
-    code = fields.Integer(string='Code', index=True, readonly=True)
+    code = fields.Char(string="Code", required=True)
+    name = fields.Char(string='Name', required=True)

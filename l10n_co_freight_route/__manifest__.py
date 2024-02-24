@@ -40,7 +40,8 @@
         'l10n_co_edi_jorels',
     ],
     'data': [
-
+        'security/ir.model.access.csv',
+        'data/data.xml',
     ],
     'installable': True,
     'pre_init_hook': 'pre_init_hook',

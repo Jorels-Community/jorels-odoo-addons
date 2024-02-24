@@ -20,4 +20,16 @@
 # email: info@jorels.com
 #
 
-from . import listings
+from odoo import fields, models
+
+
+class Chapter(models.Model):
+    _name = 'l10n_co_freight_route.chapter'
+    _description = 'Chapter'
+
+    code = fields.Char(string="Code", required=True)
+    name = fields.Char(string='Name', required=True, default=None)
+
+    nature_id = fields.Many2one(comodel_name='l10n_co_freight_route.nature', string='Nature', required=True, index=True)
+    extra_heavy_load = fields.Boolean(string='Extra heavy load', required=True)
+    oversized_load = fields.Boolean(string='Oversized load', required=True)

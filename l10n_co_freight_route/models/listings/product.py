@@ -20,4 +20,15 @@
 # email: info@jorels.com
 #
 
-from . import listings
+from odoo import fields, models
+
+
+class Product(models.Model):
+    _name = 'l10n_co_freight_route.product'
+    _description = 'Product code'
+
+    code = fields.Char(string="Code", required=True)
+    name = fields.Char(string='Name', required=True, default=None)
+
+    chapter_id = fields.Many2one(comodel_name='l10n_co_freight_route.chapter', string='Chapter', required=True,
+                                 index=True)

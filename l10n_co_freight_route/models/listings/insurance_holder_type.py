@@ -20,4 +20,12 @@
 # email: info@jorels.com
 #
 
-from . import listings
+from odoo import fields, models
+
+
+class InsuranceHolderType(models.Model):
+    _name = 'l10n_co_freight_route.insurance_holder_type'
+    _description = 'Insurance holder type'
+
+    code = fields.Char(string="Code", required=True)
+    name = fields.Char(string='Name', required=True)

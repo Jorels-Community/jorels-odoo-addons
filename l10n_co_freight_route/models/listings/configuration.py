@@ -20,4 +20,17 @@
 # email: info@jorels.com
 #
 
-from . import listings
+from odoo import fields, models
+
+
+class VehicleConfiguration(models.Model):
+    _name = 'l10n_co_freight_route.configuration'
+    _description = 'Vehicle Configuration'
+
+    code = fields.Char(string="Code", required=True)
+    name = fields.Char(string='Name', required=True)
+
+    description = fields.Char(string='Description', required=True)
+    type = fields.Char(string='Type', required=True)
+    min_empty_weight = fields.Integer(string="Min empty weight", required=True)
+    max_empty_weight = fields.Integer(string="Max empty weight", required=True)

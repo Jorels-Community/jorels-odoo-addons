@@ -20,4 +20,14 @@
 # email: info@jorels.com
 #
 
-from . import listings
+from odoo import fields, models
+
+
+class VatType(models.Model):
+    _name = 'l10n_co_freight_route.vat_type'
+    _description = 'Vat type'
+
+    code = fields.Char(string="Code", required=True)
+    name = fields.Char(string='Name', required=True)
+
+    driver = fields.Boolean(string="Driver", required=True)
