@@ -25,7 +25,7 @@ from odoo import fields, models
 
 class Product(models.Model):
     _name = 'l10n_co_freight_route.product'
-    _description = 'Product code'
+    _description = 'Product'
 
     code = fields.Char(string="Code", required=True)
     name = fields.Char(string='Name', required=True, default=None)

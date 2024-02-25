@@ -23,9 +23,9 @@
 from odoo import fields, models
 
 
-class VehicleColor(models.Model):
+class Color(models.Model):
     _name = 'l10n_co_freight_route.color'
-    _description = 'Vehicle Color'
+    _description = 'Color'
 
     code = fields.Char(string="Code", required=True)
     name = fields.Char(string='Name', required=True, default=None)

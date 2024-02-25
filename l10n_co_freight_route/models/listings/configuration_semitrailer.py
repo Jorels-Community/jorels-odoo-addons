@@ -23,9 +23,9 @@
 from odoo import fields, models
 
 
-class VehicleConfigurationSemitrailer(models.Model):
+class ConfigurationSemitrailer(models.Model):
     _name = 'l10n_co_freight_route.configuration_semitrailer'
-    _description = 'Vehicle Configuration Semitrailer'
+    _description = 'Configuration Semitrailer'
 
     name = fields.Char(string='Name', required=True)
     configuration_id = fields.Many2one(comodel_name='l10n_co_freight_route.configuration', string="Configuration",

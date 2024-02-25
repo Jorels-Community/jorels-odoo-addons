@@ -23,9 +23,9 @@
 from odoo import fields, models
 
 
-class VehicleSemitrailer(models.Model):
+class Semitrailer(models.Model):
     _name = 'l10n_co_freight_route.semitrailer'
-    _description = 'Vehicle Semitrailer'
+    _description = 'Semitrailer'
 
     code = fields.Char(string="Code", required=True)
     name = fields.Char(string='Name', required=True)

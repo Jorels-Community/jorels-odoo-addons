@@ -23,9 +23,9 @@
 from odoo import fields, models
 
 
-class VehicleBodyWork(models.Model):
+class BodyWork(models.Model):
     _name = 'l10n_co_freight_route.bodywork'
-    _description = 'Vehicle BodyWork'
+    _description = 'BodyWork'
 
     code = fields.Char(string="Code", required=True)
     name = fields.Char(string='Name', required=True)

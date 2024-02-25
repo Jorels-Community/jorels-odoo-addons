@@ -23,9 +23,9 @@
 from odoo import fields, models
 
 
-class VehicleConfiguration(models.Model):
+class Configuration(models.Model):
     _name = 'l10n_co_freight_route.configuration'
-    _description = 'Vehicle Configuration'
+    _description = 'Configuration'
 
     code = fields.Char(string="Code", required=True)
     name = fields.Char(string='Name', required=True)

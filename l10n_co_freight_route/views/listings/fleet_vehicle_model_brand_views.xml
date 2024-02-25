@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Jorels S.A.S. - Copyright (2024)-->
+
+<!--This file is part of l10n_co_freight_route.-->
+
+<!--l10n_co_freight_route is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--l10n_co_freight_route is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with l10n_co_freight_route.  If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<odoo>
+    <record id="fleet_vehicle_model_brand_view_form_freight_route" model="ir.ui.view">
+        <field name="name">fleet.vehicle.model.brand.form.freight_route.inherit</field>
+        <field name="model">fleet.vehicle.model.brand</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_model_brand_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[last()]" position="after">
+                <group name="top">
+                    <field name="code"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="fleet_vehicle_model_brand_view_tree_freight_route" model="ir.ui.view">
+        <field name="name">fleet.vehicle.model.brand.tree.freight_route.inherit</field>
+        <field name="model">fleet.vehicle.model.brand</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_model_brand_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="code" />
+            </xpath>
+        </field>
+    </record>
+</odoo>
