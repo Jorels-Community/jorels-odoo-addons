@@ -21,3 +21,4 @@
 #
 
 from . import listings
+from . import fleet_vehicle

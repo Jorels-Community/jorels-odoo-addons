@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Jorels S.A.S. - Copyright (2024)-->
+
+<!--This file is part of l10n_co_freight_route.-->
+
+<!--l10n_co_freight_route is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--l10n_co_freight_route is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with l10n_co_freight_route.  If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<odoo>
+    <record id="fleet_vehicle_view_form_freight_route" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.freight_route.inherit</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='future_driver_id']" position="after">
+                <field name="owner_id" placeholder="Vehicle Owner"/>
+                <field name="holder_id" placeholder="Vehicle Holder"/>
+            </xpath>
+            <xpath expr="//field[@name='model_year']" position="after">
+                <field name="repower_model_year"/>
+            </xpath>
+            <xpath expr="//field[@name='color']" position="after">
+                <field name="rndc_color_id"/>
+                <field name="rndc_bodywork_id"/>
+                <field name="rndc_configuration_id"/>
+                <field name="rndc_measure_unit_id"/>
+                <field name="capacity"/>
+                <field name="empty_weight"/>
+                <field name="number_axes"/>
+            </xpath>
+            <xpath expr="//notebook[1]" position="before">
+                <group col="2">
+                    <group string="SOAT and technical mechanical">
+                        <field name="rndc_insurance_company_id"/>
+                        <field name="insurance_number"/>
+                        <field name="insurance_expiration_date"/>
+                        <field name="technical_mechanical_date"/>
+                    </group>
+                    <group string="Satellite">
+                        <field name="satellite_url" widget="url"/>
+                        <field name="satellite_company"/>
+                        <field name="satellite_user"/>
+                        <field name="satellite_password"/>
+                    </group>
+                    <group string="Rndc">
+                        <field name="rndc_entry_code"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
