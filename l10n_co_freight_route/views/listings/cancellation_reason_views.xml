@@ -31,9 +31,9 @@
                 <field name="trip"/>
                 <field name="shipment"/>
                 <field name="manifest"/>
-                <field name="initial_fulfill_shipment"/>
-                <field name="fulfill_shipment"/>
-                <field name="fulfill_manifest"/>
+                <field name="initial_fulfilled_shipment"/>
+                <field name="fulfilled_shipment"/>
+                <field name="fulfilled_manifest"/>
             </tree>
         </field>
     </record>

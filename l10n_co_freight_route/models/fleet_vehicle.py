@@ -41,7 +41,6 @@ class FleetVehicle(models.Model):
     # Optional fields
     rndc_bodywork_id = fields.Many2one('l10n_co_freight_route.bodywork', 'Bodywork')
     capacity = fields.Integer(string="Capacity")
-    chassis_number = fields.Char(string="Chassis number", copy=False, compute='_compute_chassis_number', store=True)
     rndc_color_id = fields.Many2one('l10n_co_freight_route.color', 'Rndc Color')
     rndc_fuel_type_id = fields.Many2one('l10n_co_freight_route.fuel_type', 'Fuel type', copy=False,
                                         compute='_compute_rndc_fuel_type', store=True)
@@ -61,11 +60,6 @@ class FleetVehicle(models.Model):
     satellite_password = fields.Char(string="Satellite password", copy=False, tracking=True)
 
     technical_mechanical_date = fields.Date(string="Technical-mechanical Date", copy=False, tracking=True)
-
-    @api.depends('vin_sn')
-    def _compute_chassis_number(self):
-        for rec in self:
-            rec.chassis_number = rec.vin_sn
 
     @api.depends('fuel_type')
     def _compute_rndc_fuel_type(self):
