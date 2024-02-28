@@ -74,6 +74,7 @@
         'views/listings/vat_type_views.xml',
         'views/menu.xml',
         'views/res_config_settings_views.xml',
+        'views/res_partner_views.xml',
         'views/fleet_vehicle_views.xml',
     ],
     'installable': True,
