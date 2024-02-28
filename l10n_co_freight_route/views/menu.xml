@@ -189,18 +189,6 @@
         <field name="view_mode">tree</field>
     </record>
 
-
-    <!-- Freight route action -->
-    <!--    <record id="action_freight_route_config" model="ir.actions.act_window">-->
-    <!--        <field name="name">Freight route</field>-->
-    <!--        <field name="type">ir.actions.act_window</field>-->
-    <!--        <field name="res_model">res.config.settings</field>-->
-    <!--        <field name="view_id" ref="res_config_settings_view_form"/>-->
-    <!--        <field name="view_mode">form</field>-->
-    <!--        <field name="target">inline</field>-->
-    <!--        <field name="context">{'module' : 'freight_route', 'bin_size': False}</field>-->
-    <!--    </record>-->
-
     <!--  Menus-->
     <menuitem id="menu_rndc_listings"
               name="RNDC Listings"
@@ -346,18 +334,5 @@
               name="Vat Type"
               action="action_vat_type"
               parent="l10n_co_freight_route.menu_rndc_listings"/>
-
-
-    <!--  Configuration menu-->
-    <!--    <menuitem id="menu_config"-->
-    <!--              sequence="10"-->
-    <!--              name="Configuration"-->
-    <!--              parent="freight_route.menu_root" groups="freight_route.freight_route_group_manager"/>-->
-
-    <!-- General settings menu -->
-    <!--    <menuitem id="menu_freight_route_config"-->
-    <!--              name="General configuration"-->
-    <!--              action="action_freight_route_config"-->
-    <!--              parent="freight_route.menu_config" groups="freight_route.freight_route_group_manager"/>-->
 
 </odoo>

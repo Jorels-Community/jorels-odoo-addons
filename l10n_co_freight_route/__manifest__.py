@@ -73,6 +73,7 @@
         'views/listings/transshipment_reason_views.xml',
         'views/listings/vat_type_views.xml',
         'views/menu.xml',
+        'views/res_config_settings_views.xml',
         'views/fleet_vehicle_views.xml',
     ],
     'installable': True,
