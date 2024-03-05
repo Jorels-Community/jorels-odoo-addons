@@ -25,3 +25,5 @@ from . import res_company
 from . import res_config_settings
 from . import listings
 from . import fleet_vehicle
+from . import waypoint
+from . import account_move_line

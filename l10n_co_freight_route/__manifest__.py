@@ -76,6 +76,8 @@
         'views/res_config_settings_views.xml',
         'views/res_partner_views.xml',
         'views/fleet_vehicle_views.xml',
+        'views/account_move_views.xml',
+        'views/waypoint_views.xml',
     ],
     'installable': True,
     'pre_init_hook': 'pre_init_hook',
