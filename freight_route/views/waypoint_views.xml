@@ -89,7 +89,7 @@
                         </group>
                         <group name="group_carry" string="Carry">
                             <field name="carry_id" widget="res_partner_many2one"
-                                   domain="[('type','=','delivery')]"
+                                   domain="[('type','in',('contact','delivery','other'))]"
                                    context="{'show_address': 1}"
                                    options="{'always_reload': True, 'no_quick_create': True}"
                                    attrs="{'readonly': [('state', '!=', 'draft')]}"/>
