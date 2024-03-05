@@ -37,11 +37,11 @@
                 <xpath expr="//page[@name='geo_location']" position="after">
                     <page name="rndc_page" string="RNDC">
                         <group name="group_rndc">
-                            <group name="group_rndc_details">
+                            <group name="group_rndc_details" string="RNDC Details">
                                 <field name="rndc_vat_type_id"/>
                                 <field name="rndc_site_code"/>
                             </group>
-                            <group name="group_rndc_entry">
+                            <group name="group_rndc_entry" string="RNDC entry code">
                                 <field name="rndc_entry_code"/>
                             </group>
                         </group>
