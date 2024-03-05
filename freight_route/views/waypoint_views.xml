@@ -39,6 +39,10 @@
                     <button string="Validate" type="object" name="button_validate"
                             attrs="{'invisible': [('state', '!=', 'draft')]}"
                             groups="freight_route.freight_route_group_manager"/>
+                    <button string="Create delivery" type="object" name="create_delivery"
+                            attrs="{'invisible': ['|',('state', 'in', ('draft', 'cancel')),('type', '!=', 'carry')]}"
+                            groups="freight_route.freight_route_group_manager"
+                    />
 
                     <!--Status bar-->
                     <field name="state" widget="statusbar" options="{'clickable': '1', 'fold_field': 'fold'}"

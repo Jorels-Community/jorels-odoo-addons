@@ -308,3 +308,22 @@ class Waypoint(models.Model):
             context_datetime = today + delta_time
 
             rec.scheduled_datetime = context_datetime
+
+    def create_delivery(self):
+        new_deliveries_ids = []
+        for rec in self:
+            if rec.type == 'carry':
+                new_delivery = rec.copy({
+                    'type': 'delivery',
+                    'carry_waypoint_id': rec.id
+                })
+                new_deliveries_ids.append(new_delivery.id)
+        return {
+            'name': _('Delivery'),
+            'view_mode': 'tree,form',
+            'res_model': 'freight_route.waypoint',
+            'domain': [('id','in',new_deliveries_ids), ('type', '=', 'delivery')],
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'context': {'default_type': 'delivery', 'type': 'delivery'}
+        }
