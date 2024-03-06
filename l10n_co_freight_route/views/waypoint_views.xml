@@ -78,8 +78,8 @@
                         <group name="rndc_times" string="RNDC Times">
                             <field name="unload_appointment_datetime" widget="datetime"/>
                             <field name="load_appointment_datetime" widget="datetime"/>
-                            <field name="total_agreed_unload_time" widget="float_time"/>
-                            <field name="total_agreed_load_time" widget="float_time"/>
+                            <field name="unload_agreed_time" widget="float_time"/>
+                            <field name="load_agreed_time" widget="float_time"/>
                             <field name="load_arrival_datetime" widget="datetime"/>
                             <field name="load_departure_datetime" widget="datetime"/>
                             <field name="load_entry_datetime" widget="datetime"/>
