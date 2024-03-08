@@ -156,19 +156,19 @@
                                     </h1>
                                     <group>
                                         <group name="group-left">
-                                            <field name="type" invisible="1" />
-                                            <field name="move_id" invisible="1" />
-                                            <field name="event_id" readonly="state != 'draft'" />
+                                            <field name="type" invisible="1"/>
+                                            <field name="move_id" invisible="1"/>
+                                            <field name="event_id" readonly="state != 'draft'"/>
                                             <field name="rejection_concept_id"
-                                                invisible="event_id != 4"
-                                                readonly="state != 'draft'" />
+                                                   invisible="event_id != 4"
+                                                   readonly="state != 'draft'"/>
                                         </group>
                                         <group name="group-right">
-                                            <field name="date" />
-                                            <field name="user_id" readonly="state != 'draft'" />
+                                            <field name="date"/>
+                                            <field name="user_id" readonly="state != 'draft'"/>
                                             <field name="company_id" readonly="state != 'draft'"
-                                                groups="base.group_multi_company" />
-                                            <field name="note" readonly="state != 'draft'" />
+                                                   groups="base.group_multi_company"/>
+                                            <field name="note" readonly="state != 'draft'"/>
                                         </group>
                                     </group>
                                 </sheet>
@@ -177,9 +177,10 @@
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='tax_totals']" position="before">
-                    <field name="ei_amount_tax_no_withholding"/>
-                    <field name="ei_amount_total_no_withholding" class="oe_subtotal_footer_separator"/>
-                    <field name="ei_amount_tax_withholding"/>
+                    <field name="ei_amount_tax_no_withholding" invisible="state=='draft'"/>
+                    <field name="ei_amount_total_no_withholding" invisible="state=='draft'"
+                           class="oe_subtotal_footer_separator"/>
+                    <field name="ei_amount_tax_withholding" invisible="state=='draft'"/>
                 </xpath>
                 <!-- Invoice lines -->
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
