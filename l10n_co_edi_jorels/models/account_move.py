@@ -557,7 +557,7 @@ class AccountMove(models.Model):
 
                         if invoice_line_tax_id.edi_tax_id.id:
                             edi_tax_name = invoice_line_tax_id.edi_tax_id.name
-                            tax_name = invoice_line_tax_id.name
+                            tax_name = invoice_line_tax_id.description
                             dian_report_tax_base = invoice_line_tax_id.dian_report_tax_base or 'auto'
                             # The information sent to DIAN should not include the withholdings
                             if edi_tax_name[:4] != 'Rete' \
@@ -699,7 +699,7 @@ class AccountMove(models.Model):
                         taxable_amount = invoice_line_id.product_id.lst_price * invoice_line_id.quantity
 
                     for invoice_line_tax_id in invoice_line_id.tax_ids:
-                        tax_name = invoice_line_tax_id.name
+                        tax_name = invoice_line_tax_id.description
                         dian_report_tax_base = invoice_line_tax_id.dian_report_tax_base or 'auto'
 
                         if invoice_line_tax_id.amount_type == 'fixed':
