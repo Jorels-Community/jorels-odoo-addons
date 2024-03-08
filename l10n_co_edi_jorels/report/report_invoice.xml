@@ -93,6 +93,15 @@
                             <span t-if="o.partner_id.l10n_latam_identification_type_id.l10n_co_document_code == 'diplomatic_card'">
                                 Tax ID:
                             </span>
+                            <span t-if="o.partner_id.l10n_latam_identification_type_id.l10n_co_document_code == 'foreign_colombian_card'">
+                                T.E.:
+                            </span>
+                            <span t-if="o.partner_id.l10n_latam_identification_type_id.l10n_co_document_code == 'foreign_resident_card'">
+                                C.E.:
+                            </span>
+                            <span t-if="o.partner_id.l10n_latam_identification_type_id.l10n_co_document_code == 'niup_id'">
+                                NIUP:
+                            </span>
                             <span t-field="o.partner_id.vat"/>
                         </div>
                         <address t-field="o.partner_id"
@@ -102,6 +111,8 @@
             </xpath>
             <xpath expr="//div[@class='page mb-4']/h2[1]" position="replace">
                 <h2>
+                    <span t-if="not proforma"></span>
+                    <span t-else="">PROFORMA</span>
                     <span t-if="o.company_id.ei_enable and o.ei_is_valid and o.move_type == 'out_invoice' and o.state == 'posted'">
                         Electronic Sale Invoice
                     </span>
@@ -111,10 +122,14 @@
                     <span t-elif="not o.company_id.ei_enable and o.move_type == 'out_invoice' and o.state == 'posted'">
                         Invoice
                     </span>
-                    <span t-if="o.move_type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
-                    <span t-if="o.move_type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
-                    <span t-if="o.company_id.ei_enable and o.move_type == 'out_refund'">Electronic Credit Note</span>
-                    <span t-elif="not o.company_id.ei_enable and o.move_type == 'out_refund'">Credit Note</span>
+                    <span t-elif="o.move_type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
+                    <span t-elif="o.move_type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
+                    <span t-elif="o.company_id.ei_enable and o.ei_is_valid and o.move_type == 'out_refund' and o.state == 'posted'">Electronic Credit Note</span>
+                    <span t-elif="o.move_type == 'out_refund' and o.state == 'posted'">
+                        Credit Note
+                    </span>
+                    <span t-elif="o.move_type == 'out_refund' and o.state == 'draft'">Draft Credit Note</span>
+                    <span t-elif="o.move_type == 'out_refund' and o.state == 'cancel'">Cancelled Credit Note</span>
                     <strong t-if="o.company_id.ei_enable and o.move_type == 'in_refund' and o.resolution_id and o.resolution_id.resolution_type_document_id.id == 13">
                         Credit note of electronic support document in acquisitions made to those not obliged to invoice
                     </strong>
@@ -196,8 +211,8 @@
                 </td>
             </xpath>
             <xpath expr="//div[@id='right-elements']" position="before">
-                <div id="left-elements" t-attf-class="#{'col-7' if report_type != 'html' else 'col-12 col-md-5'} float-start">
-                <!-- <div t-attf-class="#{'col-7' if report_type != 'html' else 'col-sm-12 col-md-12'}"> -->
+                <div id="left-elements"
+                     t-attf-class="#{'col-7' if report_type != 'html' else 'col-12 col-md-5'} float-start">
                     <div t-if="o.company_id.ei_enable and o.payment_method_id.id" name="payment_method">
                         <strong>Payment method:</strong>
                         <span t-field="o.payment_method_id"/>
