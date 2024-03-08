@@ -683,7 +683,7 @@ class AccountMove(models.Model):
 
     # Calculation of withholdings, excluded, etc.
     def _compute_amount(self):
-        res = super(AccountMove, self)._compute_amount()
+        super(AccountMove, self)._compute_amount()
 
         for rec in self:
             amount_tax_withholding = 0
@@ -756,8 +756,6 @@ class AccountMove(models.Model):
                             rec.value_letters = rec.value_letters + ', ' + \
                                                 num2words(decimal_part, lang=lang).upper() + ' ' + \
                                                 rec.currency_id.currency_subunit_label.upper() + '.'
-
-        return res
 
     def get_ei_payment_form(self):
         for rec in self:
