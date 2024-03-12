@@ -24,9 +24,10 @@ import logging
 
 import requests
 import urllib3
+from num2words import num2words
 from odoo import _
 from odoo import api, fields, models
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -87,6 +88,126 @@ class Manifest(models.Model):
 
     distance = fields.Integer(string="Distance/m", required=True, default=0, readonly=True, copy=False)
     duration = fields.Float(string="Duration/h", required=True, default=0.0, readonly=True, copy=False)
+
+    # value totals
+    total_cash_value = fields.Monetary(string='Total immediate', currency_field='currency_id',
+                                       compute='_compute_total_cash_value', store=True, copy=False, tracking=True)
+    total_credit_value = fields.Monetary(string='Total credit', currency_field='currency_id',
+                                         compute='_compute_total_credit_value', store=True, copy=False, tracking=True)
+    total_cod_value = fields.Monetary(string='Total delivery', currency_field='currency_id',
+                                      compute='_compute_total_cod_value', store=True, copy=False, tracking=True)
+
+    total_freight_value = fields.Monetary(string='Total Freight', currency_field='currency_id',
+                                          compute='_compute_total_freight_value', store=True, copy=False,
+                                          tracking=True)
+    total_insurance_value = fields.Monetary(string='Total insurance', currency_field='currency_id',
+                                            compute='_compute_total_insurance_value', store=True, copy=False,
+                                            tracking=True)
+    total_others_value = fields.Monetary(string='Total others', currency_field='currency_id',
+                                         compute='_compute_total_others_value', store=True, copy=False, tracking=True)
+
+    agreed_value = fields.Monetary(string='Agreed value', currency_field='currency_id', copy=False, tracking=True)
+    assistant_value = fields.Monetary(string='Assistant value', readonly=True, currency_field='currency_id', copy=False,
+                                      tracking=True)
+
+    total_cost_value = fields.Monetary(string='Total cost', currency_field='currency_id',
+                                       compute='_compute_total_cost_value', store=True, copy=False, tracking=True)
+    total_rate_value = fields.Monetary(string='Total rate', currency_field='currency_id',
+                                       compute='_compute_total_rate_value', store=True, copy=False, tracking=True)
+    total_utility_value = fields.Monetary(string='Total utility', currency_field='currency_id',
+                                          compute='_compute_total_utility_value', store=True, copy=False,
+                                          tracking=True)
+
+    quantity_units = fields.Integer('# Units', copy=False, tracking=True)
+    quantity_waypoints = fields.Integer('# Waypoints', copy=False, tracking=True)
+
+    @api.depends('agreed_value')
+    def _value_letters(self):
+        for rec in self:
+            rec.value_letters = num2words(round(rec.agreed_value), lang='es_CO').upper() + ' ' + \
+                                rec.currency_id.currency_unit_label.upper()
+
+    def compute_totals_fields(self):
+        self._compute_total_cash()
+        self._compute_total_credit()
+        self._compute_total_cod()
+        self._compute_total_freight_value()
+        self._compute_total_insurance_value()
+        self._compute_total_others_value()
+
+    def change_waypoints(self):
+        self.compute_totals_fields()
+        for rec in self:
+            waypoints = rec.waypoints_ids
+            quantity_waypoints = 0
+            quantity_units = 0
+
+            for waypoint in waypoints:
+                quantity_waypoints = quantity_waypoints + 1
+                quantity_units = quantity_units + waypoint.units
+
+            rec.quantity_waypoints = quantity_waypoints
+            rec.quantity_units = quantity_units
+
+    @api.depends('agreed_value', 'assistant_value')
+    def _compute_total_cost_value(self):
+        for rec in self:
+            rec.total_cost_value = rec.agreed_value + rec.assistant_value
+
+    @api.depends('total_freight_value', 'total_insurance_value', 'total_others_value')
+    def _compute_total_rate_value(self):
+        for rec in self:
+            rec.total_rate_value = rec.total_freight_value + rec.total_insurance_value + rec.total_others_value
+
+    @api.depends('total_cost_value', 'total_rate_value')
+    def _compute_total_utility_value(self):
+        for rec in self:
+            rec.total_utility_value = rec.total_rate_value - rec.total_cost_value
+
+    def _compute_total_freight_value(self):
+        for rec in self:
+            sum_total_freight_value = 0
+            for waypoint in rec.waypoints_ids:
+                sum_total_freight_value = sum_total_freight_value + waypoint.freight_value
+            rec.total_freight_value = sum_total_freight_value
+
+    def _compute_total_insurance_value(self):
+        for rec in self:
+            sum_total_insurance_value = 0
+            for waypoint in rec.waypoints_ids:
+                sum_total_insurance_value = sum_total_insurance_value + waypoint.insurance_value
+            rec.total_insurance_value = sum_total_insurance_value
+
+    def _compute_total_others_value(self):
+        for rec in self:
+            sum_total_others_value = 0
+            for waypoint in rec.waypoints_ids:
+                sum_total_others_value = sum_total_others_value + waypoint.others_value
+            rec.total_others_value = sum_total_others_value
+
+    def _compute_total_cash_value(self):
+        for rec in self:
+            sum_cash = 0
+            for waypoint in rec.waypoints_ids:
+                if waypoint.payment_method == 'cash':
+                    sum_cash = sum_cash + waypoint.total
+            rec.total_cash_value = sum_cash
+
+    def _compute_total_credit_value(self):
+        for rec in self:
+            sum_credit = 0
+            for waypoint in rec.waypoints_ids:
+                if waypoint.payment_method == 'credit':
+                    sum_credit = sum_credit + waypoint.total
+            rec.total_credit_value = sum_credit
+
+    def _compute_total_cod_value(self):
+        for rec in self:
+            sum_cod = 0
+            for waypoint in rec.waypoints_ids:
+                if waypoint.payment_method == 'cod':
+                    sum_cod = sum_cod + waypoint.total
+            rec.total_cod_value = sum_cod
 
     @api.onchange('vehicle_id')
     def _onchange_vehicle_id(self):
@@ -358,3 +479,10 @@ class Manifest(models.Model):
                 "url": geo,
                 "target": "new",
             }
+
+    @api.model
+    def default_get(self, fields):
+        res = super(Manifest, self).default_get(fields)
+        res['partner_start_id'] = self.env.company.partner_id.id
+        res['partner_end_id'] = self.env.company.partner_id.id
+        return res
