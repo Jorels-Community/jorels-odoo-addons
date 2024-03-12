@@ -81,10 +81,10 @@
                         </group>
                         <group name="group_payment" string="Payment">
                             <field name="payment_method" attrs="{'readonly' : [('state','!=','draft')]}"/>
-                            <field name="freight" widget="monetary" attrs="{'readonly' : [('state','!=','draft')]}"/>
-                            <field name="insurance" widget="monetary" attrs="{'readonly' : [('state','!=','draft')]}"/>
-                            <field name="others" widget="monetary" attrs="{'readonly' : [('state','!=','draft')]}"/>
-                            <field name="total" widget="monetary" attrs="{'readonly' : [('state','!=','draft')]}"/>
+                            <field name="freight_value" widget="monetary" attrs="{'readonly' : [('state','!=','draft')]}"/>
+                            <field name="insurance_value" widget="monetary" attrs="{'readonly' : [('state','!=','draft')]}"/>
+                            <field name="others_value" widget="monetary" attrs="{'readonly' : [('state','!=','draft')]}"/>
+                            <field name="total_value" widget="monetary" attrs="{'readonly' : [('state','!=','draft')]}"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
                         <group name="group_carry" string="Carry">

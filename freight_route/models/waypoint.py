@@ -97,11 +97,11 @@ class Waypoint(models.Model):
                             tracking=True)
 
     # Charges
-    freight = fields.Monetary(string='Freight', required=True, default=0.0, currency_field='currency_id', tracking=True)
-    insurance = fields.Monetary(string='Insurance', required=True, default=0.0, currency_field='currency_id',
+    freight_value = fields.Monetary(string='Freight value', required=True, default=0.0, currency_field='currency_id', tracking=True)
+    insurance_value = fields.Monetary(string='Insurance value', required=True, default=0.0, currency_field='currency_id',
                                 tracking=True)
-    others = fields.Monetary(string='Others', required=True, default=0.0, currency_field='currency_id', tracking=True)
-    total = fields.Monetary(string='Total', compute='_compute_total', currency_field='currency_id', store=True,
+    others_value = fields.Monetary(string='Others value', required=True, default=0.0, currency_field='currency_id', tracking=True)
+    total_value = fields.Monetary(string='Total value', compute='_compute_total_value', currency_field='currency_id', store=True,
                             tracking=True)
     payment_method = fields.Selection(string="Payment method",
                                       selection=[
@@ -139,10 +139,10 @@ class Waypoint(models.Model):
         # res['carry_id'] = self.env.company.partner_id.id
         return res
 
-    @api.depends('freight', 'insurance', 'others')
-    def _compute_total(self):
+    @api.depends('freight_value', 'insurance_value', 'others_value')
+    def _compute_total_value(self):
         for rec in self:
-            rec.total = rec.freight + rec.insurance + rec.others
+            rec.total_value = rec.freight_value + rec.insurance_value + rec.others_value
 
     @api.onchange('vehicle_id')
     def _onchange_vehicle_id(self):
