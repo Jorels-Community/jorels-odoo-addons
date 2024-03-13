@@ -72,15 +72,21 @@
                             <field name="end_time" widget="float_time"/>
                         </group>
                         <group name="group_driver" string="Walker">
-                            <field name="vehicle_id"/>
-                            <field name="driver_id" widget="res_partner_many2one" context="{'show_address': 1}"
-                                   domain="[('is_driver', '=', True)]" options="{'always_reload': True}"/>
+                            <field name="vehicle_id"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="driver_id" widget="res_partner_many2one"
+                                   domain="[('is_driver', '=', True)]"
+                                   context="{'default_is_driver': True, 'show_address': 1}"
+                                   options="{'no_quick_create': True}"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                         </group>
                         <group name="group_details" string="Details">
                             <field name="date" widget="date"/>
                             <field name="distance"/>
                             <field name="duration" widget="float_time"/>
-                            <field name="manager_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="manager_id"
+                                   options="{'no_create': True}"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                         </group>
                         <notebook colspan="2">
                             <page string="Waypoints">
