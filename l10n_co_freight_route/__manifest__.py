@@ -81,7 +81,7 @@
         'reports/paperformat.xml',
         'reports/carry_report.xml',
         'reports/delivery_report.xml',
-        'reports/manifest_report.xml',
+        # 'reports/manifest_report.xml',
     ],
     'installable': True,
     'pre_init_hook': 'pre_init_hook',
