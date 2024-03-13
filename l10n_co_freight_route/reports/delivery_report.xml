@@ -20,7 +20,6 @@
 <!--email: info@jorels.com-->
 
 <odoo>
-
     <record id="action_delivery_report" model="ir.actions.report">
         <field name="name">Delivery</field>
         <field name="model">freight_route.waypoint</field>
@@ -32,19 +31,15 @@
         <field name="binding_model_id" ref="model_freight_route_waypoint"/>
         <field name="binding_type">report</field>
         <field name="groups_id" eval="[(4, ref('freight_route.freight_route_group_user'))]"/>
+        <field name="paperformat_id" ref="paperformat_us_half_letter"/>
     </record>
 
     <template id="report_delivery_template_translated">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <!--                <t t-set="lang" t-value="o.user_id.sudo().lang if o.type in ('in_invoice', 'in_refund') else o.partner_id.lang"/>-->
+                <!-- <t t-set="lang" t-value="o.user_id.sudo().lang if o.type in ('in_invoice', 'in_refund') else o.recipient_id.lang"/> -->
                 <t t-set="lang" t-value="o.customer_id.lang"/>
-                <!-- <t t-if="o.type=='carry'">
-                    <t t-call="freight_route.report_carry_template" t-lang="lang"/>
-                </t>
-                <t t-else=""> -->
-                    <t t-call="l10n_co_freight_route.report_delivery_template" t-lang="lang"/>
-                <!-- </t> -->
+                <t t-call="l10n_co_freight_route.report_delivery_template" t-lang="lang"/>
             </t>
         </t>
     </template>
@@ -91,7 +86,7 @@
                             <div class="row">
                                 <div class="col-4 font-weight-bold text-left">
                                     <h4>Delivery:
-                                        <span t-field="o.name_seq"/>
+                                        <span t-field="o.number"/>
                                     </h4>
                                 </div>
                                 <div class="col-4 text-center">
@@ -116,9 +111,9 @@
                                 </div>
                                 <div class="col-3 font-weight-bold">Receiver(Unload)</div>
                                 <div class="col-3 text-left">
-                                    <span t-field="o.municipality_id"/>
-                                    <span t-if="o.department_id">/</span>
-                                    <span t-field="o.department_id"/>
+                                    <span t-field="o.recipient_id.postal_municipality_id"/>
+                                    <span t-if="o.recipient_id.postal_department_id">/</span>
+                                    <span t-field="o.recipient_id.postal_department_id"/>
                                 </div>
                             </div>
                             <div class="row">
@@ -129,59 +124,59 @@
                                     <span t-field="o.customer_id.name"/>
                                 </div>
                                 <div class="col-6 text-left">
-                                    <t t-if="o.partner_id.parent_id">
-                                        <span t-field="o.partner_id.parent_id.name"/>,
+                                    <t t-if="o.recipient_id.parent_id">
+                                        <span t-field="o.recipient_id.parent_id.name"/>,
                                     </t>
-                                    <span t-field="o.partner_id.name"/>
-                                    <t t-if="o.partner_id.mobile">/
-                                        <span t-field="o.partner_id.mobile"/>
+                                    <span t-field="o.recipient_id.name"/>
+                                    <t t-if="o.recipient_id.mobile">/
+                                        <span t-field="o.recipient_id.mobile"/>
                                     </t>
-                                    <t t-elif="o.partner_id.phone">/
-                                        <span t-field="o.partner_id.phone"/>
+                                    <t t-elif="o.recipient_id.phone">/
+                                        <span t-field="o.recipient_id.phone"/>
                                     </t>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-3 font-weight-bold">Sender(Load)</div>
                                 <div class="col-3 text-left">
-                                    <span t-field="o.carry_partner_id.city"/>
-                                    <span t-if="o.carry_partner_id.state_id">/</span>
-                                    <span t-field="o.carry_partner_id.state_id"/>
+                                    <span t-field="o.carry_id.city"/>
+                                    <span t-if="o.carry_id.state_id">/</span>
+                                    <span t-field="o.carry_id.state_id"/>
                                 </div>
                                 <div class="col-6 text-left">
-                                    <span t-field="o.partner_id.street"/>
+                                    <span t-field="o.recipient_id.street"/>
                                 </div>
                             </div>
                             <!--                            <br/>-->
                             <div class="row">
                                 <div class="col-7 text-left">
-                                    <t t-if="o.carry_partner_id.parent_id">
-                                        <span t-field="o.carry_partner_id.parent_id.name"/>,
+                                    <t t-if="o.carry_id.parent_id">
+                                        <span t-field="o.carry_id.parent_id.name"/>,
                                     </t>
-                                    <span t-field="o.carry_partner_id.name"/>
-                                    <t t-if="o.carry_partner_id.mobile">/
-                                        <span t-field="o.carry_partner_id.mobile"/>
+                                    <span t-field="o.carry_id.name"/>
+                                    <t t-if="o.carry_id.mobile">/
+                                        <span t-field="o.carry_id.mobile"/>
                                     </t>
-                                    <t t-elif="o.carry_partner_id.phone">/
-                                        <span t-field="o.carry_partner_id.phone"/>
+                                    <t t-elif="o.carry_id.phone">/
+                                        <span t-field="o.carry_id.phone"/>
                                     </t>
                                 </div>
                                 <div class="col-2 font-weight-bold">Freight</div>
                                 <div class="col-3 text-right">
-                                    <span t-if="o.payment_method=='delivery' or not o.company_id.hide_delivery_values_print"
-                                          t-field="o.freight"
+                                    <span t-if="o.payment_method=='delivery' or not o.company_id.is_hide_waypoint_values_print"
+                                          t-field="o.freight_value"
                                           t-options="{'widget':'monetary'}"/>
                                     <span t-else="">---</span>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-7">
-                                    <span t-field="o.carry_partner_id.street"/>
+                                    <span t-field="o.carry_id.street"/>
                                 </div>
                                 <div class="col-2 font-weight-bold">Insurance</div>
                                 <div class="col-3 text-right">
-                                    <span t-if="o.payment_method=='delivery' or not o.company_id.hide_delivery_values_print"
-                                          t-field="o.insurance"
+                                    <span t-if="o.payment_method=='delivery' or not o.company_id.is_hide_waypoint_values_print"
+                                          t-field="o.insurance_number"
                                           t-options="{'widget':'monetary'}"/>
                                     <span t-else="">---</span>
                                 </div>
@@ -193,14 +188,17 @@
                                 </div>
                                 <div class="col-2 font-weight-bold">Packing</div>
                                 <div class="col-2">
-                                    <span t-field="o.packing_id"/>
+                                    <span t-field="o.rndc_packing_id"/>
                                 </div>
                                 <div class="col-2 font-weight-bold">Others</div>
                                 <div class="col-3 text-right">
-                                    <span t-if="o.payment_method=='delivery' or not o.company_id.hide_delivery_values_print"
-                                          t-field="o.others"
-                                          t-options="{'widget':'monetary'}"/>
-                                    <span t-else="">---</span>
+                                    TODO: Add others field
+                                    <!-- <span t-if="o.payment_method=='delivery' or not o.company_id.is_hide_waypoint_values_print" -->
+                                          <!-- t-field="o.others" -->
+                                          <!-- t-options="{'widget':'monetary'}"/> -->
+                                    <!-- <span t-else=""> -->
+                                        ---
+                                    <!-- </span> -->
                                 </div>
                             </div>
                             <div class="row">
@@ -217,8 +215,8 @@
                                 </div>
                                 <div class="col-3 text-right">
                                     <h5>
-                                        <span t-if="o.payment_method=='delivery' or not o.company_id.hide_delivery_values_print"
-                                              t-field="o.total"
+                                        <span t-if="o.payment_method=='delivery' or not o.company_id.is_hide_waypoint_values_print"
+                                              t-field="o.total_value"
                                               t-options="{'widget':'monetary'}"/>
                                         <span t-else="">---</span>
                                     </h5>

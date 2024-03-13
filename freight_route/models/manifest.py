@@ -138,7 +138,7 @@ class Manifest(models.Model):
     def change_waypoints(self):
         self.compute_totals_fields()
         for rec in self:
-            waypoints = rec.waypoints_ids
+            waypoints = rec.waypoint_ids
             quantity_waypoints = 0
             quantity_units = 0
 
@@ -167,46 +167,46 @@ class Manifest(models.Model):
     def _compute_total_freight_value(self):
         for rec in self:
             sum_total_freight_value = 0
-            for waypoint in rec.waypoints_ids:
+            for waypoint in rec.waypoint_ids:
                 sum_total_freight_value = sum_total_freight_value + waypoint.freight_value
             rec.total_freight_value = sum_total_freight_value
 
     def _compute_total_insurance_value(self):
         for rec in self:
             sum_total_insurance_value = 0
-            for waypoint in rec.waypoints_ids:
+            for waypoint in rec.waypoint_ids:
                 sum_total_insurance_value = sum_total_insurance_value + waypoint.insurance_value
             rec.total_insurance_value = sum_total_insurance_value
 
     def _compute_total_others_value(self):
         for rec in self:
             sum_total_others_value = 0
-            for waypoint in rec.waypoints_ids:
+            for waypoint in rec.waypoint_ids:
                 sum_total_others_value = sum_total_others_value + waypoint.others_value
             rec.total_others_value = sum_total_others_value
 
     def _compute_total_cash_value(self):
         for rec in self:
             sum_cash = 0
-            for waypoint in rec.waypoints_ids:
+            for waypoint in rec.waypoint_ids:
                 if waypoint.payment_method == 'cash':
-                    sum_cash = sum_cash + waypoint.total
+                    sum_cash = sum_cash + waypoint.total_value
             rec.total_cash_value = sum_cash
 
     def _compute_total_credit_value(self):
         for rec in self:
             sum_credit = 0
-            for waypoint in rec.waypoints_ids:
+            for waypoint in rec.waypoint_ids:
                 if waypoint.payment_method == 'credit':
-                    sum_credit = sum_credit + waypoint.total
+                    sum_credit = sum_credit + waypoint.total_value
             rec.total_credit_value = sum_credit
 
     def _compute_total_cod_value(self):
         for rec in self:
             sum_cod = 0
-            for waypoint in rec.waypoints_ids:
+            for waypoint in rec.waypoint_ids:
                 if waypoint.payment_method == 'cod':
-                    sum_cod = sum_cod + waypoint.total
+                    sum_cod = sum_cod + waypoint.total_value
             rec.total_cod_value = sum_cod
 
     @api.onchange('vehicle_id')

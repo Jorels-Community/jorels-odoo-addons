@@ -20,11 +20,13 @@
 # email: info@jorels.com
 #
 
-from . import res_partner
-from . import res_company
-from . import res_config_settings
-from . import listings
-from . import fleet_vehicle
-from . import waypoint
-from . import account_move_line
-from . import manifest
+import logging
+
+from odoo import models, fields
+
+_logger = logging.getLogger(__name__)
+
+
+class Manifest(models.Model):
+    _name = 'freight_route.manifest'
+    _inherit = 'freight_route.manifest'

@@ -48,11 +48,12 @@ class Waypoint(models.Model):
     rndc_short_product_description = fields.Char('Short product description', required=True)
     rndc_product_id = fields.Many2one('l10n_co_freight_route.product',
                                       'Product', required=True)
-
     unload_appointment_datetime = fields.Datetime("Unload appointment datetime", required=True)
     load_appointment_datetime = fields.Datetime("Load appointment datetime", required=True)
     unload_agreed_time = fields.Float("Unload agreed time", required=True)
     load_agreed_time = fields.Float("Load agreed time")
+    is_unload_agreement_time = fields.Boolean("Was the download time agreement met?", required=False)
+    is_load_agreement_time = fields.Boolean("Was the load time agreement met?", required=True)
 
     carry_waypoint_id = fields.Many2one('freight_route.waypoint', string='Carry waypoint', copy=False)
     empty_container_weight = fields.Integer("Empty container weight")

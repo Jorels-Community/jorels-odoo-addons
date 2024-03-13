@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Jorels S.A.S. - Copyright (2024)-->
+
+<!--This file is part of freight_trasnport.-->
+
+<!--freight_trasnport is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--freight_trasnport is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with freight_trasnport.  If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<odoo>
+    <record id="action_carry_report" model="ir.actions.report">
+        <field name="name">Carry Order</field>
+        <field name="model">freight_route.waypoint</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">l10n_co_freight_route.report_carry_template_translated</field>
+        <field name="report_file">l10n_co_freight_route.report_carry_template_translated</field>
+        <!-- <field name="print_report_name">(object._get_report_base_filename())</field> -->
+        <!-- <field name="attachment">(object.state == 'posted') and ((object.name or 'INV').replace('/','_')+'.pdf')</field> -->
+        <field name="binding_model_id" ref="model_freight_route_waypoint"/>
+        <field name="binding_type">report</field>
+        <field name="groups_id" eval="[(4, ref('freight_route.freight_route_group_user'))]"/>
+        <field name="paperformat_id" ref="paperformat_us_half_letter"/>
+    </record>
+
+    <template id="report_carry_template_translated">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="lang" t-value="o.customer_id.lang"/>
+                <t t-call="l10n_co_freight_route.report_carry_template" t-lang="lang"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_carry_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <style type="text/css">
+                    hr {
+                        display: block;
+                        margin-top: 0.0em;
+                        margin-bottom: 0.0em;
+                        margin-left: auto;
+                        margin-right: auto;
+                        border-style: solid;
+                        border-width: 1px;
+                    }
+
+                    h1, h2, h3, h4, h5, h6 {
+                        color: black;
+                    }
+
+                    p {
+                        color: black;
+                    }
+
+                    span {
+                        color: black;
+                    }
+
+                    .font-weight-bold {
+                        color: black;
+                    }
+
+                    .text, .text-left, .text-center, .text-right {
+                        color: black;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: clip;
+                    }
+                </style>
+                <t t-foreach="docs" t-as="o">
+                    <div class="page">
+                        <!-- Report content -->
+                        <div class="container">
+                            <!-- Report header content -->
+                            <div class="row">
+                                <div class="col-3 font-weight-bold">
+                                    <h4>Carry Order</h4>
+                                </div>
+                                <div class="col-3 font-weight-bold">
+                                    <h4>
+                                        <span t-field="o.number"/>
+                                    </h4>
+                                </div>
+                                <div class="col-3 font-weight-bold">
+                                    <h4>Date
+                                        <span t-field="o.date" t-options="{'format': 'dd-MMM-yyyy'}"/>
+                                    </h4>
+                                </div>
+                                <div class="col-3">
+                                    <h4>
+                                        <span t-field="o.date" t-options="{'widget':'date'}"/>
+                                    </h4>
+                                </div>
+                            </div>
+                            <br/>
+
+                            <!-- Report main content -->
+                            <div class="row">
+                                <div class="col-2 font-weight-bold">Sender</div>
+                                <div class="col-4 text">
+                                    <span t-field="o.customer_id.name"/>
+                                </div>
+
+                                <div class="col-2 font-weight-bold">Vehicle</div>
+                                <div class="col-4">
+                                    <span t-field="o.vehicle_id.license_plate"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-2 font-weight-bold">Carry point</div>
+                                <div class="col-4 text">
+                                    <span t-field="o.carry_id.name"/>
+                                </div>
+
+                                <div class="col-2 font-weight-bold"/>
+                                <div class="col-4">
+                                    <span t-field="o.vehicle_id.model_id"/>
+                                    <span>/</span>
+                                    <span t-field="o.vehicle_id.model_year"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-2 font-weight-bold"/>
+                                <div class="col-4">
+                                    <span t-field="o.carry_id.street"/>
+                                    <span>,</span>
+                                    <span t-field="o.carry_id.city"/>
+                                    <span>,</span>
+                                    <span t-field="o.carry_id.state_id"/>
+                                </div>
+
+                                <div class="col-2 font-weight-bold"/>
+                                <div class="col-4">
+                                    <span t-field="o.vehicle_id.rndc_bodywork_id"/>
+                                    <span>/</span>
+                                    <span t-field="o.vehicle_id.rndc_color_id"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-2 font-weight-bold">Phone/Mobile</div>
+                                <div class="col-4">
+                                    <span t-field="o.carry_id.phone"/>
+                                    <span>/</span>
+                                    <span t-field="o.carry_id.mobile"/>
+                                </div>
+
+                                <div class="col-2 font-weight-bold">Driver</div>
+                                <div class="col-4 text">
+                                    <span t-field="o.driver_id.name"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-2 font-weight-bold">Recipient</div>
+                                <div class="col-4 text">
+                                    <span t-field="o.recipient_id.name"/>
+                                </div>
+
+                                <div class="col-2 font-weight-bold">Document</div>
+                                <div class="col-4">
+                                    <span t-field="o.driver_id.vat"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-2 font-weight-bold">Units</div>
+                                <div class="col-4">
+                                    <span t-field="o.units"/>
+                                    <span t-field="o.rndc_packing_id"/>
+                                </div>
+
+                                <div class="col-2 font-weight-bold">Mobile</div>
+                                <div class="col-4">
+                                    <span t-field="o.driver_id.mobile"/>
+                                </div>
+
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-2 font-weight-bold">Weight/kg</div>
+                                <div class="col-4">
+                                    <span t-field="o.weight"/>
+                                </div>
+
+                                <div class="col-2 font-weight-bold">Owner</div>
+                                <div class="col-4 text">
+                                    <span t-field="o.vehicle_id.owner_id.name"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-2 font-weight-bold">
+                                    <span>Content:</span>
+                                </div>
+                                <div class="col-10 text-left">
+                                    <span t-field="o.content"/>
+                                </div>
+                            </div>
+
+                            <!-- Report footer content -->
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <div class="row">
+                                <div class="col-4 text-center">_______________________________</div>
+                                <div class="col-1"></div>
+                                <div class="col-4 text-center">______________________________</div>
+                                <div class="col-1"></div>
+                                <div class="col-2 text-center">_____________</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-center">Signature and stamp (Company)</div>
+                                <div class="col-1"></div>
+                                <div class="col-4 text-center">Signature and ID (Carry point)</div>
+                                <div class="col-1"></div>
+                                <div class="col-2 text-center">Date and Time</div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -55,8 +55,8 @@ class AccountMoveLine(models.Model):
                     rec.quantity = 1
 
                     if rec.waypoint_id:
-                        if rec.price_unit != rec.waypoint_id.total:
-                            rec.price_unit = rec.waypoint_id.total
+                        if rec.price_unit != rec.waypoint_id.total_value:
+                            rec.price_unit = rec.waypoint_id.total_value
 
                         if rec.waypoint_id.content:
                             rec.name = _('%s - Freight Transport for %s, %s of: %s') % (
