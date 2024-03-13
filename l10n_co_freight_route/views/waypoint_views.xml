@@ -83,6 +83,8 @@
                             <field name="load_arrival_datetime" widget="datetime"/>
                             <field name="load_departure_datetime" widget="datetime"/>
                             <field name="load_entry_datetime" widget="datetime"/>
+                            <field name="is_unload_agreement_time"/>
+                            <field name="is_load_agreement_time"/>
                         </group>
                         <group name="insurance" string="Insurance">
                             <field name="insurance_expiration_date" widget="date"/>

@@ -53,7 +53,7 @@ class Waypoint(models.Model):
     unload_agreed_time = fields.Float("Unload agreed time", required=True)
     load_agreed_time = fields.Float("Load agreed time")
     is_unload_agreement_time = fields.Boolean("Was the download time agreement met?", required=False)
-    is_load_agreement_time = fields.Boolean("Was the load time agreement met?", required=True)
+    is_load_agreement_time = fields.Boolean("Was the load time agreement met?", required=False)
 
     carry_waypoint_id = fields.Many2one('freight_route.waypoint', string='Carry waypoint', copy=False)
     empty_container_weight = fields.Integer("Empty container weight")
