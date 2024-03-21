@@ -25,7 +25,10 @@ import json
 import logging
 import math
 import re
+import tempfile
+import zipfile
 from io import BytesIO
+from pathlib import Path
 
 import qrcode
 import requests
@@ -1599,3 +1602,53 @@ class AccountMove(models.Model):
                         'event_id': 6,
                         'type': event_type,
                     })
+
+    def _process_attachments_for_template_post(self, mail_template):
+        """ Add Edi attachments to templates. """
+        result = super()._process_attachments_for_template_post(mail_template)
+
+        attachments = []
+        edi_attachments = {}
+        for move in self.filtered(lambda m: m.is_to_send_edi_email()):
+            move_result = result.setdefault(move.id, {})
+
+            if move.ei_zip_name:
+                attached_document_name = 'ad' + move.ei_zip_name[1:-4]
+            else:
+                attached_document_name = move.ei_uuid
+
+            # pdf_name = attached_document_name + '.pdf'
+            # pdf_path = Path(tempfile.gettempdir()) / pdf_name
+
+            xml_name = attached_document_name + '.xml'
+            xml_path = Path(tempfile.gettempdir()) / xml_name
+
+            zip_name = attached_document_name + '.zip'
+            zip_path = Path(tempfile.gettempdir()) / zip_name
+
+            zip_archive = zipfile.ZipFile(zip_path, 'w')
+
+            # pdf_handle = open(pdf_path, 'wb')
+            # pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
+            # pdf_handle.close()
+            # zip_archive.write(pdf_path, arcname=pdf_name)
+
+            xml_handle = open(xml_path, 'wb')
+            xml_handle.write(base64.decodebytes(move.ei_attached_document_base64_bytes))
+            xml_handle.close()
+            zip_archive.write(xml_path, arcname=xml_name)
+
+            zip_archive.close()
+
+            with open(zip_path, 'rb') as f:
+                attached_zip = f.read()
+                ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
+                attachments += [(zip_name, ei_attached_zip_base64_bytes)]
+                move.write({
+                    'ei_attached_zip_base64_bytes': ei_attached_zip_base64_bytes
+                })
+
+            edi_attachments = {'attachments': attachments}
+            move_result.setdefault('attachment_ids', []).extend(edi_attachments.get('attachment_ids', []))
+            move_result.setdefault('attachments', []).extend(edi_attachments.get('attachments', []))
+        return result
