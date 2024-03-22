@@ -208,10 +208,17 @@ class AccountMove(models.Model):
     def _send_edi_email(self):
         for rec in self:
             mail_template = rec.env.ref('l10n_co_edi_jorels.email_template_edi', False)
-            ctx = dict(active_model='account.move')
+            ctx = dict(
+                active_model='account.move',
+                no_new_invoice=True,
+                mail_notify_force_send=True
+            )
             if mail_template and rec.is_to_send_edi_email():
-                mail_template.with_context(ctx).send_mail(res_id=rec.id, force_send=True,
-                                                          email_layout_xmlid='mail.mail_notification_light')
+                rec.with_context(ctx).message_post_with_source(
+                    mail_template,
+                    email_layout_xmlid="mail.mail_notification_light",
+                    subtype_xmlid='mail.mt_comment',
+                )
         return True
 
     def _default_ei_type_environment(self):
