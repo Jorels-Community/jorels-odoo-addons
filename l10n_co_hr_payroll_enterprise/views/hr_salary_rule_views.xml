@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--Jorels S.A.S. - Copyright (C) 2019-2023-->
-
 <!--This file is part of l10n_co_hr_payroll_enterprise.-->
-
 <!--This program is free software: you can redistribute it and/or modify-->
 <!--it under the terms of the GNU Lesser General Public License as published by-->
 <!--the Free Software Foundation, either version 3 of the License, or-->
 <!--(at your option) any later version.-->
-
 <!--This program is distributed in the hope that it will be useful,-->
 <!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
 <!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
 <!--GNU Lesser General Public License for more details.-->
-
 <!--You should have received a copy of the GNU Lesser General Public License-->
 <!--along with this program. If not, see <https://www.gnu.org/licenses/>.-->
-
 <!--email: info@jorels.com-->
-
 <odoo>
     <record id="hr_salary_rule_view_form_l10n_co_hr_payroll" model="ir.ui.view">
         <field name="name">hr.salary.rule.form.l10n_co_hr_payroll.inherit</field>
@@ -27,19 +21,17 @@
         <field name="arch" type="xml">
             <data>
                 <xpath expr="//group[1]" position="before">
-                    <label for="type_concept" class="oe_edit_only"/>
+                    <label class="oe_edit_only" for="type_concept"/>
                     <h2>
-                        <field name="type_concept" class="oe_edit_only"/>
+                        <field class="oe_edit_only" name="type_concept"/>
                     </h2>
-                    <label for="earn_category"
-                           attrs="{'invisible': [('type_concept','!=','earn')]}"/>
+                    <label for="earn_category" invisible="type_concept != 'earn'"/>
                     <h2>
-                        <field name="earn_category" attrs="{'invisible': [('type_concept','!=','earn')]}"/>
+                        <field invisible="type_concept != 'earn'" name="earn_category"/>
                     </h2>
-                    <label for="deduction_category"
-                           attrs="{'invisible': [('type_concept','!=','deduction')]}"/>
+                    <label for="deduction_category" invisible="type_concept != 'deduction'"/>
                     <h2>
-                        <field name="deduction_category" attrs="{'invisible': [('type_concept','!=','deduction')]}"/>
+                        <field invisible="type_concept != 'deduction'" name="deduction_category"/>
                     </h2>
                 </xpath>
                 <xpath expr="//field[@name='appears_on_payslip']" position="after">
@@ -53,24 +45,20 @@
                     <separator colspan="4" string="Edi Percent"/>
                     <field name="edi_percent_select"/>
                     <newline/>
-                    <field name="edi_percent_fix"
-                           attrs="{'invisible':[('edi_percent_select','!=','fix')], 'required':[('edi_percent_select','=','fix')]}"/>
+                    <field invisible="edi_percent_select != 'fix'" name="edi_percent_fix" required="edi_percent_select == 'fix'"/>
                     <newline/>
-                    <field colspan="4" name="edi_percent_python_compute"
-                           attrs="{'invisible':[('edi_percent_select','!=','code')], 'required':[('edi_percent_select','=','code')]}"/>
+                    <field colspan="4" invisible="edi_percent_select != 'code'" name="edi_percent_python_compute" required="edi_percent_select == 'code'"/>
                 </xpath>
                 <xpath expr="//page[@name='description']" position="before">
                     <page name="inputs" string="Inputs">
-                        <field name="input_ids" mode="tree">
-                            <tree string="Input Data" editable="bottom">
+                        <field mode="tree" name="input_ids">
+                            <tree editable="bottom" string="Input Data">
                                 <field name="input_type_id"/>
                                 <field name="name"/>
                                 <field name="code"/>
-                            </tree>
-                        </field>
+                            </tree></field>
                     </page>
                 </xpath>
-            </data>
-        </field>
+            </data></field>
     </record>
 </odoo>
