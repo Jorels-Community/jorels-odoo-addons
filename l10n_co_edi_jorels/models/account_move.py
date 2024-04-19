@@ -1163,13 +1163,14 @@ class AccountMove(models.Model):
 
     def validate_dian_generic(self, is_test):
         for rec in self:
-            if not rec.company_id.ei_enable:
-                continue
-
-            # raise UserError(json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
-            _logger.debug("DIAN Validation Request: %s", json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
-
             try:
+                if not rec.company_id.ei_enable:
+                    continue
+
+                # raise UserError(json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
+                _logger.debug("DIAN Validation Request: %s",
+                              json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
+
                 if rec.state == 'draft':
                     raise UserError(_("The invoice must first be validated in Odoo, before being sent to the DIAN."))
 
