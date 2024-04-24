@@ -1510,22 +1510,34 @@ class AccountMove(models.Model):
                             if success:
                                 # self.env.user.notify_info(message=_("Validation in DIAN has been successful."))
                                 _logger.debug("Validation in DIAN has been successful.")
+                                rec.message_post(body=_("Log DIAN Electronic invoicing: "
+                                                        "Validation in DIAN has been successful."))
                             else:
                                 # self.env.user.notify_warning(message=_("The document has not been validated."))
                                 _logger.debug("The document has not been validated.")
+                                rec.message_post(body=_("Log DIAN Electronic invoicing: "
+                                                        "The document has not been validated."))
                         else:
                             # self.env.user.notify_warning(message=_("The document could not be consulted."))
                             _logger.debug("The document could not be consulted.")
+                            rec.message_post(body=_("Log DIAN Electronic invoicing: "
+                                                    "The document could not be consulted."))
                     else:
                         # self.env.user.notify_warning(
                         #     message=_("A number is required to verify the status of the document."))
                         _logger.debug("A number is required to verify the status of the document.")
+                        rec.message_post(body=_("Log DIAN Electronic invoicing: "
+                                                "A number is required to verify the status of the document."))
                 else:
                     # self.env.user.notify_warning(message=_("This type of document does not need to be sent to DIAN."))
                     _logger.debug("This type of document does not need to be sent to DIAN.")
+                    rec.message_post(body=_("Log DIAN Electronic invoicing: "
+                                            "This type of document does not need to be sent to DIAN."))
             except Exception as e:
                 # self.env.user.notify_warning(message=_("Failed to process the request"))
                 _logger.debug("Failed to process the request: %s", e)
+                rec.message_post(body=_("Log DIAN Electronic invoicing: "
+                                        "Failed to process the request for document: %s: %s") % (rec.name, e))
 
     @api.depends('ei_attached_document_base64_bytes')
     def _is_attached_document_matched(self):
