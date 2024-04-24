@@ -1636,8 +1636,8 @@ class AccountMove(models.Model):
             else:
                 attached_document_name = move.ei_uuid
 
-            # pdf_name = attached_document_name + '.pdf'
-            # pdf_path = Path(tempfile.gettempdir()) / pdf_name
+            pdf_name = attached_document_name + '.pdf'
+            pdf_path = Path(tempfile.gettempdir()) / pdf_name
 
             xml_name = attached_document_name + '.xml'
             xml_path = Path(tempfile.gettempdir()) / xml_name
@@ -1647,10 +1647,11 @@ class AccountMove(models.Model):
 
             zip_archive = zipfile.ZipFile(zip_path, 'w')
 
-            # pdf_handle = open(pdf_path, 'wb')
+            pdf_handle = open(pdf_path, 'wb')
             # pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
-            # pdf_handle.close()
-            # zip_archive.write(pdf_path, arcname=pdf_name)
+            pdf_handle.write(base64.decodebytes(move.ei_pdf_base64_bytes))
+            pdf_handle.close()
+            zip_archive.write(pdf_path, arcname=pdf_name)
 
             xml_handle = open(xml_path, 'wb')
             xml_handle.write(base64.decodebytes(move.ei_attached_document_base64_bytes))
