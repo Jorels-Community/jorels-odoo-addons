@@ -38,6 +38,7 @@
                 <br/>
                 <script type="text/javascript">
                     var ei_qr_data = document.getElementById('ei_qr_data').innerText;
+                    document.getElementById('qr_data').innerHTML = '';
                     if(ei_qr_data &amp;&amp; ei_qr_data != 'false'){
                         var qrcode = new QRCode(document.getElementById('qr_data') , {
                             text: String(ei_qr_data),
