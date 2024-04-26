@@ -1,4 +1,6 @@
-// Jorels S.A.S. - Copyright (2019-2022)
+/** @odoo-module */
+
+// Jorels S.A.S. - Copyright (2019-2024)
 //
 // This file is part of l10n_co_edi_jorels_pos.
 //
@@ -18,72 +20,51 @@
 // email: info@jorels.com
 //
 
-odoo.define('l10n_co_edi_jorels_pos.models', function(require) {
-    "use strict";
+import { Order } from "@point_of_sale/app/store/models";
+import { patch } from "@web/core/utils/patch";
 
-    var { PosGlobalState, Order } = require('point_of_sale.models');
-    const Registries = require('point_of_sale.Registries');
-
-    var rpc = require('web.rpc');
-
-    const JPosGlobalState = (PosGlobalState) =>
-        class JPosGlobalState extends PosGlobalState {
-            async _processData(loadedData) {
-                await super._processData(...arguments);
-                this.type_regimes = loadedData['l10n_co_edi_jorels.type_regimes'];
-                this.type_liabilities = loadedData['l10n_co_edi_jorels.type_liabilities'];
-                this.municipalities = loadedData['l10n_co_edi_jorels.municipalities'];
-                this.l10n_latam_identification_types = loadedData['l10n_latam.identification.type'];
-            }
+patch(Order.prototype, {
+    setup() {
+        super.setup(...arguments);
+        this.to_electronic_invoice = false;
+    },
+    init_from_JSON(json) {
+        super.init_from_JSON(json);
+        this.to_electronic_invoice = false;
+        if (this.account_move){
+            this.invoice = this.get_invoice();
+            this.invoice.then(invoice => this.invoice = invoice);
         }
-    Registries.Model.extend(PosGlobalState, JPosGlobalState);
-
-    const JPosOrder = (Order) =>
-        class JPosOrder extends Order {
-            setup() {
-                super.setup();
-                this.to_electronic_invoice = false;
-            }
-            init_from_JSON(json) {
-                super.init_from_JSON(json);
-                this.to_electronic_invoice = false;
-                if (this.account_move){
-                    this.invoice = this.get_invoice();
-                    this.invoice.then(invoice => this.invoice = invoice);
-                }
-            }
-            export_as_JSON() {
-                var json = super.export_as_JSON(...arguments);
-                json.to_electronic_invoice = this.to_electronic_invoice ? this.to_electronic_invoice : false;
-                return json;
-            }
-            export_for_printing() {
-                var receipt = super.export_for_printing(...arguments);
-                if (this.invoice){
-                    receipt.invoice = this.invoice;
-                }
-                return receipt;
-            }
-            set_invoice(invoice){
-                this.invoice = invoice;
-            }
-            get_invoice(){
-                self = this;
-                return rpc.query({
-                    model: 'pos.order',
-                    method: 'get_invoice',
-                    args: [self.backendId],
-                }).then(function(invoice){
-                    return invoice;
-                });
-            }
-            set_to_electronic_invoice(to_electronic_invoice) {
-                this.assert_editable();
-                this.to_electronic_invoice = to_electronic_invoice;
-            }
-            is_to_electronic_invoice(){
-                return this.to_electronic_invoice;
-            }
+    },
+    export_as_JSON() {
+        var json = super.export_as_JSON(...arguments);
+        json.to_electronic_invoice = this.to_electronic_invoice ? this.to_electronic_invoice : false;
+        return json;
+    },
+    export_for_printing() {
+        var receipt = super.export_for_printing(...arguments);
+        if (this.invoice){
+            receipt.invoice = this.invoice;
         }
-    Registries.Model.extend(Order, JPosOrder);
+        return receipt;
+    },
+    set_invoice(invoice){
+        this.invoice = invoice;
+    },
+    get_invoice(){
+        self = this;
+        const result = this.env.services.orm.call(
+            "pos.order",
+            "get_invoice",
+            [self.backendId]
+        );
+        return result;
+    },
+    set_to_electronic_invoice(to_electronic_invoice) {
+        this.assert_editable();
+        this.to_electronic_invoice = to_electronic_invoice;
+    },
+    is_to_electronic_invoice(){
+        return this.to_electronic_invoice;
+    },
 });

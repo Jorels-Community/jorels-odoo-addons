@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Jorels S.A.S. - Copyright (2019-2024)-->
+
+<!--This file is part of l10n_co_edi_jorels_pos.-->
+
+<!--l10n_co_edi_jorels_pos is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--l10n_co_edi_jorels_pos is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with l10n_co_edi_jorels_pos.  If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<templates id="template" xml:space="preserve">
+    <t t-name="l10n_co_edi_jorels_pos.PartnerDetailsEdit" t-inherit="point_of_sale.PartnerDetailsEdit"
+       t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('partner-details-box')]" position="inside">
+            <t t-if="pos.is_colombian_country()">
+                <div class="partner-detail col">
+                    <label class="form-label label" for="type_regime_id">Regimen</label>
+                    <select class="detail form-select" id="type_regime_id" name="type_regime_id"
+                            t-model="changes.type_regime_id"
+                            t-att="{'disabled': isFieldCommercialAndPartnerIsChild('type_regime_id')}"
+                            t-att-class="{'border-danger': missingFields.includes('type_regime_id')}">
+                        <t t-foreach="pos.type_regimes" t-as="type_regime_id" t-key="type_regime_id.id">
+                            <option t-att-value="type_regime_id.id">
+                                <t t-esc="type_regime_id.name"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div class='partner-detail col'>
+                    <label class='form-label label' for='type_liability_id'>Responsab.</label>
+                    <select class='detail form-select' id='type_liability_id' name='type_liability_id'
+                            t-model="changes.type_liability_id"
+                            t-att="{'disabled': isFieldCommercialAndPartnerIsChild('type_liability_id')}"
+                            t-att-class="{'border-danger': missingFields.includes('type_liability_id')}">
+                        <t t-foreach='pos.type_liabilities' t-as='type_liability_id' t-key="type_liability_id.id">
+                            <option t-att-value='type_liability_id.id'>
+                                <t t-esc='type_liability_id.name'/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div class='partner-detail col'>
+                    <label class='form-label label' for='municipality_id'>Municipali.</label>
+                    <select class='detail form-select' id='municipality_id' name='municipality_id'
+                            t-model="changes.municipality_id"
+                            t-att="{'disabled': isFieldCommercialAndPartnerIsChild('municipality_id')}"
+                            t-att-class="{'border-danger': missingFields.includes('municipality_id')}">
+                        <option value=''>None</option>
+                        <t t-foreach='pos.municipalities' t-as='municipality_id' t-key="municipality_id.id">
+                            <option t-att-value='municipality_id.id'>
+                                <t t-esc='municipality_id.name'/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div class='partner-detail col'>
+                    <label class='form-label label' for='l10n_latam_identification_type_id'>Tipo doc.</label>
+                    <select class='detail form-select' id='l10n_latam_identification_type_id'
+                            name='l10n_latam_identification_type_id'
+                            t-model="changes.l10n_latam_identification_type_id"
+                            t-att="{'disabled': isFieldCommercialAndPartnerIsChild('l10n_latam_identification_type_id')}"
+                            t-att-class="{'border-danger': missingFields.includes('l10n_latam_identification_type_id')}">
+                        <t t-foreach='pos.l10n_latam_identification_types' t-as='l10n_latam_identification_type_id'
+                           t-key="l10n_latam_identification_type_id.id">
+                            <option t-att-value='l10n_latam_identification_type_id.id'>
+                                <t t-esc='l10n_latam_identification_type_id.name'/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div class='partner-detail col'>
+                    <label class='form-label label' for='company_type'>Tipo per.</label>
+                    <select class='detail form-select' id='company_type' name='company_type'
+                            t-model="changes.company_type"
+                            t-att="{'disabled': isFieldCommercialAndPartnerIsChild('company_type')}"
+                            t-att-class="{'border-danger': missingFields.includes('company_type')}">
+                        <option value='person'>
+                            <t>Persona Natural</t>
+                        </option>
+                        <option value='company'>
+                            <t>Persona Jurídica</t>
+                        </option>
+                    </select>
+                </div>
+                <div class='partner-detail col'>
+                    <label class='form-label label' for='email_edi'>Email fact.</label>
+                    <input class="detail email_edi form-control" type='email' id="email_edi" name="email_edi"
+                           t-model="changes.email_edi"
+                           t-att="{'disabled': isFieldCommercialAndPartnerIsChild('email_edi')}"
+                           t-att-class="{'border-danger': missingFields.includes('email_edi')}"
+                           placeholder="fe@example.com"/>
+                </div>
+            </t>
+        </xpath>
+    </t>
+</templates>
