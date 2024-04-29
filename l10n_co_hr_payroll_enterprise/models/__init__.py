@@ -22,6 +22,7 @@
 
 from . import res_company
 from . import res_config_settings
+from . import edi
 from . import hr_rule_input
 from . import earn_line
 from . import deduction_line
@@ -30,3 +31,4 @@ from . import hr_salary_rule
 from . import hr_payslip
 from . import hr_payslip_line
 from . import hr_payslip_edi
+from . import edi_gen
