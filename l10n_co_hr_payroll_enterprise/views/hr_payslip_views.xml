@@ -45,7 +45,7 @@
                 <xpath expr="//button[@name='action_payslip_done']" position="after">
                     <button name="validate_dian" type="object" string="Validate DIAN"
                             class="oe_highlight o_payslip_validate"
-                            attrs="{'invisible': ['|', ('edi_is_valid','=',True),('state','=','draft')]}"/>
+                            attrs="{'invisible': ['|',('edi_is_valid','=',True),('state','in',('draft', 'verify'))]}"/>
                     <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
                             attrs="{'invisible': [('state','in',('draft', 'verify'))]}"/>
                 </xpath>
