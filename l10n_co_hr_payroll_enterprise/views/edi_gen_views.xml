@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Jorels S.A.S. - Copyright (C) 2019-2023-->
+
+<!--This file is part of l10n_co_hr_payroll_enterprise.-->
+
+<!--This program is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--This program is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with this program. If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<odoo>
+    <record id="action_view_hr_payslip_edi_generate" model="ir.actions.act_window">
+        <field name="name">Generate Edi Payslips</field>
+        <field name="res_model">l10n_co_hr_payroll.edi_gen</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="edi_gen_wizard_form" model="ir.ui.view">
+        <field name="name">l10n_co_hr_payroll.edi_gen.form</field>
+        <field name="model">l10n_co_hr_payroll.edi_gen</field>
+        <field name="arch" type="xml">
+            <form string="Generate Edi Payslips">
+                <group name="main">
+                    <field name="month"/>
+                    <field name="year"/>
+                </group>
+                <footer>
+                    <button name="generate" type="object"
+                            string="Generate" class="oe_highlight"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <menuitem action="action_view_hr_payslip_edi_generate"
+              id="menu_payslip_edi_generate_wizard"
+              name="Generate Edi Payslips"
+              parent="l10n_co_hr_payroll_enterprise.menu_payslip_edi"
+              groups="hr_payroll.group_hr_payroll_user"/>
+</odoo>

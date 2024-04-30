@@ -20,7 +20,6 @@
 #   email: info@jorels.com
 #
 
-
 {
     'name': 'Nómina electrónica DIAN para Colombia por Jorels SAS (Enterprise)',
     'summary': 'Nómina electrónica DIAN para Colombia por Jorels SAS (Enterprise)',
@@ -28,7 +27,7 @@
     'author': 'Jorels SAS',
     'license': 'LGPL-3',
     'category': 'Human Resources',
-    'version': '16.0.23.06.15.17.58',
+    'version': '16.0.24.01.310116',
     'website': "https://www.jorels.com",
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
@@ -42,6 +41,7 @@
         'views/hr_salary_rule_views.xml',
         'views/hr_payslip_views.xml',
         'views/hr_payslip_edi_views.xml',
+        'views/edi_gen_views.xml',
         'views/res_config_settings_views.xml',
         'security/ir.model.access.csv',
         'report/hr_payslip_edi_report.xml',
