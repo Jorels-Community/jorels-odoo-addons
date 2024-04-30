@@ -20,5 +20,4 @@
 #   email: info@jorels.com
 #
 
-
 from . import models
