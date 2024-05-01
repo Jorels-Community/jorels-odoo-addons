@@ -1,3 +1,5 @@
 ﻿"id","name","code"
 "1","Descuento no condicionado","00"
 "2","Descuento condicionado","01"
+"3","Recargo no condicionado","02"
+"4","Recargo condicionado","03"
