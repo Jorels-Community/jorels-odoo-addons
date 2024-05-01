@@ -67,6 +67,8 @@ from . import type_payroll_notes
 from . import type_principals
 from . import type_scope_mandates
 from . import type_times
+from . import collection_concepts
+from . import due_diligences
 
 # Postal
 from . import postal_department
