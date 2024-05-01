@@ -676,6 +676,8 @@ class AccountMove(models.Model):
                         raise UserError(_("Electronic invoicing does not yet support mandates"))
 
                     if rec.ei_type_document_id.id == 12:
+                        if rec.invoice_date != fields.Date.context_today(rec):
+                            raise UserError(_("The issue date must be today's date"))
                         # Support document
                         # Form generation transmission (transmission code)
                         # 1, Por operación
@@ -968,6 +970,8 @@ class AccountMove(models.Model):
 
                 # Issue date
                 if rec.invoice_date:
+                    if rec.invoice_date != fields.Date.context_today(rec):
+                        raise UserError(_("The issue date must be today's date"))
                     json_request['date'] = fields.Date.to_string(rec.invoice_date)
 
                 # Period
