@@ -144,7 +144,7 @@ class AccountMove(models.Model):
         ('mandates', 'Mandates'),
         ('transport', 'Transport'),
         ('exchange', 'Exchange'),
-        ('iva_free_day', 'Día Sin IVA')
+        ('iva_free_day', 'Día Sin IVA (No activo)')
     ], string="Operation type", default=lambda self: self.env.company.ei_operation, copy=True, readonly=True,
         required=True, states={'draft': [('readonly', False)]})
 
@@ -681,6 +681,15 @@ class AccountMove(models.Model):
                     # Mandates compatibility
                     if rec.ei_operation == 'mandates':
                         raise UserError(_("Electronic invoicing does not yet support mandates"))
+
+                    # Exchange compatibility
+                    if rec.ei_operation == 'exchange':
+                        raise UserError(_("Electronic invoicing does not yet support exchange"))
+
+                    # Iva free day compatibility
+                    if rec.ei_operation == 'iva_free_day':
+                        raise UserError(_("Electronic invoicing does not yet support iva_free_day"))
+
 
                     if rec.ei_type_document_id.id == 12:
                         if rec.invoice_date != fields.Date.context_today(rec):
