@@ -64,7 +64,8 @@ class AccountMove(models.Model):
     ei_is_restored = fields.Boolean("Is restored?", copy=False, readonly=True)
     ei_algorithm = fields.Char(string="Algorithm", copy=False, readonly=True)
     ei_class = fields.Char("Class", copy=False, readonly=True)
-    ei_number = fields.Char(string="Number", compute="compute_number_formatted", store=True, copy=False, readonly=True)
+    ei_number = fields.Char(string="Edi number", compute="compute_number_formatted", store=True, copy=False,
+                            readonly=True)
     ei_uuid = fields.Char(string="UUID", copy=False, readonly=True)
     ei_issue_date = fields.Date(string="Issue date", copy=False, readonly=True)
     ei_issue_datetime = fields.Char(string="Issue datetime", copy=False, readonly=True)
