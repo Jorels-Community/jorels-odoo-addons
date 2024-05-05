@@ -26,7 +26,7 @@
             <field name="model">res.company</field>
             <field name="inherit_id" ref="base.view_company_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//div[@class='oe_title']" position="inside">
+                <xpath expr="//div[hasclass('oe_title')]" position="inside">
                     <label for="trade_name" attrs="{'invisible': ['|', ('trade_name', '=', False), ('trade_name', '=', '')]}"/>
                     <h2>
                         <field name="trade_name" placeholder="Trade name"/>
@@ -43,7 +43,7 @@
                             <field name="ei_operation"/>
                             <field name="merchant_registration"/>
                             <field name="municipality_id"/>
-                            <field name="email_edi"/>
+                            <field name="email_edi" widget="email"/>
                         </group>
                     </page>
                 </xpath>
