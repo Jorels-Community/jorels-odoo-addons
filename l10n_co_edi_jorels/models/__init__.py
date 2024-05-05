@@ -29,6 +29,5 @@ from . import res_partner
 from . import account_invoice
 from . import account_invoice_line
 from . import account_invoice_refund
-from . import mail_message
 from . import mail_template
 from . import radian

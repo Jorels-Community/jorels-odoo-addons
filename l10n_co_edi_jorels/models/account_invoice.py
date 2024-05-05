@@ -148,14 +148,6 @@ class AccountInvoice(models.Model):
     ], string="Operation type", default=lambda self: self.env.user.company_id.ei_operation, copy=True, readonly=True,
         required=True, states={'draft': [('readonly', False)]})
 
-    # DIAN events
-    event = fields.Selection([
-        ('none', 'None'),
-        ('receipt', 'Acknowledgment of receipt'),
-        ('rejection', 'Document Rejection'),
-        ('acceptance', 'Express acceptance of document'),
-    ], string="Event", default='none', copy=False, readonly=True, required=True)
-
     # Period
     date_start = fields.Date(string="Start date", default=None, copy=True, readonly=True,
                              states={'draft': [('readonly', False)]})
@@ -704,7 +696,6 @@ class AccountInvoice(models.Model):
                     # Iva free day compatibility
                     if rec.ei_operation == 'iva_free_day':
                         raise UserError(_("Electronic invoicing does not yet support iva_free_day"))
-
 
                     if rec.ei_type_document_id.id == 12:
                         if rec.date_invoice != fields.Date.context_today(rec):
@@ -1614,26 +1605,6 @@ class AccountInvoice(models.Model):
                     rec.is_attached_document_matched = search_ok
             else:
                 rec.is_attached_document_matched = False
-
-    @api.multi
-    def message_update(self, msg_dict, update_vals=None):
-        """Check DIAN events from email content"""
-        res = super(AccountInvoice, self).message_update(msg_dict, update_vals)
-
-        for rec in self:
-            if not rec.company_id.ei_enable:
-                continue
-
-            csi = rec.partner_id.customer_software_id
-            rec.event = csi.get_event(msg_dict)
-
-            # TO DO:
-            # example: msg_dict['date'] = '2021-07-20 01:15:20'
-            # rec.event_date = msg_dict['date']
-
-            _logger.debug("Mail event. Invoice: %s, Event: %s" % (rec.number_formatted, rec.event))
-
-        return res
 
     @api.multi
     def create_radian_default_events(self):

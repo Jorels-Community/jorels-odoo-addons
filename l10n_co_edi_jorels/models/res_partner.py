@@ -43,8 +43,6 @@ class ResPartner(models.Model):
 
     trade_name = fields.Char(string="Trade name", copy=False)
 
-    customer_software_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.customer_software',
-                                           string="Customer software", copy=False, ondelete='RESTRICT')
     type_document_identification_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_document_identifications",
                                                       string="Type document identification", readonly=True,
                                                       compute='_compute_type_document_identification_id', store=True,
