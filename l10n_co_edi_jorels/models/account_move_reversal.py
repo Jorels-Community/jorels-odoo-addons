@@ -29,7 +29,20 @@ class AccountMoveReversal(models.TransientModel):
     # Required field for credit and debit notes in DIAN
     ei_correction_concept_credit_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
                                                       string="Correction concept",
-                                                      domain=[('type_document_id', '=', '5')])
+                                                      domain=[('type_document_id', 'in', (5, 13))])
+    ei_type_document_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_documents', string="Document type",
+                                          compute='_compute_ei_type_document_id', store=True)
+
+    @api.depends('move_ids')
+    def _compute_ei_type_document_id(self):
+        for rec in self:
+            move_ids = record.move_ids._origin
+            if len(move_ids) == 1 and move_ids.move_type == 'out_invoice':
+                rec.ei_type_document_id = 5
+            elif len(move_ids) == 1 and move_ids.move_type == 'in_invoice':
+                rec.ei_type_document_id = 13
+            else:
+                rec.ei_type_document_id = None
 
     @api.onchange('ei_correction_concept_credit_id')
     def _onchange_ei_correction_concept_credit_id(self):
@@ -41,9 +54,16 @@ class AccountMoveReversal(models.TransientModel):
         values = super(AccountMoveReversal, self)._prepare_default_reversal(move)
 
         if self.reason:
+            if move.move_type == 'out_invoice':
+                ei_type_document_id = 5
+            elif move.move_type == 'in_invoice':
+                ei_type_document_id = 13
+            else:
+                ei_type_document_id = None
+
             ei_correction_concept_search = self.env['l10n_co_edi_jorels.correction_concepts'].search([
                 ('name', '=', self.reason),
-                ('type_document_id', '=', 5)
+                ('type_document_id', '=', ei_type_document_id)
             ])
             if ei_correction_concept_search:
                 values['ei_correction_concept_credit_id'] = ei_correction_concept_search[0].id
