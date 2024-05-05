@@ -30,7 +30,9 @@
                 <attribute name="required">0</attribute>
             </xpath>
             <xpath expr="//field[@name='reason']" position="after">
-                <field name="ei_correction_concept_credit_id" required="1"/>
+                <field name="ei_type_document_id" invisible="1"/>
+                <field name="ei_correction_concept_credit_id" required="1"
+                       domain="[('type_document_id','=',ei_type_document_id)]"/>
             </xpath>
         </field>
     </record>
