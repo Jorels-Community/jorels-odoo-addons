@@ -22,7 +22,7 @@
 
 import logging
 
-from odoo import fields, models
+from odoo import fields, models, api
 
 _logger = logging.getLogger(__name__)
 
@@ -31,7 +31,8 @@ class Municipalities(models.Model):
     _name = "l10n_co_edi_jorels.municipalities"
     _inherit = "l10n_co_edi_jorels.languages"
     _description = "Municipalities"
-    _order = "name"
+    _rec_name = "description"
 
     department_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.departments', string="Department", required=True,
                                     readonly=True, index=True, ondelete='RESTRICT')
+    description = fields.Char('Description', readonly=True, index=True)
