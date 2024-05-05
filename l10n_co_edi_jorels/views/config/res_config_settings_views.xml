@@ -210,7 +210,7 @@
             <field name="view_id" ref="res_config_settings_view_form"/>
             <field name="view_mode">form</field>
             <field name="target">inline</field>
-            <field name="context">{'module' : 'l10n_co_edi_jorels'}</field>
+            <field name="context">{'module': 'l10n_co_edi_jorels'}</field>
         </record>
 
         <!-- Electronic invoice menu -->
@@ -261,23 +261,5 @@
                   parent="menu_l10n_co_edi_jorels_root"
                   groups="l10n_co_edi_jorels.l10n_co_edi_jorels_group_manager"/>
 
-        <!-- Customer software action-->
-        <record model="ir.actions.act_window" id="action_l10n_co_edi_jorels_customer_software">
-            <field name="name">Customer software</field>
-            <field name="res_model">l10n_co_edi_jorels.customer_software</field>
-            <field name="view_mode">tree,form</field>
-            <field name="help" type="html">
-                <p class="o_view_nocontent_smiling_face">
-                    Create your first customer software!
-                </p>
-            </field>
-        </record>
-
-        <!-- Customer software menu -->
-        <menuitem id="menu_l10n_co_edi_jorels_customer_software"
-                  name="Customer software"
-                  action="action_l10n_co_edi_jorels_customer_software"
-                  parent="menu_l10n_co_edi_jorels_root"
-                  groups="l10n_co_edi_jorels.l10n_co_edi_jorels_group_manager"/>
     </data>
 </odoo>
