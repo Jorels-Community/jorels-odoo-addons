@@ -43,6 +43,7 @@
                     </button>
                 </xpath>
                 <xpath expr="//field[@name='ref']" position="after">
+                    <field name="ei_type_document_id" invisible="1"/>
                     <field name="payment_form_id"/>
                     <field name="payment_method_id"/>
                     <field name="ei_operation"
@@ -50,7 +51,8 @@
                     <field name="ei_is_correction_without_reference"
                            attrs="{'invisible': ['&amp;','|',('type','not in',('out_invoice', 'in_invoice')),('debit_origin_id','!=',False),'|',('type','not in',('out_refund', 'in_refund')),('reversed_entry_id','!=',False)]}"/>
                     <field name="ei_correction_concept_credit_id"
-                           attrs="{'invisible': ['|',('type','not in',('out_refund', 'in_refund')),'&amp;',('reversed_entry_id','=',False), ('ei_is_correction_without_reference','=',False)]}"/>
+                           attrs="{'invisible': ['|',('type','not in',('out_refund', 'in_refund')),'&amp;',('reversed_entry_id','=',False), ('ei_is_correction_without_reference','=',False)]}"
+                           domain="[('type_document_id','=',ei_type_document_id)]"/>
                     <field name="ei_correction_concept_debit_id"
                            attrs="{'invisible': ['|',('type','not in',('out_invoice', 'in_invoice')),'&amp;',('debit_origin_id','=',False), ('ei_is_correction_without_reference','=',False)]}"/>
                 </xpath>
