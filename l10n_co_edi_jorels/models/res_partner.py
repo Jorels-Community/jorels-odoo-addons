@@ -50,7 +50,7 @@ class ResPartner(models.Model):
     # surname, second_surname, first_name, other_names
     surname = fields.Char("Surname", compute="_compute_names", store=True)
     second_surname = fields.Char("Second surname", compute="_compute_names", store=True)
-    first_name = fields.Char("Name", compute="_compute_names", store=True)
+    first_name = fields.Char("First name", compute="_compute_names", store=True)
     other_names = fields.Char("Other names", compute="_compute_names", store=True)
 
     # Postal fields
@@ -132,7 +132,7 @@ class ResPartner(models.Model):
                 rec.postal_department_id = None
                 rec.postal_municipality_id = None
 
-    @api.depends('name', 'company_type')
+    @api.depends('name', 'is_company')
     def _compute_names(self):
         for rec in self:
             if rec.name:
