@@ -52,7 +52,6 @@
         'views/config/resolution_views.xml',
         'views/config/uom_uom_views.xml',
         'views/config/account_taxes_view.xml',
-        'views/config/customer_software_views.xml',
         'views/config/account_journal_views.xml',
         'views/config/product_template_views.xml',
         'views/account_move_view.xml',

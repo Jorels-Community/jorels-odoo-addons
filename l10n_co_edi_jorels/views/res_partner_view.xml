@@ -38,12 +38,15 @@
                           invisible="not is_company and parent_id"
                           groups="account.group_account_invoice">
                         <group>
-                            <field name="type_regime_id"/>
-                            <field name="type_liability_id"/>
-                            <field name="municipality_id"/>
-                            <field name="tax_resident_co"/>
-                            <field name="email_edi"/>
-                            <field name="customer_software_id"/>
+                            <group>
+                                <field name="type_regime_id"/>
+                                <field name="type_liability_id"/>
+                                <field name="municipality_id"/>
+                            </group>
+                            <group>
+                                <field name="tax_resident_co"/>
+                                <field name="email_edi" widget="email"/>
+                            </group>
                         </group>
                     </page>
                     <page string="Electronic invoicing" name="electronic_invoicing_disabled"
