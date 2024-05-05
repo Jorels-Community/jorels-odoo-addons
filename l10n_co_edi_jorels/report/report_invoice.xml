@@ -100,7 +100,7 @@
                     </div>
                 </div>
             </xpath>
-            <xpath expr="//div[@class='page']/h2[1]" position="replace">
+            <xpath expr="//div[hasclass('page')]/h2[1]" position="replace">
                 <h2>
                     <span t-if="o.company_id.ei_enable and o.ei_is_valid and o.move_type == 'out_invoice' and o.state == 'posted'">
                         Electronic Sale Invoice
@@ -237,7 +237,7 @@
                     </td>
                 </tr>
             </xpath>
-            <xpath expr="//div[@class='page']" position="inside">
+            <xpath expr="//div[hasclass('page')]" position="inside">
                 <div t-if="o.company_id.ei_enable" class="container">
                     <div class="row">
                         <div class="col-12">
