@@ -26,5 +26,4 @@ from . import uom_uom
 from . import res_company
 from . import res_config_settings
 from . import resolution
-from . import customer_software
 from . import account_journal
