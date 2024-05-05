@@ -30,6 +30,5 @@ from . import account_move
 from . import account_move_line
 from . import account_move_reversal
 from . import account_debit_note
-from . import mail_message
 from . import mail_template
 from . import radian
