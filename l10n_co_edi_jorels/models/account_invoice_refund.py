@@ -29,7 +29,20 @@ class AccountInvoiceRefund(models.TransientModel):
     # Required field for credit notes in DIAN
     ei_correction_concept_credit_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
                                                       string="Correction concept",
-                                                      domain=[('type_document_id', '=', '5')])
+                                                      domain=[('type_document_id', 'in', (5, 13))])
+    ei_type_document_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_documents', string="Document type",
+                                          compute='_compute_ei_type_document_id', store=True)
+
+    @api.depends('date_invoice')
+    @api.one
+    def _compute_ei_type_document_id(self):
+        invoice_id = self.env['account.invoice'].browse(self._context.get('active_id', False))
+        if invoice_id.type == 'out_invoice':
+            self.ei_type_document_id = 5
+        elif invoice_id.type == 'in_invoice':
+            self.ei_type_document_id = 13
+        else:
+            self.ei_type_document_id = None
 
     @api.onchange('ei_correction_concept_credit_id')
     def _onchange_ei_correction_concept_credit_id(self):
