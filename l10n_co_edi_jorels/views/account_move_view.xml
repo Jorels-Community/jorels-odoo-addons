@@ -112,7 +112,6 @@
                             <field name="ei_attached_zip_base64_bytes"/>
                             <field name="ei_payload" groups="base.group_no_one"/>
                             <field name="ei_qr_image" widget="image"/>
-                            <field name="event"/>
                         </group>
                     </page>
                     <page name="dian_events" string="Dian Events"
