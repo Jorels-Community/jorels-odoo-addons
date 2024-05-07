@@ -121,12 +121,22 @@ class AccountInvoice(models.Model):
 
     # Total taxes only / without withholdings
     ei_amount_tax_withholding = fields.Monetary("Withholdings", compute="_compute_amount", store=True)
+    ei_amount_tax_withholding_company = fields.Monetary("Withholdings in Company Currency", compute="_compute_amount",
+                                                        store=True, currency_field='company_currency_id')
     ei_amount_tax_no_withholding = fields.Monetary("Taxes without withholdings", compute="_compute_amount", store=True)
+    ei_amount_tax_no_withholding_company = fields.Monetary("Taxes without withholdings in Company Currency",
+                                                           compute="_compute_amount", store=True,
+                                                           currency_field='company_currency_id')
     ei_amount_total_no_withholding = fields.Monetary("Total without withholdings", compute="_compute_amount",
                                                      store=True)
+    ei_amount_total_no_withholding_company = fields.Monetary("Total without withholdings in Company Currency",
+                                                             compute="_compute_amount", store=True,
+                                                             currency_field='company_currency_id')
 
     # Total base excluding tax
     ei_amount_excluded = fields.Monetary("Excluded", compute="_compute_amount", store=True)
+    ei_amount_excluded_company = fields.Monetary("Excluded in Company Currency", compute="_compute_amount", store=True,
+                                                 currency_field='company_currency_id')
 
     # Required field for credit and debit notes in DIAN
     ei_correction_concept_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
@@ -473,15 +483,17 @@ class AccountInvoice(models.Model):
     @api.multi
     def get_ei_legal_monetary_totals(self):
         self.ensure_one()
-        line_extension_amount = self.amount_untaxed
-        tax_exclusive_amount = self.amount_untaxed - self.ei_amount_excluded
+        line_extension_amount = abs(self.amount_untaxed_signed)
+        tax_exclusive_amount = abs(self.amount_untaxed_signed) - self.ei_amount_excluded_company
 
         allowance_total_amount = 0.0
         if self.is_universal_discount():
+            if self.company_currency_id == self.currency_id:
+                raise UserError(_("The universal discount module doesn't seem to be compatible with multi-currencies."))
             allowance_total_amount = self.ks_amount_discount
 
         charge_total_amount = 0.0
-        payable_amount = self.ei_amount_total_no_withholding
+        payable_amount = self.ei_amount_total_no_withholding_company
         tax_inclusive_amount = payable_amount - charge_total_amount + allowance_total_amount
 
         return {
@@ -494,14 +506,14 @@ class AccountInvoice(models.Model):
     @api.multi
     def get_ei_lines(self):
         lines = []
-        round_curr = self.currency_id.round
+        round_curr = self.company_currency_id.round
         for rec in self:
             for invoice_line_id in rec.invoice_line_ids:
                 if invoice_line_id.account_id:
                     if not (0 <= invoice_line_id.discount < 100):
                         raise UserError(_("The discount must always be greater than or equal to 0 and less than 100."))
 
-                    price_unit = 100.0 * invoice_line_id.price_subtotal / (invoice_line_id.quantity * (
+                    price_unit = 100.0 * abs(invoice_line_id.price_subtotal_signed) / (invoice_line_id.quantity * (
                             100.0 - invoice_line_id.discount))
                     # The temporary dictionary of elements that belong to the specific line
                     invoice_temps = {}
@@ -542,7 +554,7 @@ class AccountInvoice(models.Model):
                         raise UserError(_("All products must be assigned a unit of measure (DIAN)"))
 
                     products.update({'quantity': invoice_line_id.quantity})
-                    products.update({'line_extension_value': invoice_line_id.price_subtotal})
+                    products.update({'line_extension_value': abs(invoice_line_id.price_subtotal_signed)})
                     # [4]: Taxpayer adoption standard ('999')
                     products.update({'item_code': 4})
 
@@ -550,9 +562,9 @@ class AccountInvoice(models.Model):
                     if invoice_line_id.discount:
                         discount = True
                         allowance_charges.update({'indicator': False})
-                        amount = invoice_line_id.price_subtotal * invoice_line_id.discount / (
+                        amount = abs(invoice_line_id.price_subtotal_signed) * invoice_line_id.discount / (
                                 100.0 - invoice_line_id.discount)
-                        base_amount = invoice_line_id.price_subtotal + amount
+                        base_amount = abs(invoice_line_id.price_subtotal_signed) + amount
                         allowance_charge_reason = "Descuento"
                     else:
                         discount = False
@@ -561,11 +573,15 @@ class AccountInvoice(models.Model):
                         base_amount = 0
                         allowance_charge_reason = ""
 
-                    taxable_amount = invoice_line_id.price_subtotal
+                    taxable_amount_company = abs(invoice_line_id.price_subtotal_signed)
 
                     # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
                     commercial_sample = False
-                    if not taxable_amount and not discount and invoice_line_id.product_id.lst_price:
+                    if not taxable_amount_company and not discount and invoice_line_id.product_id.lst_price:
+                        if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
+                            raise UserError(
+                                _("Commercial samples doesn't seem to be compatible with multi-currencies."))
+
                         # Use the following code, as an example, to configure the tax for a commercial sample.
                         # For this you must install the account_tax_python module and
                         # select the "Tax computation" field as "Python code" in the tax form.
@@ -579,7 +595,7 @@ class AccountInvoice(models.Model):
                         #
                         commercial_sample = True
                         products.update({'price_code': 1})  # Commercial value ('01')
-                        taxable_amount = invoice_line_id.product_id.lst_price * invoice_line_id.quantity
+                        taxable_amount_company = invoice_line_id.product_id.lst_price * invoice_line_id.quantity
                         products.update({'price_value': invoice_line_id.product_id.lst_price})
 
                     allowance_charges.update({'base_value': base_amount})
@@ -600,16 +616,15 @@ class AccountInvoice(models.Model):
                                     and not (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
                                 if invoice_line_tax_id.amount_type == 'percent':
                                     tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
-                                    tax_total.update(
-                                        {'tax_value': round_curr(taxable_amount * invoice_line_tax_id.amount / 100.0)})
-                                    tax_total.update({'taxable_value': round_curr(taxable_amount)})
+                                    tax_total.update({'tax_value': round_curr(
+                                        taxable_amount_company * invoice_line_tax_id.amount / 100.0)})
+                                    tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
                                     tax_total.update({'percent': invoice_line_tax_id.amount})
                                     tax_totals['tax_totals'].append(tax_total)
                                 elif invoice_line_tax_id.amount_type == 'fixed':
                                     tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
-                                    tax_total.update(
-                                        {'tax_value': round_curr(
-                                            invoice_line_id.quantity * invoice_line_tax_id.amount)})
+                                    tax_total.update({'tax_value': round_curr(
+                                        invoice_line_id.quantity * invoice_line_tax_id.amount)})
                                     tax_total.update({'taxable_value': invoice_line_id.quantity})
                                     # "886","number of international units","NIU"
                                     tax_total.update({'uom_code': 886})
@@ -621,19 +636,18 @@ class AccountInvoice(models.Model):
                                     if commercial_sample:
                                         tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                         tax_total.update({'tax_value': round_curr(invoice_line_id.price_total)})
-                                        tax_total.update({'taxable_value': round_curr(taxable_amount)})
+                                        tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
                                         # The tax is rounded to 0 decimal places, integers. In case of rounding issues,
                                         # it is expected that this will be sufficient to correct the problem and at the
                                         # same time cover all possible percentage tax values for Colombia.
-                                        tax_total.update(
-                                            {'percent': round(invoice_line_id.price_total / taxable_amount * 100)})
+                                        tax_total.update({'percent': round(
+                                            invoice_line_id.price_total / taxable_amount_company * 100)})
                                         tax_totals['tax_totals'].append(tax_total)
                                     else:
                                         tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
-                                        tax_total.update(
-                                            {'tax_value': round_curr(
-                                                taxable_amount * invoice_line_tax_id.amount / 100.0)})
-                                        tax_total.update({'taxable_value': round_curr(taxable_amount)})
+                                        tax_total.update({'tax_value': round_curr(
+                                            taxable_amount_company * invoice_line_tax_id.amount / 100.0)})
+                                        tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
                                         tax_total.update({'percent': invoice_line_tax_id.amount})
                                         tax_totals['tax_totals'].append(tax_total)
                                 else:
@@ -732,60 +746,115 @@ class AccountInvoice(models.Model):
     def _compute_amount(self):
         res = super(AccountInvoice, self)._compute_amount()
 
-        amount_tax_withholding = 0
-        amount_tax_no_withholding = 0
-        amount_excluded = 0
-        for tax_line_id in self.tax_line_ids:
-            tax_name = tax_line_id.tax_id.name
-            dian_report_tax_base = tax_line_id.tax_id.dian_report_tax_base or 'auto'
+        for rec in self:
+            amount_tax_withholding = 0
+            amount_tax_withholding_company = 0
+            amount_tax_no_withholding = 0
+            amount_tax_no_withholding_company = 0
+            amount_excluded = 0
+            amount_excluded_company = 0
+            rate = rec.currency_id.with_context(dict(rec._context or {}, date=rec.date_invoice)).rate
+            for invoice_line_id in rec.invoice_line_ids:
+                if invoice_line_id.account_id:
+                    taxable_amount = invoice_line_id.price_subtotal
+                    taxable_amount_company = abs(invoice_line_id.price_subtotal_signed)
+                    discount = bool(invoice_line_id.discount)
 
-            if tax_line_id.tax_id.edi_tax_id:
-                edi_tax_name = tax_line_id.tax_id.edi_tax_id.name
-                if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
-                        (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
-                    amount_excluded = amount_excluded + tax_line_id.base
-                elif edi_tax_name[:4] == 'Rete':
-                    amount_tax_withholding = amount_tax_withholding + tax_line_id.amount_total
-                else:
-                    amount_tax_no_withholding = amount_tax_no_withholding + tax_line_id.amount_total
-            else:
-                if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
-                        (tax_name.startswith('IVA') and dian_report_tax_base == 'no_report'):
-                    amount_excluded = amount_excluded + tax_line_id.base
-                elif tax_name[:3] == 'Rte':
-                    amount_tax_withholding = amount_tax_withholding + tax_line_id.amount_total
-                else:
-                    amount_tax_no_withholding = amount_tax_no_withholding + tax_line_id.amount_total
+                    # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
+                    if not taxable_amount and not discount and invoice_line_id.product_id.lst_price:
+                        if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
+                            raise UserError(
+                                _("Commercial samples doesn't seem to be compatible with multi-currencies."))
 
-        self.ei_amount_tax_withholding = amount_tax_withholding
-        self.ei_amount_tax_no_withholding = amount_tax_no_withholding
-        self.ei_amount_total_no_withholding = self.amount_untaxed + self.ei_amount_tax_no_withholding
-        self.ei_amount_excluded = amount_excluded
+                        lst_price_invoice = invoice_line_id.product_id.lst_price * rate
+                        taxable_amount = lst_price_invoice * invoice_line_id.quantity
+                        taxable_amount_company = invoice_line_id.product_id.lst_price * invoice_line_id.quantity
 
-        if self.is_universal_discount():
-            if not ('ks_global_tax_rate' in self):
-                self.ks_calculate_discount()
-            sign = self.type in ['in_refund', 'out_refund'] and -1 or 1
-            self.amount_total_company_signed = self.amount_total * sign
-            self.amount_total_signed = self.amount_total * sign
+                    for invoice_line_tax_id in invoice_line_id.invoice_line_tax_ids:
+                        tax_name = invoice_line_tax_id.name
+                        dian_report_tax_base = invoice_line_tax_id.dian_report_tax_base or 'auto'
 
-            self.ei_amount_total_no_withholding = self.amount_untaxed + \
-                                                  self.ei_amount_tax_no_withholding - \
-                                                  self.ks_amount_discount
+                        if invoice_line_tax_id.amount_type == 'fixed':
+                            # For fixed amount type
+                            # The 'amount' field automatically uses the value defined in the tax configuration
+                            # without currency conversion.
+                            tax_amount = invoice_line_id.quantity * invoice_line_tax_id.amount
+                            tax_amount_company = tax_amount / rate
+                        else:
+                            # For percent and code amount type
+                            tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
+                            tax_amount_company = taxable_amount_company * invoice_line_tax_id.amount / 100.0
 
-        # Value in letters
-        decimal_part, integer_part = math.modf(self.amount_total)
-        if decimal_part:
-            decimal_part = round(decimal_part * math.pow(10, self.currency_id.decimal_places))
-        if integer_part:
-            lang = self.partner_id.lang if self.partner_id.lang else 'es_CO'
+                        if invoice_line_tax_id.edi_tax_id.id:
+                            edi_tax_name = invoice_line_tax_id.edi_tax_id.name
+                            if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
+                                    (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
+                                amount_excluded = amount_excluded + taxable_amount
+                                amount_excluded_company = amount_excluded_company + taxable_amount_company
+                            elif edi_tax_name[:4] == 'Rete':
+                                amount_tax_withholding = amount_tax_withholding + tax_amount
+                                amount_tax_withholding_company = amount_tax_withholding_company + tax_amount_company
+                            else:
+                                amount_tax_no_withholding = amount_tax_no_withholding + tax_amount
+                                amount_tax_no_withholding_company = amount_tax_no_withholding_company + tax_amount_company
+                        else:
+                            if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
+                                    (tax_name.startswith('IVA') and dian_report_tax_base == 'no_report'):
+                                amount_excluded = amount_excluded + taxable_amount
+                                amount_excluded_company = amount_excluded_company + taxable_amount_company
+                            elif tax_name[:3] == 'Rte':
+                                amount_tax_withholding = amount_tax_withholding + tax_amount
+                                amount_tax_withholding_company = amount_tax_withholding_company + tax_amount_company
+                            else:
+                                amount_tax_no_withholding = amount_tax_no_withholding + tax_amount
+                                amount_tax_no_withholding_company = amount_tax_no_withholding_company + tax_amount_company
 
-            self.value_letters = num2words(integer_part, lang=lang).upper() + ' ' + \
-                                 self.currency_id.currency_unit_label.upper()
+            rec.ei_amount_tax_withholding = amount_tax_withholding
+            rec.ei_amount_tax_withholding_company = amount_tax_withholding_company
+            rec.ei_amount_tax_no_withholding = amount_tax_no_withholding
+            rec.ei_amount_tax_no_withholding_company = amount_tax_no_withholding_company
+            rec.ei_amount_total_no_withholding = rec.amount_untaxed + rec.ei_amount_tax_no_withholding
+            rec.ei_amount_total_no_withholding_company = (abs(rec.amount_untaxed_signed) +
+                                                          rec.ei_amount_tax_no_withholding_company)
+            rec.ei_amount_excluded = amount_excluded
+            rec.ei_amount_excluded_company = amount_excluded_company
+
+            if self.is_universal_discount():
+                if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
+                    raise UserError(
+                        _("The universal discount module doesn't seem to be compatible with multi-currencies."))
+
+                if not ('ks_global_tax_rate' in rec):
+                    rec.ks_calculate_discount()
+                sign = rec.type in ['in_refund', 'out_refund'] and -1 or 1
+                rec.amount_total_company_signed = rec.amount_total * sign
+                rec.amount_total_signed = rec.amount_total * sign
+
+                rec.ei_amount_total_no_withholding = (rec.amount_untaxed +
+                                                      rec.ei_amount_tax_no_withholding -
+                                                      rec.ks_amount_discount)
+                rec.ei_amount_total_no_withholding_company = (abs(rec.amount_untaxed_signed) +
+                                                              rec.ei_amount_tax_no_withholding_company -
+                                                              rec.ks_amount_discount)
+
+            # Value in letters
+            decimal_part, integer_part = math.modf(abs(rec.amount_total_company_signed))
             if decimal_part:
-                self.value_letters = self.value_letters + ', ' + \
-                                     num2words(decimal_part, lang=lang).upper() + ' ' + \
-                                     self.currency_id.currency_subunit_label.upper() + '.'
+                decimal_part = round(decimal_part * math.pow(10, rec.company_currency_id.decimal_places))
+            if integer_part:
+                if not rec.company_id.ei_enable and rec.partner_id.lang:
+                    lang = rec.partner_id.lang
+                elif not rec.company_id.ei_enable:
+                    lang = 'en'
+                else:
+                    lang = 'es_CO'
+
+                rec.value_letters = (num2words(integer_part, lang=lang).upper() + ' ' +
+                                     rec.company_currency_id.currency_unit_label.upper())
+                if decimal_part:
+                    rec.value_letters = (rec.value_letters + ', ' +
+                                         num2words(decimal_part, lang=lang).upper() + ' ' +
+                                         rec.company_currency_id.currency_subunit_label.upper() + '.')
 
         return res
 
@@ -1117,42 +1186,28 @@ class AccountInvoice(models.Model):
                     # The if is to make sure the name in currency_id,
                     # have a match in the code in type_currencies of the DIAN
                     if company_currency_search and invoice_currency_search:
-
-                        # The inverse of Odoo,
-                        # for example for company = COP and invoice = USD,
-                        # the cup must be USD-> COP, not COP-> USD as it comes by default
-                        # This can lead to rounding errors that need to be reviewed in more detail.
-                        #
-                        # There is an OCA module that allows you to use reverse cups and avoid these problems,
-                        # but it was found that it could cause conflicts in the automatic calculation of prices.
-                        #
-                        # For now it is checked if there is a hypothetical Boolean field rate_inverted, as it would be
-                        # the case of the OCA module; although it is not considered a true solution to the problem.
-                        # The best would be 'maybe' to raise the precision of the 'rate' field so that even at a
-                        # investment the value remains within the expected margin.
-                        if hasattr(rec.currency_id, 'rate_inverted') and rec.currency_id.rate_inverted:
-                            calculation_rate = rec.currency_id.rate
-                        else:
-                            calculation_rate = 1.0 / rec.currency_id.rate
-
                         rate_date = rec._get_currency_rate_date() or fields.Date.context_today(self)
 
-                        json_request['currency_code'] = invoice_currency_search.id
+                        json_request['currency_code'] = company_currency_search.id
                         json_request['exchange_rate'] = {
-                            'code': company_currency_search.id,
-                            'rate': calculation_rate,
+                            'code': invoice_currency_search.id,
+                            'rate': rec.currency_id.rate,
                             'date': str(rate_date)
                         }
                     else:
                         raise UserError(_("A currency type in Odoo does not correspond to any DIAN currency type"))
 
                 if self.is_universal_discount():
+                    if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
+                        raise UserError(
+                            _("The universal discount module doesn't seem to be compatible with multi-currencies."))
+
                     if rec.ks_amount_discount:
                         allowance_charges = []
                         allowance_charge = {
                             'indicator': False,
                             'discount_code': 2,
-                            'base_value': rec.amount_untaxed,
+                            'base_value': abs(rec.amount_untaxed_signed),
                             'value': rec.ks_amount_discount,
                             'reason': 'Descuento general'
                         }
