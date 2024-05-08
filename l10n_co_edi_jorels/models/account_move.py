@@ -494,236 +494,237 @@ class AccountMove(models.Model):
         }
 
     def get_ei_lines(self):
+        self.ensure_one()
+
         lines = []
         round_curr = self.company_currency_id.round
-        for rec in self:
-            for invoice_line_id in rec.invoice_line_ids:
-                if invoice_line_id.account_id:
-                    if not (0 <= invoice_line_id.discount < 100):
-                        raise UserError(_("The discount must always be greater than or equal to 0 and less than 100."))
+        for invoice_line_id in self.invoice_line_ids:
+            if invoice_line_id.account_id:
+                if not (0 <= invoice_line_id.discount < 100):
+                    raise UserError(_("The discount must always be greater than or equal to 0 and less than 100."))
 
-                    price_unit = 100.0 * abs(invoice_line_id.price_subtotal_signed) / (invoice_line_id.quantity * (
-                            100.0 - invoice_line_id.discount))
-                    # The temporary dictionary of elements that belong to the specific line
-                    invoice_temps = {}
-                    products = {}
-                    allowance_charges = {}
-                    tax_totals = {'tax_totals': []}
-                    products.update({'price_value': price_unit})
-                    products.update({'base_quantity': invoice_line_id.quantity})
+                price_unit = 100.0 * abs(invoice_line_id.price_subtotal_signed) / (invoice_line_id.quantity * (
+                        100.0 - invoice_line_id.discount))
+                # The temporary dictionary of elements that belong to the specific line
+                invoice_temps = {}
+                products = {}
+                allowance_charges = {}
+                tax_totals = {'tax_totals': []}
+                products.update({'price_value': price_unit})
+                products.update({'base_quantity': invoice_line_id.quantity})
 
-                    if invoice_line_id.product_id.code:
-                        products.update({'product_ref': invoice_line_id.product_id.code})
+                if invoice_line_id.product_id.code:
+                    products.update({'product_ref': invoice_line_id.product_id.code})
+                else:
+                    raise UserError(_("All products must have an internal reference assigned"))
+
+                if self.is_out_country:
+                    if invoice_line_id.product_id.brand_name:
+                        products.update({'brand_name': invoice_line_id.product_id.brand_name})
                     else:
-                        raise UserError(_("All products must have an internal reference assigned"))
+                        raise UserError(_("Products on export invoices must have a brand name"))
 
-                    if rec.is_out_country:
-                        if invoice_line_id.product_id.brand_name:
-                            products.update({'brand_name': invoice_line_id.product_id.brand_name})
-                        else:
-                            raise UserError(_("Products on export invoices must have a brand name"))
-
-                        if invoice_line_id.product_id.model_name:
-                            products.update({'model_name': invoice_line_id.product_id.model_name})
-                        else:
-                            raise UserError(_("Products on export invoices must have a model name"))
-
-                    products.update({'description': invoice_line_id.name})
-
-                    if invoice_line_id.ei_notes:
-                        products.update({'notes': [{'text': invoice_line_id.ei_notes}]})
-
-                    if invoice_line_id.product_uom_id.edi_unit_measure_id.id:
-                        products.update({'uom_code': invoice_line_id.product_uom_id.edi_unit_measure_id.id})
+                    if invoice_line_id.product_id.model_name:
+                        products.update({'model_name': invoice_line_id.product_id.model_name})
                     else:
-                        raise UserError(_("All products must be assigned a unit of measure (DIAN)"))
+                        raise UserError(_("Products on export invoices must have a model name"))
 
-                    products.update({'quantity': invoice_line_id.quantity})
-                    products.update({'line_extension_value': abs(invoice_line_id.price_subtotal_signed)})
-                    # TODO: Standard product codes compatibility
-                    # [4]: Taxpayer adoption standard ('999')
-                    products.update({'item_code': 4})
+                products.update({'description': invoice_line_id.name})
 
-                    # Discounts
-                    if invoice_line_id.discount:
-                        discount = True
-                        allowance_charges.update({'indicator': False})
-                        amount = abs(invoice_line_id.price_subtotal_signed) * invoice_line_id.discount / (
-                                100.0 - invoice_line_id.discount)
-                        base_amount = abs(invoice_line_id.price_subtotal_signed) + amount
-                        allowance_charge_reason = "Descuento"
-                    else:
-                        discount = False
-                        allowance_charges.update({'indicator': False})
-                        amount = 0
-                        base_amount = 0
-                        allowance_charge_reason = ""
+                if invoice_line_id.ei_notes:
+                    products.update({'notes': [{'text': invoice_line_id.ei_notes}]})
 
-                    taxable_amount_company = abs(invoice_line_id.price_subtotal_signed)
+                if invoice_line_id.product_uom_id.edi_unit_measure_id.id:
+                    products.update({'uom_code': invoice_line_id.product_uom_id.edi_unit_measure_id.id})
+                else:
+                    raise UserError(_("All products must be assigned a unit of measure (DIAN)"))
 
-                    # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
-                    commercial_sample = False
-                    if not taxable_amount_company and not discount and invoice_line_id.product_id.lst_price:
-                        if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
-                            raise UserError(
-                                _("Commercial samples doesn't seem to be compatible with multi-currencies."))
+                products.update({'quantity': invoice_line_id.quantity})
+                products.update({'line_extension_value': abs(invoice_line_id.price_subtotal_signed)})
+                # TODO: Standard product codes compatibility
+                # [4]: Taxpayer adoption standard ('999')
+                products.update({'item_code': 4})
 
-                        # Use the following code, as an example, to configure the tax for a commercial sample.
-                        # For this you must install the account_tax_python module and
-                        # select the "Tax computation" field as "Python code" in the tax form.
-                        #
-                        # In the "Python code" field, in the tax form; for 19% tax:
-                        #
-                        # if price_unit:
-                        #     result = price_unit * quantity * 0.19
-                        # else:
-                        #     result = product.lst_price * quantity * 0.19
-                        #
-                        commercial_sample = True
-                        products.update({'price_code': 1})  # Commercial value ('01')
-                        taxable_amount_company = invoice_line_id.product_id.lst_price * invoice_line_id.quantity
-                        products.update({'price_value': invoice_line_id.product_id.lst_price})
+                # Discounts
+                if invoice_line_id.discount:
+                    discount = True
+                    allowance_charges.update({'indicator': False})
+                    amount = abs(invoice_line_id.price_subtotal_signed) * invoice_line_id.discount / (
+                            100.0 - invoice_line_id.discount)
+                    base_amount = abs(invoice_line_id.price_subtotal_signed) + amount
+                    allowance_charge_reason = "Descuento"
+                else:
+                    discount = False
+                    allowance_charges.update({'indicator': False})
+                    amount = 0
+                    base_amount = 0
+                    allowance_charge_reason = ""
 
-                    allowance_charges.update({'base_value': base_amount})
-                    allowance_charges.update({'value': amount})
-                    allowance_charges.update({'reason': allowance_charge_reason})
+                taxable_amount_company = abs(invoice_line_id.price_subtotal_signed)
 
-                    # Calculate tax totals for invoice line
-                    for invoice_line_tax_id in invoice_line_id.tax_ids:
-                        tax_total = {}
+                # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
+                commercial_sample = False
+                if not taxable_amount_company and not discount and invoice_line_id.product_id.lst_price:
+                    if self.currency_id and self.company_id and self.currency_id != self.company_id.currency_id:
+                        raise UserError(
+                            _("Commercial samples doesn't seem to be compatible with multi-currencies."))
 
-                        if invoice_line_tax_id.edi_tax_id.id:
-                            edi_tax_name = invoice_line_tax_id.edi_tax_id.name
-                            tax_name = invoice_line_tax_id.name
-                            dian_report_tax_base = invoice_line_tax_id.dian_report_tax_base or 'auto'
-                            # The information sent to DIAN should not include the withholdings
-                            if edi_tax_name[:4] != 'Rete' \
-                                    and not tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) \
-                                    and not (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
-                                if invoice_line_tax_id.amount_type == 'percent':
+                    # Use the following code, as an example, to configure the tax for a commercial sample.
+                    # For this you must install the account_tax_python module and
+                    # select the "Tax computation" field as "Python code" in the tax form.
+                    #
+                    # In the "Python code" field, in the tax form; for 19% tax:
+                    #
+                    # if price_unit:
+                    #     result = price_unit * quantity * 0.19
+                    # else:
+                    #     result = product.lst_price * quantity * 0.19
+                    #
+                    commercial_sample = True
+                    products.update({'price_code': 1})  # Commercial value ('01')
+                    taxable_amount_company = invoice_line_id.product_id.lst_price * invoice_line_id.quantity
+                    products.update({'price_value': invoice_line_id.product_id.lst_price})
+
+                allowance_charges.update({'base_value': base_amount})
+                allowance_charges.update({'value': amount})
+                allowance_charges.update({'reason': allowance_charge_reason})
+
+                # Calculate tax totals for invoice line
+                for invoice_line_tax_id in invoice_line_id.tax_ids:
+                    tax_total = {}
+
+                    if invoice_line_tax_id.edi_tax_id.id:
+                        edi_tax_name = invoice_line_tax_id.edi_tax_id.name
+                        tax_name = invoice_line_tax_id.name
+                        dian_report_tax_base = invoice_line_tax_id.dian_report_tax_base or 'auto'
+                        # The information sent to DIAN should not include the withholdings
+                        if edi_tax_name[:4] != 'Rete' \
+                                and not tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) \
+                                and not (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
+                            if invoice_line_tax_id.amount_type == 'percent':
+                                tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
+                                tax_total.update({'tax_value': round_curr(
+                                    taxable_amount_company * invoice_line_tax_id.amount / 100.0)})
+                                tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
+                                tax_total.update({'percent': invoice_line_tax_id.amount})
+                                tax_totals['tax_totals'].append(tax_total)
+                            elif invoice_line_tax_id.amount_type == 'fixed':
+                                tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
+                                tax_total.update({'tax_value': round_curr(
+                                    invoice_line_id.quantity * invoice_line_tax_id.amount)})
+                                tax_total.update({'taxable_value': invoice_line_id.quantity})
+                                # "886","number of international units","NIU"
+                                tax_total.update({'uom_code': 886})
+                                tax_total.update({'unit_value': round_curr(invoice_line_tax_id.amount)})
+                                tax_total.update({'base_uom': "1.000000"})
+                                tax_totals['tax_totals'].append(tax_total)
+                            elif invoice_line_tax_id.amount_type == 'code':
+                                # For now, only compatible with percentage taxes
+                                if commercial_sample:
+                                    tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
+                                    tax_total.update({'tax_value': round_curr(invoice_line_id.price_total)})
+                                    tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
+                                    # The tax is rounded to 0 decimal places, integers. In case of rounding issues,
+                                    # it is expected that this will be sufficient to correct the problem and at the
+                                    # same time cover all possible percentage tax values for Colombia.
+                                    tax_total.update({'percent': round(
+                                        invoice_line_id.price_total / taxable_amount_company * 100)})
+                                    tax_totals['tax_totals'].append(tax_total)
+                                else:
                                     tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
                                     tax_total.update({'tax_value': round_curr(
                                         taxable_amount_company * invoice_line_tax_id.amount / 100.0)})
                                     tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
                                     tax_total.update({'percent': invoice_line_tax_id.amount})
                                     tax_totals['tax_totals'].append(tax_total)
-                                elif invoice_line_tax_id.amount_type == 'fixed':
-                                    tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
-                                    tax_total.update({'tax_value': round_curr(
-                                        invoice_line_id.quantity * invoice_line_tax_id.amount)})
-                                    tax_total.update({'taxable_value': invoice_line_id.quantity})
-                                    # "886","number of international units","NIU"
-                                    tax_total.update({'uom_code': 886})
-                                    tax_total.update({'unit_value': round_curr(invoice_line_tax_id.amount)})
-                                    tax_total.update({'base_uom': "1.000000"})
-                                    tax_totals['tax_totals'].append(tax_total)
-                                elif invoice_line_tax_id.amount_type == 'code':
-                                    # For now, only compatible with percentage taxes
-                                    if commercial_sample:
-                                        tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
-                                        tax_total.update({'tax_value': round_curr(invoice_line_id.price_total)})
-                                        tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
-                                        # The tax is rounded to 0 decimal places, integers. In case of rounding issues,
-                                        # it is expected that this will be sufficient to correct the problem and at the
-                                        # same time cover all possible percentage tax values for Colombia.
-                                        tax_total.update({'percent': round(
-                                            invoice_line_id.price_total / taxable_amount_company * 100)})
-                                        tax_totals['tax_totals'].append(tax_total)
-                                    else:
-                                        tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
-                                        tax_total.update({'tax_value': round_curr(
-                                            taxable_amount_company * invoice_line_tax_id.amount / 100.0)})
-                                        tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
-                                        tax_total.update({'percent': invoice_line_tax_id.amount})
-                                        tax_totals['tax_totals'].append(tax_total)
-                                else:
-                                    raise UserError(_("Electronic invoicing is not yet compatible with this tax type."))
-                        else:
-                            raise UserError(_("All taxes must be assigned a tax type (DIAN)."))
+                            else:
+                                raise UserError(_("Electronic invoicing is not yet compatible with this tax type."))
+                    else:
+                        raise UserError(_("All taxes must be assigned a tax type (DIAN)."))
 
-                    # UPDATE ALL THE ELEMENTS OF THE PRODUCT
-                    invoice_temps.update(products)
+                # UPDATE ALL THE ELEMENTS OF THE PRODUCT
+                invoice_temps.update(products)
 
-                    # UPDATE ALL PRODUCT DISCOUNTS (* ONLY ONE IS SUPPOSED *)
-                    if discount:
-                        invoice_temps.update({'allowance_charges': [allowance_charges]})
+                # UPDATE ALL PRODUCT DISCOUNTS (* ONLY ONE IS SUPPOSED *)
+                if discount:
+                    invoice_temps.update({'allowance_charges': [allowance_charges]})
 
-                    # Taxes are attached inside this json
-                    if tax_totals['tax_totals']:
-                        invoice_temps.update({'tax_totals': tax_totals['tax_totals']})
+                # Taxes are attached inside this json
+                if tax_totals['tax_totals']:
+                    invoice_temps.update({'tax_totals': tax_totals['tax_totals']})
 
-                    # Transport compatibility
-                    if rec.ei_operation == 'transport':
-                        if 'waypoint_id' not in invoice_line_id:
-                            raise UserError(_("Transport compatibility is only available with "
-                                              "Jorels SAS Freight Transport Module"))
+                # Transport compatibility
+                if self.ei_operation == 'transport':
+                    if 'waypoint_id' not in invoice_line_id:
+                        raise UserError(_("Transport compatibility is only available with "
+                                          "Jorels SAS Freight Transport Module"))
 
-                        if invoice_line_id.waypoint_id:
-                            # Check field values
-                            if not invoice_line_id.waypoint_id.name_seq:
-                                raise UserError(_("A waypoint doesn't have an associated id number"))
-                            if not invoice_line_id.waypoint_id.rndc_ingresoid:
-                                raise UserError(_("Waypoint doesn't have an rndc ingress id: %s")
-                                                % invoice_line_id.waypoint_id.name_seq)
-                            if not invoice_line_id.waypoint_id.total:
-                                raise UserError(_("The waypoint %s doesn't have an total")
-                                                % invoice_line_id.waypoint_id.name_seq)
-                            if not invoice_line_id.waypoint_id.weight:
-                                raise UserError(_("The waypoint %s doesn't have an weight")
-                                                % invoice_line_id.waypoint_id.name_seq)
+                    if invoice_line_id.waypoint_id:
+                        # Check field values
+                        if not invoice_line_id.waypoint_id.name_seq:
+                            raise UserError(_("A waypoint doesn't have an associated id number"))
+                        if not invoice_line_id.waypoint_id.rndc_ingresoid:
+                            raise UserError(_("Waypoint doesn't have an rndc ingress id: %s")
+                                            % invoice_line_id.waypoint_id.name_seq)
+                        if not invoice_line_id.waypoint_id.total:
+                            raise UserError(_("The waypoint %s doesn't have an total")
+                                            % invoice_line_id.waypoint_id.name_seq)
+                        if not invoice_line_id.waypoint_id.weight:
+                            raise UserError(_("The waypoint %s doesn't have an weight")
+                                            % invoice_line_id.waypoint_id.name_seq)
 
-                            # Transport remittance registered in the RNDC
-                            invoice_temps.update({'sector_code': 2})
+                        # Transport remittance registered in the RNDC
+                        invoice_temps.update({'sector_code': 2})
 
-                            # 01. Remittance filing number provided by RNDC
-                            # 02. Remittance consecutive number according the internal coding of each transport company.
-                            # 03. Freight value to be charged for the transport service.
-                            # "767","kilogram","KGM"
-                            # "686","gallon","GLL"
-                            item_properties = [{
-                                'name': '01',
-                                'value': invoice_line_id.waypoint_id.rndc_ingresoid
-                            }, {
-                                'name': '02',
-                                'value': invoice_line_id.waypoint_id.name_seq
-                            }, {
-                                'name': '03',
-                                'value': invoice_line_id.waypoint_id.total,
-                                'uom_code': '767',
-                                'quantity': invoice_line_id.waypoint_id.weight
-                            }]
-                            invoice_temps.update({'item_properties': item_properties})
-                        else:
-                            # Additional service
-                            invoice_temps.update({'sector_code': 1})
+                        # 01. Remittance filing number provided by RNDC
+                        # 02. Remittance consecutive number according the internal coding of each transport company.
+                        # 03. Freight value to be charged for the transport service.
+                        # "767","kilogram","KGM"
+                        # "686","gallon","GLL"
+                        item_properties = [{
+                            'name': '01',
+                            'value': invoice_line_id.waypoint_id.rndc_ingresoid
+                        }, {
+                            'name': '02',
+                            'value': invoice_line_id.waypoint_id.name_seq
+                        }, {
+                            'name': '03',
+                            'value': invoice_line_id.waypoint_id.total,
+                            'uom_code': '767',
+                            'quantity': invoice_line_id.waypoint_id.weight
+                        }]
+                        invoice_temps.update({'item_properties': item_properties})
+                    else:
+                        # Additional service
+                        invoice_temps.update({'sector_code': 1})
 
-                    # Mandates compatibility
-                    if rec.ei_operation == 'mandates':
-                        raise UserError(_("Electronic invoicing does not yet support mandates"))
+                # Mandates compatibility
+                if self.ei_operation == 'mandates':
+                    raise UserError(_("Electronic invoicing does not yet support mandates"))
 
-                    # Exchange compatibility
-                    if rec.ei_operation == 'exchange':
-                        raise UserError(_("Electronic invoicing does not yet support exchange"))
+                # Exchange compatibility
+                if self.ei_operation == 'exchange':
+                    raise UserError(_("Electronic invoicing does not yet support exchange"))
 
-                    # Iva free day compatibility
-                    if rec.ei_operation == 'iva_free_day':
-                        raise UserError(_("Electronic invoicing does not yet support iva_free_day"))
+                # Iva free day compatibility
+                if self.ei_operation == 'iva_free_day':
+                    raise UserError(_("Electronic invoicing does not yet support iva_free_day"))
 
-                    if rec.ei_type_document_id.id == 12:
-                        if rec.invoice_date != fields.Date.context_today(rec):
-                            raise UserError(_("The issue date must be today's date"))
-                        # Support document
-                        # Form generation transmission (transmission code)
-                        # 1, Por operación (Default)
-                        # 2, Acumulado semanal
-                        invoice_temps.update({
-                            'period': {
-                                'date': fields.Date.to_string(rec.invoice_date),
-                                'transmission_code': 1
-                            }
-                        })
+                if self.ei_type_document_id.id == 12:
+                    if self.invoice_date != fields.Date.context_today(self):
+                        raise UserError(_("The issue date must be today's date"))
+                    # Support document
+                    # Form generation transmission (transmission code)
+                    # 1, Por operación (Default)
+                    # 2, Acumulado semanal
+                    invoice_temps.update({
+                        'period': {
+                            'date': fields.Date.to_string(self.invoice_date),
+                            'transmission_code': 1
+                        }
+                    })
 
-                    lines.append(invoice_temps)
+                lines.append(invoice_temps)
 
         return lines
 
@@ -891,38 +892,38 @@ class AccountMove(models.Model):
     def _compute_ei_type_document(self):
         for rec in self:
             # Compute ei_type_document
-            if self.type == 'out_invoice':
-                if (('debit_origin_id' in self) and self.debit_origin_id) or self.ei_is_correction_without_reference:
+            if rec.type == 'out_invoice':
+                if (('debit_origin_id' in rec) and rec.debit_origin_id) or rec.ei_is_correction_without_reference:
                     # Debit note
                     type_edi_document = 'debit_note'
                 else:
                     # Sales invoice
                     type_edi_document = 'invoice'
-            elif self.type == 'out_refund':
+            elif rec.type == 'out_refund':
                 # Credit note
                 type_edi_document = 'credit_note'
-            elif self.type == 'in_invoice' \
-                    and self.resolution_id \
-                    and self.resolution_id.resolution_type_document_id.id == 12:
-                if (('debit_origin_id' in self) and self.debit_origin_id) or self.ei_is_correction_without_reference:
+            elif rec.type == 'in_invoice' \
+                    and rec.resolution_id \
+                    and rec.resolution_id.resolution_type_document_id.id == 12:
+                if (('debit_origin_id' in rec) and rec.debit_origin_id) or rec.ei_is_correction_without_reference:
                     # There is no debit note for document support
                     raise UserError(_("There is not debit note for electronic document support"))
                 else:
                     # Document support
                     type_edi_document = 'doc_support'
-            elif self.type == 'in_refund' \
-                    and self.resolution_id \
-                    and self.resolution_id.resolution_type_document_id.id == 13:
+            elif rec.type == 'in_refund' \
+                    and rec.resolution_id \
+                    and rec.resolution_id.resolution_type_document_id.id == 13:
                 # Note Document Support
                 type_edi_document = 'note_support'
-            elif self.type == 'in_invoice':
-                if (('debit_origin_id' in self) and self.debit_origin_id) or self.ei_is_correction_without_reference:
+            elif rec.type == 'in_invoice':
+                if (('debit_origin_id' in rec) and rec.debit_origin_id) or rec.ei_is_correction_without_reference:
                     # Debit note
                     type_edi_document = 'debit_note'
                 else:
                     # Sales invoice
                     type_edi_document = 'invoice'
-            elif self.type == 'in_refund':
+            elif rec.type == 'in_refund':
                 # Credit note
                 type_edi_document = 'credit_note'
             else:
