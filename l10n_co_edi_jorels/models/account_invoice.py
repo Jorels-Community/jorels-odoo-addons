@@ -747,7 +747,7 @@ class AccountInvoice(models.Model):
     # Calculation of withholdings, excluded, etc.
     @api.one
     def _compute_amount(self):
-        res = super(AccountInvoice, self)._compute_amount()
+        super(AccountInvoice, self)._compute_amount()
 
         for rec in self:
             amount_tax_withholding = 0
@@ -858,8 +858,6 @@ class AccountInvoice(models.Model):
                     rec.value_letters = (rec.value_letters + ', ' +
                                          num2words(decimal_part, lang=lang).upper() + ' ' +
                                          rec.company_currency_id.currency_subunit_label.upper() + '.')
-
-        return res
 
     @api.multi
     def get_ei_payment_form(self):
