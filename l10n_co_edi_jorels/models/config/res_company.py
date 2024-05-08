@@ -281,3 +281,10 @@ class ResCompany(models.Model):
                         vals['is_not_test'] = not vals['is_not_test']
 
         return super(ResCompany, self).write(vals)
+
+    def uninstall_custom_models(self, module):
+        cr = self._cr
+        if module == 'l10n_co_edi_jorels':
+            cr.execute(
+                "DELETE FROM ir_model_data WHERE module = 'l10n_co_edi_jorels' and name like '%customer_software%'")
+            cr.execute("DELETE FROM ir_model WHERE model = 'l10n_co_edi_jorels.customer_software'")
