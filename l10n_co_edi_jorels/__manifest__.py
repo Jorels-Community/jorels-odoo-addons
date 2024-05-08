@@ -67,7 +67,6 @@
     'external_dependencies': {
         'python': [
             'num2words',
-            'pathlib',
             'qrcode',
             'requests',
         ]
