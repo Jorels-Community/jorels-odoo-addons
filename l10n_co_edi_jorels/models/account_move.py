@@ -742,6 +742,7 @@ class AccountMove(models.Model):
             amount_excluded = 0
             amount_excluded_company = 0
             rate = rec.currency_id.with_context(dict(rec._context or {}, date=rec.invoice_date)).rate
+            inverse_rate = rec.currency_id.with_context(dict(rec._context or {}, date=rec.invoice_date)).inverse_rate
             for invoice_line_id in rec.invoice_line_ids:
                 if invoice_line_id.account_id:
                     taxable_amount = invoice_line_id.price_subtotal
@@ -767,7 +768,7 @@ class AccountMove(models.Model):
                             # The 'amount' field automatically uses the value defined in the tax configuration
                             # without currency conversion.
                             tax_amount = invoice_line_id.quantity * invoice_line_tax_id.amount
-                            tax_amount_company = tax_amount / rate
+                            tax_amount_company = tax_amount * inverse_rate
                         else:
                             # For percent and code amount type
                             tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
