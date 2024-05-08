@@ -506,7 +506,7 @@ class AccountMove(models.Model):
                 if not (0 <= invoice_line_id.discount < 100):
                     raise UserError(_("The discount must always be greater than or equal to 0 and less than 100."))
 
-                price_unit = 100.0 * abs(invoice_line_id.price_subtotal_signed) / (invoice_line_id.quantity * (
+                price_unit = 100.0 * abs(invoice_line_id.balance) / (invoice_line_id.quantity * (
                         100.0 - invoice_line_id.discount))
                 # The temporary dictionary of elements that belong to the specific line
                 invoice_temps = {}
@@ -543,7 +543,7 @@ class AccountMove(models.Model):
                     raise UserError(_("All products must be assigned a unit of measure (DIAN)"))
 
                 products.update({'quantity': invoice_line_id.quantity})
-                products.update({'line_extension_value': abs(invoice_line_id.price_subtotal_signed)})
+                products.update({'line_extension_value': abs(invoice_line_id.balance)})
                 # TODO: Standard product codes compatibility
                 # [4]: Taxpayer adoption standard ('999')
                 products.update({'item_code': 4})
@@ -552,9 +552,9 @@ class AccountMove(models.Model):
                 if invoice_line_id.discount:
                     discount = True
                     allowance_charges.update({'indicator': False})
-                    amount = abs(invoice_line_id.price_subtotal_signed) * invoice_line_id.discount / (
+                    amount = abs(invoice_line_id.balance) * invoice_line_id.discount / (
                             100.0 - invoice_line_id.discount)
-                    base_amount = abs(invoice_line_id.price_subtotal_signed) + amount
+                    base_amount = abs(invoice_line_id.balance) + amount
                     allowance_charge_reason = "Descuento"
                 else:
                     discount = False
@@ -563,7 +563,7 @@ class AccountMove(models.Model):
                     base_amount = 0
                     allowance_charge_reason = ""
 
-                taxable_amount_company = abs(invoice_line_id.price_subtotal_signed)
+                taxable_amount_company = abs(invoice_line_id.balance)
 
                 # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
                 commercial_sample = False
@@ -745,7 +745,7 @@ class AccountMove(models.Model):
             for invoice_line_id in rec.invoice_line_ids:
                 if invoice_line_id.account_id:
                     taxable_amount = invoice_line_id.price_subtotal
-                    taxable_amount_company = abs(invoice_line_id.price_subtotal_signed)
+                    taxable_amount_company = abs(invoice_line_id.balance)
                     discount = bool(invoice_line_id.discount)
 
                     # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
@@ -828,7 +828,7 @@ class AccountMove(models.Model):
                                                               rec.ks_amount_discount)
 
             # Value in letters
-            decimal_part, integer_part = math.modf(abs(rec.amount_total_company_signed))
+            decimal_part, integer_part = math.modf(abs(rec.amount_total_signed))
             if decimal_part:
                 decimal_part = round(decimal_part * math.pow(10, rec.company_currency_id.decimal_places))
             if integer_part:
