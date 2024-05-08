@@ -66,12 +66,10 @@
     'external_dependencies': {
         'python': [
             'num2words',
-            'pathlib',
             'qrcode',
             'requests',
         ]
     },
     'installable': True,
     'application': False,
-    'pre_init_hook': 'pre_init_hook',
 }
