@@ -33,17 +33,17 @@ class AccountMoveReversal(models.TransientModel):
     ei_type_document_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_documents', string="Document type",
                                           compute='_compute_ei_type_document_id', store=True)
 
-    @api.depends('move_id')
+    @api.depends('date')
     def _compute_ei_type_document_id(self):
-        move_ids = self.env['account.move'].browse(self.env.context['active_ids']) if self.env.context.get('active_model') == 'account.move' else self.move_id
+        self.ensure_one()
 
-        for rec in self:
-            if len(move_ids) == 1 and move_ids.type == 'out_invoice':
-                rec.ei_type_document_id = 5
-            elif len(move_ids) == 1 and move_ids.type == 'in_invoice':
-                rec.ei_type_document_id = 13
-            else:
-                rec.ei_type_document_id = None
+        invoice_id = self.env['account.move'].browse(self._context.get('active_id', False))
+        if invoice_id.type == 'out_invoice':
+            self.ei_type_document_id = 5
+        elif invoice_id.type == 'in_invoice':
+            self.ei_type_document_id = 13
+        else:
+            self.ei_type_document_id = None
 
     @api.onchange('ei_correction_concept_credit_id')
     def _onchange_ei_correction_concept_credit_id(self):
