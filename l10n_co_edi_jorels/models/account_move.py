@@ -744,9 +744,9 @@ class AccountMove(models.Model):
 
                     # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
                     if not taxable_amount and not discount and invoice_line_id.product_id.lst_price:
-                        if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
-                            raise UserError(
-                                _("Commercial samples doesn't seem to be compatible with multi-currencies."))
+                        # if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
+                        #   raise UserError(
+                        #       _("Commercial samples doesn't seem to be compatible with multi-currencies."))
 
                         lst_price_invoice = invoice_line_id.product_id.lst_price * rate
                         taxable_amount = lst_price_invoice * invoice_line_id.quantity
@@ -804,9 +804,9 @@ class AccountMove(models.Model):
             rec.ei_amount_excluded_company = amount_excluded_company
 
             if self.is_universal_discount():
-                if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
-                    raise UserError(
-                        _("The universal discount module doesn't seem to be compatible with multi-currencies."))
+                # if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
+                #     raise UserError(
+                #         _("The universal discount module doesn't seem to be compatible with multi-currencies."))
 
                 if not ('ks_global_tax_rate' in rec):
                     rec.ks_calculate_discount()
@@ -1117,10 +1117,18 @@ class AccountMove(models.Model):
                     if rec.order_ref_date:
                         json_request['order_reference']['issue_date'] = fields.Date.to_string(rec.order_ref_date)
 
+                if not rec.company_id.currency_id or rec.company_id.currency_id.name != 'COP':
+                    raise UserError(_('The company currency must be COP to report bills to DIAN. '
+                                      'Set it up in the Companies configuration view in Odoo.'))
+
                 # Multi-currency compatibility
                 if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
                     company_currency_code = rec.company_id.currency_id.name
                     invoice_currency_code = rec.currency_id.name
+
+                    if not rec.journal_id.currency_id or rec.journal_id.currency_id.name != 'COP':
+                        raise UserError(_('The currency of their journal must be COP to report bills to DIAN. '
+                                          'Set it up in the Journals configuration view in Odoo.'))
 
                     type_currencies_env = self.env['l10n_co_edi_jorels.type_currencies']
                     company_currency_search = type_currencies_env.search([('code', '=', company_currency_code)])
