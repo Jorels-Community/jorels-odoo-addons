@@ -35,39 +35,34 @@ class AccountMoveReversal(models.TransientModel):
 
     @api.depends('date')
     def _compute_ei_type_document_id(self):
-        self.ensure_one()
-
-        invoice_id = self.env['account.move'].browse(self._context.get('active_id', False))
-        if invoice_id.type == 'out_invoice':
-            self.ei_type_document_id = 5
-        elif invoice_id.type == 'in_invoice':
-            self.ei_type_document_id = 13
-        else:
-            self.ei_type_document_id = None
+        move_ids = self.env['account.move'].browse(
+            self.env.context['active_ids']) if self.env.context.get('active_model') == 'account.move' else self.move_id
+        for rec in self:
+            if len(move_ids) == 1:
+                if move_ids.type == 'out_invoice':
+                    rec.ei_type_document_id = 5
+                elif move_ids.type == 'in_invoice':
+                    rec.ei_type_document_id = 13
+                else:
+                    rec.ei_type_document_id = None
+            else:
+                if move_ids[0].type == 'out_invoice':
+                    rec.ei_type_document_id = 5
+                elif move_ids[0].type == 'in_invoice':
+                    rec.ei_type_document_id = 13
+                else:
+                    rec.ei_type_document_id = None
 
     @api.onchange('ei_correction_concept_credit_id')
     def _onchange_ei_correction_concept_credit_id(self):
         if self.ei_correction_concept_credit_id:
             self.reason = self.ei_correction_concept_credit_id.name
 
-    @api.model
     def _prepare_default_reversal(self, move):
         values = super(AccountMoveReversal, self)._prepare_default_reversal(move)
 
-        if self.reason:
-            if move.type == 'out_invoice':
-                ei_type_document_id = 5
-            elif move.type == 'in_invoice':
-                ei_type_document_id = 13
-            else:
-                ei_type_document_id = None
-
-            ei_correction_concept_search = self.env['l10n_co_edi_jorels.correction_concepts'].search([
-                ('name', '=', self.reason),
-                ('type_document_id', '=', ei_type_document_id)
-            ])
-            if ei_correction_concept_search:
-                values['ei_correction_concept_credit_id'] = ei_correction_concept_search[0].id
+        if self.ei_correction_concept_credit_id:
+            values['ei_correction_concept_credit_id'] = self.ei_correction_concept_credit_id.id
 
         values['is_out_country'] = move.is_out_country
 
