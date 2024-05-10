@@ -27,10 +27,6 @@
                 eval="[0,'l10n_co_edi_jorels']"
         />
         <function
-                model="account.invoice"
-                name="_update_ei_amounts"
-        />
-        <function
                 model="res.company"
                 name="init_csv_data"
                 eval="[0,'l10n_co_edi_jorels.l10n_co_edi_jorels.languages']"
