@@ -27,7 +27,7 @@
                 eval="[0,'l10n_co_edi_jorels']"
         />
         <function
-                model="account.move"
+                model="account.invoice"
                 name="_update_ei_amounts"
         />
         <function
