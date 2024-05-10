@@ -120,22 +120,23 @@ class AccountMove(models.Model):
     ei_qr_image = fields.Binary("QR image", attachment=True, copy=False, readonly=True)
 
     # Total taxes only / without withholdings
-    ei_amount_tax_withholding = fields.Monetary("Withholdings", required=True, default=0)
-    ei_amount_tax_withholding_company = fields.Monetary("Withholdings in Company Currency",
-                                                        currency_field='company_currency_id', required=True, default=0)
-    ei_amount_tax_no_withholding = fields.Monetary("Taxes without withholdings", required=True, default=0)
+    ei_amount_tax_withholding = fields.Monetary("Withholdings", compute="_compute_amount", store=True)
+    ei_amount_tax_withholding_company = fields.Monetary("Withholdings in Company Currency", compute="_compute_amount",
+                                                        store=True, currency_field='company_currency_id')
+    ei_amount_tax_no_withholding = fields.Monetary("Taxes without withholdings", compute="_compute_amount", store=True)
     ei_amount_tax_no_withholding_company = fields.Monetary("Taxes without withholdings in Company Currency",
-                                                           currency_field='company_currency_id', required=True,
-                                                           default=0)
-    ei_amount_total_no_withholding = fields.Monetary("Total without withholdings", required=True, default=0)
+                                                           compute="_compute_amount", store=True,
+                                                           currency_field='company_currency_id')
+    ei_amount_total_no_withholding = fields.Monetary("Total without withholdings", compute="_compute_amount",
+                                                     store=True)
     ei_amount_total_no_withholding_company = fields.Monetary("Total without withholdings in Company Currency",
-                                                             currency_field='company_currency_id', required=True,
-                                                             default=0)
+                                                             compute="_compute_amount", store=True,
+                                                             currency_field='company_currency_id')
 
     # Total base excluding tax
-    ei_amount_excluded = fields.Monetary("Excluded", required=True, default=0)
-    ei_amount_excluded_company = fields.Monetary("Excluded in Company Currency", currency_field='company_currency_id',
-                                                 required=True, default=0)
+    ei_amount_excluded = fields.Monetary("Excluded", compute="_compute_amount", store=True)
+    ei_amount_excluded_company = fields.Monetary("Excluded in Company Currency", compute="_compute_amount", store=True,
+                                                 currency_field='company_currency_id')
 
     # Required field for credit and debit notes in DIAN
     ei_correction_concept_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
@@ -155,7 +156,7 @@ class AccountMove(models.Model):
     ei_is_correction_without_reference = fields.Boolean("Is it a correction without reference?", default=False,
                                                         readonly=True, states={'draft': [('readonly', False)]})
 
-    value_letters = fields.Char("Value in letters")
+    value_letters = fields.Char("Value in letters", compute="_compute_amount", store=True)
 
     is_attached_document_matched = fields.Boolean("Correct number in attached document?", copy=False,
                                                   compute='_is_attached_document_matched', store=True)
@@ -730,13 +731,9 @@ class AccountMove(models.Model):
 
         return lines
 
-    @api.model
-    def _update_ei_amounts(self):
-        self.env['account.move'].sudo().search(
-            [('ei_amount_total_no_withholding_company', '=', 0)]
-        )._calculate_ei_amounts()
+    def _compute_amount(self):
+        super(AccountMove, self)._compute_amount()
 
-    def _calculate_ei_amounts(self):
         for rec in self:
             amount_tax_withholding = 0
             amount_tax_withholding_company = 0
@@ -831,7 +828,6 @@ class AccountMove(models.Model):
                                                               rec.ks_amount_discount)
 
             # Value in letters
-            value_letters = ''
             decimal_part, integer_part = math.modf(abs(rec.amount_total_signed))
             if decimal_part:
                 decimal_part = round(decimal_part * math.pow(10, rec.company_currency_id.decimal_places))
@@ -841,18 +837,12 @@ class AccountMove(models.Model):
                 else:
                     lang = rec.partner_id.lang if rec.partner_id.lang else 'en'
 
-                value_letters = (num2words(integer_part, lang=lang).upper() + ' ' +
-                                 rec.company_currency_id.currency_unit_label.upper())
+                rec.value_letters = (num2words(integer_part, lang=lang).upper() + ' ' +
+                                     rec.company_currency_id.currency_unit_label.upper())
                 if decimal_part:
-                    value_letters = (value_letters + ', ' +
-                                     num2words(decimal_part, lang=lang).upper() + ' ' +
-                                     rec.company_currency_id.currency_subunit_label.upper() + '.')
-            rec.value_letters = value_letters
-
-    def _compute_amount(self):
-        super(AccountMove, self)._compute_amount()
-
-        self._calculate_ei_amounts()
+                    rec.value_letters = (rec.value_letters + ', ' +
+                                         num2words(decimal_part, lang=lang).upper() + ' ' +
+                                         rec.company_currency_id.currency_subunit_label.upper() + '.')
 
     def get_ei_payment_form(self):
         for rec in self:
