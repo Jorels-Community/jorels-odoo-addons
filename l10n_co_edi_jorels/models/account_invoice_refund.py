@@ -31,7 +31,7 @@ class AccountInvoiceRefund(models.TransientModel):
                                                       string="Correction concept",
                                                       domain=[('type_document_id', 'in', (5, 13))])
     ei_type_document_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_documents', string="Document type",
-                                          compute='_compute_ei_type_document_id', store=True)
+                                          compute='_compute_ei_type_document_id')
 
     @api.depends('date_invoice')
     @api.one
