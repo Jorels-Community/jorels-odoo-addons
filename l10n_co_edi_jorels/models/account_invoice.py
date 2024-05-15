@@ -32,6 +32,7 @@ import requests
 from num2words import num2words
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from odoo.tools.sql import column_exists, create_column
 
 _logger = logging.getLogger(__name__)
 
@@ -205,6 +206,24 @@ class AccountInvoice(models.Model):
 
     is_edi_mail_sent = fields.Boolean(readonly=True, default=False, copy=False,
                                       help="It indicates that the edi document has been sent.")
+
+    def _auto_init(self):
+        if not column_exists(self.env.cr, "account_invoice", "ei_type_document"):
+            create_column(self.env.cr, "account_invoice", "ei_type_document", "varchar")
+
+        if not column_exists(self.env.cr, "account_invoice", "ei_amount_tax_withholding_company"):
+            create_column(self.env.cr, "account_invoice", "ei_amount_tax_withholding_company", "numeric")
+
+        if not column_exists(self.env.cr, "account_invoice", "ei_amount_tax_no_withholding_company"):
+            create_column(self.env.cr, "account_invoice", "ei_amount_tax_no_withholding_company", "numeric")
+
+        if not column_exists(self.env.cr, "account_invoice", "ei_amount_total_no_withholding_company"):
+            create_column(self.env.cr, "account_invoice", "ei_amount_total_no_withholding_company", "numeric")
+
+        if not column_exists(self.env.cr, "account_invoice", "ei_amount_excluded_company"):
+            create_column(self.env.cr, "account_invoice", "ei_amount_excluded_company", "numeric")
+
+        return super()._auto_init()
 
     @api.multi
     def dian_preview(self):
