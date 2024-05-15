@@ -847,7 +847,7 @@ class AccountMove(models.Model):
                                                               rec.ks_amount_discount)
 
             # Value in letters
-            decimal_part, integer_part = math.modf(abs(rec.amount_total_signed))
+            decimal_part, integer_part = math.modf(abs(rec.ei_amount_total_no_withholding_company))
             if decimal_part:
                 decimal_part = round(decimal_part * math.pow(10, rec.company_currency_id.decimal_places))
             if integer_part:
