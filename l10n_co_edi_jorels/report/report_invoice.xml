@@ -165,14 +165,41 @@
                     <t t-set="num_item" t-value="0"/>
                 </th>
             </xpath>
+            <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_taxes']" position="attributes">
+                <attribute name="t-attf-class">text-center {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}</attribute>
+            </xpath>
+            
+            <xpath expr="//table[@name='invoice_line_table']//thead//th[contains(@name, 'th_subtotal')]" position="inside">
+                <span groups="account.group_show_line_subtotals_tax_excluded">(</span>
+                <span groups="account.group_show_line_subtotals_tax_excluded" t-field="o.currency_id"/>
+                <span groups="account.group_show_line_subtotals_tax_excluded">)</span>
+            </xpath>
+            <xpath expr="//table[@name='invoice_line_table']//thead//th[contains(@name, 'th_subtotal')]" position="after">
+                <th name="th_subtotal_company" class="text-right" t-if="o.same_currency_as_company">
+                    <span groups="account.group_show_line_subtotals_tax_excluded">Amount (</span>
+                    <span groups="account.group_show_line_subtotals_tax_excluded" t-field="o.company_currency_id"/>
+                    <span groups="account.group_show_line_subtotals_tax_excluded">)</span>
+
+                    <span groups="account.group_show_line_subtotals_tax_included">Total Price (</span>
+                    <span groups="account.group_show_line_subtotals_tax_included" t-field="o.company_currency_id"/>
+                    <span groups="account.group_show_line_subtotals_tax_included">)</span>
+                </th>
+            </xpath>
+            <xpath expr="//tbody[@class='invoice_tbody']//td[@class='text-right o_price_total']" position="after">
+                <td class="text-right o_price_total" t-if="o.same_currency_as_company">
+                    <span t-field="line.balance" groups="account.group_show_line_subtotals_tax_excluded"/>
+                    <span t-field="line.price_subtotal_company" groups="account.group_show_line_subtotals_tax_included"/>
+                </td>
+            </xpath>
             <xpath expr="//t[@name='account_invoice_line_accountable']/td[1]" position="before">
-                <td class="text-center">
+                <td class="text-center" >
                     <t t-set="num_item" t-value="num_item + 1"/>
                     <span t-esc="num_item"/>
                 </td>
             </xpath>
+
             <xpath expr="//div[@id='total']/div[1]" position="before">
-                <div t-attf-class="#{'col-7' if report_type != 'html' else 'col-sm-12 col-md-12'}">
+                <div t-attf-class="#{'col-5' if report_type != 'html' else 'col-sm-12 col-md-12'}">
                     <div t-if="o.company_id.ei_enable and o.payment_method_id.id" name="payment_method">
                         <strong>Payment method:</strong>
                         <span t-field="o.payment_method_id"/>
@@ -190,10 +217,10 @@
                 </div>
             </xpath>
             <xpath expr="//div[@id='total']/div[2]" position="attributes">
-                <attribute name="t-attf-class">#{'col-5' if report_type != 'html' else 'col-sm-7 col-md-5'}
+                <attribute name="t-attf-class">#{'col-7' if report_type != 'html' else 'col-sm-7 col-md-5'}
                 </attribute>
             </xpath>
-            <xpath expr="//div[@id='total']/div/table/tr[1]" position="before">
+            <xpath expr="//div[@id='total']/div[2]/table/tr[1]" position="before">
                 <tr class="border-black o_total" style="">
                     <td>
                         <strong>Currency</strong>
@@ -201,9 +228,18 @@
                     <td class="text-right">
                         <span t-field="o.currency_id"/>
                     </td>
+                    <td class="text-right" t-if="o.same_currency_as_company">
+                        <span t-field="o.company_currency_id"/>
+                    </td>
                 </tr>
             </xpath>
-            <xpath expr="//div[@id='total']/div/table/tr[last()]" position="before">
+            <!-- SUBTOTAL in company currency -->
+            <xpath expr="//div[@id='total']/div[2]/table/tr[2]" position="inside">
+                <td class="text-right" t-if="o.same_currency_as_company">
+                    <span t-esc="o.amount_untaxed_signed"/>
+                </td>
+            </xpath>
+            <xpath expr="//div[@id='total']/div[2]/table/tr[last()]" position="before">
                 <tr class="border-black" style="" t-if="o.company_id.ei_enable">
                     <td>
                         <strong>Total without withholdings</strong>
@@ -211,8 +247,18 @@
                     <td class="text-right">
                         <span t-field="o.ei_amount_total_no_withholding"/>
                     </td>
+                    <td class="text-right">
+                        <span t-field="o.ei_amount_total_no_withholding_company" t-if="o.same_currency_as_company"/>
+                    </td>
                 </tr>
             </xpath>
+            <!-- TOTAL in company currency -->
+            <xpath expr="//div[@id='total']/div[2]/table/tr[last()]" position="inside">
+                <td class="text-right">
+                    <span t-field="o.amount_total_signed" t-if="o.same_currency_as_company"/>
+                </td>
+            </xpath>
+
             <xpath expr="//div[hasclass('page')]" position="inside">
                 <div t-if="o.company_id.ei_enable" class="container">
                     <div class="row">

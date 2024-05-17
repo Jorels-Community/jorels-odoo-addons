@@ -206,6 +206,8 @@ class AccountMove(models.Model):
 
     is_edi_mail_sent = fields.Boolean(readonly=True, default=False, copy=False,
                                       help="It indicates that the edi document has been sent.")
+    
+    same_currency_as_company = fields.Boolean(string='Same Currency as Company', compute='_compare_currencies')
 
     def _auto_init(self):
         if not column_exists(self.env.cr, "account_move", "ei_type_document"):
@@ -1768,3 +1770,12 @@ class AccountMove(models.Model):
             except Exception as e:
                 rec.message_post(body=_("Failed to process the Nimbus request: %s: %s") % (rec.name, e))
                 _logger.debug("Failed to process the Nimbus request: %s", e)
+
+    @api.depends('currency_id', 'company_id.currency_id')
+    def _compare_currencies(self):
+        for invoice in self:
+            # if invoice and invoice.currency_id != invoice.company_id.currency_id:
+            if invoice and invoice.currency_id != invoice.company_currency_id:
+                invoice.same_currency_as_company = True
+            else:
+                invoice.same_currency_as_company = False
