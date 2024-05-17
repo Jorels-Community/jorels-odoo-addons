@@ -710,7 +710,7 @@ class AccountMove(models.Model):
                             'value': invoice_line_id.waypoint_id.number
                         }, {
                             'name': '03',
-                            'value': invoice_line_id.waypoint_id.total,
+                            'value': invoice_line_id.waypoint_id.total_value,
                             'uom_code': '767',
                             'quantity': invoice_line_id.waypoint_id.weight
                         }]
