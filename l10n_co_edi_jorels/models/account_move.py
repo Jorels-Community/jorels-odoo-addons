@@ -687,7 +687,7 @@ class AccountMove(models.Model):
                         if not invoice_line_id.waypoint_id.rndc_entry_code:
                             raise UserError(_("Waypoint doesn't have an rndc ingress id: %s")
                                             % invoice_line_id.waypoint_id.number)
-                        if not invoice_line_id.waypoint_id.total:
+                        if not invoice_line_id.waypoint_id.total_value:
                             raise UserError(_("The waypoint %s doesn't have an total")
                                             % invoice_line_id.waypoint_id.number)
                         if not invoice_line_id.waypoint_id.weight:
@@ -710,7 +710,7 @@ class AccountMove(models.Model):
                             'value': invoice_line_id.waypoint_id.number
                         }, {
                             'name': '03',
-                            'value': invoice_line_id.waypoint_id.total,
+                            'value': invoice_line_id.waypoint_id.total_value,
                             'uom_code': '767',
                             'quantity': invoice_line_id.waypoint_id.weight
                         }]
