@@ -34,6 +34,9 @@ class HrPayslipLine(models.Model):
     edi_quantity = fields.Integer(string='Edi Quantity', default=0, compute="compute_edi_quantity", required=True,
                                   store=True)
 
+    # Remove the 'related' property for the partner_id field
+    partner_id = fields.Many2one(related='', readonly=False, store=True)
+
     def compute_edi_rate(self):
         for rec in self:
             if rec.salary_rule_id.edi_percent_select == 'default':
@@ -75,3 +78,12 @@ class HrPayslipLine(models.Model):
                     return rec.quantity
             else:
                 return rec.quantity
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for values in vals_list:
+            rule = self.env['hr.salary.rule'].search([('id', '=', values['salary_rule_id'])])
+            slip = self.env['hr.payslip'].search([('id', '=', values['slip_id'])])
+            if rule.co_partner_select == 'code':
+                values['partner_id'] = rule.compute_co_partner(slip)
+        return super(HrPayslipLine, self).create(vals_list)

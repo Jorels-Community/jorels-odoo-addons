@@ -70,6 +70,11 @@
                         </field>
                     </page>
                 </xpath>
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="co_partner_select"/>
+                    <field name="co_partner_python_compute"
+                           attrs="{'invisible':[('co_partner_select','!=','code')], 'required':[('co_partner_select','=','code')]}"/>
+                </xpath>
             </data>
         </field>
     </record>
