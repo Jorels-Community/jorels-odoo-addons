@@ -137,6 +137,54 @@ class HrSalaryRule(models.Model):
     ], string='Edi quantity', index=True, required=True, default='default',
         help="The computation method for rule Edi quantity.")
 
+    co_partner_select = fields.Selection([
+        ('default', 'Default'),
+        ('code', 'Code')
+    ], string='Partner compute', default='default', required=True)
+
+    co_partner_python_compute = fields.Text(string='Python Code',
+                                            default='''
+        # Available variables:
+        # ----------------------
+        # payslip: object containing the payslips
+        # employee: hr.employee object
+        # contract: hr.contract object
+        # inputs: object containing the computed inputs.
+        
+        # Note: returned id value have to be set in the variable 'partner_id'
+        
+        result = employee.address_home_id.id''')
+
+    def compute_co_partner(self, payslip):
+        self.ensure_one()
+
+        class BrowsableObject(object):
+            def __init__(self, browsable_dict, env):
+                self.dict = browsable_dict
+                self.env = env
+
+            def __getattr__(self, attr):
+                return attr in self.dict and self.dict.__getitem__(attr) or 0.0
+
+        inputs_dict = {}
+        for input_line in payslip.input_line_ids:
+            inputs_dict[input_line.code] = input_line
+        inputs = BrowsableObject(inputs_dict, self.env)
+        contract = payslip.contract_id
+        employee = contract.employee_id
+
+        local_dict = {'payslip': payslip, 'inputs': inputs, 'employee': employee, 'contract': contract, 'result': None}
+
+        if self.co_partner_select == 'code':
+            try:
+                safe_eval(self.co_partner_python_compute, local_dict, mode='exec', nocopy=True)
+                return int(local_dict['result'])
+            except Exception as e:
+                raise UserError(
+                    _('Wrong partner python code defined for salary rule %s (%s). %s') % (self.name, self.code, e))
+        else:
+            return self.partner_id.id if self.partner_id else None
+
     def compute_edi_percent(self, payslip):
         self.ensure_one()
 
