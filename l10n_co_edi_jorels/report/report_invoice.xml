@@ -215,11 +215,12 @@
                 </td>
             </xpath>
             <xpath expr="//t[@name='account_invoice_line_accountable']/td[1]" position="before">
-                <td class="text-center">
+                <td class="text-center" >
                     <t t-set="num_item" t-value="num_item + 1"/>
                     <span t-esc="num_item"/>
                 </td>
             </xpath>
+
             <xpath expr="//div[@id='total']/div[1]" position="before">
                 <div t-attf-class="#{'col-5' if report_type != 'html' else 'col-sm-12 col-md-12'}">
                     <div t-if="o.company_id.ei_enable and o.payment_method_id.id" name="payment_method">
@@ -243,7 +244,8 @@
                     #{'col-7' if report_type != 'html' else 'col-sm-7 col-md-5'}
                 </attribute>
             </xpath>
-            <xpath expr="//t[@t-set='tax_totals']" position="before">
+            <!-- <xpath expr="//t[@t-set='tax_totals']" position="before"> -->
+            <xpath expr="//div[@id='total']/div[2]/table/tr[1]" position="before">
                 <tr class="border-black o_total" style="">
                     <td>
                         <strong>Currency</strong>
