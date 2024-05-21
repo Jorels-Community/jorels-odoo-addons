@@ -40,13 +40,12 @@ class HrPayslipEdi(models.Model):
     ]
     _description = "Payslip Edi"
 
-    note = fields.Text(string='Internal Note', readonly=True, states={'draft': [('readonly', False)]})
-    contract_id = fields.Many2one('hr.contract', string='Contract', readonly=True,
-                                  states={'draft': [('readonly', False)]})
-    credit_note = fields.Boolean(string='Adjustment note', readonly=True, states={'draft': [('readonly', False)]},
+    note = fields.Text(string='Internal Note', readonly=True)
+    contract_id = fields.Many2one('hr.contract', string='Contract', readonly=True)
+    credit_note = fields.Boolean(string='Adjustment note', readonly=True,
                                  help="Indicates this edi payslip has a refund of another")
     origin_payslip_id = fields.Many2one(comodel_name="hr.payslip.edi", string="Origin Edi payslip", readonly=True,
-                                        states={'draft': [('readonly', False)]}, copy=False)
+                                        copy=False)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('verify', 'Waiting'),
@@ -57,20 +56,16 @@ class HrPayslipEdi(models.Model):
                 \n* If the payslip is under verification, the status is \'Waiting\'.
                 \n* If the payslip is confirmed then status is set to \'Done\'.
                 \n* When user cancel payslip the status is \'Rejected\'.""")
-    employee_id = fields.Many2one('hr.employee', string='Employee', required=True, readonly=True,
-                                  states={'draft': [('readonly', False)]})
+    employee_id = fields.Many2one('hr.employee', string='Employee', required=True, readonly=True)
     company_id = fields.Many2one('res.company', string='Company', readonly=True, copy=False,
-                                 default=lambda self: self.env.company,
-                                 states={'draft': [('readonly', False)]})
-    number = fields.Char(string='Reference', readonly=True, copy=False, states={'draft': [('readonly', False)]})
+                                 default=lambda self: self.env.company)
+    number = fields.Char(string='Reference', readonly=True, copy=False)
     name = fields.Char(string='Edi Payslip Name', compute='_compute_name', store=True)
 
     # Edi fields
-    date = fields.Date("Date", required=True, readonly=True, states={'draft': [('readonly', False)]},
-                       default=fields.Date.context_today, copy=False)
+    date = fields.Date("Date", required=True, readonly=True, default=fields.Date.context_today, copy=False)
     payslip_ids = fields.Many2many(comodel_name='hr.payslip', string='Payslips',
-                                   relation='hr_payslip_hr_payslip_edi_rel',
-                                   readonly=True, states={'draft': [('readonly', False)]}, copy=True)
+                                   relation='hr_payslip_hr_payslip_edi_rel', readonly=True, copy=True)
 
     month = fields.Selection([
         ('1', 'January'),
@@ -85,10 +80,9 @@ class HrPayslipEdi(models.Model):
         ('10', 'October'),
         ('11', 'November'),
         ('12', 'December')
-    ], string='Month', index=True, copy=False, required=True, readonly=True, states={'draft': [('readonly', False)]},
+    ], string='Month', index=True, copy=False, required=True, readonly=True,
         default=lambda self: str(fields.Date.context_today(self).month))
     year = fields.Integer(string='Year', index=True, copy=False, required=True, readonly=True,
-                          states={'draft': [('readonly', False)]},
                           default=lambda self: fields.Date.context_today(self).year)
 
     @api.depends('employee_id', 'month', 'year')

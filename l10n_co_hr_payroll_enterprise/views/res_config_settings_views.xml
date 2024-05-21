@@ -29,7 +29,7 @@
                 <field name="module_l10n_co_hr_payroll" invisible="1"/>
                 <div class="row mt16 o_settings_container" id="hr_payroll_localization" invisible="1"/>
                 <div class="row mt16 o_settings_container" id="hr_payroll_localization_co"
-                     attrs="{'invisible': [('module_l10n_co_hr_payroll','=',False)]}">
+                     invisible="not module_l10n_co_hr_payroll">
                     <div class="col-12 col-lg-6 o_setting_box">
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane"/>
@@ -188,7 +188,8 @@
                             <field name="edi_payroll_enable_validate_state"/>
                         </div>
                         <div class="o_setting_right_pane">
-                            <span class="o_form_label">Enable intermediate 'DIAN Validation' state</span>
+                            <label string="Enable intermediate 'DIAN Validation' state"
+                                   for="edi_payroll_enable_validate_state"/>
                             <div class="text-muted">Advanced payroll submission and testing options</div>
                         </div>
                     </div>
@@ -197,7 +198,8 @@
                             <field name="edi_payroll_always_validate"/>
                         </div>
                         <div class="o_setting_right_pane">
-                            <span class="o_form_label">Always validate payslips</span>
+                            <label string="Always validate payslips"
+                                   for="edi_payroll_always_validate"/>
                             <div class="text-muted">When an error occurs in the DIAN, always validate payslips</div>
                         </div>
                     </div>

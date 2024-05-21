@@ -41,22 +41,19 @@ class HrPayslip(models.Model):
         'l10n_co_hr_payroll.edi'
     ]
 
-    origin_payslip_id = fields.Many2one(comodel_name="hr.payslip", string="Origin payslip", readonly=True, copy=False,
-                                        states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
+    origin_payslip_id = fields.Many2one(comodel_name="hr.payslip", string="Origin payslip", readonly=True, copy=False)
 
     # Edi fields
-    date = fields.Date('Date Account', states={'draft': [('readonly', False)], 'verify': [('readonly', False)]},
-                       readonly=True, help="Keep empty to use the period of the validation(Payslip) date.")
+    date = fields.Date('Date Account', readonly=True,
+                       help="Keep empty to use the period of the validation(Payslip) date.")
     payment_date = fields.Date("Payment date", required=True, readonly=True,
-                               states={'draft': [('readonly', False)], 'verify': [('readonly', False)]},
                                default=lambda self: fields.Date.to_string(
                                    (datetime.now() + relativedelta(months=+1, day=1, days=-1)).date()))
     others_total_amount = fields.Monetary("Others", currency_field='currency_id', readonly=True, copy=True)
     earn_ids = fields.One2many('l10n_co_hr_payroll.earn.line', 'payslip_id', string='Earn lines', readonly=True,
-                               copy=True, states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
+                               copy=True)
     deduction_ids = fields.One2many('l10n_co_hr_payroll.deduction.line', 'payslip_id', string='Deduction lines',
-                                    copy=True, readonly=True,
-                                    states={'draft': [('readonly', False)], 'verify': [('readonly', False)]})
+                                    copy=True, readonly=True)
     payslip_edi_ids = fields.Many2many(comodel_name='hr.payslip.edi', string='Edi Payslips',
                                        relation='hr_payslip_hr_payslip_edi_rel',
                                        readonly=True, copy=False)
