@@ -54,8 +54,12 @@
                                 <div class="row mt16">
                                     <label for="smmlv_value" class="col-lg-3 o_light_label"/>
                                     <field name="smmlv_value"/>
+                                </div>
+                                <div class="row mt16">
                                     <label for="uvt_value" class="col-lg-3 o_light_label"/>
                                     <field name="uvt_value"/>
+                                </div>
+                                <div class="row mt16">
                                     <label for="stm_value" class="col-lg-3 o_light_label"/>
                                     <field name="stm_value"/>
                                 </div>
@@ -70,14 +74,22 @@
                         <div class="o_setting_right_pane">
                             <span class="o_form_label">Overtime percentages</span>
                             <div class="content-group">
-                                <label for="daily_overtime" class="col-lg-3 o_light_label"/>
-                                <field name="daily_overtime"/>
-                                <label for="overtime_night_hours" class="col-lg-3 o_light_label"/>
-                                <field name="overtime_night_hours"/>
-                                <label for="sunday_holiday_daily_overtime" class="col-lg-3 o_light_label"/>
-                                <field name="sunday_holiday_daily_overtime"/>
-                                <label for="sunday_night_overtime_holidays" class="col-lg-3 o_light_label"/>
-                                <field name="sunday_night_overtime_holidays"/>
+                                <div class="row mt16">
+                                    <label for="daily_overtime" class="col-lg-3 o_light_label"/>
+                                    <field name="daily_overtime"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label for="overtime_night_hours" class="col-lg-3 o_light_label"/>
+                                    <field name="overtime_night_hours"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label for="sunday_holiday_daily_overtime" class="col-lg-3 o_light_label"/>
+                                    <field name="sunday_holiday_daily_overtime"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label for="sunday_night_overtime_holidays" class="col-lg-3 o_light_label"/>
+                                    <field name="sunday_night_overtime_holidays"/>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -87,12 +99,18 @@
                         <div class="o_setting_right_pane">
                             <span class="o_form_label">Surcharge percentages</span>
                             <div class="content-group">
-                                <label for="hours_night_surcharge" class="col-lg-3 o_light_label"/>
-                                <field name="hours_night_surcharge"/>
-                                <label for="daily_surcharge_hours_sundays_holidays" class="col-lg-3 o_light_label"/>
-                                <field name="daily_surcharge_hours_sundays_holidays"/>
-                                <label for="sunday_holidays_night_surcharge_hours" class="col-lg-3 o_light_label"/>
-                                <field name="sunday_holidays_night_surcharge_hours"/>
+                                <div class="row mt16">
+                                    <label for="hours_night_surcharge" class="col-lg-3 o_light_label"/>
+                                    <field name="hours_night_surcharge"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label for="daily_surcharge_hours_sundays_holidays" class="col-lg-3 o_light_label"/>
+                                    <field name="daily_surcharge_hours_sundays_holidays"/>
+                                </div>
+                                <div class="row mt16">
+                                    <label for="sunday_holidays_night_surcharge_hours" class="col-lg-3 o_light_label"/>
+                                    <field name="sunday_holidays_night_surcharge_hours"/>
+                                </div>
                             </div>
                         </div>
                     </div>
