@@ -16,3 +16,15 @@ l10n_co_hr_payroll/models/__pycache__/
 update_from_csv/models/__pycache__/
 /.vscode/launch.json
 /.vscode/tasks.json
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+__pycache__/
+.vscode/launch.json
+.vscode/tasks.json
