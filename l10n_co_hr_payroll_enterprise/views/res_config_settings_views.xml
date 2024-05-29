@@ -25,7 +25,7 @@
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="hr_payroll.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[@id='hr_payroll_localization']" position="replace">
+            <xpath expr="//block[@id='hr_payroll_localization']" position="replace">
                 <field name="module_l10n_co_hr_payroll" invisible="1"/>
                 <div class="row mt16 o_settings_container" id="hr_payroll_localization" invisible="1"/>
                 <div class="row mt16 o_settings_container" id="hr_payroll_localization_co"
@@ -43,7 +43,7 @@
                     </div>
                 </div>
             </xpath>
-            <xpath expr="//div[@id='hr_payroll_localization']" position="after">
+            <xpath expr="//block[@id='hr_payroll_localization']" position="after">
                 <h2>Parameters</h2>
                 <div class="row mt16 o_settings_container">
                     <div class="col-12 col-lg-6 o_setting_box">
