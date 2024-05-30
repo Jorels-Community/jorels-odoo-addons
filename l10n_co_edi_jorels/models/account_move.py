@@ -996,7 +996,7 @@ class AccountMove(models.Model):
     def _compute_resolution(self):
         for rec in self:
             type_edi_document = rec.ei_type_document
-            if rec.should_send_document_to_dian():
+            if type_edi_document:
                 if type_edi_document in ('invoice', 'doc_support') and rec.journal_id.sequence_id.resolution_id:
                     # Sales invoice
                     rec.resolution_id = rec.journal_id.sequence_id.resolution_id.id
@@ -1009,7 +1009,6 @@ class AccountMove(models.Model):
                     rec.resolution_id = rec.journal_id.sequence_id.resolution_id.id
                 else:
                     rec.resolution_id = None
-                    _logger.debug("This type of document does not have a DIAN resolution assigned: %s" % rec.name)
             else:
                 rec.resolution_id = None
 
