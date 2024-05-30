@@ -35,7 +35,7 @@ class HrPayslipLine(models.Model):
                                   store=True)
 
     # Remove the 'related' property for the partner_id field
-    partner_id = fields.Many2one(related='', readonly=False, store=True)
+    partner_id = fields.Many2one('res.partner', 'Partner', related='', readonly=False, store=True)
 
     def compute_edi_rate(self):
         for rec in self:
@@ -86,4 +86,6 @@ class HrPayslipLine(models.Model):
             slip = self.env['hr.payslip'].search([('id', '=', values['slip_id'])])
             if rule.co_partner_select == 'code':
                 values['partner_id'] = rule.compute_co_partner(slip)
+            else:
+                values['partner_id'] = rule.partner_id.id
         return super(HrPayslipLine, self).create(vals_list)
