@@ -26,6 +26,7 @@ import logging
 import math
 import re
 from io import BytesIO
+from functools import partial
 
 import qrcode
 import requests
@@ -33,6 +34,7 @@ from num2words import num2words
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from odoo.tools.sql import column_exists, create_column
+from odoo.tools.misc import formatLang
 
 _logger = logging.getLogger(__name__)
 
@@ -206,6 +208,15 @@ class AccountInvoice(models.Model):
 
     is_edi_mail_sent = fields.Boolean(readonly=True, default=False, copy=False,
                                       help="It indicates that the edi document has been sent.")
+
+    is_multicurrency = fields.Boolean(string='Is multicurrency?', compute='_compute_is_multicurrency')
+
+    amount_by_group_company = fields.Binary(string="Tax amount by group in company currency",
+                                            compute='_amount_by_group_company',
+                                            help="type: [(name, amount, base, formated amount, formated base)]")
+
+    amount_tax_company = fields.Monetary(string='Tax in company currency', compute='_compute_amount_tax_company',
+                                         currency_field='company_currency_id')
 
     def _auto_init(self):
         if not column_exists(self.env.cr, "account_invoice", "ei_type_document"):
@@ -776,7 +787,10 @@ class AccountInvoice(models.Model):
             amount_tax_no_withholding_company = 0
             amount_excluded = 0
             amount_excluded_company = 0
-            rate = rec.currency_id.with_context(dict(rec._context or {}, date=rec.date_invoice)).rate
+
+            rate_date = rec._get_currency_rate_date() or fields.Date.context_today(self)
+            rate = rec.currency_id.with_context(dict(rec._context or {}, date=rate_date)).rate
+
             for invoice_line_id in rec.invoice_line_ids:
                 if invoice_line_id.account_id:
                     taxable_amount = invoice_line_id.price_subtotal
@@ -1836,3 +1850,43 @@ class AccountInvoice(models.Model):
             except Exception as e:
                 rec.message_post(body=_("Failed to process the Nimbus request: %s: %s") % (rec.number, e))
                 _logger.debug("Failed to process the Nimbus request: %s", e)
+
+    @api.depends('currency_id', 'company_currency_id')
+    def _compute_is_multicurrency(self):
+        for invoice in self:
+            invoice.is_multicurrency = invoice.currency_id != invoice.company_currency_id
+
+    def _amount_by_group_company(self):
+        for invoice in self:
+            currency = invoice.company_id.currency_id or invoice.currency_id
+            fmt = partial(formatLang, invoice.with_context(lang=invoice.partner_id.lang).env, currency_obj=currency)
+            res = {}
+
+            rate_date = invoice._get_currency_rate_date() or fields.Date.context_today(self)
+
+            for line in invoice.tax_line_ids:
+                amount_total_company = line.currency_id._convert(
+                    line.amount_total, self.company_id.currency_id, line.company_id, rate_date)
+                base_company = line.currency_id._convert(
+                    line.base, self.company_id.currency_id, line.company_id, rate_date)
+
+                tax = line.tax_id
+                group_key = (tax.tax_group_id, tax.amount_type, tax.amount)
+                res.setdefault(group_key, {'base': 0.0, 'amount': 0.0})
+                res[group_key]['amount'] += amount_total_company
+                res[group_key]['base'] += base_company
+            res = sorted(res.items(), key=lambda l: l[0][0].sequence)
+            invoice.amount_by_group_company = [(
+                r[0][0].name, r[1]['amount'], r[1]['base'],
+                fmt(r[1]['amount']), fmt(r[1]['base']),
+                len(res),
+            ) for r in res]
+
+    @api.depends('invoice_line_ids', 'currency_id', 'company_id', 'company_currency_id', 'amount_tax', 'date', 'date_invoice')
+    def _compute_amount_tax_company(self):
+        for invoice in self:
+            rate_date = invoice._get_currency_rate_date() or fields.Date.context_today(self)
+
+            invoice.amount_tax_company = invoice.currency_id._convert(invoice.amount_tax,
+                                                                      invoice.company_currency_id,
+                                                                      invoice.company_id, rate_date)

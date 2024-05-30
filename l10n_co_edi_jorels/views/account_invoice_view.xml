@@ -164,11 +164,34 @@
                         </field>
                     </page>
                 </xpath>
+                <xpath expr="//field[@name='amount_untaxed']" position="before">
+                    <h4 class="oe_left">
+                        <field name="currency_id"/>
+                    </h4>
+                </xpath>
                 <xpath expr="//field[@name='amount_tax']" position="before">
-                    <field name="ei_amount_tax_no_withholding"/>
-                    <field name="ei_amount_total_no_withholding" class="oe_subtotal_footer_separator"/>
+                    <field name="ei_amount_tax_no_withholding" string="Imp. sin rete."/>
+                    <field name="ei_amount_total_no_withholding" class="oe_subtotal_footer_separator"
+                           string="Total sin rete."/>
                     <field name="ei_amount_tax_withholding"/>
                 </xpath>
+                <xpath expr="//group[hasclass('oe_subtotal_footer')]" position="after">
+                    <group class='oe_subtotal_footer oe_right' attrs="{'invisible':[('is_multicurrency','=',False)]}">
+                        <h4 class="oe_left">
+                            <field name="company_currency_id"/>
+                        </h4>
+                        <field name="is_multicurrency" invisible="1"/>
+                        <field name="amount_untaxed_signed" string="Base imponible"/>
+                        <field name="ei_amount_tax_no_withholding_company" string="Imp. sin rete."/>
+                        <field name="ei_amount_total_no_withholding_company" class="oe_subtotal_footer_separator"
+                               string="Total sin rete."/>
+                        <field name="ei_amount_tax_withholding_company" string="Retenciones"/>
+                        <field name="amount_tax_company" string="Impuesto"/>
+                        <field name="amount_total_company_signed" class="oe_subtotal_footer_separator"
+                               string="Total"/>
+                    </group>
+                </xpath>
+
                 <!-- Invoice lines -->
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
                     <field name="ei_notes"/>
@@ -325,11 +348,34 @@
                         </field>
                     </page>
                 </xpath>
+                <xpath expr="//field[@name='amount_untaxed']" position="before">
+                    <h4 class="oe_left">
+                        <field name="currency_id"/>
+                    </h4>
+                </xpath>
                 <xpath expr="//field[@name='amount_tax']" position="before">
-                    <field name="ei_amount_tax_no_withholding"/>
-                    <field name="ei_amount_total_no_withholding" class="oe_subtotal_footer_separator"/>
+                    <field name="ei_amount_tax_no_withholding" string="Imp. sin rete."/>
+                    <field name="ei_amount_total_no_withholding" class="oe_subtotal_footer_separator"
+                           string="Total sin rete."/>
                     <field name="ei_amount_tax_withholding"/>
                 </xpath>
+                <xpath expr="//group[hasclass('oe_subtotal_footer')]" position="after">
+                    <group class='oe_subtotal_footer oe_right' attrs="{'invisible':[('is_multicurrency','=',False)]}">
+                        <h4 class="oe_left">
+                            <field name="company_currency_id"/>
+                        </h4>
+                        <field name="is_multicurrency" invisible="1"/>
+                        <field name="amount_untaxed_signed" string="Base imponible"/>
+                        <field name="ei_amount_tax_no_withholding_company" string="Imp. sin rete."/>
+                        <field name="ei_amount_total_no_withholding_company" class="oe_subtotal_footer_separator"
+                               string="Total sin rete."/>
+                        <field name="ei_amount_tax_withholding_company" string="Retenciones"/>
+                        <field name="amount_tax_company" string="Impuesto"/>
+                        <field name="amount_total_company_signed" class="oe_subtotal_footer_separator"
+                               string="Total"/>
+                    </group>
+                </xpath>
+
                 <!-- Invoice lines -->
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
                     <field name="ei_notes"/>
