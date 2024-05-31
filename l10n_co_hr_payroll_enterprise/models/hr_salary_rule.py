@@ -153,7 +153,7 @@ class HrSalaryRule(models.Model):
         
         # Note: returned id value have to be set in the variable 'partner_id'
         
-        result = employee.address_home_id.id''')
+        result = employee.user_id.partner_id.id''')
 
     def compute_co_partner(self, payslip):
         self.ensure_one()

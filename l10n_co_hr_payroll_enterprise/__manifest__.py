@@ -42,6 +42,7 @@
         'views/hr_payslip_views.xml',
         'views/hr_payslip_edi_views.xml',
         'views/edi_gen_views.xml',
+        'views/hr_employee_views.xml',
         'views/res_config_settings_views.xml',
         'security/ir.model.access.csv',
         'report/hr_payslip_edi_report.xml',
