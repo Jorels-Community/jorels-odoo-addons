@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    l10n_co_hr_payroll
+    Copyright (C) 2024  Jorels SAS
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+    email: info@jorels.com
+ -->
+<odoo>
+    <record id="view_employee_form_l10n_co_hr_payroll" model="ir.ui.view">
+        <field name="name">hr.employee.form.l10n_co_hr_payroll.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('o_address_format')]" position="after">
+                <field name="private_postal_id"/>
+                <field name="private_postal_department_id" invisible="1"/>
+                <field name="private_postal_municipality_id"/>
+            </xpath>
+            <xpath expr="//sheet/group/group" position="before">
+                <group>
+                    <field name="private_first_name" readonly="0"/>
+                    <field name="private_other_names" readonly="0"/>
+                    <field name="private_surname" readonly="0"/>
+                    <field name="private_second_surname" readonly="0"/>
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='private_country_id']" position="after">
+                <field name="private_vat" placeholder="Identification Number"/>
+                <field name="private_type_document_identification_id" placeholder="Type document identification"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

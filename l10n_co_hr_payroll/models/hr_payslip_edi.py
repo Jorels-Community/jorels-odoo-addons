@@ -163,19 +163,19 @@ class HrPayslipEdi(models.Model):
                 raise UserError(_("The contract must have the 'Type worker' field configured"))
             if not rec.contract_id.subtype_worker_id:
                 raise UserError(_("The contract must have the 'Subtype worker' field configured"))
-            if not rec.employee_id.address_home_id.first_name:
+            if not rec.employee_id.private_first_name:
                 raise UserError(_("Employee does not have a first name"))
-            if not rec.employee_id.address_home_id.surname:
+            if not rec.employee_id.private_surname:
                 raise UserError(_("Employee does not have a surname"))
-            if not rec.employee_id.address_home_id.type_document_identification_id:
+            if not rec.employee_id.private_type_document_identification_id:
                 raise UserError(_("Employee does not have an identification type"))
-            if rec.employee_id.address_home_id.type_document_identification_id.id == 6:
+            if rec.employee_id.private_type_document_identification_id.id == 6:
                 raise UserError(_("The employee's document type cannot be NIT"))
-            if not rec.employee_id.address_home_id.vat:
+            if not rec.employee_id.private_vat:
                 raise UserError(_("Employee does not have an document number"))
-            if not rec.employee_id.address_home_id.postal_municipality_id:
+            if not rec.employee_id.private_postal_municipality_id:
                 raise UserError(_("Employee does not have a postal municipality"))
-            if not rec.employee_id.address_home_id.street:
+            if not rec.employee_id.private_street:
                 raise UserError(_("Employee does not have an address."))
             if not rec.contract_id.name:
                 raise UserError(_("Contract does not have a name"))

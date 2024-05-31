@@ -30,3 +30,5 @@ from . import hr_payslip
 from . import hr_payslip_line
 from . import hr_payslip_edi
 from . import edi_gen
+from . import hr_employee
+from . import res_users

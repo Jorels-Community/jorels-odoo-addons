@@ -306,19 +306,19 @@ class HrPayslip(models.Model):
                 raise UserError(_("The contract must have the 'Type worker' field configured"))
             if not rec.contract_id.subtype_worker_id:
                 raise UserError(_("The contract must have the 'Subtype worker' field configured"))
-            if not rec.employee_id.address_home_id.first_name:
+            if not rec.employee_id.private_first_name:
                 raise UserError(_("Employee does not have a first name"))
-            if not rec.employee_id.address_home_id.surname:
+            if not rec.employee_id.private_surname:
                 raise UserError(_("Employee does not have a surname"))
-            if not rec.employee_id.address_home_id.type_document_identification_id:
+            if not rec.employee_id.private_type_document_identification_id:
                 raise UserError(_("Employee does not have an identification type"))
-            if rec.employee_id.address_home_id.type_document_identification_id.id == 6:
+            if rec.employee_id.private_type_document_identification_id.id == 6:
                 raise UserError(_("The employee's document type cannot be NIT"))
-            if not rec.employee_id.address_home_id.vat:
+            if not rec.employee_id.private_vat:
                 raise UserError(_("Employee does not have an document number"))
-            if not rec.employee_id.address_home_id.postal_municipality_id:
+            if not rec.employee_id.private_postal_municipality_id:
                 raise UserError(_("Employee does not have a postal municipality"))
-            if not rec.employee_id.address_home_id.street:
+            if not rec.employee_id.private_street:
                 raise UserError(_("Employee does not have an address."))
             if not rec.contract_id.name:
                 raise UserError(_("Contract does not have a name"))
@@ -384,22 +384,22 @@ class HrPayslip(models.Model):
                 "type_worker_code": rec.contract_id.type_worker_id.id,
                 "subtype_worker_code": rec.contract_id.subtype_worker_id.id,
                 "high_risk_pension": rec.contract_id.high_risk_pension,
-                "id_code": rec.employee_id.address_home_id.type_document_identification_id.id,
-                "id_number": ''.join([i for i in rec.employee_id.address_home_id.vat if i.isdigit()]),
-                "surname": rec.employee_id.address_home_id.surname,
-                "first_name": rec.employee_id.address_home_id.first_name,
+                "id_code": rec.employee_id.private_type_document_identification_id.id,
+                "id_number": ''.join([i for i in rec.employee_id.private_vat if i.isdigit()]),
+                "surname": rec.employee_id.private_surname,
+                "first_name": rec.employee_id.private_first_name,
                 "country_code": 46,
-                "municipality_code": rec.employee_id.address_home_id.postal_municipality_id.id,
-                "address": rec.employee_id.address_home_id.street,
+                "municipality_code": rec.employee_id.private_postal_municipality_id.id,
+                "address": rec.employee_id.private_street,
                 "integral_salary": rec.contract_id.integral_salary,
                 "contract_code": rec.contract_id.type_contract_id.id,
                 "salary": abs(rec.contract_id.wage),
                 # "worker_code": "string"
             }
-            if rec.employee_id.address_home_id.other_names:
-                employee['other_names'] = rec.employee_id.address_home_id.other_names
-            if rec.employee_id.address_home_id.second_surname:
-                employee['second_surname'] = rec.employee_id.address_home_id.second_surname
+            if rec.employee_id.private_other_names:
+                employee['other_names'] = rec.employee_id.private_other_names
+            if rec.employee_id.private_second_surname:
+                employee['second_surname'] = rec.employee_id.private_second_surname
 
             if rec.contract_id.date_end:
                 amount_time = self.calculate_time_worked(rec.contract_id.date_start, rec.contract_id.date_end)

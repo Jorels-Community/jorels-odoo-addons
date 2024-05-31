@@ -66,7 +66,8 @@
                                         <span t-field="o.number"/>
                                     </div>
                                     <div>
-                                        <address t-field="o.employee_id.address_home_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                                        <span t-field="o.employee_id.name"/>
+                                        <span t-field="o.employee_id.private_street"/>
                                     </div>
                                 </div>
                             </div>
@@ -110,7 +111,8 @@
                                         <span t-field="o.number"/>
                                     </div>
                                     <div>
-                                        <address t-field="o.employee_id.address_home_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                                        <span t-field="o.employee_id.name"/>
+                                        <span t-field="o.employee_id.private_street"/>
                                     </div>
                                 </div>
                             </div>
