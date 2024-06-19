@@ -139,6 +139,12 @@ class AccountMove(models.Model):
     ei_amount_excluded_company = fields.Monetary("Excluded in Company Currency", compute="_compute_amount", store=True,
                                                  currency_field='company_currency_id')
 
+    # Commercial sample
+    ei_amount_commercial_sample = fields.Monetary("Total commercial sample", compute="_compute_amount", store=True)
+    ei_amount_commercial_sample_company = fields.Monetary("Total commercial sample in Company Currency",
+                                                          compute="_compute_amount", store=True,
+                                                          currency_field='company_currency_id')
+
     # Required field for credit and debit notes in DIAN
     ei_correction_concept_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
                                                string="Correction concept", copy=False, readonly=True,
@@ -208,9 +214,11 @@ class AccountMove(models.Model):
                                       help="It indicates that the edi document has been sent.")
 
     def _auto_init(self):
+        # Edi type document
         if not column_exists(self.env.cr, "account_move", "ei_type_document"):
             create_column(self.env.cr, "account_move", "ei_type_document", "varchar")
 
+        # Totals in Company Currency
         if not column_exists(self.env.cr, "account_move", "ei_amount_tax_withholding_company"):
             create_column(self.env.cr, "account_move", "ei_amount_tax_withholding_company", "numeric")
 
@@ -222,6 +230,13 @@ class AccountMove(models.Model):
 
         if not column_exists(self.env.cr, "account_move", "ei_amount_excluded_company"):
             create_column(self.env.cr, "account_move", "ei_amount_excluded_company", "numeric")
+
+        # Commercial samples
+        if not column_exists(self.env.cr, "account_invoice", "ei_amount_commercial_sample"):
+            create_column(self.env.cr, "account_invoice", "ei_amount_commercial_sample", "numeric")
+
+        if not column_exists(self.env.cr, "account_invoice", "ei_amount_commercial_sample_company"):
+            create_column(self.env.cr, "account_invoice", "ei_amount_commercial_sample_company", "numeric")
 
         return super()._auto_init()
 
@@ -491,7 +506,8 @@ class AccountMove(models.Model):
     def get_ei_legal_monetary_totals(self):
         self.ensure_one()
         line_extension_amount = abs(self.amount_untaxed_signed)
-        tax_exclusive_amount = abs(self.amount_untaxed_signed) - self.ei_amount_excluded_company
+        tax_exclusive_amount = abs(
+            self.amount_untaxed_signed) - self.ei_amount_excluded_company + self.ei_amount_commercial_sample_company
 
         allowance_total_amount = 0.0
         if self.is_universal_discount():
@@ -757,6 +773,9 @@ class AccountMove(models.Model):
             amount_tax_no_withholding_company = 0
             amount_excluded = 0
             amount_excluded_company = 0
+            amount_commercial_sample = 0
+            amount_commercial_sample_company = 0
+
             rate = rec.currency_id.with_context(dict(rec._context or {}, date=rec.invoice_date)).rate
             for invoice_line_id in rec.invoice_line_ids:
                 if invoice_line_id.account_id:
@@ -770,9 +789,14 @@ class AccountMove(models.Model):
                         #   raise UserError(
                         #       _("Commercial samples doesn't seem to be compatible with multi-currencies."))
 
-                        lst_price_invoice = invoice_line_id.product_id.lst_price * rate
+                        lst_price_company = invoice_line_id.product_id.lst_price
+                        lst_price_invoice = lst_price_company * rate
+
                         taxable_amount = lst_price_invoice * invoice_line_id.quantity
-                        taxable_amount_company = invoice_line_id.product_id.lst_price * invoice_line_id.quantity
+                        taxable_amount_company = lst_price_company * invoice_line_id.quantity
+
+                        amount_commercial_sample = amount_commercial_sample + taxable_amount
+                        amount_commercial_sample_company = amount_commercial_sample_company + taxable_amount_company
 
                     for invoice_line_tax_id in invoice_line_id.tax_ids:
                         tax_name = invoice_line_tax_id.name
@@ -824,6 +848,9 @@ class AccountMove(models.Model):
                                                           rec.ei_amount_tax_no_withholding_company)
             rec.ei_amount_excluded = amount_excluded
             rec.ei_amount_excluded_company = amount_excluded_company
+
+            rec.ei_amount_commercial_sample = amount_commercial_sample
+            rec.ei_amount_commercial_sample_company = amount_commercial_sample_company
 
             if self.is_universal_discount():
                 # if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
