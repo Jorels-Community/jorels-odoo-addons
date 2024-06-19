@@ -219,11 +219,11 @@ class AccountMove(models.Model):
             create_column(self.env.cr, "account_move", "ei_amount_excluded_company", "numeric")
 
         # Commercial samples
-        if not column_exists(self.env.cr, "account_invoice", "ei_amount_commercial_sample"):
-            create_column(self.env.cr, "account_invoice", "ei_amount_commercial_sample", "numeric")
+        if not column_exists(self.env.cr, "account_move", "ei_amount_commercial_sample"):
+            create_column(self.env.cr, "account_move", "ei_amount_commercial_sample", "numeric")
 
-        if not column_exists(self.env.cr, "account_invoice", "ei_amount_commercial_sample_company"):
-            create_column(self.env.cr, "account_invoice", "ei_amount_commercial_sample_company", "numeric")
+        if not column_exists(self.env.cr, "account_move", "ei_amount_commercial_sample_company"):
+            create_column(self.env.cr, "account_move", "ei_amount_commercial_sample_company", "numeric")
 
         return super()._auto_init()
 
