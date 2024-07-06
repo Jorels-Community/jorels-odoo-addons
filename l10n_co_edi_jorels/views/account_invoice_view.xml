@@ -166,7 +166,7 @@
                 </xpath>
                 <xpath expr="//field[@name='amount_untaxed']" position="before">
                     <h4 class="oe_left">
-                        <field name="currency_id"/>
+                        <field name="currency_id" groups="base.group_multi_currency"/>
                     </h4>
                 </xpath>
                 <xpath expr="//field[@name='amount_tax']" position="before">
@@ -178,7 +178,7 @@
                 <xpath expr="//group[hasclass('oe_subtotal_footer')]" position="after">
                     <group class='oe_subtotal_footer oe_right' attrs="{'invisible':[('is_multicurrency','=',False)]}">
                         <h4 class="oe_left">
-                            <field name="company_currency_id"/>
+                            <field name="company_currency_id" groups="base.group_multi_currency"/>
                         </h4>
                         <field name="is_multicurrency" invisible="1"/>
                         <field name="amount_untaxed_signed" string="Base imponible"/>
@@ -350,7 +350,7 @@
                 </xpath>
                 <xpath expr="//field[@name='amount_untaxed']" position="before">
                     <h4 class="oe_left">
-                        <field name="currency_id"/>
+                        <field name="currency_id" groups="base.group_multi_currency"/>
                     </h4>
                 </xpath>
                 <xpath expr="//field[@name='amount_tax']" position="before">
@@ -362,7 +362,7 @@
                 <xpath expr="//group[hasclass('oe_subtotal_footer')]" position="after">
                     <group class='oe_subtotal_footer oe_right' attrs="{'invisible':[('is_multicurrency','=',False)]}">
                         <h4 class="oe_left">
-                            <field name="company_currency_id"/>
+                            <field name="company_currency_id" groups="base.group_multi_currency"/>
                         </h4>
                         <field name="is_multicurrency" invisible="1"/>
                         <field name="amount_untaxed_signed" string="Base imponible"/>
