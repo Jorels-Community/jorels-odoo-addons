@@ -1911,9 +1911,9 @@ class AccountInvoice(models.Model):
 
             for line in invoice.tax_line_ids:
                 amount_total_company = line.currency_id._convert(
-                    line.amount_total, self.company_id.currency_id, line.company_id, rate_date)
+                    line.amount_total, line.company_id.currency_id, line.company_id, rate_date)
                 base_company = line.currency_id._convert(
-                    line.base, self.company_id.currency_id, line.company_id, rate_date)
+                    line.base, line.company_id.currency_id, line.company_id, rate_date)
 
                 tax = line.tax_id
                 group_key = (tax.tax_group_id, tax.amount_type, tax.amount)
