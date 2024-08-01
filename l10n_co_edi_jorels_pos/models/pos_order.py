@@ -64,13 +64,20 @@ class PosOrder(models.Model):
         vals['journal_id'] = journal_id
 
         if vals['move_type'] == 'out_refund':
-            invoice_search = self.env['account.move'].search([('id', '=', vals['reversed_entry_id'])])
-            if invoice_search[0].amount_total == -self.amount_total:
-                # 2 is to report 'Electronic invoice cancellation' Concept
-                vals['ei_correction_concept_credit_id'] = 2
-                vals['ei_correction_concept_id'] = 2
+            if 'reversed_entry_id' in vals:
+                invoice_search = self.env['account.move'].search([('id', '=', vals['reversed_entry_id'])])
+                if invoice_search[0].amount_total == -self.amount_total:
+                    # 2 is to report 'Electronic invoice cancellation' Concept
+                    vals['ei_correction_concept_credit_id'] = 2
+                    vals['ei_correction_concept_id'] = 2
+                else:
+                    # 1 is to report 'Partial return of goods and/or partial non-acceptance of service' Concept
+                    vals['ei_correction_concept_credit_id'] = 1
+                    vals['ei_correction_concept_id'] = 1
             else:
+                # Credit note without reference
                 # 1 is to report 'Partial return of goods and/or partial non-acceptance of service' Concept
+                vals['ei_is_correction_without_reference'] = True
                 vals['ei_correction_concept_credit_id'] = 1
                 vals['ei_correction_concept_id'] = 1
 
