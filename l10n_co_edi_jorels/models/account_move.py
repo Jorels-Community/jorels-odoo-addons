@@ -202,8 +202,24 @@ class AccountMove(models.Model):
 
     def _auto_init(self):
         # Edi type document
+        if not column_exists(self.env.cr, "account_move", "ei_type_document_id"):
+            create_column(self.env.cr, "account_move", "ei_type_document_id", "integer")
+
         if not column_exists(self.env.cr, "account_move", "ei_type_document"):
             create_column(self.env.cr, "account_move", "ei_type_document", "varchar")
+
+        # Totals in Invoice Currency
+        if not column_exists(self.env.cr, "account_move", "ei_amount_tax_withholding"):
+            create_column(self.env.cr, "account_move", "ei_amount_tax_withholding", "numeric")
+
+        if not column_exists(self.env.cr, "account_move", "ei_amount_tax_no_withholding"):
+            create_column(self.env.cr, "account_move", "ei_amount_tax_no_withholding", "numeric")
+
+        if not column_exists(self.env.cr, "account_move", "ei_amount_total_no_withholding"):
+            create_column(self.env.cr, "account_move", "ei_amount_total_no_withholding", "numeric")
+
+        if not column_exists(self.env.cr, "account_move", "ei_amount_excluded"):
+            create_column(self.env.cr, "account_move", "ei_amount_excluded", "numeric")
 
         # Totals in Company Currency
         if not column_exists(self.env.cr, "account_move", "ei_amount_tax_withholding_company"):
@@ -224,6 +240,10 @@ class AccountMove(models.Model):
 
         if not column_exists(self.env.cr, "account_move", "ei_amount_commercial_sample_company"):
             create_column(self.env.cr, "account_move", "ei_amount_commercial_sample_company", "numeric")
+
+        # Value letters
+        if not column_exists(self.env.cr, "account_move", "value_letters"):
+            create_column(self.env.cr, "account_move", "value_letters", "varchar")
 
         return super()._auto_init()
 
