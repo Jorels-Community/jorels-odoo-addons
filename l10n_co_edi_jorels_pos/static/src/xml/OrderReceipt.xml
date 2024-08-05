@@ -26,15 +26,14 @@
             <div t-if="receipt.client and receipt.client.vat">VAT: <t t-esc="receipt.client.vat"/></div>
             <br/>
             <div t-if="receipt.invoice">
-                <div id="ei_qr_data" align="center"/>
+                <div t-esc="receipt.invoice.ei_qr_data" id="ei_qr_data" class="hidden"/>
+                <div id="qr_data" align="center"/>
                 <br/>
                 <script type="text/javascript">
-                    var ei_qr_data = "<t t-esc='receipt.invoice.ei_qr_data'/>";
+                    var ei_qr_data = document.getElementById('ei_qr_data').innerText;
                     if(ei_qr_data &amp;&amp; ei_qr_data != 'false'){
-                        var qrcode = new QRCode(document.getElementById('ei_qr_data') , {
+                        var qrcode = new QRCode(document.getElementById('qr_data') , {
                             text: String(ei_qr_data),
-                            width: 100,
-                            height: 100,
                         });
                     }
                 </script>
@@ -42,8 +41,9 @@
                     <span>Factura electrónica de venta: </span>
                     <t t-esc="receipt.invoice.number"/>
                     <br/>
-                    <span>CUFE: </span>
-                    <t t-esc="receipt.invoice.ei_uuid"/>
+                    <div style="word-wrap: break-word;">
+                        <t t-esc="'CUFE:' + receipt.invoice.ei_uuid"/>
+                    </div>
                     <br/>
                     <span>Resolución: </span>
                     <t t-esc="receipt.invoice.resolution_resolution"/>
