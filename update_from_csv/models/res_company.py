@@ -51,7 +51,7 @@ class ResCompany(models.Model):
                 line_count = 0
                 for row in csv_reader:
                     if line_count == 0:
-                        _logger.debug(f'Column names are {", ".join(row)}')
+                        _logger.debug('Column names are {}'.format(", ".join(row)))
                         field_names = row
 
                     # Insert
@@ -64,8 +64,7 @@ class ResCompany(models.Model):
                         if val == "$$$$":
                             val = 'NULL'
                         query = query + val + ','
-                    query = query + str(self.env.user.id) + ',NOW(),' + str(
-                        self.env.user.id) + ',NOW()) ON CONFLICT(id) DO UPDATE SET '
+                    query = query + "{0},NOW(),{0},NOW()) ON CONFLICT(id) DO UPDATE SET ".format(str(self.env.user.id))
 
                     # Update
                     for field_name in field_names:
@@ -73,7 +72,7 @@ class ResCompany(models.Model):
                         if val == "$$$$":
                             val = 'NULL'
                         query = query + field_name + "=" + val + ","
-                    query = query + "write_uid=" + str(self.env.user.id) + ",write_date=NOW()"
+                    query = query + "write_uid={0},write_date=NOW()".format(str(self.env.user.id))
 
                     # Execute query
                     # _logger.debug(query)
@@ -84,7 +83,7 @@ class ResCompany(models.Model):
 
                 self._cr.execute("select max(id) from " + table_name)
                 max_id = self._cr.dictfetchall()[0]['max']
-                self._cr.execute(f"SELECT setval('{table_name}_id_seq',{str(max_id + 1)}, true)")
-                _logger.debug(f'Processed {line_count} records on table {table_name}')
+                self._cr.execute("SELECT setval('{0}_id_seq',{1}, true)".format(table_name, str(max_id + 1)))
+                _logger.debug('Processed {0} records on table {1}'.format(line_count, table_name))
         except Exception as e:
             _logger.debug("init_csv_data %s", e)
