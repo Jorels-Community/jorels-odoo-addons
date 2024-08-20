@@ -74,21 +74,19 @@ class MailTemplate(models.Model):
                         zip_name = attached_document_name + '.zip'
                         zip_path = Path(tempfile.gettempdir()) / zip_name
 
-                        zip_archive = zipfile.ZipFile(zip_path, 'w')
+                        zip_archive = zipfile.ZipFile(str(zip_path), 'w')
 
-                        pdf_handle = open(pdf_path, 'wb')
-                        pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
-                        pdf_handle.close()
-                        zip_archive.write(pdf_path, arcname=pdf_name)
+                        with open(str(pdf_path), 'wb') as pdf_handle:
+                            pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
+                        zip_archive.write(str(pdf_path), arcname=pdf_name)
 
-                        xml_handle = open(xml_path, 'wb')
-                        xml_handle.write(base64.decodebytes(invoice.ei_attached_document_base64_bytes))
-                        xml_handle.close()
-                        zip_archive.write(xml_path, arcname=xml_name)
+                        with open(str(xml_path), 'wb') as xml_handle:
+                            xml_handle.write(base64.decodebytes(invoice.ei_attached_document_base64_bytes))
+                        zip_archive.write(str(xml_path), arcname=xml_name)
 
                         zip_archive.close()
 
-                        with open(zip_path, 'rb') as f:
+                        with open(str(zip_path), 'rb') as f:
                             attached_zip = f.read()
                             ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
                             attachments += [(zip_name, ei_attached_zip_base64_bytes)]
