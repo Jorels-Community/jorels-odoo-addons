@@ -31,8 +31,10 @@
             </xpath>
             <xpath expr="//field[@name='reason']" position="after">
                 <field name="ei_type_document_id" invisible="1"/>
-                <field name="ei_correction_concept_credit_id" required="1"
-                       domain="[('type_document_id','=',ei_type_document_id)]"/>
+                <field name="ei_correction_concept_credit_id"
+                       invisible="ei_type_document_id not in (5,6,13)"
+                       required="ei_type_document_id in (5,6,13)"
+                       domain="[('type_document_id', '=', ei_type_document_id)]"/>
             </xpath>
         </field>
     </record>
