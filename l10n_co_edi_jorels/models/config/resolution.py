@@ -61,14 +61,14 @@ class Resolution(models.Model):
     company_id = fields.Many2one('res.company', string='Company', readonly=False, copy=False, required=True,
                                  default=lambda self: self.env.company)
 
+    @api.depends('resolution_id', 'resolution_type_document_id')
     def _compute_name(self):
         for rec in self:
             if rec.resolution_id:
-                rec.name = str(rec.resolution_id) + ' - ' + \
-                           rec.resolution_type_document_id.name + \
-                           ' [' + rec.resolution_type_document_id.code + ']'
+                rec.name = f"{rec.resolution_id} - {rec.resolution_type_document_id.name} [{rec.resolution_type_document_id.code}]"
             else:
-                rec.name = rec.resolution_type_document_id.name
+                rec.name = rec.resolution_type_document_id.name if rec.resolution_type_document_id else "Incompatible Resolution"
+
 
     @api.model_create_single
     def create(self, vals):
