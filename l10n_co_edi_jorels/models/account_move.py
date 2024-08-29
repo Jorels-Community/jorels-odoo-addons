@@ -883,6 +883,7 @@ class AccountMove(models.Model):
                     rec.value_letters = (rec.value_letters + ', ' +
                                          num2words(decimal_part, lang=lang).upper() + ' ' +
                                          rec.company_currency_id.currency_subunit_label.upper() + '.')
+
     def get_ei_payment_form(self):
         for rec in self:
             if rec.invoice_date and rec.invoice_date_due:
@@ -1667,10 +1668,11 @@ class AccountMove(models.Model):
                 with BytesIO(base64.b64decode(rec.ei_attached_document_base64_bytes)) as file:
                     search_ok = False
                     for line in file:
-                        search_string = '<cbc:ParentDocumentID>' + rec.number_formatted + '</cbc:ParentDocumentID>'
-                        if search_string in str(line):
-                            search_ok = True
-                            break
+                        if rec.number_formatted and isinstance(rec.number_formatted, str):
+                            search_string = '<cbc:ParentDocumentID>' + rec.number_formatted + '</cbc:ParentDocumentID>'
+                            if search_string in str(line):
+                                search_ok = True
+                                break
                     rec.is_attached_document_matched = search_ok
             else:
                 rec.is_attached_document_matched = False
