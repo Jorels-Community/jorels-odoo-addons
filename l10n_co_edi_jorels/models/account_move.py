@@ -447,7 +447,7 @@ class AccountMove(models.Model):
             type_document_identification_id = rec.get_type_document_identification_id()
             if type_document_identification_id:
                 if rec.partner_id.vat:
-                    if type_document_identification_id in (1, 2, 3, 4, 5, 6, 10):
+                    if type_document_identification_id in (1, 2, 3, 4, 5, 6, 10, 24, 38):
                         identification_number_general = ''.join([i for i in rec.partner_id.vat if i.isdigit()])
                     else:
                         identification_number_general = rec.partner_id.vat

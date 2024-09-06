@@ -67,7 +67,7 @@ class ResPartner(models.Model):
     def _edi_sanitize_vat(cls, vat, type_document_identification_id):
         sanitize_vat = vat and re.sub(r'\W+', '', vat).upper() or False
         if sanitize_vat:
-            if type_document_identification_id in (1, 2, 3, 4, 5, 6, 10):
+            if type_document_identification_id in (1, 2, 3, 4, 5, 6, 10, 24, 38):
                 id_number = ''.join([i for i in sanitize_vat if i.isdigit()])
             else:
                 id_number = sanitize_vat
@@ -91,27 +91,25 @@ class ResPartner(models.Model):
         if not self.env['l10n_co_edi_jorels.type_document_identifications'].search_count([]):
             self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.type_document_identifications')
 
-        for rec in self:
-            rec.type_document_identification_id = None
-            if rec.l10n_latam_identification_type_id.l10n_co_document_code:
-                values = {
-                    'civil_registration': 1,
-                    'id_card': 2,
-                    'id_document': 3,
-                    'national_citizen_id': 3,
-                    'foreign_colombian_card': 4,
-                    'foreign_resident_card': 5,
-                    'rut': 6,
-                    'passport': 7,
-                    'foreign_id_card': 8,
-                    'external_id': 9,
-                    'niup_id': 10,
-                    'residence_document': None,
-                    'diplomatic_card': None,
-                }
-                if rec.l10n_latam_identification_type_id.l10n_co_document_code in values:
-                    rec.type_document_identification_id = values[
-                        rec.l10n_latam_identification_type_id.l10n_co_document_code]
+        document_type_mapping = {
+            'rut': 6,
+            'national_citizen_id': 3,
+            'civil_registration': 1,
+            'id_card': 2,
+            'foreign_colombian_card': 4,
+            'foreign_resident_card': 5,
+            'passport': 7,
+            'PEP': 24,
+            'foreign_id_card': 8,
+            'external_id': 9,
+            'niup_id': 10,
+            'id_document': 3,
+            'PPT': 38,
+        }
+
+        for partner in self:
+            document_code = partner.l10n_latam_identification_type_id.l10n_co_document_code
+            partner.type_document_identification_id = document_type_mapping.get(document_code, None)
 
     @api.depends('zip', 'country_id')
     def _compute_postal_id(self):
