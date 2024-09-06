@@ -67,7 +67,7 @@ class ResPartner(models.Model):
     def _edi_sanitize_vat(cls, vat, type_document_identification_id):
         sanitize_vat = vat and re.sub(r'\W+', '', vat).upper() or False
         if sanitize_vat:
-            if type_document_identification_id in (1, 2, 3, 4, 5, 6, 10):
+            if type_document_identification_id in (1, 2, 3, 4, 5, 6, 10, 24, 38):
                 id_number = ''.join([i for i in sanitize_vat if i.isdigit()])
             else:
                 id_number = sanitize_vat
