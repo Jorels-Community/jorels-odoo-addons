@@ -39,15 +39,10 @@ class HrContract(models.Model):
     def _compute_payroll_period_id(self):
         for rec in self:
             values = {
-                'monthly': 5,
-                'quarterly': 6,
-                'semi-annually': 6,
-                'annually': 6,
-                'weekly': 1,
-                'bi-weekly': 4,
-                'bi-monthly': 6,
+                'weekly': 1,      # Weekly
+                'bi-weekly': 3,   # Bi-weekly
+                'semi-monthly': 4,  # Semi-monthly
+                'monthly': 5,     # Monthly
             }
-            if rec.schedule_pay:
-                rec.payroll_period_id = values[rec.schedule_pay]
-            else:
-                rec.payroll_period_id = None
+            # Default to 'Other' (6) if not found in the mapping
+            rec.payroll_period_id = values.get(rec.schedule_pay, 6)
