@@ -91,26 +91,23 @@ class ResPartner(models.Model):
         if not self.env['l10n_co_edi_jorels.type_document_identifications'].search_count([]):
             self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.type_document_identifications')
 
+        document_type_mapping = {
+            'civil_registration': 1,
+            'id_card': 2,
+            'id_document': 3,
+            'national_citizen_id': 3,
+            'foreign_colombian_card': 4,
+            'foreign_resident_card': 5,
+            'rut': 6,
+            'passport': 7,
+            'foreign_id_card': 8,
+            'external_id': 9,
+            'niup_id': 10,
+            'residence_document': 24,  # PEP
+        }
+
         for rec in self:
-            rec.type_document_identification_id = None
-            if rec.l10n_co_document_type:
-                values = {
-                    'civil_registration': 1,
-                    'id_card': 2,
-                    'id_document': 3,
-                    'national_citizen_id': 3,
-                    'foreign_colombian_card': 4,
-                    'foreign_resident_card': 5,
-                    'rut': 6,
-                    'passport': 7,
-                    'foreign_id_card': 8,
-                    'external_id': 9,
-                    'niup_id': 10,
-                    'residence_document': None,
-                    'diplomatic_card': None,
-                }
-                if rec.l10n_co_document_type in values:
-                    rec.type_document_identification_id = values[rec.l10n_co_document_type]
+            rec.type_document_identification_id = document_type_mapping.get(rec.l10n_co_document_type)
 
     @api.depends('zip', 'country_id')
     def _compute_postal_id(self):
