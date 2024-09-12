@@ -116,6 +116,11 @@
                             <field name="ei_payload" groups="base.group_no_one" class="text-break"/>
                             <field name="ei_qr_image" widget="image"/>
                         </group>
+                        <group string="Additional Documents">
+                            <field name="ei_additional_documents" widget="many2many_binary"
+                                   options="{'accepted_file_types': 'application/pdf,image/*'}"
+                                   help="Additional documents to be attached to the electronic invoice email"/>
+                        </group>
                     </page>
                     <page name="dian_events" string="Dian Events"
                           attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}">

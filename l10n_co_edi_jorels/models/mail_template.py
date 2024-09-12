@@ -21,11 +21,10 @@
 #
 
 import base64
-import tempfile
 import zipfile
-from pathlib import Path
+from io import BytesIO
 
-from odoo import models, api
+from odoo import models
 
 
 class MailTemplate(models.Model):
@@ -64,34 +63,39 @@ class MailTemplate(models.Model):
                         else:
                             attached_document_name = move.ei_uuid
 
-                        pdf_name = attached_document_name + '.pdf'
-                        pdf_path = Path(tempfile.gettempdir()) / pdf_name
-
-                        xml_name = attached_document_name + '.xml'
-                        xml_path = Path(tempfile.gettempdir()) / xml_name
-
+                        # Create main zip buffer
+                        main_zip_buffer = BytesIO()
                         zip_name = attached_document_name + '.zip'
-                        zip_path = Path(tempfile.gettempdir()) / zip_name
+                        with zipfile.ZipFile(main_zip_buffer, 'w') as main_zip:
+                            # Add PDF to main zip
+                            pdf_name = attached_document_name + '.pdf'
+                            pdf_content = base64.decodebytes(res_t['attachments'][0][1])
+                            main_zip.writestr(pdf_name, pdf_content)
 
-                        zip_archive = zipfile.ZipFile(zip_path, 'w')
+                            # Add XML to main zip
+                            xml_name = attached_document_name + '.xml'
+                            xml_content = base64.decodebytes(move.ei_attached_document_base64_bytes)
+                            main_zip.writestr(xml_name, xml_content)
 
-                        pdf_handle = open(pdf_path, 'wb')
-                        pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
-                        pdf_handle.close()
-                        zip_archive.write(pdf_path, arcname=pdf_name)
+                            # If there are additional documents, create a secondary zip
+                            if move.ei_additional_documents:
+                                additional_zip_buffer = BytesIO()
+                                with zipfile.ZipFile(additional_zip_buffer, 'w') as additional_zip:
+                                    for attachment in move.ei_additional_documents:
+                                        additional_zip.writestr(attachment.name, base64.b64decode(attachment.datas))
+                                
+                                # Add secondary zip to main zip
+                                main_zip.writestr(attached_document_name + '_additional_documents.zip', additional_zip_buffer.getvalue())
 
-                        xml_handle = open(xml_path, 'wb')
-                        xml_handle.write(base64.decodebytes(move.ei_attached_document_base64_bytes))
-                        xml_handle.close()
-                        zip_archive.write(xml_path, arcname=xml_name)
-
-                        zip_archive.close()
-
-                        with open(zip_path, 'rb') as f:
-                            attached_zip = f.read()
-                            ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
-                            attachments += [(zip_name, ei_attached_zip_base64_bytes)]
-                            move.write({
+                        # Encode main zip content
+                        main_zip_content = main_zip_buffer.getvalue()
+                        ei_attached_zip_base64_bytes = base64.b64encode(main_zip_content)
+                        
+                        # Add main zip to email attachments
+                        attachments += [(zip_name, ei_attached_zip_base64_bytes)]
+                        
+                        # Update move with new zip content
+                        move.write({
                                 'ei_attached_zip_base64_bytes': ei_attached_zip_base64_bytes
                             })
 
@@ -120,36 +124,27 @@ class MailTemplate(models.Model):
                     else:
                         attached_document_name = radian.edi_uuid
 
-                    # pdf_name = attached_document_name + '.pdf'
-                    # pdf_path = Path(tempfile.gettempdir()) / pdf_name
-
-                    xml_name = attached_document_name + '.xml'
-                    xml_path = Path(tempfile.gettempdir()) / xml_name
-
+                    # Create main zip buffer
+                    main_zip_buffer = BytesIO()
                     zip_name = attached_document_name + '.zip'
-                    zip_path = Path(tempfile.gettempdir()) / zip_name
 
-                    zip_archive = zipfile.ZipFile(zip_path, 'w')
+                    with zipfile.ZipFile(main_zip_buffer, 'w') as zip_archive:
+                        # Add XML to zip
+                        xml_name = attached_document_name + '.xml'
+                        xml_content = base64.decodebytes(radian.edi_attached_document_base64)
+                        zip_archive.writestr(xml_name, xml_content)
 
-                    # pdf_handle = open(pdf_path, 'wb')
-                    # pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
-                    # pdf_handle.close()
-                    # zip_archive.write(pdf_path, arcname=pdf_name)
+                    # Encode zip content
+                    zip_content = main_zip_buffer.getvalue()
+                    edi_attached_zip_base64 = base64.b64encode(zip_content)
 
-                    xml_handle = open(xml_path, 'wb')
-                    xml_handle.write(base64.decodebytes(radian.edi_attached_document_base64))
-                    xml_handle.close()
-                    zip_archive.write(xml_path, arcname=xml_name)
+                    # Add zip to email attachments
+                    attachments += [(zip_name, edi_attached_zip_base64)]
 
-                    zip_archive.close()
-
-                    with open(zip_path, 'rb') as f:
-                        attached_zip = f.read()
-                        edi_attached_zip_base64 = base64.encodebytes(attached_zip)
-                        attachments += [(zip_name, edi_attached_zip_base64)]
-                        radian.write({
-                            'edi_attached_zip_base64': edi_attached_zip_base64
-                        })
+                    # Update radian with new zip content
+                    radian.write({
+                        'edi_attached_zip_base64': edi_attached_zip_base64
+                    })
 
                     res_t["attachments"] = attachments
 

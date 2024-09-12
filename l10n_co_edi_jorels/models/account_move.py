@@ -117,6 +117,10 @@ class AccountMove(models.Model):
     ei_attached_zip_base64_bytes = fields.Binary('Attached zip', attachment=True, copy=False, readonly=True,
                                                  states={'draft': [('readonly', False)]})
 
+    # Additional documents for electronic invoicing
+    ei_additional_documents = fields.Many2many('ir.attachment', string='Additional Documents',
+                                            help='Additional documents to be attached to the electronic invoicing email')
+
     # QR image
     ei_qr_image = fields.Binary("QR image", attachment=True, copy=False, readonly=True)
 
