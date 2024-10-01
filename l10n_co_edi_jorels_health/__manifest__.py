@@ -27,7 +27,7 @@
     'author': 'Jorels SAS',
     'license': 'LGPL-3',
     'category': 'Invoicing & Payments',
-    'version': '15.0.24.09.30.19.10',
+    'version': '16.0.24.09.301910',
     'website': 'https://www.jorels.com',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
