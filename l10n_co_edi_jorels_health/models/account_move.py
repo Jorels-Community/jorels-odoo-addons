@@ -43,8 +43,8 @@ class AccountMove(models.Model):
                                                  comodel_name='l10n_co_edi_jorels.type_coverages',
                                                  readonly=True, states={'draft': [('readonly', False)]},
                                                  domain=[('scope', '=', 'health')], ondelete='RESTRICT')
-    ei_health_contract = fields.Char(string="Contract number")
-    ei_health_policy = fields.Char(string="Policy number")
+    ei_health_contract = fields.Char(string="Contract number", readonly=True, states={'draft': [('readonly', False)]})
+    ei_health_policy = fields.Char(string="Policy number", readonly=True, states={'draft': [('readonly', False)]})
 
     ei_health_partner_id = fields.Many2one(string="Health service user",
                                            comodel_name='res.partner',
