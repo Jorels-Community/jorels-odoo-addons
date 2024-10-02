@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2021)
+# Jorels S.A.S. - Copyright (2024)
 #
 # This file is part of update_from_csv.
 #
@@ -28,7 +28,7 @@
     'website': "https://www.jorels.com",
     'license': 'LGPL-3',
     'category': 'Tools',
-    'version': '17.0.0.1',
+    'version': '18.0.0.1',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
     'depends': ['base'],

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 #   l10n_co_hr_payroll
-#   Copyright (C) 2022  Jorels SAS
+#   Copyright (C) 2024  Jorels SAS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published

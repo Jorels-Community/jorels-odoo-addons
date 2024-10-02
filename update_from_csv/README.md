@@ -1,5 +1,5 @@
 ![Jorels](https://www.jorels.com/web/image/res.company/1/logo)
-### Jorels SAS - Copyright (2019-2023)
+### Jorels SAS - Copyright (2024)
 
 # Update from CSV
 
@@ -21,7 +21,7 @@ Jorels SAS
 Under LGPL (Lesser General Public License)
 
 ## Project status
-Tested in production on Odoo 12, 13, 14, 15 y 16.
+Tested in production on Odoo.
 
 ## Description
 Update from csv, insert values, using function; without external_id's. For example:

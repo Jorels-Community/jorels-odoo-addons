@@ -3,11 +3,11 @@ Jorels SAS
 
 Desarrollo
 ==========
-Jorge Sanabria (2021-2022). Desarrollo del código fuente del modulo
+Jorge Sanabria (2019, 2024). Desarrollo del código fuente del modulo
 
 Aportes de conocimiento
 =======================
-David Alejandro De La Rosa Maldonado (2021-2022). Asesoría el desarrollo con sus grandes conocimientos en el tema de
+David Alejandro De La Rosa Maldonado (2021, 2022). Asesoría en el desarrollo con sus grandes conocimientos en el tema de
 nómina de Odoo
 
-July Marcela Caballero Martinez (2022). Asesoría en el tema de nómina e interfaz de usuario
+July Marcela Caballero Martinez (2023, 2024). Asesoría en el tema de nómina e interfaz de usuario

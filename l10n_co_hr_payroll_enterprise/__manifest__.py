@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#   Jorels S.A.S. - Copyright (C) 2019-2023
+#   Jorels S.A.S. - Copyright (C) (2024)
 #
 #   This file is part of l10n_co_hr_payroll_enterprise.
 #
@@ -27,7 +27,7 @@
     'author': 'Jorels SAS',
     'license': 'LGPL-3',
     'category': 'Human Resources',
-    'version': '17.0.24.01.310116',
+    'version': '18.0.24.01.310116',
     'website': "https://www.jorels.com",
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',

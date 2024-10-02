@@ -1,6 +1,6 @@
 /** @odoo-module */
 
-// Jorels S.A.S. - Copyright (2019-2024)
+// Jorels S.A.S. - Copyright (2024)
 //
 // This file is part of l10n_co_edi_jorels_pos.
 //

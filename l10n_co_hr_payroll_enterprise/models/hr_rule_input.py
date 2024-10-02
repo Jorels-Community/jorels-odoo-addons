@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#   Jorels S.A.S. - Copyright (C) 2019-2023
+#   Jorels S.A.S. - Copyright (C) (2024)
 #
 #   This file is part of l10n_co_hr_payroll_enterprise.
 #
