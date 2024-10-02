@@ -88,6 +88,7 @@
                             <field name="ei_is_restored"/>
                             <field name="ei_algorithm"/>
                             <field name="ei_class"/>
+                            <field name="ei_type_document"/>
                             <field name="ei_number"/>
                             <field name="ei_uuid"/>
                             <field name="ei_issue_date"/>
