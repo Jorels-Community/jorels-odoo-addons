@@ -60,7 +60,7 @@
         'views/account_move_reversal_view.xml',
         'views/radian_views.xml',
         'views/listings/l10n_co_edi_jorels_taxes_view.xml',
-        'report/report_invoice.xml',
+        # 'report/report_invoice.xml',
         'data/mail_template_data.xml',
     ],
     'external_dependencies': {

@@ -58,7 +58,7 @@
         <field name="name">Resolution List</field>
         <field name="model">l10n_co_edi_jorels.resolution</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="resolution_type_document_id" invisible="1"/>
                 <field name="name"/>
                 <field name="resolution_prefix"/>
@@ -69,7 +69,7 @@
                 <field name="resolution_date_from"/>
                 <field name="resolution_date_to"/>
                 <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
-            </tree>
+            </list>
         </field>
     </record>
 

@@ -184,10 +184,10 @@
                     <field name="ei_amount_tax_withholding" invisible="state=='draft'"/>
                 </xpath>
                 <!-- Invoice lines -->
-                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
+                <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='name']" position="after">
                     <field name="ei_notes"/>
                 </xpath>
-                <xpath expr="//field[@name='line_ids']/tree/field[@name='name']" position="after">
+                <xpath expr="//field[@name='line_ids']/list/field[@name='name']" position="after">
                     <field name="ei_notes" invisible="1"/>
                 </xpath>
                 <xpath expr="//div[@name='journal_div']" position="after">

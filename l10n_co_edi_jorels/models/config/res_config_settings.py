@@ -78,7 +78,7 @@ class ResConfigSettings(models.TransientModel):
                 "name": _("Resolutions"),
                 "type": "ir.actions.act_window",
                 "res_model": "l10n_co_edi_jorels.resolution",
-                "views": [[False, "tree"], [False, "form"]],
+                "views": [[False, "list"], [False, "form"]],
             }
 
         try:
@@ -184,7 +184,7 @@ class ResConfigSettings(models.TransientModel):
             "name": _("Resolutions"),
             "type": "ir.actions.act_window",
             "res_model": "l10n_co_edi_jorels.resolution",
-            "views": [[False, "tree"], [False, "form"]],
+            "views": [[False, "list"], [False, "form"]],
         }
 
     # Environment update

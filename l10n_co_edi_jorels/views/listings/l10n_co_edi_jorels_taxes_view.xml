@@ -25,11 +25,11 @@
             <field name="name">l10n_co_edi_jorels.taxes.tree</field>
             <field name="model">l10n_co_edi_jorels.taxes</field>
             <field name="arch" type="xml">
-                <tree string="DIAN Taxes">
+                <list string="DIAN Taxes">
                     <field name="code"/>
                     <field name="name"/>
                     <field name="description"/>
-                </tree>
+                </list>
             </field>
         </record>
     </data>
