@@ -69,7 +69,7 @@
                 <xpath expr="//field[@name='input_line_ids']" position="after">
                     <separator string="Earn Details"/>
                     <field name="earn_ids" readonly="state != 'draft'">
-                        <tree string="Earn Details" editable="bottom">
+                        <list string="Earn Details" editable="bottom">
                             <field name="rule_input_id" options="{'no_create': True, 'no_open': True}"/>
                             <field name="category" invisible="1"/>
                             <field name="code" invisible="1"/>
@@ -142,7 +142,7 @@
                                    'sunday_night_overtime_holidays',
                                    'sunday_holidays_night_surcharge_hours')"
                                    widget="float_time"/>
-                        </tree>
+                        </list>
                         <form string="Earn Details">
                             <group>
                                 <field name="rule_input_id" options="{'no_create': True, 'no_open': True}"/>
@@ -221,14 +221,14 @@
                     </field>
                     <separator string="Deduction Details"/>
                     <field name="deduction_ids" readonly="state != 'draft'">
-                        <tree string="Deduction Details" editable="bottom">
+                        <list string="Deduction Details" editable="bottom">
                             <field name="rule_input_id" options="{'no_create': True, 'no_open': True}"/>
                             <field name="category" invisible="1"/>
                             <field name="code" invisible="1"/>
                             <field name="name"/>
                             <field name="amount"/>
                             <field name="sequence" invisible="True"/>
-                        </tree>
+                        </list>
                         <form string="Deduction Details">
                             <group>
                                 <field name="rule_input_id" options="{'no_create': True, 'no_open': True}"/>
@@ -287,7 +287,7 @@
                 <xpath expr="//field[@name='credit_note']" position="after">
                     <field name="origin_payslip_id" invisible="not credit_note" readonly="state != 'draft'"/>
                 </xpath>
-                <xpath expr="//field[@name='line_ids']//tree//field[@name='rate']" position="after">
+                <xpath expr="//field[@name='line_ids']//list//field[@name='rate']" position="after">
                     <field name="edi_quantity"/>
                     <field name="edi_rate"/>
                 </xpath>

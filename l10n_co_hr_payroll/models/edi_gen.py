@@ -127,5 +127,5 @@ class EdiGen(models.TransientModel):
             "name": "Edi Payslips",
             "type": "ir.actions.act_window",
             "res_model": "hr.payslip.edi",
-            "views": [[False, "tree"], [False, "form"]],
+            "views": [[False, "list"], [False, "form"]],
         }
