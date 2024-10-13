@@ -71,17 +71,17 @@ class AccountMove(models.Model):
                                     store=True, compute="_compute_ei_is_not_test")
 
     # API Response:
-    ei_is_valid = fields.Boolean(string="Valid", copy=False, readonly=True)
+    ei_is_valid = fields.Boolean(string="Valid", copy=False)
     ei_is_restored = fields.Boolean("Is restored?", copy=False, readonly=True)
     ei_algorithm = fields.Char(string="Algorithm", copy=False, readonly=True)
     ei_class = fields.Char("Class", copy=False, readonly=True)
     ei_number = fields.Char(string="Edi number", compute="compute_number_formatted", store=True, copy=False,
                             readonly=True)
-    ei_uuid = fields.Char(string="UUID", copy=False, readonly=True)
-    ei_issue_date = fields.Date(string="Issue date", copy=False, readonly=True)
+    ei_uuid = fields.Char(string="UUID", copy=False)
+    ei_issue_date = fields.Date(string="Issue date", copy=False)
     ei_issue_datetime = fields.Char(string="Issue datetime", copy=False, readonly=True)
     ei_expedition_date = fields.Char("Expedition date", copy=False, readonly=True)
-    ei_zip_key = fields.Char(string="Zip key", copy=False, readonly=True)
+    ei_zip_key = fields.Char(string="Zip key", copy=False)
     ei_status_code = fields.Char(string="Status code", copy=False, readonly=True)
     ei_status_description = fields.Char(string="Status description", copy=False, readonly=True)
     ei_status_message = fields.Char(string="Status message", copy=False, readonly=True)
@@ -96,11 +96,11 @@ class AccountMove(models.Model):
     ei_xml_base64_bytes = fields.Binary('XML', attachment=True, copy=False, readonly=True)
     ei_application_response_base64_bytes = fields.Binary("Application response", attachment=True, copy=False,
                                                          readonly=True)
-    ei_attached_document_base64_bytes = fields.Binary("Attached document", attachment=True, copy=False, readonly=True)
-    ei_pdf_base64_bytes = fields.Binary('Pdf document', attachment=True, copy=False, readonly=True)
+    ei_attached_document_base64_bytes = fields.Binary("Attached document", attachment=True, copy=False)
+    ei_pdf_base64_bytes = fields.Binary('Pdf document', attachment=True, copy=False)
     ei_zip_base64_bytes = fields.Binary('Zip document', attachment=True, copy=False, readonly=True)
     ei_type_environment = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_environments",
-                                          string="Type environment", copy=False, readonly=True,
+                                          string="Type environment", copy=False,
                                           default=lambda self: self._default_ei_type_environment())
     ei_payload = fields.Text("Payload", copy=False, readonly=True)
 
@@ -112,7 +112,7 @@ class AccountMove(models.Model):
     ei_dian_response_base64_bytes = fields.Binary('DIAN response', attachment=True, copy=False, readonly=True)
 
     # For mail attached
-    ei_attached_zip_base64_bytes = fields.Binary('Attached zip', attachment=True, copy=False, readonly=True)
+    ei_attached_zip_base64_bytes = fields.Binary('Attached zip', attachment=True, copy=False)
 
     # QR image
     ei_qr_image = fields.Binary("QR image", attachment=True, copy=False, readonly=True)
@@ -148,14 +148,13 @@ class AccountMove(models.Model):
                                                compute="compute_ei_correction_concept_id", store=True,
                                                ondelete='RESTRICT')
     ei_correction_concept_credit_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
-                                                      string="Credit correction concept", copy=False, readonly=True,
+                                                      string="Credit correction concept", copy=False,
                                                       domain=[('type_document_id', 'in', (5, 13))],
                                                       ondelete='RESTRICT')
     ei_correction_concept_debit_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
-                                                     string="Debit correction concept", copy=False, readonly=True,
+                                                     string="Debit correction concept", copy=False,
                                                      domain=[('type_document_id', '=', '6')], ondelete='RESTRICT')
-    ei_is_correction_without_reference = fields.Boolean("Is it a correction without reference?", default=False,
-                                                        readonly=True)
+    ei_is_correction_without_reference = fields.Boolean("Is it a correction without reference?", default=False)
 
     value_letters = fields.Char("Value in letters", compute="_compute_amount", store=True)
 
@@ -168,20 +167,20 @@ class AccountMove(models.Model):
         ('transport', 'Transport'),
         ('exchange', 'Exchange'),
         ('iva_free_day', 'Día Sin IVA (No activo)')
-    ], string="Operation type", default=lambda self: self.env.company.ei_operation, copy=True, readonly=True,
+    ], string="Operation type", default=lambda self: self.env.company.ei_operation, copy=True,
         required=True)
 
     # Period
-    date_start = fields.Date(string="Start date", default=None, copy=True, readonly=True)
-    date_end = fields.Date(string="End date", default=None, copy=True, readonly=True)
+    date_start = fields.Date(string="Start date", default=None, copy=True)
+    date_end = fields.Date(string="End date", default=None, copy=True)
 
     # Order Reference
-    order_ref_number = fields.Char(string="Order reference", default=None, copy=False, readonly=True)
-    order_ref_date = fields.Date(string="Order date", default=None, copy=False, readonly=True)
+    order_ref_number = fields.Char(string="Order reference", default=None, copy=False)
+    order_ref_date = fields.Date(string="Order date", default=None, copy=False)
 
     # Is out of country
     is_out_country = fields.Boolean(string='Is it for out of the country?',
-                                    default=lambda self: self.get_default_is_out_country(), readonly=True)
+                                    default=lambda self: self.get_default_is_out_country())
 
     # Payment form
     payment_form_id = fields.Many2one(string="Payment form", comodel_name='l10n_co_edi_jorels.payment_forms',
@@ -189,11 +188,11 @@ class AccountMove(models.Model):
                                       readonly=True, ondelete='RESTRICT')
     payment_method_id = fields.Many2one(string="Payment method", comodel_name='l10n_co_edi_jorels.payment_methods',
                                         default=lambda self: self._default_payment_method_id(), copy=True,
-                                        readonly=True, domain=[('scope', '=', False)], ondelete='RESTRICT')
+                                        domain=[('scope', '=', False)], ondelete='RESTRICT')
 
     # Store resolution
     resolution_id = fields.Many2one(string="Resolution", comodel_name='l10n_co_edi_jorels.resolution', copy=False,
-                                    store=True, compute="_compute_resolution", ondelete='RESTRICT', readonly=True)
+                                    store=True, compute="_compute_resolution", ondelete='RESTRICT')
 
     radian_ids = fields.One2many(comodel_name='l10n_co_edi_jorels.radian', inverse_name='move_id')
 
