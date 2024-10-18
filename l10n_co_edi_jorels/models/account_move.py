@@ -47,7 +47,8 @@ class AccountMove(models.Model):
 
     ei_type_document_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_documents', string="Edi Document type",
                                           copy=False, ondelete='RESTRICT',
-                                          compute='_compute_ei_type_document', store=True)
+                                          compute='_compute_ei_type_document', store=True,
+                                          default=lambda self: self._compute_ei_type_document())
     ei_type_document = fields.Selection(selection=[
         ('none', 'None'),
         ('invoice', 'Invoice'),
@@ -55,7 +56,8 @@ class AccountMove(models.Model):
         ('debit_note', 'Debit note'),
         ('doc_support', 'Document support'),
         ('note_support', 'Note support'),
-    ], string="Document type", copy=False, compute='_compute_ei_type_document', store=True)
+    ], string="Document type", copy=False, compute='_compute_ei_type_document', store=True,
+        default=lambda self: self._compute_ei_type_document())
 
     ei_customer = fields.Text(string="customer json", copy=False)
     ei_legal_monetary_totals = fields.Text(string="legal_monetary_totals json", copy=False)
