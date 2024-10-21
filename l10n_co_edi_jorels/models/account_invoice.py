@@ -1079,6 +1079,7 @@ class AccountInvoice(models.Model):
         return self.ei_is_not_test
 
     @api.depends('journal_id')
+    @api.onchange('journal_id', 'ei_type_document')
     def _compute_resolution(self):
         for rec in self:
             type_edi_document = rec.ei_type_document
