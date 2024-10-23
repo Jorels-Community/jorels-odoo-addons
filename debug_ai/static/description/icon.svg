@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <!-- Definición del gradiente para el fondo -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9d6b8f;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#875A7B;stop-opacity:1" />
+    </linearGradient>
+    <!-- Filtro para la sombra -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+      <feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
+      <feMerge>
+        <feMergeNode in="offsetBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Fondo con esquinas redondeadas -->
+  <rect width="100" height="100" rx="20" ry="20" fill="url(#bgGradient)"/>
+  
+  <!-- Grupo para el bicho con sombra -->
+  <g filter="url(#shadow)">
+    <!-- Cuerpo del bicho -->
+    <ellipse cx="50" cy="55" rx="30" ry="25" fill="#ffffff"/>
+    
+    <!-- Cabeza del bicho -->
+    <circle cx="50" cy="30" r="15" fill="#ffffff"/>
+    
+    <!-- Gafas de nerd -->
+    <rect x="40" y="25" width="10" height="8" rx="2" ry="2" fill="none" stroke="#875A7B" stroke-width="1.5"/>
+    <rect x="52" y="25" width="10" height="8" rx="2" ry="2" fill="none" stroke="#875A7B" stroke-width="1.5"/>
+    <line x1="50" y1="29" x2="52" y2="29" stroke="#875A7B" stroke-width="1.5"/>
+    <path d="M40 29 Q 35 25 32 29" fill="none" stroke="#875A7B" stroke-width="1.5"/>
+    <path d="M62 29 Q 67 25 70 29" fill="none" stroke="#875A7B" stroke-width="1.5"/>
+    
+    <!-- Ojos (ahora detrás de las gafas) -->
+    <circle cx="45" cy="29" r="2" fill="#875A7B"/>
+    <circle cx="57" cy="29" r="2" fill="#875A7B"/>
+    
+    <!-- Corbatín -->
+    <path d="M47 45 L50 48 L53 45 L55 47 L50 52 L45 47 L47 45" fill="#875A7B"/>
+    
+    <!-- Antenas (como circuitos) -->
+    <path d="M40 20 Q35 10 30 15" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <circle cx="30" cy="15" r="3" fill="#ffffff"/>
+    <path d="M60 20 Q65 10 70 15" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <circle cx="70" cy="15" r="3" fill="#ffffff"/>
+    
+    <!-- Patas -->
+    <path d="M25 55 Q20 65 15 60" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <path d="M35 70 Q30 80 25 75" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <path d="M75 55 Q80 65 85 60" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <path d="M65 70 Q70 80 75 75" fill="none" stroke="#ffffff" stroke-width="2"/>
+    
+    <!-- Red neuronal en el cuerpo -->
+    <circle cx="35" cy="50" r="2" fill="#875A7B"/>
+    <circle cx="50" cy="60" r="2" fill="#875A7B"/>
+    <circle cx="65" cy="50" r="2" fill="#875A7B"/>
+    <circle cx="40" cy="70" r="2" fill="#875A7B"/>
+    <circle cx="60" cy="70" r="2" fill="#875A7B"/>
+    
+    <!-- Conexiones de la red neuronal -->
+    <line x1="35" y1="50" x2="40" y2="70" stroke="#875A7B" stroke-width="1"/>
+    <line x1="35" y1="50" x2="50" y2="60" stroke="#875A7B" stroke-width="1"/>
+    <line x1="50" y1="60" x2="40" y2="70" stroke="#875A7B" stroke-width="1"/>
+    <line x1="50" y1="60" x2="60" y2="70" stroke="#875A7B" stroke-width="1"/>
+    <line x1="65" y1="50" x2="60" y2="70" stroke="#875A7B" stroke-width="1"/>
+    <line x1="65" y1="50" x2="50" y2="60" stroke="#875A7B" stroke-width="1"/>
+  </g>
+</svg>
