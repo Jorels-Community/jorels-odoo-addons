@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Jorels S.A.S. - Copyright (2024)-->
+
+<!--This file is part of debug_ai.-->
+
+<!--debug_ai is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--debug_ai is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with debug_ai.  If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<odoo>
+    <record id="view_view_form_inherit_debug_ai" model="ir.ui.view">
+        <field name="name">ir.ui.view.form.inherit.debug_ai</field>
+        <field name="model">ir.ui.view</field>
+        <field name="inherit_id" ref="base.view_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='inherit_children']//field[@name='inherit_children_ids']" position="before">
+                <group string="Debug AI" colspan="4">
+                    <field name="claude_prompt"
+                           placeholder="Enter instructions for Debug AI to generate a new inherited view"/>
+                    <button string="Generate Inherited View" type="object" name="generate_inherited_view_with_claude"
+                            class="btn-primary"/>
+                </group>
+            </xpath>
+            <xpath expr="//page[@name='architecture']//field[@name='arch_base']" position="before">
+                <group string="Debug AI" colspan="4">
+                    <field name="claude_edit_prompt" placeholder="Enter instructions to modify this view"/>
+                    <button string="Edit Current View" type="object" name="edit_view_with_claude" class="btn-primary"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

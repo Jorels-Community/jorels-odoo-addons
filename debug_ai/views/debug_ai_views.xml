@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Jorels S.A.S. - Copyright (2024)-->
+
+<!--This file is part of debug_ai.-->
+
+<!--debug_ai is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--debug_ai is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with debug_ai.  If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<odoo>
+    <data>
+        <!-- Tree View -->
+        <record id="view_debug_ai_tree" model="ir.ui.view">
+            <field name="name">debug.ai.tree</field>
+            <field name="model">debug.ai</field>
+            <field name="arch" type="xml">
+                <tree decoration-success="state == 'applied'"
+                      decoration-info="state == 'processed'"
+                      decoration-danger="state == 'error'"
+                      decoration-muted="state == 'draft'">
+                    <field name="create_date" string="Record Creation"/>
+                    <field name="name"/>
+                    <field name="model_id"/>
+                    <field name="view_id"/>
+                    <field name="is_edit_mode"/>
+                    <field name="state"/>
+                    <field name="prompt_processing_date"/>
+                    <field name="view_update_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_debug_ai_form" model="ir.ui.view">
+            <field name="name">debug.ai.form</field>
+            <field name="model">debug.ai</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,processed,applied"/>
+                        <button name="process_prompt"
+                                string="Process prompt"
+                                type="object"
+                                class="btn-primary"
+                                attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <button name="apply_changes"
+                                string="Apply changes"
+                                type="object"
+                                class="btn-secondary"
+                                attrs="{'invisible': [('state', '!=', 'processed')]}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Nombre"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="model_id"/>
+                                <field name="view_id"/>
+                                <field name="is_edit_mode"/>
+                            </group>
+                            <group>
+                                <field name="prompt_processing_date"/>
+                                <field name="view_update_date"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Prompt" name="prompt_page">
+                                <field name="prompt"
+                                       placeholder="Enter your instructions here..."
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                       nolabel="1"/>
+                            </page>
+                            <page string="Claude response" name="claude_response_page">
+                                <field name="claude_response"
+                                       readonly="1"
+                                       nolabel="1"/>
+                            </page>
+                            <page string="Result" name="result_page">
+                                <group>
+                                    <field name="result"
+                                           readonly="1"
+                                           nolabel="1"
+                                           attrs="{'invisible': [('result', '=', False)]}"/>
+                                    <field name="error_message"
+                                           readonly="1"
+                                           nolabel="1"
+                                           attrs="{'invisible': [('error_message', '=', False)]}"
+                                           style="color: red;"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_debug_ai_search" model="ir.ui.view">
+            <field name="name">debug.ai.search</field>
+            <field name="model">debug.ai</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="model_id"/>
+                    <field name="view_id"/>
+                    <field name="prompt"/>
+                    <field name="result"/>
+                    <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                    <filter string="Processed" name="processed" domain="[('state','=','processed')]"/>
+                    <filter string="Applied" name="applied" domain="[('state','=','applied')]"/>
+                    <filter string="Error" name="error" domain="[('state','=','error')]"/>
+                    <separator/>
+                    <filter string="Edit mode" name="edit_mode" domain="[('is_edit_mode','=',True)]"/>
+                    <filter string="Create mode" name="create_mode" domain="[('is_edit_mode','=',False)]"/>
+                    <group expand="0" string="Agrupar Por">
+                        <filter string="State" name="group_by_state"
+                                context="{'group_by': 'state'}"/>
+                        <filter string="Model" name="group_by_model"
+                                context="{'group_by': 'model_id'}"/>
+                        <filter string="View" name="group_by_view"
+                                context="{'group_by': 'view_id'}"/>
+                        <filter string="AI processing date" name="group_by_prompt_processing_date"
+                                context="{'group_by': 'prompt_processing_date:day'}"/>
+                        <filter string="View update date" name="group_by_view_update_date"
+                                context="{'group_by': 'view_update_date:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Kanban View -->
+        <record id="view_debug_ai_kanban" model="ir.ui.view">
+            <field name="name">debug.ai.kanban</field>
+            <field name="model">debug.ai</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="state"
+                        class="o_kanban_small_column"
+                        sample="1">
+                    <field name="name"/>
+                    <field name="state"/>
+                    <field name="model_id"/>
+                    <field name="view_id"/>
+                    <field name="is_edit_mode"/>
+                    <field name="create_date"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="model_id"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <span class="badge rounded-pill"
+                                              t-attf-class="bg-#{record.state.raw_value == 'applied' and 'success' or
+                                                              record.state.raw_value == 'processed' and 'info' or
+                                                              record.state.raw_value == 'error' and 'danger' or 'secondary'}">
+                                            <field name="state"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Calendar View -->
+        <record id="view_debug_ai_calendar" model="ir.ui.view">
+            <field name="name">debug.ai.calendar</field>
+            <field name="model">debug.ai</field>
+            <field name="arch" type="xml">
+                <calendar string="Debug AI"
+                          date_start="create_date"
+                          color="state"
+                          quick_add="false"
+                          mode="month">
+                    <field name="name"/>
+                    <field name="state"/>
+                    <field name="model_id"/>
+                </calendar>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_debug_ai" model="ir.actions.act_window">
+            <field name="name">Debug AI</field>
+            <field name="res_model">debug.ai</field>
+            <field name="view_mode">tree,form,kanban,calendar</field>
+            <field name="search_view_id" ref="view_debug_ai_search"/>
+            <field name="context">{
+                'search_default_draft': 1
+                }
+            </field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first Debug AI record
+                </p>
+                <p>
+                    Use Debug AI for edit and create XML views using artificial intelligence.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>
