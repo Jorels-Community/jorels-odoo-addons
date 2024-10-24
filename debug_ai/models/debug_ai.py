@@ -46,7 +46,7 @@ class IrUiView(models.Model):
 
         studio = self.env['debug.ai'].create({
             'name': f"Generated view for {self.name}",
-            'model_id': self.env['ir.model']._get(self.model).id,
+            'model_id': self.env['ir.model']._get(self.model).id if self.model else None,
             'view_id': self.id,
             'prompt': self.claude_prompt,
         })
@@ -71,7 +71,7 @@ class IrUiView(models.Model):
 
         studio = self.env['debug.ai'].create({
             'name': f"Edit view {self.name}",
-            'model_id': self.env['ir.model']._get(self.model).id,
+            'model_id': self.env['ir.model']._get(self.model).id if self.model else None,
             'view_id': self.id,
             'prompt': self.claude_edit_prompt,
             'is_edit_mode': True,
@@ -98,7 +98,7 @@ class ClaudeStudio(models.Model):
     _order = 'create_date desc'
 
     name = fields.Char(string='Name', required=True, tracking=True)
-    model_id = fields.Many2one('ir.model', string='Model', required=True, ondelete='cascade', tracking=True)
+    model_id = fields.Many2one('ir.model', string='Model', required=False, ondelete='cascade', tracking=True)
     view_id = fields.Many2one('ir.ui.view', string='View', required=True, ondelete='cascade', tracking=True)
     prompt = fields.Text(string='Instructions', required=True, tracking=True)
     result = fields.Text(string='Result', readonly=True, tracking=True)
