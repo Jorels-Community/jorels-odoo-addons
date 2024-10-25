@@ -319,7 +319,7 @@ class ClaudeStudio(models.Model):
             "x-api-key": api_key
         }
         data = {
-            "model": "claude-3-5-sonnet-20240620",
+            "model": "claude-3-5-sonnet-20241022",
             "messages": [{"role": "user", "content": prompt}],
             "max_tokens": 8000,
             "stream": True
