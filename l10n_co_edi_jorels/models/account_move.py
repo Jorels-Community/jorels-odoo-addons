@@ -335,13 +335,9 @@ class AccountMove(models.Model):
 
     def is_journal_pos(self):
         self.ensure_one()
-        try:
-            journal_pos_rec = self.env['pos.config'].search([
-                ('invoice_journal_id.id', '=', self.journal_id.id)
-            ])
-            return bool(journal_pos_rec)
-        except KeyError:
-            return False
+        # POS invoices are now always made as electronic invoices, not as POS equivalent documents
+        # therefore, the journal will always be treated as if it's not an electronic POS journal
+        return False
 
     @api.model
     def is_universal_discount(self):
