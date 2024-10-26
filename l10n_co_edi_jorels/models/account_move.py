@@ -1605,8 +1605,9 @@ class AccountMove(models.Model):
         to_edi = self.filtered(lambda inv: inv.is_pending_to_send_to_dian())
         if to_edi:
             # Invoices in DIAN cannot be validated with zero total
-            to_paid_invoices = to_edi.filtered(lambda inv: inv.currency_id.is_zero(inv.amount_total))
-            if to_paid_invoices:
+            to_paid_invoices = to_edi.filtered(lambda inv: inv.currency_id.is_zero(inv.amount_total)) 
+            if to_paid_invoices and not self.company_id.ei_allow_zero_total:
+                raise UserError(_('Please check your invoice again. Are you really billing something? To allow zero total invoices, enable the option in Electronic Invoicing settings.'))
                 raise UserError(_('Please check your invoice again. Are you really billing something?'))
 
             # Validate invoices
