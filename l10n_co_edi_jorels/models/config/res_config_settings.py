@@ -70,6 +70,12 @@ class ResConfigSettings(models.TransientModel):
     # Api key
     nimbus_api_key = fields.Char(related="company_id.nimbus_api_key", string="Nimbus api key", readonly=False)
 
+    ei_allow_zero_total = fields.Boolean(
+        related="company_id.ei_allow_zero_total",
+        string="Allow zero total invoices",
+        readonly=False
+    )
+
     # Update resolutions on Odoo database
     @api.model
     def action_update_resolutions(self):
@@ -232,4 +238,5 @@ class ResConfigSettings(models.TransientModel):
         res['ei_enable'] = self.env.company.ei_enable
         res['ei_always_validate'] = self.env.company.ei_always_validate
         res['ei_ignore_edi_email_check'] = self.env.company.ei_ignore_edi_email_check
+        res['ei_allow_zero_total'] = self.env.company.ei_allow_zero_total
         return res

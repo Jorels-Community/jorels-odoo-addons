@@ -97,6 +97,12 @@ class ResCompany(models.Model):
     # Nimbus api key
     nimbus_api_key = fields.Char(string="Nimbus api key")
 
+    ei_allow_zero_total = fields.Boolean(
+        string="Allow zero total invoices", 
+        default=False,
+        help="If enabled, allows validation of invoices with zero total amount"
+    )
+
     def _compute_vat_formatted(self):
         for rec in self:
             type_document_identification_id = self.get_type_document_identification_id()
