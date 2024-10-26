@@ -43,6 +43,7 @@
         'views/menu_items.xml',
         'views/res_config_settings_views.xml',
         'views/ir_ui_view_views.xml',
+        'views/module_analysis_views.xml',
     ],
     'demo': [],
     'qweb': [],

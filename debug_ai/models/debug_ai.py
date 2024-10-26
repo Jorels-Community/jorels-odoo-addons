@@ -31,7 +31,7 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
-class ClaudeStudio(models.Model):
+class DebugAI(models.Model):
     _name = 'debug.ai'
     _description = 'Debug AI'
     _inherit = ['mail.thread', 'mail.activity.mixin']

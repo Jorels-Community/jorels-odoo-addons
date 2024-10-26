@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View -->
+    <record id="view_module_analysis_form" model="ir.ui.view">
+        <field name="name">debug_ai.module.analysis.form</field>
+        <field name="model">debug_ai.module.analysis</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_analyze_module"
+                            string="Analyze Module"
+                            type="object"
+                            class="oe_highlight"
+                            states="draft"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="module_id"
+                                   options="{'no_create': True}"
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="technical_name"/>
+                            <field name="version"/>
+                        </group>
+                        <group>
+                            <field name="analysis_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Analysis Result">
+                            <field name="analysis_result"
+                                   nolabel="1"
+                                   attrs="{'readonly': True}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_module_analysis_tree" model="ir.ui.view">
+        <field name="name">debug_ai.module.analysis.tree</field>
+        <field name="model">debug_ai.module.analysis</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="state == 'draft'"
+                  decoration-danger="state == 'error'"
+                  decoration-success="state == 'done'">
+                <field name="module_id"/>
+                <field name="technical_name"/>
+                <field name="version"/>
+                <field name="analysis_date"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_module_analysis_search" model="ir.ui.view">
+        <field name="name">debug_ai.module.analysis.search</field>
+        <field name="model">debug_ai.module.analysis</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="module_id"/>
+                <field name="technical_name"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Analyzed" name="done" domain="[('state','=','done')]"/>
+                <filter string="Error" name="error" domain="[('state','=','error')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State" context="{'group_by':'state'}"/>
+                    <filter name="group_module" string="Module" context="{'group_by':'module_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Window Action -->
+    <record id="action_module_analysis" model="ir.actions.act_window">
+        <field name="name">Module Analysis</field>
+        <field name="res_model">debug_ai.module.analysis</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+    </record>
+
+    <!-- Menu Entry como submenu de Debug AI -->
+    <menuitem id="menu_module_analysis"
+              name="Module Analysis"
+              action="action_module_analysis"
+              parent="menu_debug_ai"
+              sequence="10"/>
+</odoo>

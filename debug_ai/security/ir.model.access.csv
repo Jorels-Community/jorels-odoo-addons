@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_debug_ai_user,debug.ai.user,model_debug_ai,base.group_user,1,1,1,1
+access_debug_ai_module_analysis_user,debug_ai.module.analysis.user,model_debug_ai_module_analysis,base.group_user,1,1,1,1
