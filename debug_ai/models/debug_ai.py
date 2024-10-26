@@ -31,66 +31,6 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
-class IrUiView(models.Model):
-    _inherit = 'ir.ui.view'
-
-    claude_prompt = fields.Text(string="Debug AI Prompt",
-                                help="Enter instructions for Debug AI to generate a new inherited view")
-    claude_edit_prompt = fields.Text(string="Debug AI Edit Prompt",
-                                     help="Enter instructions for Debug AI to modify this view")
-
-    def generate_inherited_view_with_claude(self):
-        self.ensure_one()
-        if not self.claude_prompt:
-            raise UserError(_("Please enter a prompt for Debug AI"))
-
-        studio = self.env['debug.ai'].create({
-            'name': f"Generated view for {self.name}",
-            'model_id': self.env['ir.model']._get(self.model).id if self.model else None,
-            'view_id': self.id,
-            'prompt': self.claude_prompt,
-        })
-
-        studio.process_prompt()
-
-        # Clear the prompt after processing
-        self.claude_prompt = False
-
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'ir.ui.view',
-            'res_id': int(studio.result.split(':')[-1].strip()),
-            'view_mode': 'form',
-            'target': 'current',
-        }
-
-    def edit_view_with_claude(self):
-        self.ensure_one()
-        if not self.claude_edit_prompt:
-            raise UserError(_("Please enter a prompt for editing the view"))
-
-        studio = self.env['debug.ai'].create({
-            'name': f"Edit view {self.name}",
-            'model_id': self.env['ir.model']._get(self.model).id if self.model else None,
-            'view_id': self.id,
-            'prompt': self.claude_edit_prompt,
-            'is_edit_mode': True,
-        })
-
-        studio.process_prompt()
-
-        # Clear the prompt after processing
-        self.claude_edit_prompt = False
-
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'ir.ui.view',
-            'res_id': self.id,
-            'view_mode': 'form',
-            'target': 'current',
-        }
-
-
 class ClaudeStudio(models.Model):
     _name = 'debug.ai'
     _description = 'Debug AI'
@@ -397,9 +337,3 @@ class ClaudeStudio(models.Model):
                     'sticky': False,
                 }
             }
-
-
-class ResConfigSettings(models.TransientModel):
-    _inherit = 'res.config.settings'
-
-    claude_api_key = fields.Char(string="Debug AI API Key", config_parameter='debug_ai.api_key')

@@ -20,6 +20,14 @@
 # email: info@jorels.com
 #
 
-from . import ir_ui_view
-from . import debug_ai
-from . import res_config_settings
+import logging
+
+from odoo import models, fields
+
+_logger = logging.getLogger(__name__)
+
+
+class ResConfigSettings(models.TransientModel):
+    _inherit = 'res.config.settings'
+
+    claude_api_key = fields.Char(string="Debug AI API Key", config_parameter='debug_ai.api_key')
