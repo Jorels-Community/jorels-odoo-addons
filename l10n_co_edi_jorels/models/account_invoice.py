@@ -1683,8 +1683,9 @@ class AccountInvoice(models.Model):
         if to_edi:
             # Invoices in DIAN cannot be validated with zero total
             to_paid_invoices = to_edi.filtered(lambda inv: inv.state == 'paid')
-            if to_paid_invoices:
-                raise UserError(_('Please check your invoice again. Are you really billing something?'))
+            if to_paid_invoices and not self.company_id.ei_allow_zero_total:
+                raise UserError(_('Please check your invoice again. Are you really billing something? '
+                                  'To allow zero total invoices, enable the option in Electronic Invoicing settings.'))
 
             # Validate invoices
             to_electronic_invoices = to_edi.filtered(lambda inv: inv.state == 'open'
