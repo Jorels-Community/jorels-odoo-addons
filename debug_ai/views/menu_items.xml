@@ -23,5 +23,19 @@
     <data>
         <menuitem id="menu_debug_ai" name="Debug AI" action="action_debug_ai"
                   web_icon="debug_ai,static/description/icon.png"/>
+
+        <!-- Menu Entry como submenu de Debug AI -->
+        <menuitem id="menu_debug_ai_main"
+                  name="Debug AI"
+                  action="action_debug_ai"
+                  parent="menu_debug_ai"
+                  sequence="1"/>
+
+        <!-- Menu Entry como submenu de Debug AI -->
+        <menuitem id="menu_module_analysis"
+                  name="Module Analysis"
+                  action="action_module_analysis"
+                  parent="menu_debug_ai"
+                  sequence="2"/>
     </data>
 </odoo>

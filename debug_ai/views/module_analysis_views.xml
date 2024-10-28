@@ -102,11 +102,4 @@
         <field name="context">{'search_default_draft': 1}</field>
     </record>
 
-    <!-- Menu Entry como submenu de Debug AI -->
-    <menuitem id="menu_module_analysis"
-              name="Module Analysis"
-              action="action_module_analysis"
-              parent="menu_debug_ai"
-              sequence="10"/>
-
 </odoo>
