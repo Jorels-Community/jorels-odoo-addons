@@ -7,8 +7,6 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_analyze_module" string="Analyze Module" type="object" class="oe_highlight"/>
-                    <button name="action_prompt_module" string="Prompt Module" type="object" class="oe_highlight"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -24,11 +22,14 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Analysis Result">
-                            <field name="analysis_result" nolabel="1" attrs="{'readonly': True}" widget="html"/>
-                        </page>
                         <page string="Prompt Result">
-                            <field name="prompt_request"/>
+                            <group>
+                                <field name="prompt_request" placeholder="Enter your prompt request here..."/>
+                                <button name="action_prompt_module"
+                                        string="Prompt Module"
+                                        type="object"
+                                        class="oe_highlight"/>
+                            </group>
                             <div class="claude-response-wrapper">
                                 <field name="prompt_result"
                                        nolabel="1"
@@ -36,6 +37,15 @@
                                        widget="html"
                                        options="{'safe': true, 'resizable': true}"/>
                             </div>
+                        </page>
+                        <page string="Analysis Result">
+                            <group>
+                                <button name="action_analyze_module"
+                                        string="Analyze Module"
+                                        type="object"
+                                        class="oe_highlight"/>
+                            </group>
+                            <field name="analysis_result" nolabel="1" attrs="{'readonly': True}" widget="html"/>
                         </page>
                     </notebook>
                 </sheet>

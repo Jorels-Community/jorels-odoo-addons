@@ -22,7 +22,6 @@ class ModuleAnalysis(models.Model):
         'ir.module.module',
         string='Module',
         required=True,
-        domain=[('state', '=', 'installed')],
         ondelete='cascade',
         tracking=True
     )
