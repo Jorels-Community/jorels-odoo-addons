@@ -11,7 +11,12 @@
                             string="Analyze Module"
                             type="object"
                             class="oe_highlight"
-                            states="draft"/>
+                    />
+                    <button name="action_prompt_module"
+                            string="Prompt Module"
+                            type="object"
+                            class="oe_highlight"
+                    />
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -30,6 +35,12 @@
                     <notebook>
                         <page string="Analysis Result">
                             <field name="analysis_result"
+                                   nolabel="1"
+                                   attrs="{'readonly': True}"/>
+                        </page>
+                        <page string="Prompt Result">
+                            <field name="prompt_request"/>
+                            <field name="prompt_result"
                                    nolabel="1"
                                    attrs="{'readonly': True}"/>
                         </page>
