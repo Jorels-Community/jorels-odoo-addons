@@ -316,121 +316,220 @@ class DebugAI(models.Model):
 
     @api.model
     def claude_api_call_html(self, prompt):
-        api_key = self.env['ir.config_parameter'].sudo().get_param('debug_ai.api_key')
-        if not api_key:
-            raise UserError(_("Debug AI API Key not configured. Please set it in Settings."))
-
-        api_url = "https://api.anthropic.com/v1/messages"
-        headers = {
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-            "x-api-key": api_key
-        }
-        data = {
-            "model": "claude-3-5-sonnet-20241022",
-            "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 8000,
-            "stream": True
-        }
-
+        """Llamada al API de Claude con mejor manejo de errores"""
         try:
+            api_key = self.env['ir.config_parameter'].sudo().get_param('debug_ai.api_key')
+            if not api_key:
+                raise UserError(_("Debug AI API Key not configured. Please set it in Settings."))
+
+            api_url = "https://api.anthropic.com/v1/messages"
+            headers = {
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json",
+                "x-api-key": api_key
+            }
+            data = {
+                "model": "claude-3-5-sonnet-20241022",
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": 8000,
+                "stream": True
+            }
+
+            _logger.info("Sending request to Claude API")
             response = requests.post(api_url, headers=headers, json=data, stream=True)
             response.raise_for_status()
 
             full_text = ""
             for line in response.iter_lines():
-                if line:
+                if not line:
+                    continue
+
+                try:
                     decoded_line = line.decode('utf-8')
-                    if decoded_line.startswith('data: '):
-                        try:
-                            event_data = json.loads(decoded_line[6:])
-                            if event_data['type'] == 'content_block_delta':
-                                if 'text' in event_data['delta']:
-                                    full_text += event_data['delta']['text']
-                        except json.JSONDecodeError:
-                            continue
+                    if not decoded_line.startswith('data: '):
+                        continue
 
-            # Procesamiento del texto completo
-            processed_html = self._format_response(full_text)
+                    event_data = json.loads(decoded_line[6:])
+                    if event_data.get('type') == 'content_block_delta':
+                        if 'text' in event_data.get('delta', {}):
+                            full_text += event_data['delta']['text']
 
-            if not processed_html.strip():
+                except json.JSONDecodeError as e:
+                    _logger.warning(f"Error decoding JSON from Claude: {e}")
+                    continue
+                except Exception as e:
+                    _logger.warning(f"Unexpected error processing Claude response line: {e}")
+                    continue
+
+            if not full_text.strip():
                 raise UserError(_("Claude API response is empty. Please check the prompt or try again."))
 
-            return processed_html
+            # Procesar el texto completo
+            return self._format_response(full_text)
 
         except requests.RequestException as e:
             error_message = f"API call error: {str(e)}"
             if hasattr(e, 'response') and e.response is not None:
                 error_message += f"\nStatus code: {e.response.status_code}"
                 error_message += f"\nResponse content: {e.response.text}"
+            _logger.error(error_message)
             raise UserError(_(error_message))
         except Exception as e:
-            raise UserError(_("Unexpected error: %s") % str(e))
+            _logger.exception("Unexpected error in claude_api_call")
+            error_message = f"Unexpected error: {str(e)}"
+            raise UserError(_(error_message))
 
     def _format_response(self, text):
         """
         Formatea la respuesta de Claude en HTML con estilo apropiado
         """
-        # Dividir el texto en partes de código y no código
-        parts = text.split("```")
-        formatted_parts = []
+        try:
+            # Usamos un delimitador único que sea muy improbable que aparezca en el texto
+            TEMP_CODE_START = "<<CLAUDE_CODE_BLOCK_START>>"
+            TEMP_CODE_END = "<<CLAUDE_CODE_BLOCK_END>>"
 
-        for i, part in enumerate(parts):
-            if i % 2 == 0:  # No es un bloque de código
-                # Procesar texto regular
-                if part.strip():
-                    # Convertir saltos de línea a párrafos HTML
-                    paragraphs = part.strip().split('\n')
-                    formatted_paragraphs = []
-                    for p in paragraphs:
-                        if p.strip():
-                            # Procesar listas numeradas
-                            if re.match(r'^\d+\.\s', p):
-                                if not formatted_paragraphs or not formatted_paragraphs[-1].startswith('<ol>'):
-                                    formatted_paragraphs.append('<ol>')
-                                formatted_paragraphs.append(f'<li>{p.split(". ", 1)[1]}</li>')
-                                if i == len(paragraphs) - 1 or not re.match(r'^\d+\.\s', paragraphs[i + 1]):
-                                    formatted_paragraphs.append('</ol>')
-                            # Procesar viñetas
-                            elif p.startswith('- '):
-                                if not formatted_paragraphs or not formatted_paragraphs[-1].startswith('<ul>'):
-                                    formatted_paragraphs.append('<ul>')
-                                formatted_paragraphs.append(f'<li>{p[2:]}</li>')
-                                if i == len(paragraphs) - 1 or not paragraphs[i + 1].startswith('- '):
-                                    formatted_paragraphs.append('</ul>')
-                            else:
-                                formatted_paragraphs.append(f'<p>{p}</p>')
-                    formatted_parts.append('\n'.join(formatted_paragraphs))
-            else:  # Es un bloque de código
-                if part.strip():
-                    # Detectar el lenguaje si está especificado
-                    lines = part.split('\n')
-                    lang = lines[0].strip()
-                    code = '\n'.join(lines[1:] if lang else lines)
+            # Primera fase: reemplazar los delimitadores de código
+            text = text.replace('```', TEMP_CODE_START, 1)  # Primera ocurrencia
+            while '```' in text:
+                text = text.replace('```', TEMP_CODE_END, 1)  # Siguiente ocurrencia
+                if '```' in text:
+                    text = text.replace('```', TEMP_CODE_START, 1)  # Y la siguiente, si existe
 
-                    lang_class = f'class="language-{lang}"' if lang else ''
-                    formatted_parts.append(
-                        f'<pre><code {lang_class}>{html.escape(code.strip())}</code></pre>'
-                    )
+            # Si quedó algún delimitador sin cerrar, lo cerramos
+            if text.count(TEMP_CODE_START) > text.count(TEMP_CODE_END):
+                text += TEMP_CODE_END
 
-        # Juntar todas las partes y envolver en un div con clase
-        result = '\n'.join(formatted_parts)
-        return f'<div class="claude-response">{result}</div>'
+            # Segunda fase: dividir y procesar el texto
+            parts = []
+            current_text = text
+            while TEMP_CODE_START in current_text:
+                # Encontrar el próximo bloque de código
+                pre_code, rest = current_text.split(TEMP_CODE_START, 1)
+
+                # Procesar el texto antes del código
+                if pre_code.strip():
+                    parts.append(('text', pre_code))
+
+                # Procesar el bloque de código
+                if TEMP_CODE_END in rest:
+                    code, current_text = rest.split(TEMP_CODE_END, 1)
+                    parts.append(('code', code))
+                else:
+                    # Si no hay delimitador de fin, tratar todo como código
+                    parts.append(('code', rest))
+                    current_text = ''
+
+            # Procesar cualquier texto restante
+            if current_text.strip():
+                parts.append(('text', current_text))
+
+            # Tercera fase: formatear cada parte
+            formatted_parts = []
+            for part_type, content in parts:
+                if part_type == 'text':
+                    formatted_parts.append(self._process_regular_text(content))
+                else:  # code
+                    formatted_parts.append(self._process_code_block(content))
+
+            # Unir todo y envolver en el contenedor principal
+            result = '\n'.join(formatted_parts)
+            return f'<div class="claude-response">{result}</div>'
+
+        except Exception as e:
+            _logger.error(f"Error formatting response: {e}")
+            return f'<div class="claude-response"><pre>{html.escape(text)}</pre></div>'
 
     def _process_regular_text(self, text):
-        """Procesa el texto regular (fuera de bloques de código)"""
-        # Convertir saltos de línea a <br/>
-        text = text.replace('\n', '<br/>')
+        """
+        Procesa el texto regular (no código)
+        """
+        try:
+            paragraphs = text.strip().split('\n')
+            formatted_paragraphs = []
+            current_list_type = None
 
-        # Procesar markdown básico
-        # Negrita
-        text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
-        # Cursiva
-        text = re.sub(r'\*(.*?)\*', r'<em>\1</em>', text)
-        # Enlaces
-        text = re.sub(r'\[(.*?)\]\((.*?)\)', r'<a href="\2">\1</a>', text)
+            for p in paragraphs:
+                p = p.strip()
+                if not p:
+                    continue
 
-        return text
+                # Procesar listas numeradas
+                if re.match(r'^\d+\.\s', p):
+                    if current_list_type != 'ol':
+                        if current_list_type:
+                            formatted_paragraphs.append(f'</{current_list_type}>')
+                        formatted_paragraphs.append('<ol>')
+                        current_list_type = 'ol'
+                    list_content = p.split('. ', 1)
+                    content = list_content[1] if len(list_content) > 1 else p
+                    formatted_paragraphs.append(f'<li>{content}</li>')
+
+                # Procesar viñetas
+                elif p.startswith('- '):
+                    if current_list_type != 'ul':
+                        if current_list_type:
+                            formatted_paragraphs.append(f'</{current_list_type}>')
+                        formatted_paragraphs.append('<ul>')
+                        current_list_type = 'ul'
+                    formatted_paragraphs.append(f'<li>{p[2:]}</li>')
+
+                else:
+                    # Cerrar lista si estábamos en una
+                    if current_list_type:
+                        formatted_paragraphs.append(f'</{current_list_type}>')
+                        current_list_type = None
+
+                    # Procesar encabezados
+                    if p.startswith('#'):
+                        heading_match = re.match(r'^(#{1,6})\s+(.+)$', p)
+                        if heading_match:
+                            level = len(heading_match.group(1))
+                            content = heading_match.group(2)
+                            formatted_paragraphs.append(f'<h{level}>{content}</h{level}>')
+                    else:
+                        # Procesar negrita e itálica
+                        p = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', p)
+                        p = re.sub(r'\*(.*?)\*', r'<em>\1</em>', p)
+                        formatted_paragraphs.append(f'<p>{p}</p>')
+
+            # Cerrar cualquier lista abierta
+            if current_list_type:
+                formatted_paragraphs.append(f'</{current_list_type}>')
+
+            return '\n'.join(formatted_paragraphs)
+        except Exception as e:
+            _logger.warning(f"Error processing regular text: {e}")
+            return f'<p>{html.escape(text)}</p>'
+
+    def _process_code_block(self, text):
+        """
+        Procesa un bloque de código
+        """
+        try:
+            lines = text.strip().split('\n')
+            if not lines:
+                return ''
+
+            # Detectar lenguaje
+            first_line = lines[0].strip().lower()
+            known_languages = {
+                'python', 'javascript', 'js', 'html', 'css', 'xml', 'sql',
+                'bash', 'shell', 'php', 'ruby', 'java', 'cpp', 'c++', 'c',
+                'typescript', 'ts', 'json', 'yaml', 'markdown', 'md'
+            }
+
+            if first_line in known_languages:
+                lang = first_line
+                code = '\n'.join(lines[1:])
+            else:
+                lang = ''
+                code = '\n'.join(lines)
+
+            lang_attr = f' class="language-{lang}"' if lang else ''
+            return f'<pre class="code-block"><code{lang_attr}>{html.escape(code.strip())}</code></pre>'
+        except Exception as e:
+            _logger.warning(f"Error processing code block: {e}")
+            return f'<pre class="code-block"><code>{html.escape(text)}</code></pre>'
 
     def apply_changes(self):
         self.ensure_one()
