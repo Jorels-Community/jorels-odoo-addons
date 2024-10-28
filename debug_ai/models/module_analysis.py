@@ -51,15 +51,19 @@ class ModuleAnalysis(models.Model):
         tracking=True
     )
 
-    analysis_result = fields.Text(
+    analysis_result = fields.Html(
         string='Analysis Result',
         readonly=True,
-        tracking=True
+        tracking=True,
+        sanitize=True
     )
 
-    prompt_result = fields.Text(
+    prompt_result = fields.Html(
         string='Prompt Result',
-        readonly=True
+        readonly=True,
+        sanitize=True,  # Desactivar sanitización
+        strip_classes=False,  # Mantener clases CSS
+        strip_style=False,  # Mantener estilos inline
     )
 
     prompt_request = fields.Text('Prompt request')
@@ -147,7 +151,7 @@ class ModuleAnalysis(models.Model):
             })
 
             _logger.info(f"Sending prompt to Claude for module {self.technical_name}")
-            return debug_ai.claude_api_call(prompt_content), debug_ai
+            return debug_ai.claude_api_call_html(prompt_content), debug_ai
 
         except Exception as e:
             if debug_ai:

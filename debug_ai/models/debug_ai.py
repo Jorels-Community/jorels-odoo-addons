@@ -22,7 +22,8 @@
 
 import json
 import logging
-
+import html
+import re
 import requests
 from lxml import etree
 from odoo import models, fields, api, _
@@ -312,6 +313,124 @@ class DebugAI(models.Model):
         except Exception as e:
             _logger.exception("Unexpected error in claude_api_call")
             raise UserError(_("Unexpected error: %s") % str(e))
+
+    @api.model
+    def claude_api_call_html(self, prompt):
+        api_key = self.env['ir.config_parameter'].sudo().get_param('debug_ai.api_key')
+        if not api_key:
+            raise UserError(_("Debug AI API Key not configured. Please set it in Settings."))
+
+        api_url = "https://api.anthropic.com/v1/messages"
+        headers = {
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+            "x-api-key": api_key
+        }
+        data = {
+            "model": "claude-3-5-sonnet-20241022",
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 8000,
+            "stream": True
+        }
+
+        try:
+            response = requests.post(api_url, headers=headers, json=data, stream=True)
+            response.raise_for_status()
+
+            full_text = ""
+            for line in response.iter_lines():
+                if line:
+                    decoded_line = line.decode('utf-8')
+                    if decoded_line.startswith('data: '):
+                        try:
+                            event_data = json.loads(decoded_line[6:])
+                            if event_data['type'] == 'content_block_delta':
+                                if 'text' in event_data['delta']:
+                                    full_text += event_data['delta']['text']
+                        except json.JSONDecodeError:
+                            continue
+
+            # Procesamiento del texto completo
+            processed_html = self._format_response(full_text)
+
+            if not processed_html.strip():
+                raise UserError(_("Claude API response is empty. Please check the prompt or try again."))
+
+            return processed_html
+
+        except requests.RequestException as e:
+            error_message = f"API call error: {str(e)}"
+            if hasattr(e, 'response') and e.response is not None:
+                error_message += f"\nStatus code: {e.response.status_code}"
+                error_message += f"\nResponse content: {e.response.text}"
+            raise UserError(_(error_message))
+        except Exception as e:
+            raise UserError(_("Unexpected error: %s") % str(e))
+
+    def _format_response(self, text):
+        """
+        Formatea la respuesta de Claude en HTML con estilo apropiado
+        """
+        # Dividir el texto en partes de código y no código
+        parts = text.split("```")
+        formatted_parts = []
+
+        for i, part in enumerate(parts):
+            if i % 2 == 0:  # No es un bloque de código
+                # Procesar texto regular
+                if part.strip():
+                    # Convertir saltos de línea a párrafos HTML
+                    paragraphs = part.strip().split('\n')
+                    formatted_paragraphs = []
+                    for p in paragraphs:
+                        if p.strip():
+                            # Procesar listas numeradas
+                            if re.match(r'^\d+\.\s', p):
+                                if not formatted_paragraphs or not formatted_paragraphs[-1].startswith('<ol>'):
+                                    formatted_paragraphs.append('<ol>')
+                                formatted_paragraphs.append(f'<li>{p.split(". ", 1)[1]}</li>')
+                                if i == len(paragraphs) - 1 or not re.match(r'^\d+\.\s', paragraphs[i + 1]):
+                                    formatted_paragraphs.append('</ol>')
+                            # Procesar viñetas
+                            elif p.startswith('- '):
+                                if not formatted_paragraphs or not formatted_paragraphs[-1].startswith('<ul>'):
+                                    formatted_paragraphs.append('<ul>')
+                                formatted_paragraphs.append(f'<li>{p[2:]}</li>')
+                                if i == len(paragraphs) - 1 or not paragraphs[i + 1].startswith('- '):
+                                    formatted_paragraphs.append('</ul>')
+                            else:
+                                formatted_paragraphs.append(f'<p>{p}</p>')
+                    formatted_parts.append('\n'.join(formatted_paragraphs))
+            else:  # Es un bloque de código
+                if part.strip():
+                    # Detectar el lenguaje si está especificado
+                    lines = part.split('\n')
+                    lang = lines[0].strip()
+                    code = '\n'.join(lines[1:] if lang else lines)
+
+                    lang_class = f'class="language-{lang}"' if lang else ''
+                    formatted_parts.append(
+                        f'<pre><code {lang_class}>{html.escape(code.strip())}</code></pre>'
+                    )
+
+        # Juntar todas las partes y envolver en un div con clase
+        result = '\n'.join(formatted_parts)
+        return f'<div class="claude-response">{result}</div>'
+
+    def _process_regular_text(self, text):
+        """Procesa el texto regular (fuera de bloques de código)"""
+        # Convertir saltos de línea a <br/>
+        text = text.replace('\n', '<br/>')
+
+        # Procesar markdown básico
+        # Negrita
+        text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
+        # Cursiva
+        text = re.sub(r'\*(.*?)\*', r'<em>\1</em>', text)
+        # Enlaces
+        text = re.sub(r'\[(.*?)\]\((.*?)\)', r'<a href="\2">\1</a>', text)
+
+        return text
 
     def apply_changes(self):
         self.ensure_one()

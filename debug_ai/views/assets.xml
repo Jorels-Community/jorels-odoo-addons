@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="assets_common_debug_ai" inherit_id="web.assets_common">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" type="text/scss" href="/debug_ai/static/src/scss/claude_response.scss"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

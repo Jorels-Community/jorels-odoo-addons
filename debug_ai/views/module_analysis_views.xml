@@ -7,23 +7,14 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_analyze_module"
-                            string="Analyze Module"
-                            type="object"
-                            class="oe_highlight"
-                    />
-                    <button name="action_prompt_module"
-                            string="Prompt Module"
-                            type="object"
-                            class="oe_highlight"
-                    />
+                    <button name="action_analyze_module" string="Analyze Module" type="object" class="oe_highlight"/>
+                    <button name="action_prompt_module" string="Prompt Module" type="object" class="oe_highlight"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
                     <group>
                         <group>
-                            <field name="module_id"
-                                   options="{'no_create': True}"
+                            <field name="module_id" options="{'no_create': True}"
                                    attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="technical_name"/>
                             <field name="version"/>
@@ -34,15 +25,17 @@
                     </group>
                     <notebook>
                         <page string="Analysis Result">
-                            <field name="analysis_result"
-                                   nolabel="1"
-                                   attrs="{'readonly': True}"/>
+                            <field name="analysis_result" nolabel="1" attrs="{'readonly': True}" widget="html"/>
                         </page>
                         <page string="Prompt Result">
                             <field name="prompt_request"/>
-                            <field name="prompt_result"
-                                   nolabel="1"
-                                   attrs="{'readonly': True}"/>
+                            <div class="claude-response-wrapper">
+                                <field name="prompt_result"
+                                       nolabel="1"
+                                       attrs="{'readonly': True}"
+                                       widget="html"
+                                       options="{'safe': true, 'resizable': true}"/>
+                            </div>
                         </page>
                     </notebook>
                 </sheet>
@@ -105,4 +98,5 @@
               action="action_module_analysis"
               parent="menu_debug_ai"
               sequence="10"/>
+
 </odoo>

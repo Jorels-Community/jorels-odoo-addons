@@ -1,0 +1,70 @@
+.claude-response {
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin: 1rem 0;
+
+    p {
+        margin: 0.75rem 0;
+        line-height: 1.6;
+        color: #2d3436;
+    }
+
+    // Listas
+    ul, ol {
+        margin: 1rem 0;
+        padding-left: 2rem;
+
+        li {
+            margin: 0.5rem 0;
+            line-height: 1.6;
+            color: #2d3436;
+        }
+    }
+
+    // Bloques de código
+    pre {
+        margin: 1rem 0;
+        padding: 0;
+        background: #1e1e1e;
+        border-radius: 6px;
+        overflow: hidden;
+
+        code {
+            display: block;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #d4d4d4;
+            background-color: transparent;
+            white-space: pre;
+            -webkit-font-smoothing: antialiased;
+
+            &.language-python { color: #569cd6; }
+            &.language-javascript { color: #dcdcaa; }
+            &.language-xml { color: #4ec9b0; }
+            &.language-bash { color: #ce9178; }
+        }
+    }
+
+    // Código en línea
+    :not(pre) > code {
+        padding: 0.2em 0.4em;
+        background-color: #f6f8fa;
+        border-radius: 3px;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.9em;
+        color: #1a1a1a;
+    }
+}
+
+// Asegurar que el contenedor tenga suficiente espacio
+.o_form_view {
+    .claude-response-wrapper {
+        margin: 1rem 0;
+        padding: 0 1rem;
+    }
+}
