@@ -29,6 +29,12 @@
             '/debug_ai/static/src/scss/claude_response.scss',
         ],
     },
+    'external_dependencies': {
+        'python': [
+            'markdown',
+            'pygments',  # Para el resaltado de sintaxis
+        ],
+    },
     'installable': True,
     'application': True,
     'auto_install': False,

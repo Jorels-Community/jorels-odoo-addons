@@ -20,6 +20,9 @@
 # email: info@jorels.com
 #
 
+import markdown
+from markdown.extensions import fenced_code, tables, codehilite
+
 import json
 import logging
 import html
@@ -381,155 +384,32 @@ class DebugAI(models.Model):
 
     def _format_response(self, text):
         """
-        Formatea la respuesta de Claude en HTML con estilo apropiado
+        Formatea la respuesta de Claude en HTML usando markdown
         """
         try:
-            # Usamos un delimitador único que sea muy improbable que aparezca en el texto
-            TEMP_CODE_START = "<<CLAUDE_CODE_BLOCK_START>>"
-            TEMP_CODE_END = "<<CLAUDE_CODE_BLOCK_END>>"
+            # Configurar las extensiones de markdown
+            md = markdown.Markdown(extensions=[
+                'fenced_code',  # Para bloques de código con ```
+                'codehilite',  # Para resaltado de sintaxis
+                'tables',  # Para tablas
+                'attr_list',  # Para atributos HTML
+                'def_list',  # Para listas de definición
+                'footnotes',  # Para notas al pie
+                'md_in_html',  # Para markdown dentro de HTML
+                'sane_lists',  # Para listas más predecibles
+                'smarty',  # Para comillas inteligentes
+                'toc',  # Para tabla de contenidos
+            ])
 
-            # Primera fase: reemplazar los delimitadores de código
-            text = text.replace('```', TEMP_CODE_START, 1)  # Primera ocurrencia
-            while '```' in text:
-                text = text.replace('```', TEMP_CODE_END, 1)  # Siguiente ocurrencia
-                if '```' in text:
-                    text = text.replace('```', TEMP_CODE_START, 1)  # Y la siguiente, si existe
+            # Convertir el texto a HTML
+            html_content = md.convert(text)
 
-            # Si quedó algún delimitador sin cerrar, lo cerramos
-            if text.count(TEMP_CODE_START) > text.count(TEMP_CODE_END):
-                text += TEMP_CODE_END
-
-            # Segunda fase: dividir y procesar el texto
-            parts = []
-            current_text = text
-            while TEMP_CODE_START in current_text:
-                # Encontrar el próximo bloque de código
-                pre_code, rest = current_text.split(TEMP_CODE_START, 1)
-
-                # Procesar el texto antes del código
-                if pre_code.strip():
-                    parts.append(('text', pre_code))
-
-                # Procesar el bloque de código
-                if TEMP_CODE_END in rest:
-                    code, current_text = rest.split(TEMP_CODE_END, 1)
-                    parts.append(('code', code))
-                else:
-                    # Si no hay delimitador de fin, tratar todo como código
-                    parts.append(('code', rest))
-                    current_text = ''
-
-            # Procesar cualquier texto restante
-            if current_text.strip():
-                parts.append(('text', current_text))
-
-            # Tercera fase: formatear cada parte
-            formatted_parts = []
-            for part_type, content in parts:
-                if part_type == 'text':
-                    formatted_parts.append(self._process_regular_text(content))
-                else:  # code
-                    formatted_parts.append(self._process_code_block(content))
-
-            # Unir todo y envolver en el contenedor principal
-            result = '\n'.join(formatted_parts)
-            return f'<div class="claude-response">{result}</div>'
+            # Envolver en el contenedor con clase
+            return f'<div class="claude-response">{html_content}</div>'
 
         except Exception as e:
             _logger.error(f"Error formatting response: {e}")
-            return f'<div class="claude-response"><pre>{html.escape(text)}</pre></div>'
-
-    def _process_regular_text(self, text):
-        """
-        Procesa el texto regular (no código)
-        """
-        try:
-            paragraphs = text.strip().split('\n')
-            formatted_paragraphs = []
-            current_list_type = None
-
-            for p in paragraphs:
-                p = p.strip()
-                if not p:
-                    continue
-
-                # Procesar listas numeradas
-                if re.match(r'^\d+\.\s', p):
-                    if current_list_type != 'ol':
-                        if current_list_type:
-                            formatted_paragraphs.append(f'</{current_list_type}>')
-                        formatted_paragraphs.append('<ol>')
-                        current_list_type = 'ol'
-                    list_content = p.split('. ', 1)
-                    content = list_content[1] if len(list_content) > 1 else p
-                    formatted_paragraphs.append(f'<li>{content}</li>')
-
-                # Procesar viñetas
-                elif p.startswith('- '):
-                    if current_list_type != 'ul':
-                        if current_list_type:
-                            formatted_paragraphs.append(f'</{current_list_type}>')
-                        formatted_paragraphs.append('<ul>')
-                        current_list_type = 'ul'
-                    formatted_paragraphs.append(f'<li>{p[2:]}</li>')
-
-                else:
-                    # Cerrar lista si estábamos en una
-                    if current_list_type:
-                        formatted_paragraphs.append(f'</{current_list_type}>')
-                        current_list_type = None
-
-                    # Procesar encabezados
-                    if p.startswith('#'):
-                        heading_match = re.match(r'^(#{1,6})\s+(.+)$', p)
-                        if heading_match:
-                            level = len(heading_match.group(1))
-                            content = heading_match.group(2)
-                            formatted_paragraphs.append(f'<h{level}>{content}</h{level}>')
-                    else:
-                        # Procesar negrita e itálica
-                        p = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', p)
-                        p = re.sub(r'\*(.*?)\*', r'<em>\1</em>', p)
-                        formatted_paragraphs.append(f'<p>{p}</p>')
-
-            # Cerrar cualquier lista abierta
-            if current_list_type:
-                formatted_paragraphs.append(f'</{current_list_type}>')
-
-            return '\n'.join(formatted_paragraphs)
-        except Exception as e:
-            _logger.warning(f"Error processing regular text: {e}")
-            return f'<p>{html.escape(text)}</p>'
-
-    def _process_code_block(self, text):
-        """
-        Procesa un bloque de código
-        """
-        try:
-            lines = text.strip().split('\n')
-            if not lines:
-                return ''
-
-            # Detectar lenguaje
-            first_line = lines[0].strip().lower()
-            known_languages = {
-                'python', 'javascript', 'js', 'html', 'css', 'xml', 'sql',
-                'bash', 'shell', 'php', 'ruby', 'java', 'cpp', 'c++', 'c',
-                'typescript', 'ts', 'json', 'yaml', 'markdown', 'md'
-            }
-
-            if first_line in known_languages:
-                lang = first_line
-                code = '\n'.join(lines[1:])
-            else:
-                lang = ''
-                code = '\n'.join(lines)
-
-            lang_attr = f' class="language-{lang}"' if lang else ''
-            return f'<pre class="code-block"><code{lang_attr}>{html.escape(code.strip())}</code></pre>'
-        except Exception as e:
-            _logger.warning(f"Error processing code block: {e}")
-            return f'<pre class="code-block"><code>{html.escape(text)}</code></pre>'
+            return f'<div class="claude-response"><pre>{text}</pre></div>'
 
     def apply_changes(self):
         self.ensure_one()
