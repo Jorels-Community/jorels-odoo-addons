@@ -20,13 +20,10 @@
 # email: info@jorels.com
 #
 
-import markdown
-from markdown.extensions import fenced_code, tables, codehilite
-
 import json
 import logging
-import html
-import re
+
+import markdown
 import requests
 from lxml import etree
 from odoo import models, fields, api, _

@@ -1,12 +1,12 @@
 import fnmatch
 import logging
 import os
+from pathlib import Path
 from typing import Optional, Tuple
 
 from odoo import models, fields, _
 from odoo.exceptions import UserError
 from odoo.modules import module
-from pathlib import Path
 
 _logger = logging.getLogger(__name__)
 
@@ -71,7 +71,6 @@ class ModuleAnalysis(models.Model):
         module_name = self.technical_name
         module_path = module.get_module_path(module_name)
         return module_path
-
 
     def _get_temp_file_path(self):
         """Get temporary file path"""
@@ -237,64 +236,135 @@ class GitignoreHandler:
             for line in f:
                 line = line.strip()
                 if line and not line.startswith('#'):
-                    # Convertir patrones relativos a absolutos
-                    if not line.startswith('/'):
-                        line = f'**/{line}'
+                    # Eliminar el slash inicial si existe, ya que manejaremos las rutas de forma relativa
+                    if line.startswith('/'):
+                        line = line[1:]
+                    # Eliminar el slash final si existe
                     if line.endswith('/'):
-                        line = f'{line}**'
+                        line = line[:-1]
                     patterns.append(line)
+
+        _logger.info(f"Parsed gitignore patterns: {patterns}")
         return patterns
 
     @staticmethod
-    def should_ignore(file_path, patterns):
-        """Check if file should be ignored based on gitignore patterns"""
-        for pattern in patterns:
-            if fnmatch.fnmatch(file_path, pattern):
-                return True
-        return False
+    def should_ignore(file_path: str, patterns: list, module_root: str) -> bool:
+        """
+        Check if file should be ignored based on gitignore patterns
+        """
+        try:
+            # Convertir rutas a Path objects para un manejo más robusto
+            file_path = Path(file_path)
+            module_root = Path(module_root)
+
+            # Obtener la ruta relativa desde la raíz del módulo
+            try:
+                relative_path = file_path.relative_to(module_root)
+                relative_str = str(relative_path).replace('\\', '/')  # Normalizar separadores
+            except ValueError:
+                _logger.error(f"File {file_path} is not relative to {module_root}")
+                return False
+
+            _logger.debug(f"Checking path: {relative_str} against patterns")
+
+            # Comprobar cada patrón
+            for pattern in patterns:
+                # Verificar si el inicio de la ruta relativa coincide con el patrón
+                path_parts = relative_str.split('/')
+                current_path = ''
+
+                for part in path_parts:
+                    if current_path:
+                        current_path += '/'
+                    current_path += part
+
+                    if fnmatch.fnmatch(current_path, pattern):
+                        _logger.debug(f"Path {relative_str} matches pattern {pattern}")
+                        return True
+
+                    # También probar con el patrón como un prefijo directo
+                    if current_path.startswith(pattern + '/'):
+                        _logger.debug(f"Path {relative_str} starts with pattern {pattern}")
+                        return True
+
+            _logger.debug(f"Path {relative_str} does not match any pattern")
+            return False
+
+        except Exception as e:
+            _logger.error(f"Error in should_ignore: {str(e)}")
+            return False
 
 
 class ModuleProcessor:
     def __init__(self, directory):
-        self.directory = directory
+        self.directory = os.path.abspath(directory)
         self.gitignore_patterns = []
-        gitignore_path = os.path.join(directory, '.gitignore')
+        gitignore_path = os.path.join(self.directory, '.gitignore')
         if os.path.exists(gitignore_path):
             self.gitignore_patterns = GitignoreHandler.parse_gitignore(gitignore_path)
+            _logger.info(f"Initialized ModuleProcessor with gitignore patterns: {self.gitignore_patterns}")
+        else:
+            _logger.warning(f"No .gitignore file found at {gitignore_path}")
 
-    def should_process_path(self, path):
+    def should_process_path(self, path: str) -> bool:
         """Check if a path should be processed"""
-        relative_path = os.path.relpath(path, self.directory)
-        return not GitignoreHandler.should_ignore(relative_path, self.gitignore_patterns)
+        try:
+            should_ignore = GitignoreHandler.should_ignore(path, self.gitignore_patterns, self.directory)
+            _logger.info(f"Checking path: {path} - Should ignore: {should_ignore}")
+            return not should_ignore
+        except Exception as e:
+            _logger.error(f"Error in should_process_path: {str(e)}")
+            return True
 
     def process_directory(self):
+        _logger.info(f"Starting directory processing at: {self.directory}")
         content = []
 
-        for root, dirs, files in os.walk(self.directory):
-            # Filtrar directorios
-            dirs[:] = [d for d in dirs if self.should_process_path(os.path.join(root, d))]
+        try:
+            for root, dirs, files in os.walk(self.directory):
+                # Primero verificar si el directorio actual debe ser ignorado
+                relative_root = os.path.relpath(root, self.directory).replace('\\', '/')
+                _logger.info(f"Processing directory: {relative_root}")
 
-            # Procesar archivos
-            for file in files:
-                file_path = os.path.join(root, file)
-                if not self.should_process_path(file_path):
+                if not self.should_process_path(root):
+                    _logger.info(f"Skipping ignored directory: {relative_root}")
+                    dirs[:] = []  # No procesar subdirectorios
                     continue
 
-                if file.endswith(('.py', '.xml', '.csv', '.js')) and file != '.gitignore':
-                    relative_path = os.path.relpath(file_path, self.directory)
+                # Filtrar directorios ignorados
+                original_dirs = dirs.copy()
+                dirs[:] = [d for d in dirs if self.should_process_path(os.path.join(root, d))]
+                if len(dirs) != len(original_dirs):
+                    _logger.info(f"Filtered out directories: {set(original_dirs) - set(dirs)}")
 
-                    try:
-                        if file.endswith('.csv'):
-                            file_content = FileReader.read_file(file_path, max_lines=100)
-                        else:
-                            file_content = FileReader.read_file(file_path)
+                # Procesar archivos
+                for file in files:
+                    if file == '.gitignore':
+                        continue
 
-                        content.append(f"File: {relative_path}\n\n```\n{file_content}\n```\n\n")
-                    except Exception as e:
-                        _logger.warning(f"Error reading file {file_path}: {str(e)}")
+                    file_path = os.path.join(root, file)
+                    if not self.should_process_path(file_path):
+                        _logger.info(f"Skipping ignored file: {os.path.relpath(file_path, self.directory)}")
+                        continue
+
+                    if file.endswith(('.py', '.xml', '.csv', '.js')):
+                        relative_path = os.path.relpath(file_path, self.directory)
+                        _logger.info(f"Processing file: {relative_path}")
+
+                        try:
+                            if file.endswith('.csv'):
+                                file_content = FileReader.read_file(file_path, max_lines=100)
+                            else:
+                                file_content = FileReader.read_file(file_path)
+
+                            content.append(f"File: {relative_path}\n\n```\n{file_content}\n```\n\n")
+                        except Exception as e:
+                            _logger.error(f"Error reading file {file_path}: {str(e)}")
+
+        except Exception as e:
+            _logger.error(f"Error processing directory: {str(e)}")
 
         return '\n'.join(content)
-
 
 class PromptCreator:
     def __init__(self, module_path, problem_description):

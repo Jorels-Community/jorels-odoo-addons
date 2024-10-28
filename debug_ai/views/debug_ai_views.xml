@@ -89,15 +89,13 @@
                             <page string="Claude response" name="claude_response_page">
                                 <field name="claude_response"
                                        readonly="1"
-                                       nolabel="1"
-                                       widget="html"/>
+                                       nolabel="1"/>
                             </page>
                             <page string="Result" name="result_page">
                                 <group>
                                     <field name="result"
                                            readonly="1"
                                            nolabel="1"
-                                           widget="html"
                                            attrs="{'invisible': [('result', '=', False)]}"/>
                                     <field name="error_message"
                                            readonly="1"
