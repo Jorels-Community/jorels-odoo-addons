@@ -1,3 +1,4 @@
+import fnmatch
 import logging
 import os
 from typing import Optional, Tuple
@@ -5,9 +6,6 @@ from typing import Optional, Tuple
 from odoo import models, fields, _
 from odoo.exceptions import UserError
 from odoo.modules import module
-from pathspec import PathSpec
-from pathspec.patterns import GitWildMatchPattern
-
 from pathlib import Path
 
 _logger = logging.getLogger(__name__)
@@ -226,40 +224,72 @@ class FileReader:
 
 class GitignoreHandler:
     @staticmethod
-    def get_gitignore_spec(directory):
-        gitignore_path = os.path.join(directory, '.gitignore')
-        if os.path.exists(gitignore_path):
-            with open(gitignore_path, 'r') as gitignore_file:
-                spec = PathSpec.from_lines(GitWildMatchPattern, gitignore_file)
-            return spec
-        return None
+    def parse_gitignore(gitignore_path):
+        """Parse .gitignore file and return list of patterns"""
+        if not os.path.exists(gitignore_path):
+            return []
+
+        patterns = []
+        with open(gitignore_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    # Convertir patrones relativos a absolutos
+                    if not line.startswith('/'):
+                        line = f'**/{line}'
+                    if line.endswith('/'):
+                        line = f'{line}**'
+                    patterns.append(line)
+        return patterns
+
+    @staticmethod
+    def should_ignore(file_path, patterns):
+        """Check if file should be ignored based on gitignore patterns"""
+        for pattern in patterns:
+            if fnmatch.fnmatch(file_path, pattern):
+                return True
+        return False
 
 
 class ModuleProcessor:
     def __init__(self, directory):
         self.directory = directory
-        self.gitignore_spec = GitignoreHandler.get_gitignore_spec(directory)
+        self.gitignore_patterns = []
+        gitignore_path = os.path.join(directory, '.gitignore')
+        if os.path.exists(gitignore_path):
+            self.gitignore_patterns = GitignoreHandler.parse_gitignore(gitignore_path)
+
+    def should_process_path(self, path):
+        """Check if a path should be processed"""
+        relative_path = os.path.relpath(path, self.directory)
+        return not GitignoreHandler.should_ignore(relative_path, self.gitignore_patterns)
 
     def process_directory(self):
         content = []
 
         for root, dirs, files in os.walk(self.directory):
-            if self.gitignore_spec:
-                rel_root = os.path.relpath(root, self.directory)
-                dirs[:] = [d for d in dirs if not self.gitignore_spec.match_file(os.path.join(rel_root, d))]
-                files = [f for f in files if not self.gitignore_spec.match_file(os.path.join(rel_root, f))]
+            # Filtrar directorios
+            dirs[:] = [d for d in dirs if self.should_process_path(os.path.join(root, d))]
 
+            # Procesar archivos
             for file in files:
+                file_path = os.path.join(root, file)
+                if not self.should_process_path(file_path):
+                    continue
+
                 if file.endswith(('.py', '.xml', '.csv', '.js')) and file != '.gitignore':
-                    file_path = os.path.join(root, file)
                     relative_path = os.path.relpath(file_path, self.directory)
 
-                    if file.endswith('.csv'):
-                        file_content = FileReader.read_file(file_path, max_lines=100)
-                    else:
-                        file_content = FileReader.read_file(file_path)
+                    try:
+                        if file.endswith('.csv'):
+                            file_content = FileReader.read_file(file_path, max_lines=100)
+                        else:
+                            file_content = FileReader.read_file(file_path)
 
-                    content.append(f"File: {relative_path}\n\n```\n{file_content}\n```\n\n")
+                        content.append(f"File: {relative_path}\n\n```\n{file_content}\n```\n\n")
+                    except Exception as e:
+                        _logger.warning(f"Error reading file {file_path}: {str(e)}")
+
         return '\n'.join(content)
 
 
