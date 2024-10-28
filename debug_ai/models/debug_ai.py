@@ -262,7 +262,7 @@ class DebugAI(models.Model):
         data = {
             "model": "claude-3-5-sonnet-20241022",
             "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 8000,
+            "max_tokens": 8192,
             "stream": True
         }
 
@@ -331,7 +331,7 @@ class DebugAI(models.Model):
             data = {
                 "model": "claude-3-5-sonnet-20241022",
                 "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 8000,
+                "max_tokens": 8192,
                 "stream": True
             }
 
