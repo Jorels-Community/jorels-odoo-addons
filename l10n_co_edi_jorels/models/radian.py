@@ -20,8 +20,12 @@
 # email: info@jorels.com
 #
 
+import base64
 import json
 import logging
+import tempfile
+import zipfile
+from pathlib import Path
 
 import requests
 from odoo import api, fields, models, _
@@ -118,13 +122,26 @@ class Radian(models.Model):
                     'url': 'https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=' + rec.move_id.ei_uuid,
                 }
 
+    def is_to_send_edi_email(self):
+        self.ensure_one()
+        return self.edi_is_valid \
+            and self.state != 'draft' \
+            and bool(self.edi_uuid) \
+            and bool(self.edi_attached_document_base64)
+
     def _send_email(self):
         for rec in self:
             mail_template = rec.env.ref('l10n_co_edi_jorels.email_template_radian', False)
-            ctx = dict(active_model='l10n_co_edi_jorels.radian')
-            if mail_template:
-                mail_template.with_context(ctx).send_mail(res_id=rec.id, force_send=True,
-                                                          email_layout_xmlid='mail.mail_notification_light')
+            ctx = dict(
+                active_model='l10n_co_edi_jorels.radian',
+                mail_notify_force_send=True
+            )
+            if mail_template and rec.is_to_send_edi_email():
+                rec.with_context(ctx).message_post_with_source(
+                    mail_template,
+                    email_layout_xmlid="mail.mail_notification_light",
+                    subtype_xmlid='mail.mt_comment',
+                )
         return True
 
     def action_send_email(self):
@@ -320,7 +337,7 @@ class Radian(models.Model):
                     (rec.type == 'customer' and rec.event_id.code == '034')
             ):
                 rec.validate_dian_generic()
-                if rec.edi_is_valid and rec.edi_uuid:
+                if rec.is_to_send_edi_email():
                     rec._send_email()
 
     def validate_dian_generic(self):
@@ -518,3 +535,78 @@ class Radian(models.Model):
             'res_id': rec_id,
             'context': context,
         }
+
+    def _process_attachments_for_template_post(self, mail_template):
+        """ Add Edi attachments to templates. """
+        result = super()._process_attachments_for_template_post(mail_template)
+
+        attachments = []
+        edi_attachments = {}
+        for event in self.filtered(lambda m: m.is_to_send_edi_email()):
+            event_result = result.setdefault(event.id, {})
+
+            if not event.company_id.ei_enable or not event.is_to_send_edi_email():
+                continue
+
+            event._compute_attached_zip_file()
+            attached_document_name = event._compute_attached_document_name()
+            zip_name = f"{attached_document_name}.zip"
+            attachments += [(zip_name, event.edi_attached_zip_base64)]
+
+            edi_attachments = {'attachments': attachments}
+            event_result.setdefault('attachment_ids', []).extend(edi_attachments.get('attachment_ids', []))
+            event_result.setdefault('attachments', []).extend(edi_attachments.get('attachments', []))
+        return result
+
+    def _compute_attached_document_name(self):
+        self.ensure_one()
+        if self.edi_zip_name:
+            attached_document_name = 'ad' + self.edi_zip_name[1:-4]
+        else:
+            attached_document_name = self.edi_uuid
+
+        return attached_document_name
+
+    def _compute_attached_zip_file(self):
+        for event in self:
+            attached_document_name = event._compute_attached_document_name()
+
+            # pdf_name = attached_document_name + '.pdf'
+            # pdf_path = Path(tempfile.gettempdir()) / pdf_name
+
+            xml_name = attached_document_name + '.xml'
+            xml_path = Path(tempfile.gettempdir()) / xml_name
+
+            zip_name = attached_document_name + '.zip'
+            zip_path = Path(tempfile.gettempdir()) / zip_name
+
+            zip_archive = zipfile.ZipFile(zip_path, 'w')
+
+            # pdf_handle = open(pdf_path, 'wb')
+            # # pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
+            # pdf_handle.write(base64.decodebytes(event.edi_pdf_base64_bytes))
+            # pdf_handle.close()
+            # zip_archive.write(pdf_path, arcname=pdf_name)
+
+            xml_handle = open(xml_path, 'wb')
+            xml_handle.write(base64.decodebytes(event.edi_attached_document_base64))
+            xml_handle.close()
+            zip_archive.write(xml_path, arcname=xml_name)
+
+            zip_archive.close()
+
+            with open(zip_path, 'rb') as f:
+                attached_zip = f.read()
+                edi_attached_zip_base64 = base64.encodebytes(attached_zip)
+                event.write({
+                    'edi_attached_zip_base64': edi_attached_zip_base64
+                })
+
+    # def action_send_and_print(self):
+    #     for rec in self:
+    #         if not rec.company_id.ei_enable or not rec.is_to_send_edi_email():
+    #             continue
+    # 
+    #         rec._compute_attached_zip_file()
+    # 
+    #     return super().action_send_and_print()
