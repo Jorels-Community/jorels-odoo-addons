@@ -27,8 +27,8 @@ from . import listings
 # Then load other models
 from . import res_partner
 from . import account_move
+from . import account_move_send
 from . import account_move_line
 from . import account_move_reversal
 from . import account_debit_note
-from . import mail_template
 from . import radian
