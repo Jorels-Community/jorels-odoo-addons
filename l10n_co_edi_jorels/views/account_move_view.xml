@@ -166,10 +166,33 @@
                         </field>
                     </page>
                 </xpath>
+                <xpath expr="//field[@name='amount_untaxed']" position="before">
+                    <h4 class="oe_left">
+                        <field name="currency_id" groups="base.group_multi_currency" readonly="1"
+                               attrs="{'invisible': ['|', ('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')), ('is_multicurrency','=',False)]}"/>
+                    </h4>
+                </xpath>
                 <xpath expr="//field[@name='amount_by_group']" position="before">
                     <field name="ei_amount_tax_no_withholding"/>
-                    <field name="ei_amount_total_no_withholding" class="oe_subtotal_footer_separator"/>
+                    <field name="ei_amount_total_no_withholding"
+                           class="oe_subtotal_footer_separator"/>
                     <field name="ei_amount_tax_withholding"/>
+                </xpath>
+                <xpath expr="//group[hasclass('oe_subtotal_footer')]" position="after">
+                    <group class="oe_subtotal_footer" groups="base.group_multi_currency"
+                           attrs="{'invisible': ['|', ('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')), ('is_multicurrency','=',False)]}">
+                        <h4 class="oe_left">
+                            <field name="company_currency_id"/>
+                        </h4>
+                        <field name="is_multicurrency" invisible="1"/>
+                        <field name="amount_untaxed_signed" string="Untaxed Amount"/>
+                        <field name="ei_amount_tax_no_withholding_company" string="Taxes without withholdings"/>
+                        <field name="ei_amount_total_no_withholding_company" string="Total without withholdings"
+                               class="oe_subtotal_footer_separator"/>
+                        <field name="ei_amount_tax_withholding_company" string="Withholdings"/>
+                        <field name="amount_by_group_company" widget="tax-group-custom-field" nolabel="1" colspan="2"/>
+                        <field name="amount_total_signed" string="Total" class="oe_subtotal_footer_separator"/>
+                    </group>
                 </xpath>
                 <!-- Invoice lines -->
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
