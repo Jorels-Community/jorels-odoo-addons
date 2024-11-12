@@ -220,8 +220,6 @@ class AccountMove(models.Model):
     is_multicurrency = fields.Boolean(string='Is multicurrency?', compute='_compute_is_multicurrency')
     amount_by_group_company = fields.Binary(string="Tax amount by group in Company Currency",
                                             compute='_compute_invoice_taxes_by_group_company')
-    amount_tax_company = fields.Monetary(string='Tax in Company Currency', compute='_compute_amount_tax_company',
-                                         currency_field='company_currency_id')
 
     def _auto_init(self):
         # Edi type document
@@ -1817,18 +1815,6 @@ class AccountMove(models.Model):
     def _compute_is_multicurrency(self):
         for invoice in self:
             invoice.is_multicurrency = invoice.currency_id != invoice.company_currency_id
-
-    @api.depends('line_ids', 'currency_id', 'company_id', 'company_currency_id', 'amount_tax', 'date',
-                 'invoice_date')
-    def _compute_amount_tax_company(self):
-        for move in self:
-            if not move.is_multicurrency:
-                move.amount_tax_company = move.amount_tax
-            else:
-                rate_date = move.date or move.invoice_date or fields.Date.context_today(self)
-                move.amount_tax_company = move.currency_id._convert(move.amount_tax,
-                                                                    move.company_currency_id,
-                                                                    move.company_id, rate_date)
 
     @api.depends('line_ids.price_subtotal', 'line_ids.tax_base_amount', 'line_ids.tax_line_id', 'partner_id',
                  'currency_id', 'amount_by_group')
