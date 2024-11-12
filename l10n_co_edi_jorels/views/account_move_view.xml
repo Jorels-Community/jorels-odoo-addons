@@ -168,10 +168,31 @@
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='tax_totals_json']" position="before">
+                    <h4 class="oe_left">
+                        <field name="currency_id" groups="base.group_multi_currency"
+                               attrs="{'invisible': ['|', ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')), ('is_multicurrency','=',False)]}"/>
+                    </h4>
                     <field name="ei_amount_tax_no_withholding"/>
-                    <field name="ei_amount_total_no_withholding" class="oe_subtotal_footer_separator"/>
+                    <field name="ei_amount_total_no_withholding"
+                           class="oe_subtotal_footer_separator"/>
                     <field name="ei_amount_tax_withholding"/>
                 </xpath>
+                <xpath expr="//group[hasclass('oe_subtotal_footer')]" position="after">
+                    <group class="oe_subtotal_footer" groups="base.group_multi_currency"
+                           attrs="{'invisible': ['|', ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')), ('is_multicurrency','=',False)]}">
+                        <h4 class="oe_left">
+                            <field name="company_currency_id"/>
+                        </h4>
+                        <field name="is_multicurrency" invisible="1"/>
+                        <field name="ei_amount_tax_no_withholding_company" string="Taxes without withholdings"/>
+                        <field name="ei_amount_total_no_withholding_company" string="Total without withholdings"
+                               class="oe_subtotal_footer_separator"/>
+                        <field name="ei_amount_tax_withholding_company" string="Withholdings"/>
+                        <field name="tax_totals_company_json" widget="account-tax-totals-field" nolabel="1"
+                               colspan="2"/>
+                    </group>
+                </xpath>
+
                 <!-- Invoice lines -->
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
                     <field name="ei_notes"/>
