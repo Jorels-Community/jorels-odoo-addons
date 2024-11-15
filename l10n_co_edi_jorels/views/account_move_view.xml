@@ -177,11 +177,33 @@
                         </field>
                     </page>
                 </xpath>
-                <xpath expr="//field[@name='tax_totals']" position="before">
-                    <field name="ei_amount_tax_no_withholding" invisible="state=='draft'"/>
-                    <field name="ei_amount_total_no_withholding" invisible="state=='draft'"
-                           class="oe_subtotal_footer_separator"/>
-                    <field name="ei_amount_tax_withholding" invisible="state=='draft'"/>
+                <xpath expr="//group[hasclass('oe_subtotal_footer')]" position="before">
+                    <group class="oe_subtotal_footer"
+                           invisible="move_type not in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund') or is_multicurrency == False">
+                        <field name="company_currency_id" invisible="state=='draft'"/>
+                        <field name="is_multicurrency" invisible="1"/>
+                        <field name="ei_amount_total_no_withholding_company" invisible="state=='draft'"
+                               string="Total without withholdings"/>
+                        <field name="ei_amount_tax_no_withholding_company" invisible="state=='draft'"
+                               string="Taxes without withholdings"/>
+                        <field name="ei_amount_tax_withholding_company" invisible="state=='draft'"
+                               string="Withholdings"/>
+                        <field name="amount_total_signed" invisible="state=='draft'" string="Total"
+                               class="oe_subtotal_footer_separator"/>
+                    </group>
+                    <group class="oe_subtotal_footer">
+                        <field name="currency_id"
+                               groups="base.group_multi_currency"
+                               invisible="move_type == 'entry'"
+                               readonly="state != 'draft'"
+                               options="{'no_create': True}"
+                               context="{'search_default_active': 1, 'search_default_inactive': 1}"/>
+                        <field name="ei_amount_total_no_withholding" invisible="state=='draft'"/>
+                        <field name="ei_amount_tax_no_withholding" invisible="state=='draft'"/>
+                        <field name="ei_amount_tax_withholding" invisible="state=='draft'"/>
+                        <field name="amount_total" invisible="state=='draft'" string="Total"
+                               class="oe_subtotal_footer_separator"/>
+                    </group>
                 </xpath>
                 <!-- Invoice lines -->
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
