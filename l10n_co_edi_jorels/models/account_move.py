@@ -21,6 +21,7 @@
 #
 
 import base64
+import copy
 import json
 import logging
 import math
@@ -32,6 +33,7 @@ import requests
 from num2words import num2words
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from odoo.tools.misc import formatLang
 from odoo.tools.sql import column_exists, create_column
 
 _logger = logging.getLogger(__name__)
@@ -121,7 +123,7 @@ class AccountMove(models.Model):
 
     # Additional documents for electronic invoicing
     ei_additional_documents = fields.Many2many('ir.attachment', string='Additional Documents',
-                                            help='Additional documents to be attached to the electronic invoicing email')
+                                               help='Additional documents to be attached to the electronic invoicing email')
 
     # QR image
     ei_qr_image = fields.Binary("QR image", attachment=True, copy=False, readonly=True)
@@ -218,6 +220,16 @@ class AccountMove(models.Model):
 
     is_edi_mail_sent = fields.Boolean(readonly=True, default=False, copy=False,
                                       help="It indicates that the edi document has been sent.")
+
+    # === Amount fields in company currency ===
+    is_multicurrency = fields.Boolean(string='Is multicurrency?', compute='_compute_is_multicurrency')
+
+    tax_totals_company = fields.Binary(
+        string="Invoice Totals in Company Currency",
+        compute='_compute_tax_totals_company',
+        help='Display tax totals in company currency',
+        exportable=False
+    )
 
     def _auto_init(self):
         # Edi type document
@@ -796,20 +808,18 @@ class AccountMove(models.Model):
 
         for rec in self:
             amount_tax_withholding = 0
-            amount_tax_withholding_company = 0
             amount_tax_no_withholding = 0
-            amount_tax_no_withholding_company = 0
             amount_excluded = 0
-            amount_excluded_company = 0
             amount_commercial_sample = 0
-            amount_commercial_sample_company = 0
 
-            rate = rec.currency_id.with_context(dict(rec._context or {}, date=rec.invoice_date)).rate
+            currency = rec.currency_id
+            company = rec.company_id or self.env.company
+            rate_date = rec.date or rec.invoice_date or fields.Date.context_today(self)
+            rate = rec.currency_id.with_context(dict(rec._context or {}, date=rate_date)).rate
             inverse_rate = rec.currency_id.with_context(dict(rec._context or {}, date=rec.invoice_date)).inverse_rate
             for invoice_line_id in rec.invoice_line_ids:
                 if invoice_line_id.account_id:
                     taxable_amount = invoice_line_id.price_subtotal
-                    taxable_amount_company = abs(invoice_line_id.balance)
                     discount = bool(invoice_line_id.discount)
 
                     # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
@@ -822,10 +832,8 @@ class AccountMove(models.Model):
                         lst_price_invoice = lst_price_company * rate
 
                         taxable_amount = lst_price_invoice * invoice_line_id.quantity
-                        taxable_amount_company = lst_price_company * invoice_line_id.quantity
 
                         amount_commercial_sample = amount_commercial_sample + taxable_amount
-                        amount_commercial_sample_company = amount_commercial_sample_company + taxable_amount_company
 
                     for invoice_line_tax_id in invoice_line_id.tax_ids:
                         tax_name = invoice_line_tax_id.name
@@ -836,50 +844,43 @@ class AccountMove(models.Model):
                             # The 'amount' field automatically uses the value defined in the tax configuration
                             # without currency conversion.
                             tax_amount = invoice_line_id.quantity * invoice_line_tax_id.amount
-                            tax_amount_company = tax_amount * inverse_rate
                         else:
                             # For percent and code amount type
                             tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
-                            tax_amount_company = taxable_amount_company * invoice_line_tax_id.amount / 100.0
 
                         if invoice_line_tax_id.edi_tax_id.id:
                             edi_tax_name = invoice_line_tax_id.edi_tax_id.name
                             if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
                                     (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
                                 amount_excluded = amount_excluded + taxable_amount
-                                amount_excluded_company = amount_excluded_company + taxable_amount_company
                             elif edi_tax_name[:4] == 'Rete':
                                 amount_tax_withholding = amount_tax_withholding + tax_amount
-                                amount_tax_withholding_company = amount_tax_withholding_company + tax_amount_company
                             else:
                                 amount_tax_no_withholding = amount_tax_no_withholding + tax_amount
-                                amount_tax_no_withholding_company = (amount_tax_no_withholding_company +
-                                                                     tax_amount_company)
                         else:
                             if tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) or \
                                     (tax_name.startswith('IVA') and dian_report_tax_base == 'no_report'):
                                 amount_excluded = amount_excluded + taxable_amount
-                                amount_excluded_company = amount_excluded_company + taxable_amount_company
                             elif tax_name[:3] == 'Rte':
                                 amount_tax_withholding = amount_tax_withholding + tax_amount
-                                amount_tax_withholding_company = amount_tax_withholding_company + tax_amount_company
                             else:
                                 amount_tax_no_withholding = amount_tax_no_withholding + tax_amount
-                                amount_tax_no_withholding_company = (amount_tax_no_withholding_company +
-                                                                     tax_amount_company)
 
             rec.ei_amount_tax_withholding = amount_tax_withholding
-            rec.ei_amount_tax_withholding_company = amount_tax_withholding_company
+            rec.ei_amount_tax_withholding_company = currency._convert(rec.ei_amount_tax_withholding,
+                                                                      company.currency_id, company, rate_date)
             rec.ei_amount_tax_no_withholding = amount_tax_no_withholding
-            rec.ei_amount_tax_no_withholding_company = amount_tax_no_withholding_company
+            rec.ei_amount_tax_no_withholding_company = currency._convert(rec.ei_amount_tax_no_withholding,
+                                                                         company.currency_id, company, rate_date)
             rec.ei_amount_total_no_withholding = rec.amount_untaxed + rec.ei_amount_tax_no_withholding
             rec.ei_amount_total_no_withholding_company = (abs(rec.amount_untaxed_signed) +
                                                           rec.ei_amount_tax_no_withholding_company)
             rec.ei_amount_excluded = amount_excluded
-            rec.ei_amount_excluded_company = amount_excluded_company
-
+            rec.ei_amount_excluded_company = currency._convert(rec.ei_amount_excluded, company.currency_id, company,
+                                                               rate_date)
             rec.ei_amount_commercial_sample = amount_commercial_sample
-            rec.ei_amount_commercial_sample_company = amount_commercial_sample_company
+            rec.ei_amount_commercial_sample_company = currency._convert(rec.ei_amount_commercial_sample,
+                                                                        company.currency_id, company, rate_date)
 
             if self.is_universal_discount():
                 # if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
@@ -1454,10 +1455,10 @@ class AccountMove(models.Model):
         to_edi = self.filtered(lambda inv: inv.is_pending_to_send_to_dian())
         if to_edi:
             # Invoices in DIAN cannot be validated with zero total
-            to_paid_invoices = to_edi.filtered(lambda inv: inv.currency_id.is_zero(inv.amount_total)) 
+            to_paid_invoices = to_edi.filtered(lambda inv: inv.currency_id.is_zero(inv.amount_total))
             if to_paid_invoices and not self.company_id.ei_allow_zero_total:
-                raise UserError(_('Please check your invoice again. Are you really billing something? To allow zero total invoices, enable the option in Electronic Invoicing settings.'))
-                raise UserError(_('Please check your invoice again. Are you really billing something?'))
+                raise UserError(
+                    _('Please check your invoice again. Are you really billing something? To allow zero total invoices, enable the option in Electronic Invoicing settings.'))
 
             # Validate invoices
             to_electronic_invoices = to_edi.filtered(lambda inv: inv.state == 'posted'
@@ -1831,3 +1832,68 @@ class AccountMove(models.Model):
             except Exception as e:
                 rec.message_post(body=_("Failed to process the Nimbus request: %s: %s") % (rec.name, e))
                 _logger.debug("Failed to process the Nimbus request: %s", e)
+
+    @api.depends('currency_id', 'company_currency_id')
+    def _compute_is_multicurrency(self):
+        for invoice in self:
+            invoice.is_multicurrency = invoice.currency_id != invoice.company_currency_id
+
+    @api.depends('tax_totals', 'currency_id', 'company_id', 'date')
+    def _compute_tax_totals_company(self):
+        """ Computed field that converts tax_totals to company currency.
+            This is used only for display purposes in forms and reports.
+            No inverse function is needed as this is a display-only field.
+        """
+        for move in self:
+            # If no tax_totals or same currency as company, use original values
+            if not move.tax_totals or move.currency_id == move.company_id.currency_id:
+                move.tax_totals_company = move.tax_totals
+                continue
+
+            company_currency = move.company_id.currency_id
+            date = move.date or move.invoice_date or fields.Date.context_today(self)
+
+            # Create a copy to avoid modifying the original dict
+            tax_totals_company = copy.deepcopy(move.tax_totals)
+
+            for field in ['amount_untaxed', 'amount_total']:
+                amount_company = company_currency.round(abs(getattr(move, f'{field}_signed')))
+                tax_totals_company[field] = amount_company
+                tax_totals_company[f'formatted_{field}'] = formatLang(
+                    self.env, amount_company, currency_obj=company_currency
+                )
+
+            # Convert subtotal amounts
+            for subtotal in tax_totals_company.get('subtotals', []):
+                amount_company = company_currency.round(
+                    move.currency_id._convert(subtotal['amount'], company_currency, move.company_id, date)
+                )
+                subtotal['amount'] = amount_company
+                subtotal['formatted_amount'] = formatLang(
+                    self.env, amount_company, currency_obj=company_currency
+                )
+
+            # Convert tax group amounts
+            for groups in tax_totals_company.get('groups_by_subtotal', {}).values():
+                for group in groups:
+                    amount_company = company_currency.round(
+                        move.currency_id._convert(group['tax_group_amount'], company_currency, move.company_id, date)
+                    )
+                    group['tax_group_amount'] = amount_company
+                    group['formatted_tax_group_amount'] = formatLang(
+                        self.env, amount_company, currency_obj=company_currency
+                    )
+
+            move.tax_totals_company = tax_totals_company
+
+    # @api.onchange('currency_id')
+    # def _inverse_currency_id(self):
+    #     super()._inverse_currency_id()
+    #
+    #     if not self.is_invoice(include_receipts=True):
+    #         return
+    #
+    #     container = {'records': self}
+    #     with self._sync_dynamic_lines(container):
+    #         lines_to_update = self._get_lines_onchange_currency()
+    #         lines_to_update.invalidate_recordset()
