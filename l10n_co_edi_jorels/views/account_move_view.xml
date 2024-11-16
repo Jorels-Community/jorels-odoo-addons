@@ -173,24 +173,32 @@
                         </field>
                     </page>
                 </xpath>
-                <xpath expr="//field[@name='tax_totals']" position="before">
-                    <field name="currency_id" groups="base.group_multi_currency"
-                           attrs="{'invisible': ['|', ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')), ('is_multicurrency','=',False)]}"
-                           class="oe_subtotal_footer_separator"/>
-                    <field name="ei_amount_tax_no_withholding"/>
-                    <field name="ei_amount_total_no_withholding" class="oe_subtotal_footer_separator"/>
-                    <field name="ei_amount_tax_withholding"/>
-                </xpath>
-                <xpath expr="//group[hasclass('oe_subtotal_footer')]" position="before">
-                    <group class="oe_subtotal_footer oe_right" groups="base.group_multi_currency"
-                           attrs="{'invisible': ['|', ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')), ('is_multicurrency','=',False)]}">
-                        <field name="company_currency_id" class="oe_subtotal_footer_separator"/>
+                <xpath expr="//group[contains(@class, 'oe_subtotal_footer')]" position="before">
+                    <group class="oe_subtotal_footer"
+                           attrs="{'invisible': ['|', ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')), ('is_multicurrency', '=', False)]}">
+                        <field name="company_currency_id" attrs="{'invisible': [('state', '=', 'draft')]}"/>
                         <field name="is_multicurrency" invisible="1"/>
-                        <field name="ei_amount_tax_no_withholding_company" string="Taxes without withholdings"/>
-                        <field name="ei_amount_total_no_withholding_company" string="Total without withholdings"
-                               class="oe_subtotal_footer_separator" attrs="{'invisible':[('state','=','draft')]}"/>
-                        <field name="ei_amount_tax_withholding_company" string="Withholdings"/>
-                        <field name="tax_totals_company" widget="account-tax-totals-field" nolabel="1" colspan="2"/>
+                        <field name="ei_amount_total_no_withholding_company"
+                               attrs="{'invisible': [('state', '=', 'draft')]}"
+                               string="Total without withholdings"/>
+                        <field name="ei_amount_tax_no_withholding_company"
+                               attrs="{'invisible': [('state', '=', 'draft')]}"
+                               string="Taxes without withholdings"/>
+                        <field name="ei_amount_tax_withholding_company" attrs="{'invisible': [('state', '=', 'draft')]}"
+                               string="Withholdings"/>
+                        <field name="amount_total_signed" attrs="{'invisible': [('state', '=', 'draft')]}"
+                               string="Total"
+                               class="oe_subtotal_footer_separator"/>
+                    </group>
+                    <group class="oe_subtotal_footer">
+                        <field name="currency_id"
+                               groups="base.group_multi_currency"
+                               attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('move_type', '=', 'entry')]}"/>
+                        <field name="ei_amount_total_no_withholding" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                        <field name="ei_amount_tax_no_withholding" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                        <field name="ei_amount_tax_withholding" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                        <field name="amount_total" attrs="{'invisible': [('state', '=', 'draft')]}" string="Total"
+                               class="oe_subtotal_footer_separator"/>
                     </group>
                 </xpath>
 

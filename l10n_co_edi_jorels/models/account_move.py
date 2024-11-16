@@ -1886,14 +1886,14 @@ class AccountMove(models.Model):
 
             move.tax_totals_company = tax_totals_company
 
-    @api.onchange('currency_id')
-    def _inverse_currency_id(self):
-        super()._inverse_currency_id()
-
-        if not self.is_invoice(include_receipts=True):
-            return
-
-        container = {'records': self}
-        with self._sync_dynamic_lines(container):
-            lines_to_update = self._get_lines_onchange_currency()
-            lines_to_update.invalidate_recordset()
+    # @api.onchange('currency_id')
+    # def _inverse_currency_id(self):
+    #     super()._inverse_currency_id()
+    #
+    #     if not self.is_invoice(include_receipts=True):
+    #         return
+    #
+    #     container = {'records': self}
+    #     with self._sync_dynamic_lines(container):
+    #         lines_to_update = self._get_lines_onchange_currency()
+    #         lines_to_update.invalidate_recordset()
