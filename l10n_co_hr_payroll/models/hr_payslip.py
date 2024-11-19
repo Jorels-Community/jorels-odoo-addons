@@ -59,7 +59,7 @@ class HrPayslip(models.Model):
     is_settlement = fields.Boolean(string='Is Settlement',
                                    default=False,
                                    help="Check this box if this payslip is a settlement",
-                                   readonly=True, states={'draft': [('readonly', False)]})
+                                   readonly=True, copy=False)
 
     month = fields.Selection([
         ('1', 'January'),
