@@ -116,6 +116,10 @@ class AccountMove(models.Model):
     # For mail attached
     ei_attached_zip_base64_bytes = fields.Binary('Attached zip', attachment=True, copy=False)
 
+    # Additional documents for electronic invoicing
+    ei_additional_documents = fields.Many2many('ir.attachment', string='Additional Documents',
+                                               help='Additional documents to be attached to the electronic invoicing email')
+
     # QR image
     ei_qr_image = fields.Binary("QR image", attachment=True, copy=False, readonly=True)
 
@@ -1845,36 +1849,62 @@ class AccountMove(models.Model):
         for move in self:
             attached_document_name = move._compute_attached_document_name()
 
+            # Create temporary directory for all files
+            temp_dir = Path(tempfile.gettempdir())
+
+            # Define file paths
             pdf_name = attached_document_name + '.pdf'
-            pdf_path = Path(tempfile.gettempdir()) / pdf_name
+            pdf_path = temp_dir / pdf_name
 
             xml_name = attached_document_name + '.xml'
-            xml_path = Path(tempfile.gettempdir()) / xml_name
+            xml_path = temp_dir / xml_name
 
             zip_name = attached_document_name + '.zip'
-            zip_path = Path(tempfile.gettempdir()) / zip_name
+            zip_path = temp_dir / zip_name
 
-            zip_archive = zipfile.ZipFile(zip_path, 'w')
+            # Create main zip file
+            with zipfile.ZipFile(zip_path, 'w') as zip_archive:
+                # Add PDF to zip
+                with open(pdf_path, 'wb') as pdf_handle:
+                    pdf_handle.write(base64.decodebytes(move.ei_pdf_base64_bytes))
+                zip_archive.write(pdf_path, arcname=pdf_name)
 
-            pdf_handle = open(pdf_path, 'wb')
-            # pdf_handle.write(base64.decodebytes(res_t['attachments'][0][1]))
-            pdf_handle.write(base64.decodebytes(move.ei_pdf_base64_bytes))
-            pdf_handle.close()
-            zip_archive.write(pdf_path, arcname=pdf_name)
+                # Add XML to zip
+                with open(xml_path, 'wb') as xml_handle:
+                    xml_handle.write(base64.decodebytes(move.ei_attached_document_base64_bytes))
+                zip_archive.write(xml_path, arcname=xml_name)
 
-            xml_handle = open(xml_path, 'wb')
-            xml_handle.write(base64.decodebytes(move.ei_attached_document_base64_bytes))
-            xml_handle.close()
-            zip_archive.write(xml_path, arcname=xml_name)
+                # If there are additional documents, create a secondary zip
+                if move.ei_additional_documents:
+                    additional_zip_name = f"{attached_document_name}_additional_documents.zip"
+                    additional_zip_path = temp_dir / additional_zip_name
 
-            zip_archive.close()
+                    with zipfile.ZipFile(additional_zip_path, 'w') as additional_zip:
+                        for attachment in move.ei_additional_documents:
+                            attachment_path = temp_dir / attachment.name
+                            with open(attachment_path, 'wb') as attachment_handle:
+                                attachment_handle.write(base64.b64decode(attachment.datas))
+                            additional_zip.write(attachment_path, arcname=attachment.name)
+                            # Clean up temporary attachment file
+                            attachment_path.unlink()
 
+                    # Add secondary zip to main zip
+                    zip_archive.write(additional_zip_path, arcname=additional_zip_name)
+                    # Clean up secondary zip file
+                    additional_zip_path.unlink()
+
+            # Read and encode the final zip file
             with open(zip_path, 'rb') as f:
                 attached_zip = f.read()
                 ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
                 move.write({
                     'ei_attached_zip_base64_bytes': ei_attached_zip_base64_bytes
                 })
+
+            # Clean up temporary files
+            pdf_path.unlink()
+            xml_path.unlink()
+            zip_path.unlink()
 
     def action_send_and_print(self):
         for rec in self:
