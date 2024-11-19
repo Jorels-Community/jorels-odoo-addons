@@ -286,6 +286,7 @@
                 </xpath>
                 <xpath expr="//field[@name='credit_note']" position="after">
                     <field name="origin_payslip_id" invisible="not credit_note" readonly="state != 'draft'"/>
+                    <field name="is_settlement"/>
                 </xpath>
                 <xpath expr="//field[@name='line_ids']//tree//field[@name='rate']" position="after">
                     <field name="edi_quantity"/>
