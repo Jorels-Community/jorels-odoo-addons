@@ -1867,9 +1867,15 @@ class AccountMove(models.Model):
 
             # Create main zip file
             with zipfile.ZipFile(zip_path, 'w') as zip_archive:
+                # Generate default Odoo PDF report
+                pdf_content, _ = self.env['ir.actions.report']._render_qweb_pdf(
+                    'account.account_invoices',
+                    move.ids
+                )
+
                 # Add PDF to zip
                 with open(pdf_path, 'wb') as pdf_handle:
-                    pdf_handle.write(base64.decodebytes(move.ei_pdf_base64_bytes))
+                    pdf_handle.write(pdf_content)
                 zip_archive.write(pdf_path, arcname=pdf_name)
 
                 # Add XML to zip
