@@ -19,10 +19,10 @@
     'data': [
         'security/ir.model.access.csv',
         'views/debug_ai_views.xml',
+        'views/module_analysis_views.xml',
         'views/menu_items.xml',
         'views/res_config_settings_views.xml',
         'views/ir_ui_view_views.xml',
-        'views/module_analysis_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
