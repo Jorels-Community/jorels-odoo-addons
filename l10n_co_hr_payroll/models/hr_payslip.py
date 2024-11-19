@@ -57,6 +57,10 @@ class HrPayslip(models.Model):
     payslip_edi_ids = fields.Many2many(comodel_name='hr.payslip.edi', string='Edi Payslips',
                                        relation='hr_payslip_hr_payslip_edi_rel',
                                        readonly=True, copy=False)
+    is_settlement = fields.Boolean(string='Is Settlement',
+                                   default=False,
+                                   help="Check this box if this payslip is a settlement",
+                                   readonly=True, states={'draft': [('readonly', False)]})
 
     month = fields.Selection([
         ('1', 'January'),
@@ -1073,18 +1077,21 @@ class HrPayslip(models.Model):
                             "payment": abs(line_id.total)
                         })
 
-            # Calculate days worked
-            rec.worked_days_total = self.calculate_time_worked(rec.date_from, rec.date_to)
-            for list_with_days in [
-                vacation_common,
-                licensings_maternity_or_paternity_leaves,
-                licensings_permit_or_paid_licenses,
-                licensings_suspension_or_unpaid_leaves,
-                incapacities,
-                legal_strikes
-            ]:
-                for dict_with_days in list_with_days:
-                    rec.worked_days_total -= dict_with_days['quantity']
+            # Calculate days worked considering settlement flag
+            if rec.is_settlement:
+                rec.worked_days_total = 0
+            else:
+                rec.worked_days_total = self.calculate_time_worked(rec.date_from, rec.date_to)
+                for list_with_days in [
+                    vacation_common,
+                    licensings_maternity_or_paternity_leaves,
+                    licensings_permit_or_paid_licenses,
+                    licensings_suspension_or_unpaid_leaves,
+                    incapacities,
+                    legal_strikes
+                ]:
+                    for dict_with_days in list_with_days:
+                        rec.worked_days_total -= dict_with_days['quantity']
             if rec.worked_days_total < 0:
                 rec.worked_days_total = 0
             basic['worked_days'] = rec.worked_days_total
