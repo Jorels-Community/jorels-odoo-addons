@@ -226,7 +226,7 @@
                 </td>
             </xpath>
             <xpath expr="//div[@id='total']/div[1]" position="before">
-                <div t-attf-class="#{'col-5' if report_type != 'html' else 'col-sm-12 col-md-12'}">
+                <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-12 col-md-12'}">
                     <div t-if="o.company_id.ei_enable and o.payment_method_id.id" name="payment_method">
                         <strong>Payment method:</strong>
                         <span t-field="o.payment_method_id"/>
@@ -244,26 +244,19 @@
                 </div>
             </xpath>
             <xpath expr="//div[@id='total']/div[2]" position="attributes">
-                <attribute name="t-attf-class">#{'col-7' if report_type != 'html' else 'col-sm-7 col-md-5'}
+                <attribute name="t-attf-class">#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'}
                 </attribute>
             </xpath>
-            <xpath expr="//div[@id='total']//table/t[1]" position="before">
-                <tr class="border-black o_total" style="">
-                    <td>
-                        <strong>Currency</strong>
-                    </td>
-                    <td class="text-right">
-                        <span t-field="o.currency_id"/>
-                    </td>
-                    <td class="text-right" t-if="o.company_id.ei_enable and o.is_multicurrency">
-                        <span t-field="o.company_currency_id"/>
-                    </td>
-                </tr>
-            </xpath>
-            <!-- Add company currency totals variable right after tax_totals -->
-            <xpath expr="//t[@t-set='tax_totals']" position="after">
-                <t t-if="o.company_id.ei_enable and o.is_multicurrency">
-                    <t t-set="tax_totals_company" t-value="json.loads(o.tax_totals_company_json)"/>
+            <xpath expr="//t[@t-set='tax_totals']" position="before">
+                <t>
+                    <tr class="border-black o_total">
+                        <td>
+                            <strong>Currency</strong>
+                        </td>
+                        <td class="text-right">
+                            <span t-field="o.currency_id"/>
+                        </td>
+                    </tr>
                 </t>
             </xpath>
             <xpath expr="//t[@t-call='account.document_tax_totals']" position="after">
@@ -272,15 +265,42 @@
                         <strong>Total without withholdings</strong>
                     </td>
                     <td class="text-right">
-                        <!--                        <span t-field="o.ei_amount_total_no_withholding"/>-->
                         <span t-field="o.ei_amount_total_no_withholding"
                               t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                     </td>
-                    <td class="text-right">
-                        <span t-field="o.ei_amount_total_no_withholding_company" t-if="o.is_multicurrency"
-                              t-options='{"widget": "monetary", "display_currency": o.company_currency_id}'/>
-                    </td>
                 </tr>
+            </xpath>
+            <xpath expr="//div[@id='total']" position="after">
+                <div id="total-company" class="row mt-4" style="page-break-inside: avoid;"
+                     t-if="o.company_id.ei_enable and o.is_multicurrency">
+                    <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
+                        <div class="position-relative shadow-sm border rounded p-3">
+                            <table class="table table-sm mb-0">
+                                <t>
+                                    <tr class="border-black o_total">
+                                        <td>
+                                            <strong>Currency</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.company_currency_id"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-set="tax_totals" t-value="json.loads(o.tax_totals_company_json)"/>
+                                <t t-call="account.document_tax_totals"/>
+                                <tr class="border-black" style="" t-if="o.company_id.ei_enable">
+                                    <td>
+                                        <strong>Total without withholdings</strong>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="o.ei_amount_total_no_withholding_company"
+                                              t-options='{"widget": "monetary", "display_currency": o.company_currency_id}'/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </xpath>
             <xpath expr="//div[hasclass('page')]" position="inside">
                 <div t-if="o.company_id.ei_enable" class="container">
@@ -323,82 +343,6 @@
                         </div>
                     </div>
                 </div>
-            </xpath>
-        </template>
-
-        <!-- Inherit and modify document_tax_totals template -->
-        <template id="document_tax_totals_inherited" inherit_id="account.document_tax_totals">
-            <!-- Add company currency column in subtotal rows -->
-            <xpath expr="//tr[hasclass('o_subtotal')]/td[2]" position="after">
-                <td t-if="o.company_id.ei_enable and o.is_multicurrency" class="text-right">
-                    <span t-att-class="oe_subtotal_footer_separator"
-                          t-esc="tax_totals_company['subtotals'][subtotal_index]['formatted_amount']"/>
-                </td>
-            </xpath>
-            <!-- Add company currency column in total row -->
-            <xpath expr="//tr[hasclass('o_total')]/td[2]" position="after">
-                <td t-if="o.company_id.ei_enable and o.is_multicurrency" class="text-right">
-                    <span t-esc="tax_totals_company['formatted_amount_total']"/>
-                </td>
-            </xpath>
-        </template>
-
-        <!-- Inherit and modify tax_groups_totals template -->
-        <template id="tax_groups_totals_inherited" inherit_id="account.tax_groups_totals">
-            <!-- Modify original t-foreach to include condition -->
-            <xpath expr="//t[@t-foreach]" position="attributes">
-                <attribute name="t-if">not o.company_id.ei_enable or not o.is_multicurrency</attribute>
-            </xpath>
-
-            <!-- Add new iteration for company currency after original t-foreach -->
-            <xpath expr="//t[@t-foreach]" position="after">
-                <t t-if="o.company_id.ei_enable and o.is_multicurrency">
-                    <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
-                        <tr>
-                            <t t-if="len(tax_totals['groups_by_subtotal'][subtotal_to_show]) > 1 or (tax_totals['amount_untaxed'] != amount_by_group['tax_group_base_amount'])">
-                                <td>
-                                    <span t-esc="amount_by_group['tax_group_name']"/>
-                                    <span class="text-nowrap">on
-                                        <t t-esc="amount_by_group['formatted_tax_group_base_amount']"/>
-                                    </span>
-                                </td>
-                                <td class="text-right o_price_total">
-                                    <span class="text-nowrap" t-esc="amount_by_group['formatted_tax_group_amount']"/>
-                                </td>
-                                <td class="text-right o_price_total">
-                                    <span class="text-nowrap"
-                                          t-esc="tax_totals_company['groups_by_subtotal'][subtotal_to_show][amount_by_group_index]['formatted_tax_group_amount']"/>
-                                </td>
-                            </t>
-                            <t t-else="">
-                                <td>
-                                    <span class="text-nowrap" t-esc="amount_by_group['tax_group_name']"/>
-                                </td>
-                                <td class="text-right o_price_total">
-                                    <span class="text-nowrap" t-esc="amount_by_group['formatted_tax_group_amount']"/>
-                                </td>
-                                <td class="text-right o_price_total">
-                                    <span class="text-nowrap"
-                                          t-esc="tax_totals_company['groups_by_subtotal'][subtotal_to_show][amount_by_group_index]['formatted_tax_group_amount']"/>
-                                </td>
-                            </t>
-                        </tr>
-                    </t>
-                </t>
-            </xpath>
-
-            <!-- Add column for company currency amounts in both conditional branches -->
-            <xpath expr="//tr/t[1]/td[hasclass('o_price_total')]" position="after">
-                <td t-if="o.company_id.ei_enable and o.is_multicurrency" class="text-right o_price_total">
-                    <span class="text-nowrap"
-                          t-esc="tax_totals_company['groups_by_subtotal'][subtotal_to_show][amount_by_group_index]['formatted_tax_group_amount']"/>
-                </td>
-            </xpath>
-            <xpath expr="//tr/t[2]/td[hasclass('o_price_total')]" position="after">
-                <td t-if="o.company_id.ei_enable and o.is_multicurrency" class="text-right o_price_total">
-                    <span class="text-nowrap"
-                          t-esc="tax_totals_company['groups_by_subtotal'][subtotal_to_show][amount_by_group_index]['formatted_tax_group_amount']"/>
-                </td>
             </xpath>
         </template>
     </data>
