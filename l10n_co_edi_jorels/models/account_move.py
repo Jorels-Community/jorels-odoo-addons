@@ -604,9 +604,9 @@ class AccountMove(models.Model):
                 if invoice_line_id.discount:
                     discount = True
                     allowance_charges.update({'indicator': False})
-                    amount = abs(invoice_line_id.balance) * invoice_line_id.discount / (
-                            100.0 - invoice_line_id.discount)
-                    base_amount = abs(invoice_line_id.balance) + amount
+                    amount = round_curr(abs(invoice_line_id.balance) * invoice_line_id.discount / (
+                            100.0 - invoice_line_id.discount))
+                    base_amount = round_curr(abs(invoice_line_id.balance) + amount)
                     allowance_charge_reason = "Descuento"
                 else:
                     discount = False
