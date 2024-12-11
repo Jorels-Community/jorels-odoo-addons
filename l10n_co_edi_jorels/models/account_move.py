@@ -1120,7 +1120,7 @@ class AccountMove(models.Model):
         else:
             return operation[self.ei_operation]
 
-    def get_json_request(self):
+    def get_json_request(self, check_date=True):
         for rec in self:
             if rec.should_send_document_to_dian():
                 # Important for compatibility with old fields,
@@ -1161,7 +1161,7 @@ class AccountMove(models.Model):
 
                 # Issue date
                 if rec.invoice_date:
-                    if rec.invoice_date != fields.Date.context_today(rec):
+                    if check_date and rec.invoice_date != fields.Date.context_today(rec):
                         raise UserError(_("The issue date must be today's date"))
                     json_request['date'] = fields.Date.to_string(rec.invoice_date)
 
@@ -1543,7 +1543,7 @@ class AccountMove(models.Model):
             try:
                 # This line ensures that the electronic fields of the invoice are updated in Odoo,
                 # before request
-                requests_data = rec.get_json_request()
+                requests_data = rec.get_json_request(check_date=False)
                 _logger.debug('Customer data: %s', requests_data)
 
                 if rec.should_send_document_to_dian():
