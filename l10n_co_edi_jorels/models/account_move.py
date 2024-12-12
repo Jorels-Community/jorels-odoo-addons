@@ -1851,6 +1851,9 @@ class AccountMove(models.Model):
 
     def _compute_attached_zip_file(self):
         for move in self:
+            if not move.ei_attached_document_base64_bytes:
+                continue
+
             attached_document_name = move._compute_attached_document_name()
 
             # Create temporary directory for all files
