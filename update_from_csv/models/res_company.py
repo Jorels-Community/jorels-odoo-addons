@@ -43,10 +43,10 @@ class ResCompany(models.Model):
             _logger.debug("Import csv file: %s", file_name)
 
             module_path = module.get_module_path(module_name)
-            file_path = Path(module_path) / 'data' / file_name
+            file_path = Path(module_path).joinpath('data').joinpath(file_name)
             table_name = model.replace(".", "_")
 
-            with open(file_path, mode="r", encoding="utf-8-sig") as csv_file:
+            with open(str(file_path), mode="r", encoding="utf-8-sig") as csv_file:
                 csv_reader = csv.DictReader(csv_file, delimiter=',', quotechar='"')
                 line_count = 0
                 for row in csv_reader:
