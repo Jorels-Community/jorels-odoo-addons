@@ -4,11 +4,37 @@ import os
 from pathlib import Path
 from typing import Optional, Tuple
 
-from odoo import models, fields, _
+from odoo import api, models, fields, _
 from odoo.exceptions import UserError
 from odoo.modules import module
 
 _logger = logging.getLogger(__name__)
+
+
+class ModuleAnalysisMessage(models.Model):
+    _name = 'debug_ai.module.analysis.message'
+    _description = 'Module Analysis Message History'
+    _order = 'sequence, id'
+
+    analysis_id = fields.Many2one(
+        'debug_ai.module.analysis',
+        string='Analysis',
+        required=True,
+        ondelete='cascade'
+    )
+    sequence = fields.Integer(
+        string='Sequence',
+        default=10
+    )
+    role = fields.Selection([
+        ('user', 'User'),
+        ('assistant', 'Assistant')
+    ], string='Role', required=True)
+    content = fields.Text('Content', required=True)
+    timestamp = fields.Datetime(
+        string='Timestamp',
+        default=fields.Datetime.now
+    )
 
 
 class ModuleAnalysis(models.Model):
@@ -57,15 +83,35 @@ class ModuleAnalysis(models.Model):
         sanitize=True
     )
 
-    prompt_result = fields.Html(
+    prompt_result = fields.Text(
         string='Prompt Result',
         readonly=True,
-        sanitize=True,  # Desactivar sanitización
-        strip_classes=False,  # Mantener clases CSS
-        strip_style=False,  # Mantener estilos inline
+    )
+
+    # Agregar campo computado para visualización HTML
+    prompt_result_html = fields.Html(
+        string='Prompt Result HTML',
+        compute='_compute_prompt_result_html',
+        sanitize=True,
+        strip_classes=False,
+        strip_style=False,
     )
 
     prompt_request = fields.Text('Prompt request')
+
+    message_history_ids = fields.One2many(
+        'debug_ai.module.analysis.message',
+        'analysis_id',
+        string='Message History'
+    )
+
+    @api.depends('prompt_result')
+    def _compute_prompt_result_html(self):
+        for record in self:
+            if record.prompt_result:
+                record.prompt_result_html = self.env['debug.ai']._format_response(record.prompt_result)
+            else:
+                record.prompt_result_html = False
 
     def _get_module_path(self):
         module_name = self.technical_name
@@ -137,19 +183,28 @@ class ModuleAnalysis(models.Model):
                 os.remove(output_file)
             raise UserError(_('Error reading generated prompt: %s') % str(e))
 
-    def _process_with_claude(self, prompt_content):
-        """Process the prompt with Claude AI"""
+    def _process_with_claude(self, messages):
+        """Process the prompt with Claude AI using message history"""
         debug_ai = None
         try:
             debug_ai = self.env['debug.ai'].create({
                 'name': f'Module Analysis Prompt - {self.technical_name}',
-                'prompt': prompt_content,
-                'view_id': self.env.ref('base.view_view_form').id,  # Required field
+                'prompt': messages[-1]['content'],  # último mensaje
+                'view_id': self.env.ref('base.view_view_form').id,
                 'state': 'draft'
             })
 
             _logger.info(f"Sending prompt to Claude for module {self.technical_name}")
-            return debug_ai.claude_api_call_html(prompt_content), debug_ai
+            raw_response = debug_ai.claude_api_call_with_history(messages)
+
+            # Verificar que la respuesta no sea None antes de devolverla
+            if not raw_response:
+                raise UserError(_('Empty response received from Claude API'))
+
+            # Formatear la respuesta para visualización mientras mantenemos la versión raw
+            formatted_response = debug_ai._format_response(raw_response)
+
+            return formatted_response, debug_ai
 
         except Exception as e:
             if debug_ai:
@@ -157,7 +212,6 @@ class ModuleAnalysis(models.Model):
             raise UserError(_('Error processing with Claude: %s') % str(e))
 
     def action_prompt_module(self):
-        """Execute module prompt and store results"""
         self.ensure_one()
         debug_ai = None
         temp_file = None
@@ -166,16 +220,50 @@ class ModuleAnalysis(models.Model):
             # Problem description
             problem_description = self.prompt_request
 
+            if not problem_description:
+                raise UserError(_('Please provide a prompt request'))
+
             # Generate and read prompt
             prompt_content, temp_file = self._generate_and_read_prompt(problem_description)
 
-            # Process with Claude
-            claude_response, debug_ai = self._process_with_claude(prompt_content)
+            # Guardar el mensaje del usuario en el historial
+            self.env['debug_ai.module.analysis.message'].create({
+                'analysis_id': self.id,
+                'role': 'user',
+                'content': self.prompt_request,
+                'sequence': len(self.message_history_ids) + 1
+            })
 
-            # Update record
+            # Construir el historial de mensajes para Claude
+            messages = []
+            for msg in self.message_history_ids:
+                messages.append({
+                    "role": msg.role,
+                    "content": msg.content
+                })
+            messages.append({
+                "role": "user",
+                "content": prompt_content
+            })
+
+            # Process with Claude using message history
+            formatted_response, debug_ai = self._process_with_claude(messages)
+
+            # Obtener la respuesta raw para el historial
+            raw_response = debug_ai.claude_api_call_with_history(messages)
+
+            # Guardar la respuesta raw en el historial
+            self.env['debug_ai.module.analysis.message'].create({
+                'analysis_id': self.id,
+                'role': 'assistant',
+                'content': raw_response,
+                'sequence': len(self.message_history_ids) + 1
+            })
+
+            # Update record con la respuesta formateada para visualización
             self.write({
                 'analysis_date': fields.Datetime.now(),
-                'prompt_result': claude_response,
+                'prompt_result': formatted_response,
                 'state': 'done'
             })
 
@@ -365,6 +453,7 @@ class ModuleProcessor:
             _logger.error(f"Error processing directory: {str(e)}")
 
         return '\n'.join(content)
+
 
 class PromptCreator:
     def __init__(self, module_path, problem_description):

@@ -432,3 +432,67 @@ class DebugAI(models.Model):
                     'sticky': False,
                 }
             }
+
+    @api.model
+    def claude_api_call_with_history(self, messages):
+        """Llamada al API de Claude con historial de mensajes"""
+        api_key = self.env['ir.config_parameter'].sudo().get_param('debug_ai.api_key')
+        if not api_key:
+            raise UserError(_("Debug AI API Key not configured. Please set it in Settings."))
+
+        api_url = "https://api.anthropic.com/v1/messages"
+        headers = {
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+            "x-api-key": api_key
+        }
+        data = {
+            "model": "claude-3-5-sonnet-20241022",
+            "messages": messages,
+            "max_tokens": 8192,
+            "stream": True
+        }
+
+        try:
+            _logger.info(f"Sending request to Claude API")
+            response = requests.post(api_url, headers=headers, json=data, stream=True)
+            response.raise_for_status()
+
+            full_text = ""
+            for line in response.iter_lines():
+                if not line:
+                    continue
+
+                try:
+                    decoded_line = line.decode('utf-8')
+                    if not decoded_line.startswith('data: '):
+                        continue
+
+                    event_data = json.loads(decoded_line[6:])
+                    if event_data.get('type') == 'content_block_delta':
+                        if 'text' in event_data.get('delta', {}):
+                            full_text += event_data['delta']['text']
+
+                except json.JSONDecodeError as e:
+                    _logger.warning(f"Error decoding JSON from Claude: {e}")
+                    continue
+                except Exception as e:
+                    _logger.warning(f"Unexpected error processing Claude response line: {e}")
+                    continue
+
+            if not full_text.strip():
+                raise UserError(_("Claude API response is empty. Please check the prompt or try again."))
+
+            return full_text.strip()
+
+        except requests.RequestException as e:
+            error_message = f"API call error: {str(e)}"
+            if hasattr(e, 'response') and e.response is not None:
+                error_message += f"\nStatus code: {e.response.status_code}"
+                error_message += f"\nResponse content: {e.response.text}"
+            _logger.error(error_message)
+            raise UserError(_(error_message))
+        except Exception as e:
+            _logger.exception("Unexpected error in claude_api_call")
+            error_message = f"Unexpected error: {str(e)}"
+            raise UserError(_(error_message))

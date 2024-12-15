@@ -31,9 +31,9 @@
                                         class="oe_highlight"/>
                             </group>
                             <div class="claude-response-wrapper">
-                                <field name="prompt_result"
+                                <field name="prompt_result_html"
                                        nolabel="1"
-                                       attrs="{'readonly': True}"
+                                       readonly="1"
                                        widget="html"
                                        options="{'safe': true, 'resizable': true}"/>
                             </div>
@@ -46,6 +46,16 @@
                                         class="oe_highlight"/>
                             </group>
                             <field name="analysis_result" nolabel="1" attrs="{'readonly': True}" widget="html"/>
+                        </page>
+                        <page string="Message History">
+                            <field name="message_history_ids" readonly="1">
+                                <tree>
+                                    <field name="sequence" invisible="1"/>
+                                    <field name="role"/>
+                                    <field name="timestamp"/>
+                                    <field name="content"/>
+                                </tree>
+                            </field>
                         </page>
                     </notebook>
                 </sheet>
