@@ -317,40 +317,36 @@ class FileReader:
             return ''.join(lines)
 
 
-class GitignoreHandler:
+class IgnoreHandler:
     @staticmethod
-    def parse_gitignore(gitignore_path):
-        """Parse .gitignore file and return list of patterns"""
-        if not os.path.exists(gitignore_path):
+    def parse_ignore_file(ignore_file_path):
+        """Parse ignore file and return list of patterns"""
+        if not os.path.exists(ignore_file_path):
             return []
 
         patterns = []
-        with open(gitignore_path, 'r') as f:
+        with open(ignore_file_path, 'r') as f:
             for line in f:
                 line = line.strip()
                 if line and not line.startswith('#'):
-                    # Eliminar el slash inicial si existe, ya que manejaremos las rutas de forma relativa
                     if line.startswith('/'):
                         line = line[1:]
-                    # Eliminar el slash final si existe
                     if line.endswith('/'):
                         line = line[:-1]
                     patterns.append(line)
 
-        _logger.info(f"Parsed gitignore patterns: {patterns}")
+        _logger.info(f"Parsed ignore patterns from {ignore_file_path}: {patterns}")
         return patterns
 
     @staticmethod
     def should_ignore(file_path: str, patterns: list, module_root: str) -> bool:
         """
-        Check if file should be ignored based on gitignore patterns
+        Check if file should be ignored based on ignore patterns
         """
         try:
-            # Convertir rutas a Path objects para un manejo más robusto
             file_path = Path(file_path)
             module_root = Path(module_root)
 
-            # Obtener la ruta relativa desde la raíz del módulo
             try:
                 relative_path = file_path.relative_to(module_root)
                 relative_str = str(relative_path).replace('\\', '/')  # Normalizar separadores
@@ -360,9 +356,7 @@ class GitignoreHandler:
 
             _logger.debug(f"Checking path: {relative_str} against patterns")
 
-            # Comprobar cada patrón
             for pattern in patterns:
-                # Verificar si el inicio de la ruta relativa coincide con el patrón
                 path_parts = relative_str.split('/')
                 current_path = ''
 
@@ -375,7 +369,6 @@ class GitignoreHandler:
                         _logger.debug(f"Path {relative_str} matches pattern {pattern}")
                         return True
 
-                    # También probar con el patrón como un prefijo directo
                     if current_path.startswith(pattern + '/'):
                         _logger.debug(f"Path {relative_str} starts with pattern {pattern}")
                         return True
@@ -391,18 +384,30 @@ class GitignoreHandler:
 class ModuleProcessor:
     def __init__(self, directory):
         self.directory = os.path.abspath(directory)
-        self.gitignore_patterns = []
+        self.ignore_patterns = []
+
+        # Procesar patrones de .gitignore
         gitignore_path = os.path.join(self.directory, '.gitignore')
         if os.path.exists(gitignore_path):
-            self.gitignore_patterns = GitignoreHandler.parse_gitignore(gitignore_path)
-            _logger.info(f"Initialized ModuleProcessor with gitignore patterns: {self.gitignore_patterns}")
+            self.ignore_patterns.extend(IgnoreHandler.parse_ignore_file(gitignore_path))
+            _logger.info(f"Loaded .gitignore patterns from {gitignore_path}")
         else:
             _logger.warning(f"No .gitignore file found at {gitignore_path}")
+
+        # Procesar patrones de .aignore
+        aignore_path = os.path.join(self.directory, '.aignore')
+        if os.path.exists(aignore_path):
+            self.ignore_patterns.extend(IgnoreHandler.parse_ignore_file(aignore_path))
+            _logger.info(f"Loaded .aignore patterns from {aignore_path}")
+        else:
+            _logger.warning(f"No .aignore file found at {aignore_path}")
+
+        _logger.info(f"Total ignore patterns: {len(self.ignore_patterns)}")
 
     def should_process_path(self, path: str) -> bool:
         """Check if a path should be processed"""
         try:
-            should_ignore = GitignoreHandler.should_ignore(path, self.gitignore_patterns, self.directory)
+            should_ignore = IgnoreHandler.should_ignore(path, self.ignore_patterns, self.directory)
             _logger.info(f"Checking path: {path} - Should ignore: {should_ignore}")
             return not should_ignore
         except Exception as e:
