@@ -386,6 +386,9 @@ class ModuleProcessor:
         self.directory = os.path.abspath(directory)
         self.ignore_patterns = []
 
+        # Agregar patrones por defecto para directorios que empiezan con punto
+        self.ignore_patterns.append(".*")  # Este patrón ignorará cualquier archivo o directorio que empiece con punto
+
         # Procesar patrones de .gitignore
         gitignore_path = os.path.join(self.directory, '.gitignore')
         if os.path.exists(gitignore_path):
@@ -407,9 +410,17 @@ class ModuleProcessor:
     def should_process_path(self, path: str) -> bool:
         """Check if a path should be processed"""
         try:
+            # Verificar si es un directorio o archivo que empieza con punto
+            basename = os.path.basename(path)
+            if basename.startswith('.'):
+                _logger.info(f"Skipping dot path: {path}")
+                return False
+
+            # Verificar otros patrones de ignore
             should_ignore = IgnoreHandler.should_ignore(path, self.ignore_patterns, self.directory)
             _logger.info(f"Checking path: {path} - Should ignore: {should_ignore}")
             return not should_ignore
+
         except Exception as e:
             _logger.error(f"Error in should_process_path: {str(e)}")
             return True
@@ -420,24 +431,14 @@ class ModuleProcessor:
 
         try:
             for root, dirs, files in os.walk(self.directory):
-                # Primero verificar si el directorio actual debe ser ignorado
                 relative_root = os.path.relpath(root, self.directory).replace('\\', '/')
                 _logger.info(f"Processing directory: {relative_root}")
 
-                if not self.should_process_path(root):
-                    _logger.info(f"Skipping ignored directory: {relative_root}")
-                    dirs[:] = []  # No procesar subdirectorios
-                    continue
-
-                # Filtrar directorios ignorados
-                original_dirs = dirs.copy()
+                # Filtrar directorios que empiezan con punto y otros ignorados
                 dirs[:] = [d for d in dirs if self.should_process_path(os.path.join(root, d))]
-                if len(dirs) != len(original_dirs):
-                    _logger.info(f"Filtered out directories: {set(original_dirs) - set(dirs)}")
 
-                # Procesar archivos
                 for file in files:
-                    if file == '.gitignore':
+                    if file.startswith('.'):
                         continue
 
                     file_path = os.path.join(root, file)
@@ -463,6 +464,7 @@ class ModuleProcessor:
             _logger.error(f"Error processing directory: {str(e)}")
 
         return '\n'.join(content)
+
 
 
 class PromptCreator:
