@@ -308,8 +308,13 @@ class FileReader:
 
         with open(file_path, 'r', encoding='utf-8') as file:
             if max_lines:
-                return ''.join(file.readline() for _ in range(max_lines))
-            return file.read()
+                lines = [line for line in (file.readline() for _ in range(max_lines))
+                         if not line.strip().startswith('#')]
+                return ''.join(lines)
+
+            lines = [line for line in file.readlines()
+                     if not line.strip().startswith('#')]
+            return ''.join(lines)
 
 
 class GitignoreHandler:
