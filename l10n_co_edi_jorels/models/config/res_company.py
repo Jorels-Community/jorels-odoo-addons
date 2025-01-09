@@ -165,19 +165,23 @@ class ResCompany(models.Model):
             document_type = rec.partner_id.l10n_latam_identification_type_id.l10n_co_document_code
             if document_type:
                 values = {
+                    'rut': 6,
+                    'national_citizen_id': 3,
                     'civil_registration': 1,
                     'id_card': 2,
-                    'id_document': 3,
-                    'national_citizen_id': 3,
-                    'residence_document': 4,
-                    'foreign_id_card': 5,
-                    'rut': 6,
+                    'foreign_colombian_card': 4,
+                    'foreign_resident_card': 5,
                     'passport': 7,
-                    'external_id': 8,
-                    'diplomatic_card': 0,
+                    'PEP': 24,
+                    'foreign_id_card': 8,
+                    'external_id': 9,
+                    'niup_id': 10,
+                    'id_document': 3,
+                    'PPT': 38,
+                    'vat': 6,
                 }
                 document_type_id = values[document_type]
-                if 1 <= document_type_id <= 8:
+                if document_type_id in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 24, 38):
                     return document_type_id
             return None
 

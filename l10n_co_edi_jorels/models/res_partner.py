@@ -105,6 +105,7 @@ class ResPartner(models.Model):
             'niup_id': 10,
             'id_document': 3,
             'PPT': 38,
+            'vat': 6,
         }
 
         for partner in self:
