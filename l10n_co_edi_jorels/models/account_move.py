@@ -1826,10 +1826,31 @@ class AccountMove(models.Model):
         for move in self.filtered(lambda m: m.is_to_send_edi_email()):
             move_result = result.setdefault(move.id, {})
 
-            if move.ei_zip_name:
-                attached_document_name = 'ad' + move.ei_zip_name[1:-4]
-            else:
-                attached_document_name = move.ei_uuid
+            if not move.company_id.ei_enable or not move.is_to_send_edi_email():
+                continue
+
+            move._compute_attached_zip_file()
+            attached_document_name = move._compute_attached_document_name()
+            zip_name = f"{attached_document_name}.zip"
+            attachments += [(zip_name, move.ei_attached_zip_base64_bytes)]
+
+            edi_attachments = {'attachments': attachments}
+            move_result.setdefault('attachment_ids', []).extend(edi_attachments.get('attachment_ids', []))
+            move_result.setdefault('attachments', []).extend(edi_attachments.get('attachments', []))
+        return result
+
+    def _compute_attached_document_name(self):
+        self.ensure_one()
+        if self.ei_zip_name:
+            attached_document_name = 'ad' + self.ei_zip_name[1:-4]
+        else:
+            attached_document_name = self.ei_uuid
+
+        return attached_document_name
+
+    def _compute_attached_zip_file(self):
+        for move in self:
+            attached_document_name = move._compute_attached_document_name()
 
             pdf_name = attached_document_name + '.pdf'
             pdf_path = Path(tempfile.gettempdir()) / pdf_name
@@ -1858,12 +1879,15 @@ class AccountMove(models.Model):
             with open(zip_path, 'rb') as f:
                 attached_zip = f.read()
                 ei_attached_zip_base64_bytes = base64.encodebytes(attached_zip)
-                attachments += [(zip_name, ei_attached_zip_base64_bytes)]
                 move.write({
                     'ei_attached_zip_base64_bytes': ei_attached_zip_base64_bytes
                 })
 
-            edi_attachments = {'attachments': attachments}
-            move_result.setdefault('attachment_ids', []).extend(edi_attachments.get('attachment_ids', []))
-            move_result.setdefault('attachments', []).extend(edi_attachments.get('attachments', []))
-        return result
+    def action_send_and_print(self):
+        for rec in self:
+            if not rec.company_id.ei_enable or not rec.is_to_send_edi_email():
+                continue
+
+            rec._compute_attached_zip_file()
+
+        return super().action_send_and_print()
