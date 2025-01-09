@@ -125,7 +125,7 @@ class Radian(models.Model):
     def is_to_send_edi_email(self):
         self.ensure_one()
         return self.edi_is_valid \
-            and self.state != 'draft' \
+            and self.state == 'posted' \
             and bool(self.edi_uuid) \
             and bool(self.edi_attached_document_base64)
 
