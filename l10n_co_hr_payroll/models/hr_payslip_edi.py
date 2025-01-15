@@ -153,6 +153,17 @@ class HrPayslipEdi(models.Model):
 
         return True
 
+    @api.model
+    def reset_payroll_values(self):
+        return {
+            'payment_form_id': 1,
+            'payment_method_id': 1,
+            'accrued_total_amount': 0,
+            'deductions_total_amount': 0,
+            'total_amount': 0,
+            'worked_days_total': 0,
+        }
+
     @api.multi
     def get_json_request(self):
         for rec in self:
@@ -228,12 +239,27 @@ class HrPayslipEdi(models.Model):
 
             # Others fields
             if rec.payslip_ids:
-                for index, payslip in enumerate(rec.payslip_ids):
+                # Normal payslips
+                general_slips = rec.payslip_ids.filtered(lambda slip: not slip.is_settlement)
+                for index, payslip in enumerate(general_slips):
+                    temp_edi_payload = json.loads(payslip.edi_payload)
                     if index > 0:
-                        json_request = rec.join_dicts(json_request, json.loads(payslip.edi_payload),
-                                                      fields.Date.to_string(rec.date))
+                        json_request = rec.join_dicts(json_request, temp_edi_payload, fields.Date.to_string(rec.date))
                     else:
-                        json_request = json.loads(payslip.edi_payload)
+                        json_request = temp_edi_payload
+                if not json_request:
+                    rec.write(self.reset_payroll_values())
+                    return {}
+
+                # Settlement payslips
+                settlement_slips = rec.payslip_ids.filtered(lambda slip: slip.is_settlement)
+                for index, payslip in enumerate(settlement_slips):
+                    temp_edi_payload = json.loads(payslip.edi_payload)
+                    temp_edi_payload['period'] = json_request['period']
+                    json_request = rec.join_dicts(json_request, temp_edi_payload, fields.Date.to_string(rec.date))
+            else:
+                rec.write(self.reset_payroll_values())
+                return {}
 
             # Sequence
             if sequence:
