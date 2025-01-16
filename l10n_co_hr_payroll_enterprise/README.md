@@ -21,7 +21,7 @@ Jorels SAS
 Under LGPL (Lesser General Public License)
 
 ## Project status
-Tested in production on Odoo.
+Tested in production on Odoo
 
 ## Description
 Odoo module for electronic payroll for Colombia (Enterprise)
