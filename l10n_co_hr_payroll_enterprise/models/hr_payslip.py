@@ -81,15 +81,15 @@ class HrPayslip(models.Model):
     ], string='Month', compute='_compute_month', store=True, copy=False)
     year = fields.Integer(string='Year', compute='_compute_year', store=True, copy=False)
 
-    @api.depends('date_from')
+    @api.depends('date_to')
     def _compute_month(self):
         for rec in self:
-            rec.month = str(rec.date_from.month) if rec.date_from else None
+            rec.month = str(rec.date_to.month) if rec.date_to else None
 
-    @api.depends('date_from')
+    @api.depends('date_to')
     def _compute_year(self):
         for rec in self:
-            rec.year = rec.date_from.year
+            rec.year = rec.date_to.year if rec.date_to else None
 
     def _format_date_hours(self, date, hours):
         date_hours = datetime(date.year,
