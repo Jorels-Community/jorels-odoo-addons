@@ -71,11 +71,13 @@ odoo.define('l10n_co_edi_jorels_pos.models', function(require) {
         'email_edi',
     ]);
     exports.load_fields('res.company', ['municipality_id', 'city']);
+    exports.load_fields('pos.config', ['invoice_type']);
 
     exports.Order = exports.Order.extend({
-        initialize: function(attributes,options){
+        initialize: function(attributes, options) {
             OrderSuper.prototype.initialize.call(this, attributes, options);
-            this.to_electronic_invoice = false;
+            const invoiceType = this.pos.config.invoice_type;
+            this.to_electronic_invoice = invoiceType === 'electronic' ? true : false;
         },
         init_from_JSON: function(json) {
             OrderSuper.prototype.init_from_JSON.call(this, json);
@@ -112,9 +114,26 @@ odoo.define('l10n_co_edi_jorels_pos.models', function(require) {
         },
         set_to_electronic_invoice: function(to_electronic_invoice) {
             this.assert_editable();
-            this.to_electronic_invoice = to_electronic_invoice;
+            const invoiceType = this.pos.config.invoice_type;
+            if (!this.is_to_invoice()) {
+                this.to_electronic_invoice = false;
+                return;
+            }
+            if (invoiceType === 'normal') {
+                this.to_electronic_invoice = false;
+            }
+            else if (invoiceType === 'electronic') {
+                this.to_electronic_invoice = true;
+            }
+            else {
+                this.to_electronic_invoice = to_electronic_invoice;
+            }
         },
         is_to_electronic_invoice: function(){
+            const invoiceType = this.pos.config.invoice_type;
+            if (!this.is_to_invoice()) return false;
+            if (invoiceType === 'normal') return false;
+            if (invoiceType === 'electronic') return true;
             return this.to_electronic_invoice;
         }
     });
