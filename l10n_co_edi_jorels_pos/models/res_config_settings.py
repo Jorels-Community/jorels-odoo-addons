@@ -33,3 +33,11 @@ class ResConfigSettings(models.TransientModel):
 
     pos_electronic_invoice_journal_id = fields.Many2one(related='pos_config_id.electronic_invoice_journal_id',
                                                         readonly=False)
+    invoice_type = fields.Selection([
+        ('normal', 'Normal invoice'),
+        ('electronic', 'Electronic invoice'),
+        ('both', 'Both (normal and electronic)')
+    ], required=True, related='pos_config_id.invoice_type', readonly=False,
+        help="Normal: Only normal invoices\n"
+             "Electronic: Only electronic invoices\n"
+             "Both: Allowed both normal and electronic invoices")

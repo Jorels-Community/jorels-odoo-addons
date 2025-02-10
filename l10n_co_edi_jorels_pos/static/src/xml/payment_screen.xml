@@ -23,7 +23,7 @@
     <t t-name="l10n_co_edi_jorels_pos.PaymentScreenButtons" t-inherit="point_of_sale.PaymentScreenButtons" t-inherit-mode="extension">
         <xpath expr="//button[hasclass('js_invoice')]" position="after">
             <button class="button js_electronic_invoice btn btn-light py-3 text-start rounded-0 border-bottom"
-                    t-att-class="{ 'highlight text-bg-primary': currentOrder.is_to_electronic_invoice(), hidden: !currentOrder.is_to_invoice() }"
+                    t-att-class="{ 'highlight text-bg-primary': currentOrder.is_to_electronic_invoice(), hidden: !currentOrder.is_to_invoice()  or !(pos.config.invoice_type === 'both') }"
                     t-on-click="toggleIsToElectronicInvoice">
                 <i class="fa fa-file-text-o me-2"/>Electronic Invoice
             </button>

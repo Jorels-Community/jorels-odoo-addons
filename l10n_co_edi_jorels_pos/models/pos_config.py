@@ -40,6 +40,15 @@ class PosConfig(models.Model):
         help="Accounting journal used to create electronic invoices.",
         default=_default_electronic_invoice_journal)
 
+    invoice_type = fields.Selection([
+        ('normal', 'Normal invoice'),
+        ('electronic', 'Electronic invoice'),
+        ('both', 'Both (normal and electronic)')
+    ], string='Invoice type', default='both', required=True,
+        help="Normal: Only normal invoices\n"
+             "Electronic: Only electronic invoices\n"
+             "Both: Allowed both normal and electronic invoices")
+
     @api.constrains('pricelist_id', 'use_pricelist', 'available_pricelist_ids', 'journal_id', 'invoice_journal_id',
                     'electronic_invoice_journal_id', 'payment_method_ids')
     def _check_currencies(self):
