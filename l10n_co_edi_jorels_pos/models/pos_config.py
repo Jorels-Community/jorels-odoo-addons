@@ -37,6 +37,15 @@ class PosConfig(models.Model):
         help="Accounting journal used to create electronic invoices.",
         default=_default_electronic_invoice_journal)
 
+    invoice_type = fields.Selection([
+        ('normal', 'Normal invoice'),
+        ('electronic', 'Electronic invoice'),
+        ('both', 'Both (normal and electronic)')
+    ], string='Invoice type', default='both', required=True,
+        help="Normal: Only normal invoices\n"
+             "Electronic: Only electronic invoices\n"
+             "Both: Allowed both normal and electronic invoices")
+
     @api.constrains('company_id', 'electronic_invoice_journal_id')
     def _check_company_electronic_invoice_journal(self):
         for config in self:
