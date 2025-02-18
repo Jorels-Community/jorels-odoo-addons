@@ -51,8 +51,8 @@ class AccountMove(models.Model):
                                            readonly=True, states={'draft': [('readonly', False)]},
                                            ondelete='RESTRICT')
 
-    def get_json_request(self):
-        json_request = super(AccountMove, self).get_json_request()
+    def get_json_request(self, check_date=True):
+        json_request = super(AccountMove, self).get_json_request(check_date)
         health_data = {}
 
         # Collect health-related data
