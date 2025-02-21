@@ -59,7 +59,7 @@ class EdiGen(models.TransientModel):
             ('month', '=', self.month),
             ('credit_note', '=', False),
             ('origin_payslip_id', '=', False),
-            ('state', '=', 'done')
+            ('state', 'in', ('done', 'paid'))
         ])
 
         # Existing Credit notes
@@ -68,7 +68,7 @@ class EdiGen(models.TransientModel):
             ('month', '=', self.month),
             ('credit_note', '=', True),
             ('origin_payslip_id', '!=', False),
-            ('state', '=', 'done')
+            ('state', 'in', ('done', 'paid'))
         ])
 
         # Filtered valid Payslips
