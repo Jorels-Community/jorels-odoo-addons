@@ -559,6 +559,36 @@ class AccountMove(models.Model):
             "payable_value": payable_amount
         }
 
+    def get_ei_withholding_tax_totals(self, lines):
+        """
+        Consolidates withholding taxes by summing values for each unique code.
+
+        Args:
+            lines: List of dictionaries containing 'withholding_tax_totals'
+
+        Returns:
+            List of dictionaries with consolidated totals per tax code
+        """
+        result = {}
+
+        for line in lines:
+            for tax in line.get('withholding_tax_totals', []):
+                code = tax['code']
+
+                if code in result:
+                    # Check for consistent percentage
+                    if result[code]['percent'] != tax['percent']:
+                        raise ValueError(f"Inconsistent percentage for code {code}")
+
+                    # Sum values
+                    result[code]['tax_value'] += tax['tax_value']
+                    result[code]['taxable_value'] += tax['taxable_value']
+                else:
+                    # Copy the tax dictionary to avoid modifying the original
+                    result[code] = dict(tax)
+
+        return list(result.values())
+
     def get_ei_lines(self):
         self.ensure_one()
 
@@ -576,6 +606,7 @@ class AccountMove(models.Model):
                 products = {}
                 allowance_charges = {}
                 tax_totals = {'tax_totals': []}
+                withholding_tax_totals = {'withholding_tax_totals': []}
                 products.update({'price_value': price_unit})
                 products.update({'base_quantity': invoice_line_id.quantity})
 
@@ -658,6 +689,7 @@ class AccountMove(models.Model):
                 # Calculate tax totals for invoice line
                 for invoice_line_tax_id in invoice_line_id.tax_ids:
                     tax_total = {}
+                    withholding_tax_total = {}
 
                     if invoice_line_tax_id.edi_tax_id.id:
                         edi_tax_name = invoice_line_tax_id.edi_tax_id.name
@@ -704,7 +736,19 @@ class AccountMove(models.Model):
                                     tax_total.update({'percent': invoice_line_tax_id.amount})
                                     tax_totals['tax_totals'].append(tax_total)
                             else:
-                                raise UserError(_("Electronic invoicing is not yet compatible with this tax type."))
+                                raise UserError(
+                                    _("Electronic invoicing is not yet compatible with this tax type: %s" % tax_name))
+                        elif edi_tax_name[:4] == 'Rete' and dian_report_tax_base == 'withholding_report':
+                            if invoice_line_tax_id.amount_type == 'percent' and invoice_line_tax_id.amount < 0:
+                                withholding_tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
+                                withholding_tax_total.update({'tax_value': round_curr(
+                                    abs(taxable_amount_company * invoice_line_tax_id.amount / 100.0))})
+                                withholding_tax_total.update({'taxable_value': round_curr(abs(taxable_amount_company))})
+                                withholding_tax_total.update({'percent': abs(invoice_line_tax_id.amount)})
+                                withholding_tax_totals['withholding_tax_totals'].append(withholding_tax_total)
+                            else:
+                                raise UserError(
+                                    _("Electronic invoicing is not yet compatible with this tax type: %s" % tax_name))
                     else:
                         raise UserError(_("All taxes must be assigned a tax type (DIAN)."))
 
@@ -718,6 +762,10 @@ class AccountMove(models.Model):
                 # Taxes are attached inside this json
                 if tax_totals['tax_totals']:
                     invoice_temps.update({'tax_totals': tax_totals['tax_totals']})
+
+                # Withholdings are attached inside this json
+                if withholding_tax_totals['withholding_tax_totals']:
+                    invoice_temps.update({'withholding_tax_totals': withholding_tax_totals['withholding_tax_totals']})
 
                 # Transport compatibility
                 if self.ei_operation == 'transport':
@@ -1240,6 +1288,7 @@ class AccountMove(models.Model):
                 invoice_rec = None
                 json_request['legal_monetary_totals'] = rec.get_ei_legal_monetary_totals()
                 json_request['lines'] = rec.get_ei_lines()
+                json_request['withholding_tax_totals'] = rec.get_ei_withholding_tax_totals(json_request['lines'])
                 json_request['payment_forms'] = [rec.get_ei_payment_form()]
                 if type_edi_document in ('invoice', 'doc_support'):
                     # Sales invoice
