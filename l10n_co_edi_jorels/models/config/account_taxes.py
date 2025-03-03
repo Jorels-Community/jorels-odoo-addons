@@ -30,5 +30,6 @@ class AccountTax(models.Model):
 
     dian_report_tax_base = fields.Selection([
         ('auto', 'Auto'),
-        ('no_report', 'Not reporting the taxable base to the DIAN')
+        ('no_report', 'Not reporting the taxable base to the DIAN'),
+        ('withholding_report', 'Report withholding (self-withholding agents)'),
     ], string="Taxable base (DIAN)", default='auto', copy=True)
