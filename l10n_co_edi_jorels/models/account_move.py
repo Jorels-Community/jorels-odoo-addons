@@ -749,11 +749,32 @@ class AccountMove(models.Model):
                                     _("Electronic invoicing is not yet compatible with this tax type: %s" % tax_name))
                         elif edi_tax_name[:4] == 'Rete' and dian_report_tax_base == 'withholding_report':
                             if invoice_line_tax_id.amount_type == 'percent' and invoice_line_tax_id.amount < 0:
-                                withholding_tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
-                                withholding_tax_total.update({'tax_value': round_curr(
-                                    abs(taxable_amount_company * invoice_line_tax_id.amount / 100.0))})
-                                withholding_tax_total.update({'taxable_value': round_curr(abs(taxable_amount_company))})
-                                withholding_tax_total.update({'percent': abs(invoice_line_tax_id.amount)})
+                                if invoice_line_tax_id.edi_tax_id.name == 'ReteIVA':
+                                    tax_percent = abs(invoice_line_tax_id.amount)
+                                    if tax_percent in [0.75, 2.4, 2.85]:
+                                        tax_percent_report = 15.0
+                                    elif tax_percent in [5.0, 16.0, 19.0]:
+                                        tax_percent_report = 100.0
+                                    else:
+                                        raise UserError(_('This type of tax ReteIVA is not supported'))
+
+                                    taxable_value_report = abs(
+                                        taxable_amount_company * invoice_line_tax_id.amount / tax_percent_report)
+
+                                    tax_value = taxable_value_report * tax_percent_report / 100.0
+                                    taxable_value = taxable_value_report
+                                    percent = tax_percent_report
+                                else:
+                                    tax_value = abs(taxable_amount_company * invoice_line_tax_id.amount / 100.0)
+                                    taxable_value = abs(taxable_amount_company)
+                                    percent = abs(invoice_line_tax_id.amount)
+
+                                withholding_tax_total.update({
+                                    'code': invoice_line_tax_id.edi_tax_id.id,
+                                    'tax_value': round_curr(tax_value),
+                                    'taxable_value': round_curr(taxable_value),
+                                    'percent': percent
+                                })
                                 withholding_tax_totals['withholding_tax_totals'].append(withholding_tax_total)
                             else:
                                 raise UserError(
