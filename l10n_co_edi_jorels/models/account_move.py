@@ -571,7 +571,7 @@ class AccountMove(models.Model):
                 if code in result:
                     # Check for consistent percentage
                     if result[code]['percent'] != tax['percent']:
-                        raise ValueError(f"Inconsistent percentage for code {code}")
+                        raise UserError("Inconsistent percentage for code {}".format(code))
 
                     # Sum values
                     result[code]['tax_value'] += tax['tax_value']
