@@ -93,8 +93,7 @@ class HrPayslip(models.Model):
                               date.day) + timedelta(hours=hours)
         return fields.Datetime.to_string(date_hours)
 
-    def compute_sheet(self):
-
+    def action_compute_sheet(self):
         for rec in self:
             # Read all codes
             all_earn_code_list = []
@@ -236,7 +235,7 @@ class HrPayslip(models.Model):
             if not rec.number:
                 rec.number = _('New')
 
-        res = super(HrPayslip, self).compute_sheet()
+        res = super(HrPayslip, self).action_compute_sheet()
         self.compute_totals()
 
         # The sheet and the totals are calculated again,
@@ -244,7 +243,7 @@ class HrPayslip(models.Model):
         # Especially the field worked_days_total
         try:
             if int(self.env['ir.config_parameter'].sudo().get_param('jorels.payroll.recompute_sheet', 1)):
-                res = super(HrPayslip, self).compute_sheet()
+                res = super(HrPayslip, self).action_compute_sheet()
                 self.compute_totals()
         except ValueError as e:
             raise UserError("The system parameter 'jorels.payroll.recompute_sheet' is misconfigured. Use only 0 or 1")
@@ -1346,10 +1345,10 @@ class HrPayslip(models.Model):
             payload = json.dumps(rec.get_json_request(), indent=2, sort_keys=False)
             rec._status_zip(payload)
 
-    def refund_sheet(self):
+    def action_refund_sheet(self):
         # The following line is commented, because if applied, the sequence is incorrectly calculated
         # and the relationship to the original payroll would not be taken by default
-        # res = super(HrPayslip, self).refund_sheet()
+        # res = super(HrPayslip, self).action_refund_sheet()
         copied_payslip = None
         for payslip in self:
             if payslip.credit_note:
@@ -1362,7 +1361,7 @@ class HrPayslip(models.Model):
                                            })
             # It is important to call compute_sheet here,
             # so that the accounting of the adjustment notes works well.
-            copied_payslip.compute_sheet()
+            copied_payslip.action_compute_sheet()
             copied_payslip.action_payslip_done()
 
             if payslip.edi_payload and not copied_payslip.edi_payload:
