@@ -605,6 +605,98 @@ class AccountInvoice(models.Model):
         return list(result.values())
 
     @api.multi
+    def get_line_totals(self, invoice_line_tax_id, taxable_amount_company, invoice_line_id, commercial_sample,
+                        tax_totals, withholding_tax_totals, round_curr):
+        tax_total = {}
+        withholding_tax_total = {}
+
+        if invoice_line_tax_id.edi_tax_id.id:
+            edi_tax_name = invoice_line_tax_id.edi_tax_id.name
+            tax_name = invoice_line_tax_id.name
+            dian_report_tax_base = invoice_line_tax_id.dian_report_tax_base or 'auto'
+            # The information sent to DIAN should not include the withholdings
+            if edi_tax_name[:4] != 'Rete' \
+                    and not tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) \
+                    and not (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
+                if invoice_line_tax_id.amount_type == 'percent':
+                    tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
+                    tax_total.update({'tax_value': round_curr(
+                        taxable_amount_company * invoice_line_tax_id.amount / 100.0)})
+                    tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
+                    tax_total.update({'percent': invoice_line_tax_id.amount})
+                    tax_totals['tax_totals'].append(tax_total)
+                elif invoice_line_tax_id.amount_type == 'fixed':
+                    tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
+                    tax_total.update({'tax_value': round_curr(
+                        invoice_line_id.quantity * invoice_line_tax_id.amount)})
+                    tax_total.update({'taxable_value': invoice_line_id.quantity})
+                    # "886","number of international units","NIU"
+                    tax_total.update({'uom_code': 886})
+                    tax_total.update({'unit_value': round_curr(invoice_line_tax_id.amount)})
+                    tax_total.update({'base_uom': "1.000000"})
+                    tax_totals['tax_totals'].append(tax_total)
+                elif invoice_line_tax_id.amount_type == 'code':
+                    # For now, only compatible with percentage taxes
+                    if commercial_sample:
+                        tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
+                        tax_total.update({'tax_value': round_curr(invoice_line_id.price_total)})
+                        tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
+                        # The tax is rounded to 0 decimal places, integers. In case of rounding issues,
+                        # it is expected that this will be sufficient to correct the problem and at the
+                        # same time cover all possible percentage tax values for Colombia.
+                        tax_total.update({'percent': round(
+                            invoice_line_id.price_total / taxable_amount_company * 100)})
+                        tax_totals['tax_totals'].append(tax_total)
+                    else:
+                        tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
+                        tax_total.update({'tax_value': round_curr(
+                            taxable_amount_company * invoice_line_tax_id.amount / 100.0)})
+                        tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
+                        tax_total.update({'percent': invoice_line_tax_id.amount})
+                        tax_totals['tax_totals'].append(tax_total)
+                else:
+                    raise UserError(
+                        _("Electronic invoicing is not yet compatible with this tax type: %s" % tax_name))
+            elif edi_tax_name[:4] == 'Rete' and dian_report_tax_base == 'withholding_report':
+                if invoice_line_tax_id.amount_type == 'percent' and invoice_line_tax_id.amount < 0:
+                    if invoice_line_tax_id.edi_tax_id.name == 'ReteIVA':
+                        tax_percent = abs(invoice_line_tax_id.amount)
+                        if tax_percent in [0.75, 2.4, 2.85]:
+                            tax_percent_report = 15.0
+                        elif tax_percent in [5.0, 16.0, 19.0]:
+                            tax_percent_report = 100.0
+                        else:
+                            raise UserError(_('This type of tax ReteIVA is not supported'))
+
+                        taxable_value_report = abs(
+                            taxable_amount_company * invoice_line_tax_id.amount / tax_percent_report)
+
+                        tax_value = taxable_value_report * tax_percent_report / 100.0
+                        taxable_value = taxable_value_report
+                        percent = tax_percent_report
+                    else:
+                        tax_value = abs(taxable_amount_company * invoice_line_tax_id.amount / 100.0)
+                        taxable_value = abs(taxable_amount_company)
+                        percent = abs(invoice_line_tax_id.amount)
+
+                    withholding_tax_total.update({
+                        'code': invoice_line_tax_id.edi_tax_id.id,
+                        'tax_value': round_curr(tax_value),
+                        'taxable_value': round_curr(taxable_value),
+                        'percent': percent
+                    })
+                    withholding_tax_totals['withholding_tax_totals'].append(withholding_tax_total)
+                elif invoice_line_tax_id.amount_type == 'group':
+                    for children_tax_id in invoice_line_tax_id.children_tax_ids:
+                        self.get_line_totals(children_tax_id, taxable_amount_company, invoice_line_id,
+                                             commercial_sample, tax_totals, withholding_tax_totals, round_curr)
+                else:
+                    raise UserError(
+                        _("Electronic invoicing is not yet compatible with this tax type: %s" % tax_name))
+        else:
+            raise UserError(_("All taxes must be assigned a tax type (DIAN)."))
+
+    @api.multi
     def get_ei_lines(self):
         self.ensure_one()
 
@@ -708,90 +800,8 @@ class AccountInvoice(models.Model):
 
                 # Calculate tax totals for invoice line
                 for invoice_line_tax_id in invoice_line_id.invoice_line_tax_ids:
-                    tax_total = {}
-                    withholding_tax_total = {}
-
-                    if invoice_line_tax_id.edi_tax_id.id:
-                        edi_tax_name = invoice_line_tax_id.edi_tax_id.name
-                        tax_name = invoice_line_tax_id.name
-                        dian_report_tax_base = invoice_line_tax_id.dian_report_tax_base or 'auto'
-                        # The information sent to DIAN should not include the withholdings
-                        if edi_tax_name[:4] != 'Rete' \
-                                and not tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) \
-                                and not (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
-                            if invoice_line_tax_id.amount_type == 'percent':
-                                tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
-                                tax_total.update({'tax_value': round_curr(
-                                    taxable_amount_company * invoice_line_tax_id.amount / 100.0)})
-                                tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
-                                tax_total.update({'percent': invoice_line_tax_id.amount})
-                                tax_totals['tax_totals'].append(tax_total)
-                            elif invoice_line_tax_id.amount_type == 'fixed':
-                                tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
-                                tax_total.update({'tax_value': round_curr(
-                                    invoice_line_id.quantity * invoice_line_tax_id.amount)})
-                                tax_total.update({'taxable_value': invoice_line_id.quantity})
-                                # "886","number of international units","NIU"
-                                tax_total.update({'uom_code': 886})
-                                tax_total.update({'unit_value': round_curr(invoice_line_tax_id.amount)})
-                                tax_total.update({'base_uom': "1.000000"})
-                                tax_totals['tax_totals'].append(tax_total)
-                            elif invoice_line_tax_id.amount_type == 'code':
-                                # For now, only compatible with percentage taxes
-                                if commercial_sample:
-                                    tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
-                                    tax_total.update({'tax_value': round_curr(invoice_line_id.price_total)})
-                                    tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
-                                    # The tax is rounded to 0 decimal places, integers. In case of rounding issues,
-                                    # it is expected that this will be sufficient to correct the problem and at the
-                                    # same time cover all possible percentage tax values for Colombia.
-                                    tax_total.update({'percent': round(
-                                        invoice_line_id.price_total / taxable_amount_company * 100)})
-                                    tax_totals['tax_totals'].append(tax_total)
-                                else:
-                                    tax_total.update({'code': invoice_line_tax_id.edi_tax_id.id})
-                                    tax_total.update({'tax_value': round_curr(
-                                        taxable_amount_company * invoice_line_tax_id.amount / 100.0)})
-                                    tax_total.update({'taxable_value': round_curr(taxable_amount_company)})
-                                    tax_total.update({'percent': invoice_line_tax_id.amount})
-                                    tax_totals['tax_totals'].append(tax_total)
-                            else:
-                                raise UserError(
-                                    _("Electronic invoicing is not yet compatible with this tax type: %s" % tax_name))
-                        elif edi_tax_name[:4] == 'Rete' and dian_report_tax_base == 'withholding_report':
-                            if invoice_line_tax_id.amount_type == 'percent' and invoice_line_tax_id.amount < 0:
-                                if invoice_line_tax_id.edi_tax_id.name == 'ReteIVA':
-                                    tax_percent = abs(invoice_line_tax_id.amount)
-                                    if tax_percent in [0.75, 2.4, 2.85]:
-                                        tax_percent_report = 15.0
-                                    elif tax_percent in [5.0, 16.0, 19.0]:
-                                        tax_percent_report = 100.0
-                                    else:
-                                        raise UserError(_('This type of tax ReteIVA is not supported'))
-
-                                    taxable_value_report = abs(
-                                        taxable_amount_company * invoice_line_tax_id.amount / tax_percent_report)
-
-                                    tax_value = taxable_value_report * tax_percent_report / 100.0
-                                    taxable_value = taxable_value_report
-                                    percent = tax_percent_report
-                                else:
-                                    tax_value = abs(taxable_amount_company * invoice_line_tax_id.amount / 100.0)
-                                    taxable_value = abs(taxable_amount_company)
-                                    percent = abs(invoice_line_tax_id.amount)
-
-                                withholding_tax_total.update({
-                                    'code': invoice_line_tax_id.edi_tax_id.id,
-                                    'tax_value': round_curr(tax_value),
-                                    'taxable_value': round_curr(taxable_value),
-                                    'percent': percent
-                                })
-                                withholding_tax_totals['withholding_tax_totals'].append(withholding_tax_total)
-                            else:
-                                raise UserError(
-                                    _("Electronic invoicing is not yet compatible with this tax type: %s" % tax_name))
-                    else:
-                        raise UserError(_("All taxes must be assigned a tax type (DIAN)."))
+                    self.get_line_totals(invoice_line_tax_id, taxable_amount_company, invoice_line_id,
+                                         commercial_sample, tax_totals, withholding_tax_totals, round_curr)
 
                 # UPDATE ALL THE ELEMENTS OF THE PRODUCT
                 invoice_temps.update(products)
@@ -932,10 +942,23 @@ class AccountInvoice(models.Model):
                             # without currency conversion.
                             tax_amount = invoice_line_id.quantity * invoice_line_tax_id.amount
                             tax_amount_company = tax_amount / rate
-                        else:
-                            # For percent and code amount type
+                        elif invoice_line_tax_id.amount_type == 'percent':
+                            # For percent amount type
                             tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
                             tax_amount_company = taxable_amount_company * invoice_line_tax_id.amount / 100.0
+                        elif invoice_line_tax_id.amount_type == 'code':
+                            # For percent code amount type
+                            # TODO: Check if it also applies to code amount type or if it's only for percent
+                            tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
+                            tax_amount_company = taxable_amount_company * invoice_line_tax_id.amount / 100.0
+                        elif invoice_line_tax_id.amount_type == 'group':
+                            # Only compatible with self withholding group amount type, with zero report
+                            # TODO: Recursive iteration for make compatible with all tax types
+                            tax_amount = 0
+                            tax_amount_company = 0
+                        else:
+                            tax_amount = 0
+                            tax_amount_company = 0
 
                         if invoice_line_tax_id.edi_tax_id.id:
                             edi_tax_name = invoice_line_tax_id.edi_tax_id.name
