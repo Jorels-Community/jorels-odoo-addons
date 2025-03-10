@@ -1323,8 +1323,12 @@ class AccountMove(models.Model):
                 invoice_rec = None
                 json_request['legal_monetary_totals'] = rec.get_ei_legal_monetary_totals()
                 json_request['lines'] = rec.get_ei_lines()
-                json_request['withholding_tax_totals'] = rec.get_ei_withholding_tax_totals(json_request['lines'])
                 json_request['payment_forms'] = [rec.get_ei_payment_form()]
+
+                withholding_tax_totals = rec.get_ei_withholding_tax_totals(json_request['lines'])
+                if withholding_tax_totals:
+                    json_request['withholding_tax_totals'] = withholding_tax_totals
+
                 if type_edi_document in ('invoice', 'doc_support'):
                     # Sales invoice
                     billing_reference = False
