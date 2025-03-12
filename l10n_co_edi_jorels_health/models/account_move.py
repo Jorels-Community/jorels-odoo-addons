@@ -92,7 +92,7 @@ class AccountMove(models.Model):
             # Prepare person data
             person = {
                 'id_code': partner.edi_health_type_document_id.id or None,
-                'id_number': partner.vat or None,
+                'id_number': int(partner.edi_sanitize_vat) or None,
                 'name': partner.name or None,
                 'country_code': country.id or None,
                 'municipality_code': municipality_code or None,
