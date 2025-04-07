@@ -29,15 +29,18 @@
                 <xpath expr="//notebook" position="inside">
                     <page string="DIAN - Health" name="dian_health">
                         <group>
-                            <group>
+                            <group string="Health required info">
                                 <field name="ei_health_provider_ref"/>
-                                <field name="ei_health_partner_id" widget="many2one_avatar"/>
                                 <field name="ei_health_payment_method_id"/>
-                            </group>
-                            <group>
                                 <field name="ei_health_type_coverage_id"/>
                                 <field name="ei_health_contract"/>
                                 <field name="ei_health_policy"/>
+                            </group>
+                            <group string="Health service user">
+                                <field name="ei_health_partner_id" widget="res_partner_many2one"
+                                       context="{'show_address': 1, 'show_vat': True}"
+                                       options="{'always_reload': True, 'no_quick_create': True}"
+                                       domain="[('is_company', '=', False)]"/>
                             </group>
                         </group>
                     </page>
