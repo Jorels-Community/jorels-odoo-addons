@@ -115,10 +115,8 @@ class AccountMove(models.Model):
             raise UserError(_("The health payment method is mandatory."))
         if not self.ei_health_type_coverage_id:
             raise UserError(_("The health coverage type is mandatory."))
-        if not self.ei_health_contract:
-            raise UserError(_("The health contract number is mandatory."))
-        if not self.ei_health_policy:
-            raise UserError(_("The health policy number is mandatory."))
+        if self.ei_health_contract and self.ei_health_policy:
+            raise UserError(_("Please provide either health contract or police number, not both."))
 
         # Collect health-related data
         collection = {
@@ -128,9 +126,8 @@ class AccountMove(models.Model):
             'contract': self.ei_health_contract or None,
             'policy': self.ei_health_policy or None
         }
-        collection = {k: v for k, v in collection.items() if v is not None}
-        if collection:
-            health_data['collections'] = [collection]
+
+        health_data['collections'] = [collection]
 
         # Process partner data if available
         if self.ei_health_partner_id:
