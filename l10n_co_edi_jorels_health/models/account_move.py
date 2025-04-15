@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2024)
+# Jorels S.A.S. - Copyright (2025)
 #
 # This file is part of l10n_co_edi_jorels_health.
 #
@@ -76,13 +76,13 @@ class AccountMove(models.Model):
         ('ss_reporte', 'SS-Reporte'),
         ('ss_sinaporte', 'SS-SinAporte'),
     ], ondelete={
-        'ss_cufe': 'set default',
-        'ss_cude': 'set default',
-        'ss_pos': 'set default',
-        'ss_snum': 'set default',
-        'ss_recaudo': 'set default',
-        'ss_reporte': 'set default',
-        'ss_sinaporte': 'set default',
+        'ss_cufe': 'set standard',
+        'ss_cude': 'set standard',
+        'ss_pos': 'set standard',
+        'ss_snum': 'set standard',
+        'ss_recaudo': 'set standard',
+        'ss_reporte': 'set standard',
+        'ss_sinaporte': 'set standard',
     })
 
     def get_operation_code(self):
@@ -109,25 +109,26 @@ class AccountMove(models.Model):
 
         health_data = {}
 
-        if not self.ei_health_provider_ref:
-            raise UserError(_("The health service provider code is mandatory."))
-        if not self.ei_health_payment_method_id:
-            raise UserError(_("The health payment method is mandatory."))
-        if not self.ei_health_type_coverage_id:
-            raise UserError(_("The health coverage type is mandatory."))
-        if self.ei_health_contract and self.ei_health_policy:
-            raise UserError(_("Please provide either health contract or police number, not both."))
+        if self.ei_operation in ('ss_cufe', 'ss_cude', 'ss_pos', 'ss_snum'):
+            if not self.ei_health_provider_ref:
+                raise UserError(_("The health service provider code is mandatory."))
+            if not self.ei_health_payment_method_id:
+                raise UserError(_("The health payment method is mandatory."))
+            if not self.ei_health_type_coverage_id:
+                raise UserError(_("The health coverage type is mandatory."))
+            if self.ei_health_contract and self.ei_health_policy:
+                raise UserError(_("Please provide either health contract or police number, not both."))
 
-        # Collect health-related data
-        collection = {
-            'provider_ref': self.ei_health_provider_ref or None,
-            'payment_method_code': self.ei_health_payment_method_id.id or None,
-            'type_coverage_code': self.ei_health_type_coverage_id.id or None,
-            'contract': self.ei_health_contract or None,
-            'policy': self.ei_health_policy or None
-        }
+            # Collect health-related data
+            collection = {
+                'provider_ref': self.ei_health_provider_ref or None,
+                'payment_method_code': self.ei_health_payment_method_id.id or None,
+                'type_coverage_code': self.ei_health_type_coverage_id.id or None,
+                'contract': self.ei_health_contract or None,
+                'policy': self.ei_health_policy or None
+            }
 
-        health_data['collections'] = [collection]
+            health_data['collections'] = [collection]
 
         # Process partner data if available
         if self.ei_health_partner_id:
