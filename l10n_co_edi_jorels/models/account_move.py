@@ -1558,7 +1558,7 @@ class AccountMove(models.Model):
 
             try:
                 # This line ensures that the electronic fields of the invoice are updated in Odoo, before the request
-                requests_data = rec.get_json_request()
+                requests_data = rec.get_json_request(check_date=False)
                 _logger.debug('Customer data: %s', requests_data)
 
                 if rec.should_send_document_to_dian():
