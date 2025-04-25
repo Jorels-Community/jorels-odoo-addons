@@ -31,8 +31,8 @@ class AccountMoveSend(models.AbstractModel):
     _inherit = 'account.move.send'
 
     @api.model
-    def _get_default_mail_attachments_widget(self, move, mail_template, extra_edis=None, pdf_report=None):
-        res = super()._get_default_mail_attachments_widget(move, mail_template)
+    def _get_default_mail_attachments_widget(self, move, mail_template, **kwargs):
+        res = super()._get_default_mail_attachments_widget(move, mail_template, **kwargs)
         return res + self._get_invoice_edi_attachments_data(move)
 
     def _get_invoice_edi_attachments_data(self, move):
