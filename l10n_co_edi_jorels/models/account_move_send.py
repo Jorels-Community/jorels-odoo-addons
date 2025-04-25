@@ -30,8 +30,8 @@ _logger = logging.getLogger(__name__)
 class AccountMoveSend(models.TransientModel):
     _inherit = 'account.move.send'
 
-    def _get_default_mail_attachments_widget(self, move, mail_template):
-        res = super()._get_default_mail_attachments_widget(move, mail_template)
+    def _get_default_mail_attachments_widget(self, move, mail_template, **kwargs):
+        res = super()._get_default_mail_attachments_widget(move, mail_template, **kwargs)
         return res + self._get_invoice_edi_attachments_data(move)
 
     def _get_invoice_edi_attachments_data(self, move):
