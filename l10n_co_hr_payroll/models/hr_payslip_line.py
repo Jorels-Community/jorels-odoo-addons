@@ -30,8 +30,10 @@ class HrPayslipLine(models.Model):
     edi_rate = fields.Float(string='Edi Rate (%)', digits=dp.get_precision('Payroll Rate'),
                             default=100.0, compute="compute_edi_rate", store=True, required=True)
 
-    edi_quantity = fields.Integer(string='Edi Quantity', default=0, compute="compute_edi_quantity", required=True,
-                                  store=True)
+    edi_quantity = fields.Float(string='Edi Quantity', default=0, compute="compute_edi_quantity", required=True,
+                                help="Only hour-based salary rules can use decimal values for DIAN reporting. "
+                                     "Other rules require integers.",
+                                store=True)
 
     @api.multi
     def compute_edi_rate(self):
