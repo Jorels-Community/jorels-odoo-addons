@@ -805,7 +805,7 @@ class HrPayslip(models.Model):
                             layoffs['interest_payment'] = abs(line_id.total)
                     elif line_id.salary_rule_id.earn_category == 'primas':
                         if line_id.total:
-                            primas['quantity'] = abs(line_id.edi_quantity)
+                            primas['quantity'] = int(abs(line_id.edi_quantity))
                             primas['payment'] = abs(line_id.total)
                     elif line_id.salary_rule_id.earn_category == 'primas_non_salary':
                         if line_id.total:
@@ -883,45 +883,45 @@ class HrPayslip(models.Model):
                     elif line_id.salary_rule_id.earn_category == 'incapacities_common':
                         if line_id.edi_quantity and line_id.total:
                             incapacities.append({
-                                "quantity": abs(line_id.edi_quantity),
+                                "quantity": int(abs(line_id.edi_quantity)),
                                 "incapacity_code": 1,
                                 "payment": abs(line_id.total)
                             })
                     elif line_id.salary_rule_id.earn_category == 'incapacities_professional':
                         if line_id.edi_quantity and line_id.total:
                             incapacities.append({
-                                "quantity": abs(line_id.edi_quantity),
+                                "quantity": int(abs(line_id.edi_quantity)),
                                 "incapacity_code": 2,
                                 "payment": abs(line_id.total)
                             })
                     elif line_id.salary_rule_id.earn_category == 'incapacities_working':
                         if line_id.edi_quantity and line_id.total:
                             incapacities.append({
-                                "quantity": abs(line_id.edi_quantity),
+                                "quantity": int(abs(line_id.edi_quantity)),
                                 "incapacity_code": 3,
                                 "payment": abs(line_id.total)
                             })
                     elif line_id.salary_rule_id.earn_category == 'legal_strikes':
                         if line_id.edi_quantity:
                             legal_strikes.append({
-                                "quantity": abs(line_id.edi_quantity)
+                                "quantity": int(abs(line_id.edi_quantity))
                             })
                     elif line_id.salary_rule_id.earn_category == 'licensings_maternity_or_paternity_leaves':
                         if line_id.edi_quantity and line_id.total:
                             licensings_maternity_or_paternity_leaves.append({
-                                "quantity": abs(line_id.edi_quantity),
+                                "quantity": int(abs(line_id.edi_quantity)),
                                 "payment": abs(line_id.total)
                             })
                     elif line_id.salary_rule_id.earn_category == 'licensings_permit_or_paid_licenses':
                         if line_id.edi_quantity and line_id.total:
                             licensings_permit_or_paid_licenses.append({
-                                "quantity": abs(line_id.edi_quantity),
+                                "quantity": int(abs(line_id.edi_quantity)),
                                 "payment": abs(line_id.total)
                             })
                     elif line_id.salary_rule_id.earn_category == 'licensings_suspension_or_unpaid_leaves':
                         if line_id.edi_quantity:
                             licensings_suspension_or_unpaid_leaves.append({
-                                "quantity": abs(line_id.edi_quantity)
+                                "quantity": int(abs(line_id.edi_quantity))
                             })
                     elif line_id.salary_rule_id.earn_category == 'other_concepts':
                         if line_id.total:
@@ -986,13 +986,13 @@ class HrPayslip(models.Model):
                     elif line_id.salary_rule_id.earn_category == 'vacation_common':
                         if line_id.edi_quantity and line_id.total:
                             vacation_common.append({
-                                "quantity": abs(line_id.edi_quantity),
+                                "quantity": int(abs(line_id.edi_quantity)),
                                 "payment": abs(line_id.total)
                             })
                     elif line_id.salary_rule_id.earn_category == 'vacation_compensated':
                         if line_id.edi_quantity and line_id.total:
                             vacation_compensated.append({
-                                "quantity": abs(line_id.edi_quantity),
+                                "quantity": int(abs(line_id.edi_quantity)),
                                 "payment": abs(line_id.total)
                             })
                     elif line_id.salary_rule_id.earn_category == 'vouchers':
