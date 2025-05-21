@@ -204,7 +204,7 @@ class ModuleAnalysis(models.Model):
             # Formatear la respuesta para visualización mientras mantenemos la versión raw
             formatted_response = debug_ai._format_response(raw_response)
 
-            return formatted_response, debug_ai
+            return formatted_response, debug_ai, raw_response
 
         except Exception as e:
             if debug_ai:
@@ -247,10 +247,7 @@ class ModuleAnalysis(models.Model):
             })
 
             # Process with Claude using message history
-            formatted_response, debug_ai = self._process_with_claude(messages)
-
-            # Obtener la respuesta raw para el historial
-            raw_response = debug_ai.claude_api_call_with_history(messages)
+            formatted_response, debug_ai, raw_response = self._process_with_claude(messages)
 
             # Guardar la respuesta raw en el historial
             self.env['debug_ai.module.analysis.message'].create({
@@ -464,7 +461,6 @@ class ModuleProcessor:
             _logger.error(f"Error processing directory: {str(e)}")
 
         return '\n'.join(content)
-
 
 
 class PromptCreator:
