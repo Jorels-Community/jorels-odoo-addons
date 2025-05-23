@@ -415,7 +415,7 @@ class DebugAI(models.Model):
             "x-api-key": api_key
         }
         data = {
-            "model": "claude-3-7-sonnet-20250219",
+            "model": "claude-sonnet-4-20250514",
             "messages": [{"role": "user", "content": prompt}],
             "max_tokens": 8192,
             "stream": True
@@ -509,7 +509,7 @@ class DebugAI(models.Model):
                 "x-api-key": api_key
             }
             data = {
-                "model": "claude-3-7-sonnet-20250219",
+                "model": "claude-sonnet-4-20250514",
                 "messages": [{"role": "user", "content": prompt}],
                 "max_tokens": 8192,
                 "stream": True
@@ -700,7 +700,7 @@ class DebugAI(models.Model):
             "x-api-key": api_key
         }
         data = {
-            "model": "claude-3-7-sonnet-20250219",
+            "model": "claude-sonnet-4-20250514",
             "messages": messages,
             "max_tokens": 8192,
             "stream": True
