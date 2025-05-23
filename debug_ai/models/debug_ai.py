@@ -24,7 +24,7 @@ import json
 import logging
 
 import markdown
-import requests
+import anthropic
 from lxml import etree
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
@@ -380,18 +380,18 @@ class DebugAI(models.Model):
     @api.model
     def claude_api_call(self, prompt):
         """
-        Make a streaming API call to Anthropic's Claude AI service.
+        Make a streaming API call to Anthropic's Claude AI service using the official client.
 
         This model-level method handles the complete API communication process with
-        Anthropic's Claude API, including:
+        Anthropic's Claude API using the official anthropic Python library, including:
         1. Retrieving the API key from Odoo's system parameters
-        2. Setting up the API request with proper headers and body
+        2. Creating an Anthropic client instance
         3. Making a streaming request to the Claude API
-        4. Processing the streamed response incrementally
+        4. Processing the streamed response incrementally using the official client
         5. Handling various error conditions and providing informative error messages
 
         The method uses streaming to process potentially large responses efficiently,
-        parsing the server-sent events (SSE) format that Claude's API returns.
+        using the official client's stream handling which is more robust than manual parsing.
 
         Args:
             prompt (str): The prompt text to send to Claude
@@ -408,46 +408,21 @@ class DebugAI(models.Model):
         if not api_key:
             raise UserError(_("Debug AI API Key not configured. Please set it in Settings."))
 
-        api_url = "https://api.anthropic.com/v1/messages"
-        headers = {
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-            "x-api-key": api_key
-        }
-        data = {
-            "model": "claude-sonnet-4-20250514",
-            "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 8192,
-            "stream": True
-        }
-
         try:
-            _logger.debug(f"Sending request to Claude API: {json.dumps(data)}")
-            response = requests.post(api_url, headers=headers, json=data, stream=True)
-            _logger.debug(f"Response status code: {response.status_code}")
+            client = anthropic.Anthropic(api_key=api_key)
 
-            response.raise_for_status()
+            _logger.debug("Sending streaming request to Claude API")
 
             full_response = ""
-            for line in response.iter_lines():
-                if line:
-                    decoded_line = line.decode('utf-8')
-                    if decoded_line.startswith('data: '):
-                        json_str = decoded_line[6:]
-                        try:
-                            event_data = json.loads(json_str)
-                            if event_data['type'] == 'content_block_delta':
-                                if 'text' in event_data['delta']:
-                                    full_response += event_data['delta']['text']
-                            elif event_data['type'] == 'message_delta':
-                                if 'stop_reason' in event_data['delta']:
-                                    _logger.info(f"Stream stopped: {event_data['delta']['stop_reason']}")
-                            elif event_data['type'] == 'error':
-                                raise UserError(_(f"API Error: {event_data['error']}"))
-                        except json.JSONDecodeError:
-                            _logger.warning(f"Failed to decode JSON: {json_str}")
+            with client.messages.stream(
+                    max_tokens=8192,
+                    messages=[{"role": "user", "content": prompt}],
+                    model="claude-sonnet-4-20250514",
+            ) as stream:
+                for text in stream.text_stream:
+                    full_response += text
 
-            _logger.info(f"Complete response from Claude API: {full_response}")
+            _logger.info(f"Complete response from Claude API received")
 
             if not full_response.strip():
                 _logger.warning("Claude API response is empty.")
@@ -455,16 +430,18 @@ class DebugAI(models.Model):
 
             return full_response.strip()
 
-        except requests.RequestException as e:
-            error_message = f"API call error: {str(e)}"
-            if hasattr(e, 'response') and e.response is not None:
-                error_message += f"\nStatus code: {e.response.status_code}"
-                error_message += f"\nResponse content: {e.response.text}"
+        except anthropic.APIError as e:
+            error_message = f"Anthropic API Error: {str(e)}"
             _logger.error(error_message)
             raise UserError(_(error_message))
-        except json.JSONDecodeError as e:
-            _logger.error(f"Error decoding JSON response: {str(e)}")
-            raise UserError(_("Error decoding API response"))
+        except anthropic.AuthenticationError as e:
+            error_message = f"Authentication Error: {str(e)}. Please check your API key."
+            _logger.error(error_message)
+            raise UserError(_(error_message))
+        except anthropic.RateLimitError as e:
+            error_message = f"Rate Limit Error: {str(e)}. Please try again later."
+            _logger.error(error_message)
+            raise UserError(_(error_message))
         except Exception as e:
             _logger.exception("Unexpected error in claude_api_call")
             raise UserError(_("Unexpected error: %s") % str(e))
@@ -472,19 +449,19 @@ class DebugAI(models.Model):
     @api.model
     def claude_api_call_html(self, prompt):
         """
-        Make a streaming API call to Anthropic's Claude AI service with improved error handling.
+        Make a streaming API call to Anthropic's Claude AI service with HTML formatting.
 
         This model-level method is an enhanced version of claude_api_call that includes:
-        1. More robust error handling and streamlined exception processing
-        2. Cleaner stream parsing logic with explicit continue statements
+        1. Integration with the official Anthropic client library
+        2. Cleaner stream processing using the official client
         3. Use of debug-level logging for detailed API communication
         4. Integration with a response formatter via _format_response method
-        5. Support for Claude 3.7 Sonnet model (newer than the other implementation)
+        5. Support for the latest Claude 3.5 Sonnet model
 
         The method processes the streamed response from Claude incrementally,
         building the complete response while handling potential errors at each step.
         After collecting the full response, it passes it through a formatter method
-        that likely converts plain text to HTML or other formatted output.
+        that converts plain text to HTML.
 
         Args:
             prompt (str): The prompt text to send to Claude
@@ -502,46 +479,18 @@ class DebugAI(models.Model):
             if not api_key:
                 raise UserError(_("Debug AI API Key not configured. Please set it in Settings."))
 
-            api_url = "https://api.anthropic.com/v1/messages"
-            headers = {
-                "anthropic-version": "2023-06-01",
-                "content-type": "application/json",
-                "x-api-key": api_key
-            }
-            data = {
-                "model": "claude-sonnet-4-20250514",
-                "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 8192,
-                "stream": True
-            }
+            client = anthropic.Anthropic(api_key=api_key)
 
-            _logger.debug(f"Sending request to Claude API: {json.dumps(data)}")
-            response = requests.post(api_url, headers=headers, json=data, stream=True)
-            _logger.debug(f"Response status code: {response.status_code}")
-
-            response.raise_for_status()
+            _logger.debug("Sending streaming request to Claude API")
 
             full_text = ""
-            for line in response.iter_lines():
-                if not line:
-                    continue
-
-                try:
-                    decoded_line = line.decode('utf-8')
-                    if not decoded_line.startswith('data: '):
-                        continue
-
-                    event_data = json.loads(decoded_line[6:])
-                    if event_data.get('type') == 'content_block_delta':
-                        if 'text' in event_data.get('delta', {}):
-                            full_text += event_data['delta']['text']
-
-                except json.JSONDecodeError as e:
-                    _logger.warning(f"Error decoding JSON from Claude: {e}")
-                    continue
-                except Exception as e:
-                    _logger.warning(f"Unexpected error processing Claude response line: {e}")
-                    continue
+            with client.messages.stream(
+                    max_tokens=8192,
+                    messages=[{"role": "user", "content": prompt}],
+                    model="claude-sonnet-4-20250514",
+            ) as stream:
+                for text in stream.text_stream:
+                    full_text += text
 
             if not full_text.strip():
                 raise UserError(_("Claude API response is empty. Please check the prompt or try again."))
@@ -549,11 +498,16 @@ class DebugAI(models.Model):
             # Procesar el texto completo
             return self._format_response(full_text)
 
-        except requests.RequestException as e:
-            error_message = f"API call error: {str(e)}"
-            if hasattr(e, 'response') and e.response is not None:
-                error_message += f"\nStatus code: {e.response.status_code}"
-                error_message += f"\nResponse content: {e.response.text}"
+        except anthropic.APIError as e:
+            error_message = f"Anthropic API Error: {str(e)}"
+            _logger.error(error_message)
+            raise UserError(_(error_message))
+        except anthropic.AuthenticationError as e:
+            error_message = f"Authentication Error: {str(e)}. Please check your API key."
+            _logger.error(error_message)
+            raise UserError(_(error_message))
+        except anthropic.RateLimitError as e:
+            error_message = f"Rate Limit Error: {str(e)}. Please try again later."
             _logger.error(error_message)
             raise UserError(_(error_message))
         except Exception as e:
@@ -664,14 +618,8 @@ class DebugAI(models.Model):
 
         This model-level method enables multi-turn conversations with Claude by
         accepting an array of messages representing the conversation history.
-        It handles the complete API communication process with Anthropic's Claude API,
-        including:
-
-        1. Retrieving the API key from Odoo's system parameters
-        2. Setting up the API request with multiple messages in the conversation history
-        3. Making a streaming request to the Claude API
-        4. Processing the streamed response incrementally
-        5. Handling various error conditions with detailed error messages
+        It handles the complete API communication process with Anthropic's Claude API
+        using the official client library.
 
         Unlike claude_api_call which accepts a single prompt string, this method
         accepts a structured array of message objects in the format required by
@@ -693,61 +641,38 @@ class DebugAI(models.Model):
         if not api_key:
             raise UserError(_("Debug AI API Key not configured. Please set it in Settings."))
 
-        api_url = "https://api.anthropic.com/v1/messages"
-        headers = {
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-            "x-api-key": api_key
-        }
-        data = {
-            "model": "claude-sonnet-4-20250514",
-            "messages": messages,
-            "max_tokens": 8192,
-            "stream": True
-        }
-
         try:
-            _logger.debug(f"Sending request to Claude API")
-            response = requests.post(api_url, headers=headers, json=data, stream=True)
-            _logger.debug(f"Response status code: {response.status_code}")
+            client = anthropic.Anthropic(api_key=api_key)
 
-            response.raise_for_status()
+            _logger.debug("Sending streaming request to Claude API with message history")
 
             full_text = ""
-            for line in response.iter_lines():
-                if not line:
-                    continue
-
-                try:
-                    decoded_line = line.decode('utf-8')
-                    if not decoded_line.startswith('data: '):
-                        continue
-
-                    event_data = json.loads(decoded_line[6:])
-                    if event_data.get('type') == 'content_block_delta':
-                        if 'text' in event_data.get('delta', {}):
-                            full_text += event_data['delta']['text']
-
-                except json.JSONDecodeError as e:
-                    _logger.warning(f"Error decoding JSON from Claude: {e}")
-                    continue
-                except Exception as e:
-                    _logger.warning(f"Unexpected error processing Claude response line: {e}")
-                    continue
+            with client.messages.stream(
+                    max_tokens=8192,
+                    messages=messages,
+                    model="claude-sonnet-4-20250514",
+            ) as stream:
+                for text in stream.text_stream:
+                    full_text += text
 
             if not full_text.strip():
                 raise UserError(_("Claude API response is empty. Please check the prompt or try again."))
 
             return full_text.strip()
 
-        except requests.RequestException as e:
-            error_message = f"API call error: {str(e)}"
-            if hasattr(e, 'response') and e.response is not None:
-                error_message += f"\nStatus code: {e.response.status_code}"
-                error_message += f"\nResponse content: {e.response.text}"
+        except anthropic.APIError as e:
+            error_message = f"Anthropic API Error: {str(e)}"
+            _logger.error(error_message)
+            raise UserError(_(error_message))
+        except anthropic.AuthenticationError as e:
+            error_message = f"Authentication Error: {str(e)}. Please check your API key."
+            _logger.error(error_message)
+            raise UserError(_(error_message))
+        except anthropic.RateLimitError as e:
+            error_message = f"Rate Limit Error: {str(e)}. Please try again later."
             _logger.error(error_message)
             raise UserError(_(error_message))
         except Exception as e:
-            _logger.exception("Unexpected error in claude_api_call")
+            _logger.exception("Unexpected error in claude_api_call_with_history")
             error_message = f"Unexpected error: {str(e)}"
             raise UserError(_(error_message))

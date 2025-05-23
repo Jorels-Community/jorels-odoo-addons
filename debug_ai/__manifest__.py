@@ -33,6 +33,7 @@
         'python': [
             'markdown',
             'pygments',  # Para el resaltado de sintaxis
+            'anthropic',  # Librería oficial de Anthropic
         ],
     },
     'installable': True,
