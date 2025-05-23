@@ -51,6 +51,12 @@ class DebugAI(models.Model):
     ], string='State', default='draft', required=True, tracking=True)
     is_edit_mode = fields.Boolean(string='Edit Mode', default=False, tracking=True)
 
+    odoo_version = fields.Char(
+        string='Odoo Version',
+        compute='_compute_odoo_version',
+        store=False,
+        help='Current Odoo version for this request'
+    )
     prompt_processing_date = fields.Datetime(
         string='AI Processing Date',
         readonly=True,
@@ -71,6 +77,34 @@ class DebugAI(models.Model):
         readonly=True,
         help='Error message if something went wrong during the process'
     )
+
+    @api.model
+    def _get_odoo_version_info(self):
+        """
+        Get Odoo version information to include in prompts.
+        
+        Returns:
+            str: Formatted Odoo version information
+        """
+        try:
+            import odoo
+            version = odoo.release.version
+            series = odoo.release.series
+            return f"Odoo {version} (Series: {series})"
+        except Exception as e:
+            _logger.warning(f"Could not get Odoo version: {e}")
+            # Fallback: try to get from manifest version pattern
+            try:
+                return f"Odoo {self.env['ir.module.module'].search([('name', '=', 'debug_ai')], limit=1).latest_version.split('.')[0]}.0"
+            except:
+                return "Odoo (version unknown)"
+
+    @api.depends()
+    def _compute_odoo_version(self):
+        """Compute current Odoo version"""
+        version_info = self._get_odoo_version_info()
+        for record in self:
+            record.odoo_version = version_info
 
     def process_prompt(self):
         """
@@ -153,14 +187,18 @@ class DebugAI(models.Model):
         Returns:
             str: A formatted prompt string to send to Claude API
         """
+        odoo_version = self._get_odoo_version_info()
+        
         return f"""
+        IMPORTANT: This is for {odoo_version}. Please ensure all XML syntax, field definitions, view structures, and coding patterns are compatible with this specific Odoo version.
+
         Modify this XML view according to the following instruction:
         {self.prompt}
 
         Current XML view:
         {current_arch}
 
-        Important instructions:
+        Important instructions for {odoo_version}:
         1. Return ONLY the XML code for a new inherited view that implements the requested changes.
         2. The inherited view must contain a root <odoo> element and within it a <record> element with id, model="ir.ui.view" attributes, and the fields name, model, inherit_id and arch.
         3. Inside the arch field, place the necessary xpath elements.
@@ -168,8 +206,10 @@ class DebugAI(models.Model):
         5. You can include multiple XPath operations if necessary.
         6. Make sure all XML elements are properly closed.
         7. Do not include additional explanations, just the XML of the inherited view.
+        8. Ensure compatibility with {odoo_version} syntax and best practices.
+        9. Use the correct widget names, attributes, and view structure for this Odoo version.
 
-        Expected format example:
+        Expected format example for {odoo_version}:
         <odoo>
             <record id="view_partner_form_inherited" model="ir.ui.view">
                 <field name="name">res.partner.form.inherited</field>
@@ -208,14 +248,18 @@ class DebugAI(models.Model):
         Returns:
             str: A formatted prompt string to send to Claude API
         """
+        odoo_version = self._get_odoo_version_info()
+        
         return f"""
+        IMPORTANT: This is for {odoo_version}. Please ensure all XML syntax, field definitions, view structures, and coding patterns are compatible with this specific Odoo version.
+
         Modify this XML view according to the following instruction:
         {self.prompt}
 
         Current XML view:
         {current_arch}
 
-        Important instructions:
+        Important instructions for {odoo_version}:
         1. Return ONLY the complete modified XML view.
         2. Preserve the root structure and all necessary attributes.
         3. Include ALL the original content with the requested modifications.
@@ -223,6 +267,8 @@ class DebugAI(models.Model):
         5. Do not include additional explanations, just the modified XML.
         6. The response should be a valid Odoo view architecture that can replace the current one.
         7. Preserve any existing groups, access rights, and other security-related attributes.
+        8. Ensure compatibility with {odoo_version} syntax and best practices.
+        9. Use the correct widget names, attributes, and view structure for this Odoo version.
 
         Return the complete modified XML structure, starting with <?xml version="1.0"?>
         """

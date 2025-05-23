@@ -469,10 +469,23 @@ class PromptCreator:
         self.module_name = os.path.basename(module_path)
         self.processor = ModuleProcessor(module_path)
         self.problem_description = problem_description
+        self.odoo_version = self._get_odoo_version_info()
+
+    def _get_odoo_version_info(self):
+        """Get Odoo version information"""
+        try:
+            import odoo
+            version = odoo.release.version
+            series = odoo.release.series
+            return f"Odoo {version} (Series: {series})"
+        except Exception:
+            return "Odoo (version unknown)"
 
     def create_prompt(self):
         content = self.processor.process_directory()
         prompt = f"""
+IMPORTANT: This analysis is for {self.odoo_version}. Please ensure all recommendations, code examples, and solutions are compatible with this specific Odoo version.
+
 This is the content of the Odoo module '{self.module_name}', excluding files and folders specified in .gitignore. For CSV files, a maximum of 100 lines are shown. Please analyze the code and structure of the module:
 
 {content}
