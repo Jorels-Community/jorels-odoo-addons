@@ -378,32 +378,35 @@ class DebugAI(models.Model):
             raise UserError(_("Invalid XML: %s") % str(e))
 
     @api.model
-    def claude_api_call(self, prompt):
+    def claude_api_call(self, prompt=None, messages=None, format_html=False):
         """
         Make a streaming API call to Anthropic's Claude AI service using the official client.
 
-        This model-level method handles the complete API communication process with
-        Anthropic's Claude API using the official anthropic Python library, including:
-        1. Retrieving the API key from Odoo's system parameters
-        2. Creating an Anthropic client instance
-        3. Making a streaming request to the Claude API
-        4. Processing the streamed response incrementally using the official client
-        5. Handling various error conditions and providing informative error messages
-
-        The method uses streaming to process potentially large responses efficiently,
-        using the official client's stream handling which is more robust than manual parsing.
+        This unified method handles all Claude API communications with support for:
+        1. Single prompt requests
+        2. Multi-turn conversation history
+        3. Optional HTML formatting of responses
 
         Args:
-            prompt (str): The prompt text to send to Claude
+            prompt (str, optional): Single prompt text to send to Claude
+            messages (list, optional): List of message objects for conversation history
+            format_html (bool): Whether to format the response as HTML using Markdown
 
         Returns:
-            str: The complete text response from Claude
+            str: The response from Claude, optionally formatted as HTML
 
         Raises:
-            UserError: If the API key is not configured, if the API returns an error,
-                      if the response is empty, or if any other errors occur during
-                      the API communication process
+            UserError: If neither prompt nor messages are provided, if API key is not configured,
+                      or if any errors occur during API communication
         """
+        # Validate input parameters
+        if not prompt and not messages:
+            raise UserError(_("Either prompt or messages must be provided"))
+
+        if prompt and messages:
+            raise UserError(_("Provide either prompt or messages, not both"))
+
+        # Get API key
         api_key = self.env['ir.config_parameter'].sudo().get_param('debug_ai.api_key')
         if not api_key:
             raise UserError(_("Debug AI API Key not configured. Please set it in Settings."))
@@ -411,24 +414,35 @@ class DebugAI(models.Model):
         try:
             client = anthropic.Anthropic(api_key=api_key)
 
-            _logger.debug("Sending streaming request to Claude API")
+            # Prepare messages for API call
+            if prompt:
+                api_messages = [{"role": "user", "content": prompt}]
+                _logger.debug("Sending streaming request to Claude API with single prompt")
+            else:
+                api_messages = messages
+                _logger.debug("Sending streaming request to Claude API with message history")
 
+            # Make the streaming API call
             full_response = ""
             with client.messages.stream(
                     max_tokens=8192,
-                    messages=[{"role": "user", "content": prompt}],
+                    messages=api_messages,
                     model="claude-sonnet-4-20250514",
             ) as stream:
                 for text in stream.text_stream:
                     full_response += text
 
-            _logger.info(f"Complete response from Claude API received")
+            _logger.info("Complete response from Claude API received")
 
             if not full_response.strip():
                 _logger.warning("Claude API response is empty.")
                 raise UserError(_("Claude API response is empty. Please check the prompt or try again."))
 
-            return full_response.strip()
+            # Format response if requested
+            if format_html:
+                return self._format_response(full_response.strip())
+            else:
+                return full_response.strip()
 
         except anthropic.APIError as e:
             error_message = f"Anthropic API Error: {str(e)}"
@@ -446,74 +460,22 @@ class DebugAI(models.Model):
             _logger.exception("Unexpected error in claude_api_call")
             raise UserError(_("Unexpected error: %s") % str(e))
 
+    # Métodos de compatibilidad para mantener la API existente
     @api.model
     def claude_api_call_html(self, prompt):
         """
-        Make a streaming API call to Anthropic's Claude AI service with HTML formatting.
-
-        This model-level method is an enhanced version of claude_api_call that includes:
-        1. Integration with the official Anthropic client library
-        2. Cleaner stream processing using the official client
-        3. Use of debug-level logging for detailed API communication
-        4. Integration with a response formatter via _format_response method
-        5. Support for the latest Claude 3.5 Sonnet model
-
-        The method processes the streamed response from Claude incrementally,
-        building the complete response while handling potential errors at each step.
-        After collecting the full response, it passes it through a formatter method
-        that converts plain text to HTML.
-
-        Args:
-            prompt (str): The prompt text to send to Claude
-
-        Returns:
-            str: The formatted response from Claude, processed by _format_response
-
-        Raises:
-            UserError: If the API key is not configured, if the API returns an error,
-                      if the response is empty, or if any other errors occur during
-                      the API communication process
+        Legacy method for HTML formatted API calls.
+        Redirects to the unified claude_api_call method.
         """
-        try:
-            api_key = self.env['ir.config_parameter'].sudo().get_param('debug_ai.api_key')
-            if not api_key:
-                raise UserError(_("Debug AI API Key not configured. Please set it in Settings."))
+        return self.claude_api_call(prompt=prompt, format_html=True)
 
-            client = anthropic.Anthropic(api_key=api_key)
-
-            _logger.debug("Sending streaming request to Claude API")
-
-            full_text = ""
-            with client.messages.stream(
-                    max_tokens=8192,
-                    messages=[{"role": "user", "content": prompt}],
-                    model="claude-sonnet-4-20250514",
-            ) as stream:
-                for text in stream.text_stream:
-                    full_text += text
-
-            if not full_text.strip():
-                raise UserError(_("Claude API response is empty. Please check the prompt or try again."))
-
-            # Procesar el texto completo
-            return self._format_response(full_text)
-
-        except anthropic.APIError as e:
-            error_message = f"Anthropic API Error: {str(e)}"
-            _logger.error(error_message)
-            raise UserError(_(error_message))
-        except anthropic.AuthenticationError as e:
-            error_message = f"Authentication Error: {str(e)}. Please check your API key."
-            _logger.error(error_message)
-            raise UserError(_(error_message))
-        except anthropic.RateLimitError as e:
-            error_message = f"Rate Limit Error: {str(e)}. Please try again later."
-            _logger.error(error_message)
-            raise UserError(_(error_message))
-        except Exception as e:
-            _logger.exception("Unexpected error in claude_api_call")
-            error_message = f"Unexpected error: {str(e)}"
-            raise UserError(_(error_message))
+    @api.model
+    def claude_api_call_with_history(self, messages):
+        """
+        Legacy method for API calls with conversation history.
+        Redirects to the unified claude_api_call method.
+        """
+        return self.claude_api_call(messages=messages)
 
     def _format_response(self, text):
         """
@@ -610,69 +572,3 @@ class DebugAI(models.Model):
                     'sticky': False,
                 }
             }
-
-    @api.model
-    def claude_api_call_with_history(self, messages):
-        """
-        Make a streaming API call to Claude AI with conversation history support.
-
-        This model-level method enables multi-turn conversations with Claude by
-        accepting an array of messages representing the conversation history.
-        It handles the complete API communication process with Anthropic's Claude API
-        using the official client library.
-
-        Unlike claude_api_call which accepts a single prompt string, this method
-        accepts a structured array of message objects in the format required by
-        Claude's API (with role and content fields).
-
-        Args:
-            messages (list): A list of message objects with 'role' and 'content' keys
-                             representing the conversation history
-
-        Returns:
-            str: The complete text response from Claude
-
-        Raises:
-            UserError: If the API key is not configured, if the API returns an error,
-                      if the response is empty, or if any other errors occur during
-                      the API communication process
-        """
-        api_key = self.env['ir.config_parameter'].sudo().get_param('debug_ai.api_key')
-        if not api_key:
-            raise UserError(_("Debug AI API Key not configured. Please set it in Settings."))
-
-        try:
-            client = anthropic.Anthropic(api_key=api_key)
-
-            _logger.debug("Sending streaming request to Claude API with message history")
-
-            full_text = ""
-            with client.messages.stream(
-                    max_tokens=8192,
-                    messages=messages,
-                    model="claude-sonnet-4-20250514",
-            ) as stream:
-                for text in stream.text_stream:
-                    full_text += text
-
-            if not full_text.strip():
-                raise UserError(_("Claude API response is empty. Please check the prompt or try again."))
-
-            return full_text.strip()
-
-        except anthropic.APIError as e:
-            error_message = f"Anthropic API Error: {str(e)}"
-            _logger.error(error_message)
-            raise UserError(_(error_message))
-        except anthropic.AuthenticationError as e:
-            error_message = f"Authentication Error: {str(e)}. Please check your API key."
-            _logger.error(error_message)
-            raise UserError(_(error_message))
-        except anthropic.RateLimitError as e:
-            error_message = f"Rate Limit Error: {str(e)}. Please try again later."
-            _logger.error(error_message)
-            raise UserError(_(error_message))
-        except Exception as e:
-            _logger.exception("Unexpected error in claude_api_call_with_history")
-            error_message = f"Unexpected error: {str(e)}"
-            raise UserError(_(error_message))
