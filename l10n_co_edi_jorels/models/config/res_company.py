@@ -85,8 +85,6 @@ class ResCompany(models.Model):
     report_custom_text = fields.Html(string="Header text")
     footer_custom_text = fields.Html(string="Footer text")
 
-    ei_include_pdf_attachment = fields.Boolean(string="Include PDF attachment on electronic invoice email",
-                                               default=True)
 
     # Enable/disable electronic invoicing for company
     ei_enable = fields.Boolean(string="Enable electronic invoicing for this company", default=True)
