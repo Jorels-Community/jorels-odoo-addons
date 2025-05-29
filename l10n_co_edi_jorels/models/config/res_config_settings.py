@@ -55,9 +55,6 @@ class ResConfigSettings(models.TransientModel):
     report_custom_text = fields.Html(related="company_id.report_custom_text", string="Header text", readonly=False)
     footer_custom_text = fields.Html(related="company_id.footer_custom_text", string="Footer text", readonly=False)
 
-    ei_include_pdf_attachment = fields.Boolean(related="company_id.ei_include_pdf_attachment",
-                                               string="Include PDF attachment on electronic invoice email",
-                                               default=True, readonly=False)
 
     # Enable/disable electronic invoicing for company
     ei_enable = fields.Boolean(related="company_id.ei_enable",
@@ -234,7 +231,6 @@ class ResConfigSettings(models.TransientModel):
         res['is_not_test'] = self.env.company.is_not_test
         res['enable_validate_state'] = self.env.company.enable_validate_state
         res['enable_mass_send_print'] = self.env.company.enable_mass_send_print
-        res['ei_include_pdf_attachment'] = self.env.company.ei_include_pdf_attachment
         res['ei_enable'] = self.env.company.ei_enable
         res['ei_always_validate'] = self.env.company.ei_always_validate
         res['ei_ignore_edi_email_check'] = self.env.company.ei_ignore_edi_email_check

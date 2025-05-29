@@ -1674,12 +1674,6 @@ msgstr "Ignorar la verificación del edi email"
 msgid "In production"
 msgstr "En producción"
 
-#. module: l10n_co_edi_jorels
-#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__ei_include_pdf_attachment
-#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings__ei_include_pdf_attachment
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
-msgid "Include PDF attachment on electronic invoice email"
-msgstr "Incluir PDF adjunto en el correo de factura electrónica"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__move_id
