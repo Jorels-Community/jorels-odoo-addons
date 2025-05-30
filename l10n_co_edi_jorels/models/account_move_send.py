@@ -38,6 +38,9 @@ class AccountMoveSend(models.TransientModel):
         if not move.company_id.ei_enable or not move.is_to_send_edi_email():
             return []
 
+        if not move.ei_attached_zip_base64_bytes:
+            return []
+
         attached_document_name = move._compute_attached_document_name()
         zip_name = f"{attached_document_name}.zip"
 
