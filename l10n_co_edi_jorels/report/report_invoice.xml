@@ -239,29 +239,6 @@
                     <span t-esc="num_item"/>
                 </td>
             </xpath>
-            <xpath expr="//div[@id='right-elements']" position="before">
-                <div id="left-elements"
-                     t-attf-class="#{'col-7' if report_type != 'html' else 'col-12 col-md-5'} float-start">
-                    <div t-if="o.company_id.ei_enable and o.payment_method_id.id" name="payment_method">
-                        <strong>Payment method:</strong>
-                        <span t-field="o.payment_method_id"/>
-                    </div>
-                    <br/>
-                    <div t-if="o.company_id.ei_enable" name="withholdings_note">
-                        <strong>The withholdings are for informational purposes only.</strong>
-                    </div>
-                    <br/>
-                    <div t-if="o.value_letters">
-                        <strong>Value in letters:</strong>
-                        <span t-field="o.value_letters"/>
-                    </div>
-                    <br/>
-                </div>
-            </xpath>
-            <xpath expr="//div[@id='right-elements']" position="attributes">
-                <attribute name="t-attf-class">#{'col-5' if report_type != 'html' else 'col-12 col-md-5'} float-end
-                </attribute>
-            </xpath>
             <xpath expr="//t[@t-set='tax_totals']" position="before">
                 <t>
                     <tr class="border-black o_total">
@@ -288,44 +265,69 @@
                 </t>
             </xpath>
             <xpath expr="//div[hasclass('page')]" position="inside">
-                <div t-if="o.company_id.ei_enable" class="container">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mt16 text-center">
-                                <div t-if="o.company_id.footer_custom_text">
-                                    <span t-field="o.company_id.footer_custom_text" name="footer_custom_text"/>
-                                </div>
-                                <div t-if="o.resolution_id and o.ei_uuid">
-                                    <strong t-field="o.resolution_id.resolution_type_document_id.type"/>:
-                                    <small t-field="o.ei_uuid"/>
-                                </div>
-                                <div t-if="o.ei_signature">
-                                    <strong>Signature:</strong>
-                                    <small t-field="o.ei_signature"/>
-                                </div>
-                                <strong t-if="o.resolution_id.resolution_resolution">Invoicing authorization number:
-                                </strong>
-                                <span t-field="o.resolution_id.resolution_resolution"/>
-                                <strong t-if="o.resolution_id.resolution_resolution_date">Date:</strong>
-                                <span t-field="o.resolution_id.resolution_resolution_date"/>
-                                <br/>
-                                <strong t-if="o.resolution_id.resolution_from">Authorized range from:</strong>
-                                <span t-field="o.resolution_id.resolution_prefix"/>
-                                <span t-field="o.resolution_id.resolution_from"/>
-                                <strong t-if="o.resolution_id.resolution_to">to</strong>
-                                <span t-field="o.resolution_id.resolution_prefix"/>
-                                <span t-field="o.resolution_id.resolution_to"/>
-                                <strong t-if="o.resolution_id.resolution_date_from">Valid from:</strong>
-                                <span t-field="o.resolution_id.resolution_date_from"/>
-                                <strong t-if="o.resolution_id.resolution_date_to">to</strong>
-                                <span t-field="o.resolution_id.resolution_date_to"/>
-                                <br/>
-                                <strong t-if="o.ei_is_valid">Graphic representation of electronic invoicing printed by
-                                    computer with own software by
-                                </strong>
-                                <strong t-if="o.ei_is_valid" t-field="o.company_id.business_name"/>
-                            </div>
-                        </div>
+                <div t-if="o.company_id.ei_enable" class="row text-center">
+                    <div t-if="o.company_id.ei_enable and o.payment_method_id.id" name="payment_method">
+                        <strong>Payment method:</strong>
+                        <span t-field="o.payment_method_id"/>
+                    </div>
+                </div>
+                <div t-if="o.company_id.ei_enable" class="row text-center">
+                    <div t-if="o.company_id.ei_enable" name="withholdings_note">
+                        <strong>The withholdings are for informational purposes only.</strong>
+                    </div>
+                </div>
+                <div t-if="o.company_id.ei_enable" class="row text-center">
+                    <div t-if="o.value_letters">
+                        <strong>Value in letters:</strong>
+                        <span t-field="o.value_letters"/>
+                    </div>
+                </div>
+                <div t-if="o.company_id.ei_enable" class="row text-center">
+                    <div t-if="o.company_id.footer_custom_text">
+                        <span t-field="o.company_id.footer_custom_text" name="footer_custom_text"/>
+                    </div>
+                </div>
+                <div t-if="o.company_id.ei_enable" class="row text-center">
+                    <div t-if="o.resolution_id and o.ei_uuid">
+                        <strong t-field="o.resolution_id.resolution_type_document_id.type"/>:
+                        <small t-field="o.ei_uuid"/>
+                    </div>
+                </div>
+                <div t-if="o.company_id.ei_enable" class="row text-center">
+                    <div t-if="o.ei_signature">
+                        <strong>Signature:</strong>
+                        <small t-field="o.ei_signature"/>
+                    </div>
+                </div>
+                <div t-if="o.company_id.ei_enable" class="row text-center">
+                    <div>
+                        <strong t-if="o.resolution_id.resolution_resolution">Invoicing authorization number:
+                        </strong>
+                        <span t-field="o.resolution_id.resolution_resolution"/>
+                        <strong t-if="o.resolution_id.resolution_resolution_date">Date:</strong>
+                        <span t-field="o.resolution_id.resolution_resolution_date"/>
+                    </div>
+                </div>
+                <div t-if="o.company_id.ei_enable" class="row text-center">
+                    <div>
+                        <strong t-if="o.resolution_id.resolution_from">Authorized range from:</strong>
+                        <span t-field="o.resolution_id.resolution_prefix"/>
+                        <span t-field="o.resolution_id.resolution_from"/>
+                        <strong t-if="o.resolution_id.resolution_to">to</strong>
+                        <span t-field="o.resolution_id.resolution_prefix"/>
+                        <span t-field="o.resolution_id.resolution_to"/>
+                        <strong t-if="o.resolution_id.resolution_date_from">Valid from:</strong>
+                        <span t-field="o.resolution_id.resolution_date_from"/>
+                        <strong t-if="o.resolution_id.resolution_date_to">to</strong>
+                        <span t-field="o.resolution_id.resolution_date_to"/>
+                    </div>
+                </div>
+                <div t-if="o.company_id.ei_enable" class="row text-center">
+                    <div>
+                        <strong t-if="o.ei_is_valid">Graphic representation of electronic invoicing printed by
+                            computer with own software by
+                        </strong>
+                        <strong t-if="o.ei_is_valid" t-field="o.company_id.business_name"/>
                     </div>
                 </div>
             </xpath>
