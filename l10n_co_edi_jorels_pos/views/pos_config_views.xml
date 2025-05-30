@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Jorels S.A.S. - Copyright (C) 2019-2025-->
+
+<!--This file is part of l10n_co_edi_jorels_pos.-->
+
+<!--This program is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--This program is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with this program. If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<odoo>
+
+    <record id="res_config_settings_view_form_inherit" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.l10n.co.edi.jorels.pos</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='pos_bills_and_receipts_section']//setting[last()]" position="after">
+                <setting string="Disable Auto Email on Invoice" help="Prevent automatic email sending when creating invoices from POS orders">
+                    <field name="pos_disable_auto_email_invoice"/>
+                    <div class="content-group mt16" invisible="not pos_disable_auto_email_invoice">
+                        <div class="text-muted">
+                            When enabled, invoices created from POS orders will not automatically send emails to customers.
+                        </div>
+                    </div>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
