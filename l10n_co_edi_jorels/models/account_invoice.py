@@ -32,7 +32,8 @@ import qrcode
 import requests
 from num2words import num2words
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
+from odoo.tools.misc import formatLang
 from odoo.tools.sql import column_exists, create_column
 from odoo.tools.misc import formatLang
 
@@ -49,8 +50,8 @@ class AccountInvoice(models.Model):
 
     ei_type_document_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_documents', string="Edi Document type",
                                           copy=False, ondelete='RESTRICT',
-                                          compute='_compute_ei_type_document', store=True,
-                                          default=lambda self: self._compute_ei_type_document())
+                                          compute='_compute_ei_type_document_id', store=True,
+                                          default=lambda self: self._compute_ei_type_document_id())
     ei_type_document = fields.Selection(selection=[
         ('none', 'None'),
         ('invoice', 'Invoice'),
@@ -209,7 +210,7 @@ class AccountInvoice(models.Model):
 
     # Store resolution
     resolution_id = fields.Many2one(string="Resolution", comodel_name='l10n_co_edi_jorels.resolution', copy=False,
-                                    store=True, compute="_compute_resolution", ondelete='RESTRICT', readonly=True,
+                                    store=True, compute="_compute_resolution_id", ondelete='RESTRICT', readonly=True,
                                     states={'draft': [('readonly', False)]})
 
     radian_ids = fields.One2many(comodel_name='l10n_co_edi_jorels.radian', inverse_name='invoice_id')
@@ -1084,81 +1085,122 @@ class AccountInvoice(models.Model):
 
         return self.should_send_document_to_dian()
 
-    @api.depends('is_out_country', 'ei_is_correction_without_reference', 'debit_invoice_id', 'resolution_id', 'type')
+    @api.depends('ei_is_correction_without_reference', 'debit_invoice_id', 'journal_id', 'type')
     def _compute_ei_type_document(self):
+        """
+        Compute the electronic invoice document type based on record attributes.
+
+        This method determines the appropriate electronic document type for Colombian
+        electronic invoicing (EDI) based on the invoice type, debit scenarios, and
+        journal resolution configuration.
+
+        Document Types:
+            - 'invoice': Regular sales/purchase invoice
+            - 'credit_note': Credit note for refunds
+            - 'debit_note': Debit note for corrections/adjustments
+            - 'doc_support': Electronic document support (resolution type 12)
+            - 'note_support': Credit note for document support (resolution type 13)
+            - 'none': No electronic document type assigned
+
+        Business Logic:
+            - Debit scenarios occur when there's a debit_origin_id or correction without reference
+            - Document support (type 12) cannot have debit notes (raises UserError)
+            - Note support (type 13) is only for in_refund with specific resolution
+            - Different invoice types (out_invoice, in_invoice, etc.) follow different rules
+
+        Raises:
+            UserError: When attempting to create a debit note for document support
+        """
         for rec in self:
-            # Compute ei_type_document
-            if rec.type == 'out_invoice':
-                if (('debit_invoice_id' in rec) and rec.debit_invoice_id) or rec.ei_is_correction_without_reference:
-                    # Debit note
-                    type_edi_document = 'debit_note'
-                else:
-                    # Sales invoice
-                    type_edi_document = 'invoice'
-            elif rec.type == 'out_refund':
-                # Credit note
-                type_edi_document = 'credit_note'
-            elif rec.type == 'in_invoice' \
-                    and rec.resolution_id \
-                    and rec.resolution_id.resolution_type_document_id.id == 12:
-                if (('debit_invoice_id' in rec) and rec.debit_invoice_id) or rec.ei_is_correction_without_reference:
-                    # There is no debit note for document support
-                    raise UserError(_("There is not debit note for electronic document support"))
-                else:
-                    # Document support
+            # Determine if this is a debit scenario (correction with or without reference)
+            is_debit = (hasattr(rec,
+                                'debit_invoice_id') and rec.debit_invoice_id) or rec.ei_is_correction_without_reference
+
+            # Safely extract resolution type ID from journal sequence
+            try:
+                resolution_type_id = rec.journal_id.sequence_id.resolution_id.resolution_type_document_id.id
+            except AttributeError:
+                resolution_type_id = None
+
+            # Document type mapping for standard cases
+            type_mapping = {
+                'out_invoice': 'debit_note' if is_debit else 'invoice',
+                'out_refund': 'credit_note',
+                'in_refund': 'note_support' if resolution_type_id == 12 else 'credit_note',
+            }
+
+            # Handle special case: in_invoice with document support resolution
+            if rec.type == 'in_invoice':
+                if resolution_type_id == 12:  # Document support resolution
+                    if is_debit:
+                        raise UserError(_("There is not debit note for electronic document support"))
                     type_edi_document = 'doc_support'
-            elif rec.type == 'in_refund' \
-                    and rec.resolution_id \
-                    and rec.resolution_id.resolution_type_document_id.id == 13:
-                # Note Document Support
-                type_edi_document = 'note_support'
-            elif rec.type == 'in_invoice':
-                if (('debit_invoice_id' in rec) and rec.debit_invoice_id) or rec.ei_is_correction_without_reference:
-                    # Debit note
-                    type_edi_document = 'debit_note'
                 else:
-                    # Sales invoice
-                    type_edi_document = 'invoice'
-            elif rec.type == 'in_refund':
-                # Credit note
-                type_edi_document = 'credit_note'
+                    # Regular in_invoice: debit note or invoice based on debit scenario
+                    type_edi_document = 'debit_note' if is_debit else 'invoice'
             else:
-                type_edi_document = 'none'
+                # Use mapping for all other invoice types, default to 'none' if not found
+                type_edi_document = type_mapping.get(rec.type, 'none')
 
-            # Compute ei_type_document_id
-            # For now the document type is always
-            # Electronic invoicing (Code '01')
-            # Export electronic invoicing (Code '02')
-            # Credit note (Code '91')
-            # Debit note (Code '92')
-            # Support document (Code '05')
-            # Credit note for support document (Code '95')
-            # The contingency and others are pending review
-            type_documents_env = self.env['l10n_co_edi_jorels.type_documents']
-            if type_edi_document == 'invoice':
-                # Sales invoice
-                if not rec.is_out_country:
-                    type_documents_rec = type_documents_env.search([('code', '=', '01')])
-                else:
-                    type_documents_rec = type_documents_env.search([('code', '=', '02')])
-            elif type_edi_document == 'credit_note':
-                # Credit note
-                type_documents_rec = type_documents_env.search([('code', '=', '91')])
-            elif type_edi_document == 'debit_note':
-                # Debit note
-                type_documents_rec = type_documents_env.search([('code', '=', '92')])
-            elif type_edi_document == 'doc_support':
-                # Document support
-                type_documents_rec = type_documents_env.search([('code', '=', '05')])
-            elif type_edi_document == 'note_support':
-                # Note Document Support
-                type_documents_rec = type_documents_env.search([('code', '=', '95')])
-            else:
-                type_documents_rec = None
-
-            # Store compute fields
             rec.ei_type_document = type_edi_document
-            rec.ei_type_document_id = type_documents_rec.id if type_documents_rec else None
+
+    @api.depends('is_out_country', 'ei_type_document')
+    def _compute_ei_type_document_id(self):
+        """
+        Compute the electronic invoice document type ID based on document type and country context.
+
+        This method maps electronic document types to their corresponding official codes
+        according to Colombian DIAN (tax authority) regulations, then finds the matching
+        record in the type_documents model.
+
+        Document Type Code Mapping (DIAN Official Codes):
+            - '01': Electronic invoicing (domestic sales)
+            - '02': Export electronic invoicing (international sales)
+            - '91': Credit note
+            - '92': Debit note
+            - '05': Support document
+            - '95': Credit note for support document
+
+        Business Logic:
+            - Invoice type depends on country context:
+              * Domestic sales (is_out_country=False) → Code '01'
+              * Export sales (is_out_country=True) → Code '02'
+            - Other document types have fixed codes regardless of country
+            - If no matching code is found, ei_type_document_id is set to False
+            - If code exists but no record found in type_documents, also set to False
+
+        Dependencies:
+            - is_out_country: Boolean indicating if sale is to foreign country
+            - ei_type_document: String with document type ('invoice', 'credit_note', etc.)
+
+        Related Model:
+            - l10n_co_edi_jorels.type_documents: Contains official document type records
+        """
+        # Official DIAN document type codes (excluding invoice types handled separately)
+        DOCUMENT_TYPE_CODES = {
+            'credit_note': '91',  # Credit note
+            'debit_note': '92',  # Debit note
+            'doc_support': '05',  # Support document
+            'note_support': '95',  # Credit note for support document
+        }
+
+        type_documents_env = self.env['l10n_co_edi_jorels.type_documents']
+
+        for rec in self:
+            # Handle invoice type with country-specific logic
+            if rec.ei_type_document == 'invoice':
+                code = '02' if rec.is_out_country else '01'  # Export vs domestic invoice
+            else:
+                # Get code from mapping for other document types
+                code = DOCUMENT_TYPE_CODES.get(rec.ei_type_document)
+
+            # Search for document type record and assign ID
+            if code:
+                type_documents_rec = type_documents_env.search([('code', '=', code)], limit=1)
+                rec.ei_type_document_id = type_documents_rec.id if type_documents_rec else False
+            else:
+                # No valid code found, clear the relation
+                rec.ei_type_document_id = False
 
     @api.multi
     def get_ei_sync(self):
@@ -1173,24 +1215,46 @@ class AccountInvoice(models.Model):
 
     @api.depends('journal_id')
     @api.onchange('journal_id', 'ei_type_document')
-    def _compute_resolution(self):
+    def _compute_resolution_id(self):
+        """
+        Compute the DIAN resolution ID based on journal configuration and document type.
+
+        This method assigns the appropriate DIAN (Colombian tax authority) resolution
+        to electronic documents based on the document type and journal sequence configuration.
+        DIAN resolutions authorize the use of specific number ranges for electronic documents.
+
+        Dependencies:
+            - journal_id: Account journal with sequence configuration
+            - ei_type_document: Electronic document type string
+        """
+        # Document types that use the journal's regular sequence
+        REGULAR_SEQUENCE_TYPES = {'invoice', 'doc_support'}
+        # Document types that use the journal's refund sequence
+        REFUND_SEQUENCE_TYPES = {'credit_note', 'note_support'}
+        # Document types that use the journal's debit sequence
+        DEBIT_SEQUENCE_TYPES = {'debit_note'}
         for rec in self:
-            type_edi_document = rec.ei_type_document
-            if type_edi_document:
-                if type_edi_document in ('invoice', 'doc_support') and rec.journal_id.sequence_id.resolution_id:
-                    # Sales invoice
-                    rec.resolution_id = rec.journal_id.sequence_id.resolution_id.id
-                elif type_edi_document in (
-                        'credit_note', 'note_support') and rec.journal_id.refund_sequence_id.resolution_id:
-                    # Credit note
-                    rec.resolution_id = rec.journal_id.refund_sequence_id.resolution_id.id
-                elif type_edi_document == 'debit_note' and rec.journal_id.debitnote_sequence_id.resolution_id:
-                    # Debit note
-                    rec.resolution_id = rec.journal_id.debitnote_sequence_id.resolution_id.id
+            # Safely determine resolution based on document type and journal sequences
+            try:
+                if rec.ei_type_document in REGULAR_SEQUENCE_TYPES:
+                    # Use main sequence resolution for regular documents
+                    resolution = rec.journal_id.sequence_id.resolution_id
+                elif rec.ei_type_document in REFUND_SEQUENCE_TYPES:
+                    # Use refund sequence resolution for credit notes
+                    resolution = rec.journal_id.refund_sequence_id.resolution_id
+                elif rec.ei_type_document in DEBIT_SEQUENCE_TYPES:
+                    # Use debit sequence resolution for debit notes
+                    resolution = rec.journal_id.debitnote_sequence_id.resolution_id
                 else:
-                    rec.resolution_id = None
-            else:
-                rec.resolution_id = None
+                    # Unknown document type, no resolution applicable
+                    resolution = False
+
+                # Assign resolution ID or False if resolution doesn't exist
+                rec.resolution_id = resolution.id if resolution else False
+
+            except AttributeError:
+                # Handle missing journal, sequence, or resolution chain gracefully
+                rec.resolution_id = False
 
     @api.depends('number', 'reference', 'journal_id')
     def compute_number_formatted(self):
