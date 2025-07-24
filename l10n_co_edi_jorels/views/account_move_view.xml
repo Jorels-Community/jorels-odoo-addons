@@ -26,6 +26,44 @@
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
+                <!-- Warning banner for invalid DIAN validation as last element in header -->
+                <xpath expr="//header" position="after">
+                    <!-- Add invisible field to make ei_company_enable available for attrs -->
+                    <field name="ei_company_enable" invisible="1"/>
+                    <div attrs="{'invisible': ['|', '|', '|', ('ei_company_enable', '=', False), ('ei_is_valid', '=', True), ('state', '=', 'draft'), ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}">
+                        <span style="
+                            position: fixed;
+                            top: 58px;
+                            left: -85px;
+                            width: 380px;
+                            height: 60px;
+                            background-color: #cc3c2c;
+                            color: #ffffff;
+                            font-size: 38px;
+                            font-weight: bold;
+                            text-align: center;
+                            line-height: 60px;
+                            letter-spacing: 2px;
+                            text-transform: uppercase;
+                            transform: rotate(-45deg);
+                            transform-origin: center;
+                            opacity: 0.5;
+                            z-index: 10000;
+                            pointer-events: none;
+                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+                            border: 2px solid rgba(255, 255, 255, 0.1);
+                            font-family: 'Arial', sans-serif;
+                        ">Invalid
+                        </span>
+                    </div>
+                    <div class="alert alert-danger mb-0" role="alert"
+                         attrs="{'invisible': ['|', '|', '|', ('ei_company_enable', '=', False), ('ei_is_valid', '=', True), ('state', '=', 'draft'), ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}">
+                        <i class="fa fa-exclamation-triangle" style="margin-right: 8px;" title="Warning"/>
+                        <strong>WARNING!</strong>
+                        This document has NOT been validated with DIAN.
+                        The document has no tax validity until it is successfully validated.
+                    </div>
+                </xpath>
                 <xpath expr="//div[@name='button_box']" position="inside">
                     <button name="dian_preview" type="object" class="oe_stat_button" icon="fa-globe icon"
                             invisible="not ei_uuid">
@@ -85,7 +123,7 @@
                 </xpath>
                 <xpath expr="//page[@name='other_info']" position="after">
                     <page string="DIAN response" name="info_Dian"
-                          invisible="move_type not in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')">
+                          invisible="not ei_company_enable or move_type not in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')">
                         <group name="dian_response">
                             <field name="ei_sync"/>
                             <field name="ei_is_not_test"/>
@@ -129,7 +167,7 @@
                         </group>
                     </page>
                     <page name="dian_events" string="Dian Events"
-                          invisible="move_type not in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')">
+                          invisible="not ei_company_enable or move_type not in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')">
                         <field name="radian_ids"
                                context="{'type': move_type in ('out_invoice','out_refund') and 'customer' or 'supplier', 'default_move_id': id}"
                                options="{'always_reload': True}">
@@ -224,6 +262,18 @@
                     <field name="resolution_id"
                            invisible="move_type not in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')"
                            readonly="state != 'draft'"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Tree view -->
+        <record id="account_move_view_tree_inherit_l10n_co_edi_jorels" model="ir.ui.view">
+            <field name="name">account.move.view.tree.inherit.l10n_co_edi_jorels</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <field name="ei_is_valid" optional="show"/>
                 </xpath>
             </field>
         </record>
