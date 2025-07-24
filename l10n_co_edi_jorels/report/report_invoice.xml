@@ -22,10 +22,10 @@
 <odoo>
     <data>
         <template id="report_invoice_document_custom" inherit_id="account.report_invoice_document">
-            <xpath expr="//div[@class='row']" position="attributes">
+            <xpath expr="//div[hasclass('row')]" position="attributes">
                 <attribute name="t-if" add="not o.company_id.ei_enable" separator=" and "/>
             </xpath>
-            <xpath expr="//div[@class='row']" position="after">
+            <xpath expr="//div[hasclass('row')]" position="after">
                 <div t-if="o.company_id.ei_enable" class="row mt32 mb32" name="ei_header">
                     <div t-if="o.ei_is_valid and o.ei_qr_data" class="col-2 mb-2" name="ei_qr">
                         <!-- With OCA -->

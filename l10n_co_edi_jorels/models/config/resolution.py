@@ -69,17 +69,18 @@ class Resolution(models.Model):
             else:
                 rec.name = rec.resolution_type_document_id.name if rec.resolution_type_document_id else "Incompatible Resolution"
 
-
     @api.model_create_multi
     def create(self, vals_list):
-        records = []
+        processed_vals = []
         for vals in vals_list:
-            if vals['resolution_api_sync']:
-                vals, success = self.post_resolution(vals)
+            if vals.get('resolution_api_sync'):
+                processed_vals_item, success = self.post_resolution(vals)
                 if not success:
                     raise UserError(_("Could not save record to API"))
-            records.append(vals)
-        return super(Resolution, self).create(records)
+                processed_vals.append(processed_vals_item)
+            else:
+                processed_vals.append(vals)
+        return super(Resolution, self).create(processed_vals)
 
     def write(self, vals):
         for rec in self:
