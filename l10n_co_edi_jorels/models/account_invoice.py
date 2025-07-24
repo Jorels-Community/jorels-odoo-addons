@@ -71,9 +71,11 @@ class AccountInvoice(models.Model):
     ei_is_not_test = fields.Boolean(string="In production", copy=False, readonly=True,
                                     default=lambda self: self.env['res.company']._company_default_get().is_not_test,
                                     store=True, compute="_compute_ei_is_not_test")
+    ei_company_enable = fields.Boolean(string="Company Edi Enable", compute="_compute_ei_company_enable")
 
     # API Response:
-    ei_is_valid = fields.Boolean(string="Valid", copy=False, readonly=True, states={'draft': [('readonly', False)]})
+    ei_is_valid = fields.Boolean(string="DIAN Valid", copy=False, readonly=True,
+                                 states={'draft': [('readonly', False)]})
     ei_is_restored = fields.Boolean("Is restored?", copy=False, readonly=True)
     ei_algorithm = fields.Char(string="Algorithm", copy=False, readonly=True)
     ei_class = fields.Char("Class", copy=False, readonly=True)
@@ -326,6 +328,11 @@ class AccountInvoice(models.Model):
                 rec.ei_is_not_test = (rec.ei_type_environment.id == 1)
             else:
                 rec.ei_is_not_test = rec.company_id.is_not_test
+
+    @api.depends('company_id.ei_enable')
+    def _compute_ei_company_enable(self):
+        for rec in self:
+            rec.ei_company_enable = rec.company_id.ei_enable
 
     @api.multi
     def _default_payment_method_id(self):
@@ -1073,17 +1080,44 @@ class AccountInvoice(models.Model):
         return False
 
     @api.multi
-    def is_pending_to_send_to_dian(self):
+    def _can_process_edi(self):
+        """
+        Check if the document can be processed for EDI.
+        Returns True if all basic conditions are met, False otherwise.
+        """
         self.ensure_one()
 
-        if not self.company_id.ei_enable:
-            return False
-        if self.is_journal_pos():
-            return False
-        if self.ei_is_valid:
-            return False
+        return (
+                self.company_id.ei_enable and
+                not self.is_journal_pos() and
+                not self.ei_is_valid
+        )
 
-        return self.should_send_document_to_dian()
+    @api.multi
+    def is_pending_to_send_to_dian(self):
+        """
+        Check if the document is pending to be sent to DIAN.
+        """
+        self.ensure_one()
+
+        return (
+                self._can_process_edi() and
+                self.should_send_document_to_dian()
+        )
+
+    @api.multi
+    def is_pending_to_force_edi(self):
+        """
+        Check if the document is pending to force EDI processing.
+        """
+        self.ensure_one()
+
+        return (
+                self._can_process_edi() and
+                self.ei_uuid and
+                self.type in ('in_invoice', 'in_refund') and
+                not self.should_send_document_to_dian()
+        )
 
     @api.depends('ei_is_correction_without_reference', 'debit_invoice_id', 'journal_id', 'type')
     def _compute_ei_type_document(self):
@@ -1626,6 +1660,8 @@ class AccountInvoice(models.Model):
                             raise UserError(_('The document could not be validated in DIAN.'))
                     else:
                         raise UserError(_("No logical response was obtained from the API."))
+                elif rec.is_pending_to_force_edi():
+                    rec.write({'ei_is_valid': True})
                 else:
                     _logger.debug("This document does not need to be sent to the DIAN")
             except Exception as e:
@@ -1702,6 +1738,13 @@ class AccountInvoice(models.Model):
                 to_test_invoices = to_electronic_invoices.filtered(lambda inv: not inv.ei_is_not_test)
                 if to_test_invoices:
                     to_test_invoices.validate_dian_generic(True)
+
+        to_force_edi = self.filtered(lambda inv: inv.is_pending_to_force_edi())
+        if to_force_edi:
+            # Validate invoices
+            to_force_invoices = to_force_edi.filtered(lambda inv: inv.state == 'open')
+            if to_force_invoices:
+                to_force_invoices.write({'ei_is_valid': True})
 
         return res
 
