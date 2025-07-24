@@ -70,16 +70,19 @@ class Resolution(models.Model):
             else:
                 rec.name = rec.resolution_type_document_id.name
 
-    @api.model_create_single
-    def create(self, vals):
-        if vals['resolution_api_sync']:
-            vals, success = self.post_resolution(vals)
-            if success:
-                return super(Resolution, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = self.env['l10n_co_edi_jorels.resolution']
+        for vals in vals_list:
+            if vals['resolution_api_sync']:
+                vals, success = self.post_resolution(vals)
+                if success:
+                    records += super(Resolution, self).create([vals])
+                else:
+                    raise UserError(_("Could not save record to API"))
             else:
-                raise UserError(_("Could not save record to API"))
-        else:
-            return super(Resolution, self).create(vals)
+                records += super(Resolution, self).create([vals])
+        return records
 
     def write(self, vals):
         for rec in self:
