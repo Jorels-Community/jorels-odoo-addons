@@ -261,7 +261,7 @@
                            readonly="state != 'draft'"/>
                     <field name="resolution_id"
                            invisible="move_type not in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')"
-                           readonly="state != 'draft'"/>
+                           readonly="state != 'draft' or (not posted_before and name in (False, '', '/'))"/>
                 </xpath>
             </field>
         </record>
