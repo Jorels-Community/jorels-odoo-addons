@@ -1388,183 +1388,184 @@ class AccountInvoice(models.Model):
             return operation[self.ei_operation]
 
     @api.multi
+    # Currently, the should_send_document_to_dian() function is always called first throughout the code in this module,
+    # so this validation was removed from within this function to optimize it. But if you want to use the function
+    # directly, it would be important to evaluate whether it's necessary to first perform this validation.
     def get_json_request(self, check_date=True):
-        for rec in self:
-            if rec.should_send_document_to_dian():
-                # Important for compatibility with old fields,
-                # third-party modules or manual changes to the database
-                if not rec.ei_number or not rec.number_formatted:
-                    rec.compute_number_formatted()
+        self.ensure_one()
 
-                # Check resolution
-                if not rec.resolution_id:
-                    raise UserError(
-                        _("This type of document does not have a DIAN resolution assigned: %s") % rec.number)
+        # Important for compatibility with old fields,
+        # third-party modules or manual changes to the database
+        if not self.ei_number or not self.number_formatted:
+            self.compute_number_formatted()
 
-                json_request = {
-                    'number': rec.ei_number,
-                    'type_document_code': rec.ei_type_document_id.id,
-                    'sync': rec.get_ei_sync(),
-                    'customer': rec.get_ei_customer(),
-                    'operation_code': rec.get_operation_code()
+        # Check resolution
+        if not self.resolution_id:
+            raise UserError(
+                _("This type of document does not have a DIAN resolution assigned: %s") % self.number)
+
+        json_request = {
+            'number': self.ei_number,
+            'type_document_code': self.ei_type_document_id.id,
+            'sync': self.get_ei_sync(),
+            'customer': self.get_ei_customer(),
+            'operation_code': self.get_operation_code()
+        }
+
+        if self.ei_type_document == 'invoice':
+            json_request['resolution'] = {
+                'prefix': self.resolution_id.resolution_prefix,
+                'resolution': self.resolution_id.resolution_resolution,
+                'resolution_date': fields.Date.to_string(self.resolution_id.resolution_resolution_date),
+                'technical_key': self.resolution_id.resolution_technical_key,
+                'number_from': self.resolution_id.resolution_from,
+                'number_to': self.resolution_id.resolution_to,
+                'date_from': fields.Date.to_string(self.resolution_id.resolution_date_from),
+                'date_to': fields.Date.to_string(self.resolution_id.resolution_date_to)
+            }
+        else:
+            json_request['resolution_code'] = self.resolution_id.resolution_id
+
+        # Due date
+        if self.date_due:
+            json_request['due_date'] = fields.Date.to_string(self.date_due)
+
+        # Issue date
+        if self.date_invoice:
+            if check_date and self.date_invoice != fields.Date.context_today(self):
+                raise UserError(_("The issue date must be today's date"))
+            json_request['date'] = fields.Date.to_string(self.date_invoice)
+
+        # Period
+        if self.date_start and self.date_end:
+            json_request['period'] = {
+                'date_start': fields.Date.to_string(self.date_start),
+                'date_end': fields.Date.to_string(self.date_end)
+            }
+
+        # Order reference
+        if self.order_ref_number:
+            json_request['order_reference'] = {
+                'number': self.order_ref_number
+            }
+            if self.order_ref_date:
+                json_request['order_reference']['issue_date'] = fields.Date.to_string(self.order_ref_date)
+
+        if not self.company_id.currency_id or self.company_id.currency_id.name != 'COP':
+            raise UserError(_('The company currency must be COP to report bills to DIAN. '
+                              'Set it up in the Companies configuration view in Odoo.'))
+
+        # Multi-currency compatibility
+        if self.currency_id and self.company_id and self.currency_id != self.company_id.currency_id:
+            company_currency_code = self.company_id.currency_id.name
+            invoice_currency_code = self.currency_id.name
+
+            if not self.journal_id.currency_id or self.journal_id.currency_id.name != 'COP':
+                raise UserError(_('The currency of their journal must be COP to report bills to DIAN. '
+                                  'Set it up in the Journals configuration view in Odoo.'))
+
+            type_currencies_env = self.env['l10n_co_edi_jorels.type_currencies']
+            company_currency_search = type_currencies_env.search([('code', '=', company_currency_code)])
+            invoice_currency_search = type_currencies_env.search([('code', '=', invoice_currency_code)])
+
+            # The if is to make sure the name in currency_id,
+            # have a match in the code in type_currencies of the DIAN
+            if company_currency_search and invoice_currency_search:
+                rate_date = self._get_currency_rate_date() or fields.Date.context_today(self)
+                rate = self.currency_id.with_context(dict(self._context or {}, date=self.date_invoice)).rate
+
+                json_request['currency_code'] = company_currency_search.id
+                json_request['exchange_rate'] = {
+                    'code': invoice_currency_search.id,
+                    'rate': rate,
+                    'date': str(rate_date)
                 }
+            else:
+                raise UserError(_("A currency type in Odoo does not correspond to any DIAN currency type"))
 
-                if rec.ei_type_document == 'invoice':
-                    json_request['resolution'] = {
-                        'prefix': rec.resolution_id.resolution_prefix,
-                        'resolution': rec.resolution_id.resolution_resolution,
-                        'resolution_date': fields.Date.to_string(rec.resolution_id.resolution_resolution_date),
-                        'technical_key': rec.resolution_id.resolution_technical_key,
-                        'number_from': rec.resolution_id.resolution_from,
-                        'number_to': rec.resolution_id.resolution_to,
-                        'date_from': fields.Date.to_string(rec.resolution_id.resolution_date_from),
-                        'date_to': fields.Date.to_string(rec.resolution_id.resolution_date_to)
+        if self.is_universal_discount():
+            if self.currency_id and self.company_id and self.currency_id != self.company_id.currency_id:
+                raise UserError(
+                    _("The universal discount module doesn't seem to be compatible with multi-currencies."))
+
+            if self.ks_amount_discount:
+                allowance_charges = []
+                allowance_charge = {
+                    'indicator': False,
+                    'discount_code': 2,
+                    'base_value': abs(self.amount_untaxed_signed),
+                    'value': self.ks_amount_discount,
+                    'reason': 'Descuento general'
+                }
+                allowance_charges.append(allowance_charge)
+                json_request['allowance_charges'] = allowance_charges
+
+        # json_request y billing_reference
+        billing_reference = False
+        type_edi_document = self.ei_type_document
+        invoice_rec = None
+        json_request['legal_monetary_totals'] = self.get_ei_legal_monetary_totals()
+        json_request['lines'] = self.get_ei_lines()
+        json_request['payment_forms'] = [self.get_ei_payment_form()]
+
+        withholding_tax_totals = self.get_ei_withholding_tax_totals(json_request['lines'])
+        if withholding_tax_totals:
+            json_request['withholding_tax_totals'] = withholding_tax_totals
+
+        if type_edi_document in ('invoice', 'doc_support'):
+            # Sales invoice
+            billing_reference = False
+        elif type_edi_document in ('credit_note', 'note_support'):
+            # Credit note
+            invoice_env = self.env['account.invoice']
+            invoice_rec = invoice_env.search([('id', '=', self.refund_invoice_id.id)])
+            billing_reference = True
+        elif type_edi_document == 'debit_note':
+            # Debit note
+            if self.is_debit_note_module():
+                if not self.ei_is_correction_without_reference:
+                    invoice_env = self.env['account.invoice']
+                    invoice_rec = invoice_env.search([('id', '=', self.debit_invoice_id.id)])
+                billing_reference = True
+            else:
+                raise UserError(_("The debit notes module has not been installed."))
+
+        # Billing reference
+        if billing_reference:
+            self.compute_ei_correction_concept_id()
+            if self.ei_correction_concept_id:
+                json_request["discrepancy"] = {
+                    # "reference": None,
+                    "correction_code": self.ei_correction_concept_id.id,
+                    "description": self.name if self.name else ''
+                }
+            else:
+                raise UserError(_("You need to select a correction code first"))
+
+            if not self.ei_is_correction_without_reference:
+                if invoice_rec and invoice_rec.ei_uuid:
+                    json_request["reference"] = {
+                        "number": invoice_rec.number_formatted,
+                        "uuid": invoice_rec.ei_uuid,
+                        "issue_date": fields.Date.to_string(invoice_rec.ei_issue_date)
                     }
                 else:
-                    json_request['resolution_code'] = rec.resolution_id.resolution_id
+                    raise UserError(_("The reference invoice has not yet been validated before the DIAN"))
+            elif type_edi_document == 'note_support':
+                raise UserError(
+                    _("The credit note for document support cannot be a correction without reference"))
 
-                # Due date
-                if rec.date_due:
-                    json_request['due_date'] = fields.Date.to_string(rec.date_due)
+        if self.name or self.comment:
+            notes = []
+            if self.name:
+                notes.append({'text': self.name})
+            if self.comment:
+                comment = re.sub(r'<.*?>', '', self.comment)
+                if comment:
+                    notes.append({'text': comment})
+            json_request['notes'] = notes
 
-                # Issue date
-                if rec.date_invoice:
-                    if check_date and rec.date_invoice != fields.Date.context_today(rec):
-                        raise UserError(_("The issue date must be today's date"))
-                    json_request['date'] = fields.Date.to_string(rec.date_invoice)
-
-                # Period
-                if rec.date_start and rec.date_end:
-                    json_request['period'] = {
-                        'date_start': fields.Date.to_string(rec.date_start),
-                        'date_end': fields.Date.to_string(rec.date_end)
-                    }
-
-                # Order reference
-                if rec.order_ref_number:
-                    json_request['order_reference'] = {
-                        'number': rec.order_ref_number
-                    }
-                    if rec.order_ref_date:
-                        json_request['order_reference']['issue_date'] = fields.Date.to_string(rec.order_ref_date)
-
-                if not rec.company_id.currency_id or rec.company_id.currency_id.name != 'COP':
-                    raise UserError(_('The company currency must be COP to report bills to DIAN. '
-                                      'Set it up in the Companies configuration view in Odoo.'))
-
-                # Multi-currency compatibility
-                if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
-                    company_currency_code = rec.company_id.currency_id.name
-                    invoice_currency_code = rec.currency_id.name
-
-                    if not rec.journal_id.currency_id or rec.journal_id.currency_id.name != 'COP':
-                        raise UserError(_('The currency of their journal must be COP to report bills to DIAN. '
-                                          'Set it up in the Journals configuration view in Odoo.'))
-
-                    type_currencies_env = self.env['l10n_co_edi_jorels.type_currencies']
-                    company_currency_search = type_currencies_env.search([('code', '=', company_currency_code)])
-                    invoice_currency_search = type_currencies_env.search([('code', '=', invoice_currency_code)])
-
-                    # The if is to make sure the name in currency_id,
-                    # have a match in the code in type_currencies of the DIAN
-                    if company_currency_search and invoice_currency_search:
-                        rate_date = rec._get_currency_rate_date() or fields.Date.context_today(self)
-                        rate = rec.currency_id.with_context(dict(rec._context or {}, date=rec.date_invoice)).rate
-
-                        json_request['currency_code'] = company_currency_search.id
-                        json_request['exchange_rate'] = {
-                            'code': invoice_currency_search.id,
-                            'rate': rate,
-                            'date': str(rate_date)
-                        }
-                    else:
-                        raise UserError(_("A currency type in Odoo does not correspond to any DIAN currency type"))
-
-                if self.is_universal_discount():
-                    if rec.currency_id and rec.company_id and rec.currency_id != rec.company_id.currency_id:
-                        raise UserError(
-                            _("The universal discount module doesn't seem to be compatible with multi-currencies."))
-
-                    if rec.ks_amount_discount:
-                        allowance_charges = []
-                        allowance_charge = {
-                            'indicator': False,
-                            'discount_code': 2,
-                            'base_value': abs(rec.amount_untaxed_signed),
-                            'value': rec.ks_amount_discount,
-                            'reason': 'Descuento general'
-                        }
-                        allowance_charges.append(allowance_charge)
-                        json_request['allowance_charges'] = allowance_charges
-
-                # json_request y billing_reference
-                billing_reference = False
-                type_edi_document = rec.ei_type_document
-                invoice_rec = None
-                json_request['legal_monetary_totals'] = rec.get_ei_legal_monetary_totals()
-                json_request['lines'] = rec.get_ei_lines()
-                json_request['payment_forms'] = [rec.get_ei_payment_form()]
-
-                withholding_tax_totals = rec.get_ei_withholding_tax_totals(json_request['lines'])
-                if withholding_tax_totals:
-                    json_request['withholding_tax_totals'] = withholding_tax_totals
-
-                if type_edi_document in ('invoice', 'doc_support'):
-                    # Sales invoice
-                    billing_reference = False
-                elif type_edi_document in ('credit_note', 'note_support'):
-                    # Credit note
-                    invoice_env = self.env['account.invoice']
-                    invoice_rec = invoice_env.search([('id', '=', rec.refund_invoice_id.id)])
-                    billing_reference = True
-                elif type_edi_document == 'debit_note':
-                    # Debit note
-                    if self.is_debit_note_module():
-                        if not rec.ei_is_correction_without_reference:
-                            invoice_env = self.env['account.invoice']
-                            invoice_rec = invoice_env.search([('id', '=', rec.debit_invoice_id.id)])
-                        billing_reference = True
-                    else:
-                        raise UserError(_("The debit notes module has not been installed."))
-
-                # Billing reference
-                if billing_reference:
-                    rec.compute_ei_correction_concept_id()
-                    if rec.ei_correction_concept_id:
-                        json_request["discrepancy"] = {
-                            # "reference": None,
-                            "correction_code": rec.ei_correction_concept_id.id,
-                            "description": rec.name if rec.name else ''
-                        }
-                    else:
-                        raise UserError(_("You need to select a correction code first"))
-
-                    if not rec.ei_is_correction_without_reference:
-                        if invoice_rec and invoice_rec.ei_uuid:
-                            json_request["reference"] = {
-                                "number": invoice_rec.number_formatted,
-                                "uuid": invoice_rec.ei_uuid,
-                                "issue_date": fields.Date.to_string(invoice_rec.ei_issue_date)
-                            }
-                        else:
-                            raise UserError(_("The reference invoice has not yet been validated before the DIAN"))
-                    elif type_edi_document == 'note_support':
-                        raise UserError(
-                            _("The credit note for document support cannot be a correction without reference"))
-
-                if rec.name or rec.comment:
-                    notes = []
-                    if rec.name:
-                        notes.append({'text': rec.name})
-                    if rec.comment:
-                        comment = re.sub(r'<.*?>', '', rec.comment)
-                        if comment:
-                            notes.append({'text': comment})
-                    json_request['notes'] = notes
-            else:
-                raise UserError(_("This type of document does not need to be sent to DIAN"))
-
-            return json_request
+        return json_request
 
     @api.multi
     def validate_dian_generic(self, is_test):
@@ -1573,16 +1574,14 @@ class AccountInvoice(models.Model):
                 if not rec.company_id.ei_enable:
                     continue
 
-                # raise UserError(json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
-                _logger.debug("DIAN Validation Request: %s",
-                              json.dumps(rec.get_json_request(), indent=2, sort_keys=False))
-
                 if rec.state == 'draft':
                     raise UserError(_("The invoice must first be validated in Odoo, before being sent to the DIAN."))
 
                 type_edi_document = rec.ei_type_document
                 if rec.is_pending_to_send_to_dian():
                     requests_data = rec.get_json_request()
+                    _logger.debug("DIAN Validation Request: %s",
+                                  json.dumps(requests_data, indent=2, sort_keys=False))
 
                     if rec.company_id.api_key:
                         token = rec.company_id.api_key
@@ -1755,11 +1754,11 @@ class AccountInvoice(models.Model):
                 continue
 
             try:
-                # This line ensures that the electronic fields of the invoice are updated in Odoo, before the request
-                requests_data = rec.get_json_request(check_date=False)
-                _logger.debug('Customer data: %s', requests_data)
-
                 if rec.should_send_document_to_dian():
+                    # This line ensures that the electronic fields of the invoice are updated in Odoo, before the request
+                    requests_data = rec.get_json_request(check_date=False)
+                    _logger.debug('Customer data: %s', requests_data)
+
                     if rec.ei_zip_key or rec.ei_uuid:
                         requests_data = {}
                         _logger.debug('API Requests: %s', requests_data)
@@ -1833,12 +1832,12 @@ class AccountInvoice(models.Model):
                 continue
 
             try:
-                # This line ensures that the electronic fields of the invoice are updated in Odoo,
-                # before request
-                requests_data = rec.get_json_request(check_date=False)
-                _logger.debug('Customer data: %s', requests_data)
-
                 if rec.should_send_document_to_dian():
+                    # This line ensures that the electronic fields of the invoice are updated in Odoo,
+                    # before request
+                    requests_data = rec.get_json_request(check_date=False)
+                    _logger.debug('Customer data: %s', requests_data)
+
                     if rec.number_formatted:
                         requests_data = {}
                         _logger.debug('API Requests: %s', requests_data)
