@@ -239,7 +239,8 @@
                 </xpath>
                 <xpath expr="//field[@name='journal_id']" position="after">
                     <field name="is_out_country"/>
-                    <field name="resolution_id"/>
+                    <field name="resolution_id"
+                           attrs="{'readonly': ['|', ('state', '!=', 'draft'), ('move_name', 'in', (False, '', '/'))]}"/>
                 </xpath>
             </field>
         </record>
@@ -464,7 +465,8 @@
                 </xpath>
                 <xpath expr="//field[@name='journal_id']" position="after">
                     <field name="is_out_country"/>
-                    <field name="resolution_id"/>
+                    <field name="resolution_id"
+                           attrs="{'readonly': ['|', ('state', '!=', 'draft'), ('move_name', 'in', (False, '', '/'))]}"/>
                 </xpath>
             </field>
         </record>
