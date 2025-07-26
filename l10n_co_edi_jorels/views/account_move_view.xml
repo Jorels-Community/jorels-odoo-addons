@@ -251,7 +251,7 @@
                     <field name="is_out_country"
                            attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
                     <field name="resolution_id"
-                           attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
+                           attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))], 'readonly': ['|', ('state', '!=', 'draft'), '&amp;', ('posted_before', '=', False), ('name', 'in', (False, '', '/'))]}"/>
                 </xpath>
             </field>
         </record>
