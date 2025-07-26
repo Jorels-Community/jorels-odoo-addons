@@ -243,7 +243,7 @@
                     <field name="is_out_country"
                            attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
                     <field name="resolution_id"
-                           attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>
+                           attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))], 'readonly': ['|', ('state', '!=', 'draft'), ('name', 'in', (False, '', '/'))]}"/>
                 </xpath>
             </field>
         </record>
