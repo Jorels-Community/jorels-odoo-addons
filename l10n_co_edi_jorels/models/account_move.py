@@ -271,6 +271,51 @@ class AccountMove(models.Model):
 
         return super()._auto_init()
 
+    @api.constrains('ei_type_document', 'resolution_id')
+    def _check_resolution_id_document_type_consistency(self):
+        """
+        Validate that resolution_id is consistent with ei_type_document field.
+
+        Based on DIAN requirements, each document type has specific allowed resolution types:
+        - none: Can have any resolution or no resolution
+        - invoice: Can have no resolution or type documents with IDs 1, 2, 101
+        - credit_note: Can have no resolution or type documents with IDs 5, 105
+        - debit_note: Can have no resolution or type documents with IDs 6, 106
+        - doc_support: Can have no resolution or type documents with ID 12
+        - note_support: Can have no resolution or type documents with ID 13
+        """
+        for record in self:
+            if not record.resolution_id:
+                # If no resolution is set, it's always valid
+                continue
+
+            # Get the type document ID from the resolution
+            resolution_type_doc_id = record.resolution_id.resolution_type_document_id.id if record.resolution_id.resolution_type_document_id else False
+
+            # Define allowed type document IDs for each ei_type_document
+            allowed_mappings = {
+                'none': None,  # Can have any resolution
+                'invoice': [1, 2, 101],  # Factura electrónica de venta, exportación, no electrónica
+                'credit_note': [5, 105],  # Nota de crédito electrónica, no electrónica
+                'debit_note': [6, 106],  # Nota de débito electrónica, no electrónica
+                'doc_support': [12],  # Documento soporte
+                'note_support': [13],  # Nota de ajuste al documento soporte
+            }
+
+            allowed_ids = allowed_mappings.get(record.ei_type_document)
+
+            # If allowed_ids is defined and resolution type doc ID is not in allowed list
+            if allowed_ids is not None and resolution_type_doc_id not in allowed_ids:
+                type_doc_names = self.env['l10n_co_edi_jorels.type_documents'].browse(allowed_ids).mapped('name')
+                allowed_names = ', '.join(type_doc_names) if type_doc_names else _('None')
+
+                current_type_doc_name = record.resolution_id.resolution_type_document_id.name if record.resolution_id.resolution_type_document_id else _(
+                    'Unknown')
+
+                raise ValidationError(_("The Edi document type is not compatible with resolution '%s'. \n"
+                                        "Allowed resolutions are: \n%s"
+                                        ) % (current_type_doc_name, allowed_names))
+
     def dian_preview(self):
         for rec in self:
             if rec.ei_uuid:
