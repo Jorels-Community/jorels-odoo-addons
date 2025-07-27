@@ -30,7 +30,7 @@
                 <xpath expr="//header" position="after">
                     <!-- Add invisible field to make ei_company_enable available for attrs -->
                     <field name="ei_company_enable" invisible="1"/>
-                    <div attrs="{'invisible': ['|', '|', '|', ('ei_company_enable', '=', False), ('ei_is_valid', '=', True), ('state', '=', 'draft'), ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}">
+                    <div invisible="not ei_company_enable or ei_is_valid or state == 'draft' or move_type not in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']">
                         <span style="
                             position: fixed;
                             top: 58px;
@@ -57,7 +57,7 @@
                         </span>
                     </div>
                     <div class="alert alert-danger mb-0" role="alert"
-                         attrs="{'invisible': ['|', '|', '|', ('ei_company_enable', '=', False), ('ei_is_valid', '=', True), ('state', '=', 'draft'), ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}">
+                         invisible="not ei_company_enable or ei_is_valid or state == 'draft' or move_type not in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']">
                         <i class="fa fa-exclamation-triangle" style="margin-right: 8px;" title="Warning"/>
                         <strong>WARNING!</strong>
                         This document has NOT been validated with DIAN.
