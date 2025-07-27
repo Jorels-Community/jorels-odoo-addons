@@ -72,17 +72,16 @@ class Resolution(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        records = self.env['l10n_co_edi_jorels.resolution']
+        processed_vals = []
         for vals in vals_list:
-            if vals['resolution_api_sync']:
-                vals, success = self.post_resolution(vals)
-                if success:
-                    records += super(Resolution, self).create([vals])
-                else:
+            if vals.get('resolution_api_sync'):
+                processed_vals_item, success = self.post_resolution(vals)
+                if not success:
                     raise Warning(_("Could not save record to API"))
+                processed_vals.append(processed_vals_item)
             else:
-                records += super(Resolution, self).create([vals])
-        return records
+                processed_vals.append(vals)
+        return super(Resolution, self).create(processed_vals)
 
     @api.multi
     def write(self, vals):
