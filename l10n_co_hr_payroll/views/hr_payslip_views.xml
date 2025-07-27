@@ -71,8 +71,8 @@
                     <field name="earn_ids" readonly="state != 'draft'">
                         <tree string="Earn Details" editable="bottom">
                             <field name="rule_input_id" options="{'no_create': True, 'no_open': True}"/>
-                            <field name="category" invisible="1"/>
-                            <field name="code" invisible="1"/>
+                            <field name="category" column_invisible="1"/>
+                            <field name="code" column_invisible="1"/>
                             <field name="name"/>
                             <field name="amount"
                                    invisible="category in (
@@ -87,7 +87,7 @@
                                    invisible="category in (
                                    'suspension_or_unpaid_leaves',
                                    'legal_strikes')"/>
-                            <field name="sequence" invisible="True"/>
+                            <field name="sequence" column_invisible="1"/>
                             <field name="date_start"
                                    invisible="category not in (
                                    'vacation_common',
@@ -223,11 +223,11 @@
                     <field name="deduction_ids" readonly="state != 'draft'">
                         <tree string="Deduction Details" editable="bottom">
                             <field name="rule_input_id" options="{'no_create': True, 'no_open': True}"/>
-                            <field name="category" invisible="1"/>
-                            <field name="code" invisible="1"/>
+                            <field name="category" column_invisible="1"/>
+                            <field name="code" column_invisible="1"/>
                             <field name="name"/>
                             <field name="amount"/>
-                            <field name="sequence" invisible="True"/>
+                            <field name="sequence" column_invisible="1"/>
                         </tree>
                         <form string="Deduction Details">
                             <group>
