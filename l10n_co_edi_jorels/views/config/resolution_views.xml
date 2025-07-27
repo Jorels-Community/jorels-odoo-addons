@@ -59,7 +59,7 @@
         <field name="model">l10n_co_edi_jorels.resolution</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="resolution_type_document_id" invisible="1"/>
+                <field name="resolution_type_document_id" column_invisible="1"/>
                 <field name="name"/>
                 <field name="resolution_prefix"/>
                 <field name="resolution_resolution"/>
