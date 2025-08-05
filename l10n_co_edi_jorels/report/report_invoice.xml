@@ -186,7 +186,7 @@
                     </span>
                 </th>
             </xpath>
-            <xpath expr="//tbody[@class='invoice_tbody']//td[@class='text-right o_price_total']" position="after">
+            <xpath expr="//tbody[hasclass('invoice_tbody')]//td[hasclass('text-right', 'o_price_total')]" position="after">
                 <td class="text-right o_price_total" t-if="o.is_multicurrency">
                     <span groups="account.group_show_line_subtotals_tax_excluded"
                           t-esc="abs(line.price_subtotal_signed)"
