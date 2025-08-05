@@ -1294,8 +1294,7 @@ class AccountInvoice(models.Model):
         self.ensure_one()
         return self.ei_is_not_test
 
-    @api.depends('journal_id')
-    @api.onchange('journal_id', 'ei_type_document')
+    @api.depends('journal_id', 'ei_type_document')
     def _compute_resolution_id(self):
         """
         Compute the DIAN resolution ID based on journal configuration and document type.
@@ -1314,6 +1313,7 @@ class AccountInvoice(models.Model):
         REFUND_SEQUENCE_TYPES = {'credit_note', 'note_support'}
         # Document types that use the journal's debit sequence
         DEBIT_SEQUENCE_TYPES = {'debit_note'}
+
         for rec in self:
             # Safely determine resolution based on document type and journal sequences
             try:
