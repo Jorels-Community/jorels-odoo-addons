@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 14.0-20250725\n"
+"Project-Id-Version: Odoo Server 14.0-20231106\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-26 21:59+0000\n"
-"PO-Revision-Date: 2025-07-26 17:06-0500\n"
+"POT-Creation-Date: 2025-08-08 01:18+0000\n"
+"PO-Revision-Date: 2025-08-07 20:48-0500\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "Language: es_CO\n"
@@ -18,12 +18,18 @@ msgstr ""
 "X-Generator: Poedit 3.6\n"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/config/res_company.py:0
 #: code:addons/l10n_co_edi_jorels/models/config/res_company.py:0
 #, python-format
 msgid " - Electronic invoicing"
 msgstr " - Facturación electrónica"
+
+#. module: l10n_co_edi_jorels
+#: model:mail.template,subject:l10n_co_edi_jorels.email_template_edi
+msgid ""
+"${object.company_id.vat_formatted or ''};${object.company_id.business_name or object.company_id."
+"name or ''};${object.number_formatted or ''};${object.ei_type_document_id.code or ''};${object."
+"company_id.trade_name or object.company_id.business_name or object.company_id.name or ''};"
+msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -67,190 +73,141 @@ msgid "<br/>When changing the environment, this is automatic"
 msgstr "<br/>Cuando cambia el entorno, esto es automático"
 
 #. module: l10n_co_edi_jorels
-#: model:mail.template,body_html:l10n_co_edi_jorels.email_template_radian
-msgid ""
-"<div style=\"margin: 0px; padding: 0px;\">\n"
-"                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
-"                        Dear\n"
-"                        <t t-if=\"object.move_id and object.move_id.partner_id and object."
-"move_id.partner_id.parent_id\">\n"
-"                            <t t-out=\"object.move_id.partner_id.name or ''\">Brandon Freeman</"
-"t> (<t t-out=\"object.move_id.partner_id.parent_id.name or ''\">Azure Interior</t>),\n"
-"                        </t>\n"
-"                        <t t-else=\"\">\n"
-"                            <t t-if=\"object.move_id and object.move_id.partner_id\">\n"
-"                                <t t-out=\"object.move_id.partner_id.name or ''\">Brandon "
-"Freeman</t>,\n"
-"                            </t>\n"
-"                        </t>\n"
-"                        <br><br>\n"
-"                        Here is your\n"
-"                        <t t-if=\"object.event_id and object.event_id.name\">\n"
-"                            Radian event <strong t-out=\"object.event_id.name or ''\">Acuse de "
-"recibido</strong>\n"
-"                        </t>\n"
-"                        <t t-else=\"\">\n"
-"                            Radian event\n"
-"                        </t>\n"
-"                        <t t-if=\"object.edi_number\">\n"
-"                            with number <strong t-out=\"object.edi_number or ''\">E0310</"
-"strong>\n"
-"                        </t>\n"
-"                        <t t-if=\"object.move_id and object.move_id.number_formatted\">\n"
-"                            (with invoice: <t t-out=\"object.move_id.number_formatted or "
-"''\">INV0</t>)\n"
-"                        </t>\n"
-"                        <t t-if=\"object.company_id.business_name\">\n"
-"                            from <t t-out=\"object.company_id.business_name or ''\">YourCompany</"
-"t>.\n"
-"                        </t>\n"
-"                        <t t-else=\"object.company_id.name\">\n"
-"                            from <t t-out=\"object.company_id.name or ''\">YourCompany</t>.\n"
-"                        </t>\n"
-"                        <br><br>\n"
-"                        Do not hesitate to contact us if you have any questions.\n"
-"                    </p>\n"
-"                </div>\n"
-"            "
-msgstr ""
-"<div style=\"margin: 0px; padding: 0px;\">\n"
-"                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
-"                        Querido\n"
-"                        <t t-if=\"object.move_id and object.move_id.partner_id and object."
-"move_id.partner_id.parent_id\">\n"
-"                            <t t-out=\"object.move_id.partner_id.name or ''\">Brandon Freeman</"
-"t> (<t t-out=\"object.move_id.partner_id.parent_id.name or ''\">Azure Interior</t>),\n"
-"                        </t>\n"
-"                        <t t-else=\"\">\n"
-"                            <t t-if=\"object.move_id and object.move_id.partner_id\">\n"
-"                                <t t-out=\"object.move_id.partner_id.name or ''\">Brandon "
-"Freeman</t>,\n"
-"                            </t>\n"
-"                        </t>\n"
-"                        <br/><br/>\n"
-"                        Aquí está su\n"
-"                        <t t-if=\"object.event_id and object.event_id.name\">\n"
-"                            Evento del Radian <strong t-out=\"object.event_id.name or ''\">Acuse "
-"de recibido</strong>\n"
-"                        </t>\n"
-"                        <t t-else=\"\">\n"
-"                            Evento del Radian\n"
-"                        </t>\n"
-"                        <t t-if=\"object.edi_number\">\n"
-"                            con número <strong t-out=\"object.edi_number or ''\">E0310</strong>\n"
-"                        </t>\n"
-"                        <t t-if=\"object.move_id and object.move_id.number_formatted\">\n"
-"                            (con factura: <t t-out=\"object.move_id.number_formatted or "
-"''\">INV0</t>)\n"
-"                        </t>\n"
-"                        <t t-if=\"object.company_id.business_name\">\n"
-"                            de <t t-out=\"object.company_id.business_name or ''\">YourCompany</"
-"t>.\n"
-"                        </t>\n"
-"                        <t t-else=\"object.company_id.name\">\n"
-"                            de <t t-out=\"object.company_id.name or ''\">YourCompany</t>.\n"
-"                        </t>\n"
-"                        <br/><br/>\n"
-"                        No dude en contactarnos si tiene alguna inquietud.\n"
-"                    </p>\n"
-"                </div>\n"
-"            "
-
-#. module: l10n_co_edi_jorels
 #: model:mail.template,body_html:l10n_co_edi_jorels.email_template_edi
 msgid ""
 "<div style=\"margin: 0px; padding: 0px;\">\n"
 "                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
 "                        Dear\n"
-"                        <t t-if=\"object.partner_id.parent_id\">\n"
-"                            <t t-out=\"object.partner_id.name or ''\">Brandon Freeman</t> (<t t-"
-"out=\"object.partner_id.parent_id.name or ''\">Azure Interior</t>),\n"
-"                        </t>\n"
-"                        <t t-else=\"\">\n"
-"                            <t t-out=\"object.partner_id.name or ''\">Brandon Freeman</t>,\n"
-"                        </t>\n"
-"                        <br><br>\n"
+"                        % if object.partner_id.parent_id:\n"
+"                            ${object.partner_id.name} (${object.partner_id.parent_id.name}),\n"
+"                        % else:\n"
+"                            ${object.partner_id.name},\n"
+"                        % endif\n"
+"                        <br/><br/>\n"
 "                        Here is your\n"
-"                        <t t-if=\"object.name\">\n"
-"                            invoice <strong t-out=\"object.name or ''\">INV/2021/05/0005</"
-"strong>\n"
-"                        </t>\n"
-"                        <t t-else=\"\">\n"
-"                            invoice\n"
-"                        </t>\n"
-"                        <t t-if=\"object.invoice_origin\">\n"
-"                            (with reference: <t t-out=\"object.invoice_origin or ''\">SUB003</"
-"t>)\n"
-"                        </t>\n"
-"                        amounting in <strong t-out=\"format_amount(object.amount_total, object."
-"currency_id) or ''\">$ 143,750.00</strong>\n"
-"                        from <t t-out=\"object.company_id.name or ''\">YourCompany</t>.\n"
-"                        <t t-if=\"object.payment_state in ('paid', 'in_payment')\">\n"
+"                        % if object.name:\n"
+"                            invoice <strong>${object.name}</strong>\n"
+"                        % else:\n"
+"                        invoice\n"
+"                        %endif\n"
+"                        % if object.invoice_origin:\n"
+"                            (with reference: ${object.invoice_origin})\n"
+"                        % endif\n"
+"                        amounting in <strong>${format_amount(object.amount_total, object."
+"currency_id)}</strong>\n"
+"                        from ${object.company_id.name}.\n"
+"                        % if object.payment_state in ('paid', 'in_payment'):\n"
 "                            This invoice is already paid.\n"
-"                        </t>\n"
-"                        <t t-else=\"\">\n"
+"                        % else:\n"
 "                            Please remit payment at your earliest convenience.\n"
-"                            <t t-if=\"object.payment_reference\">\n"
-"                                <br><br>\n"
-"                                Please use the following communication for your payment: <strong "
-"t-out=\"object.payment_reference or ''\">INV/2021/05/0005</strong>.\n"
-"                            </t>\n"
-"                        </t>\n"
-"                        <br><br>\n"
+"                            % if object.payment_reference:\n"
+"                                <br/><br/>\n"
+"                                Please use the following communication for your payment: "
+"<strong>${object.payment_reference}</strong>.\n"
+"                            % endif\n"
+"                        % endif\n"
+"                        <br/><br/>\n"
 "                        Do not hesitate to contact us if you have any questions.\n"
-"                        <t t-if=\"object.invoice_user_id.signature\">\n"
-"                            <br>\n"
-"                            <t t-out=\"object.invoice_user_id.signature or ''\">--<br>Mitchell "
-"Admin</t>\n"
-"                        </t>\n"
+"                        % if object.invoice_user_id.signature:\n"
+"                            <br/>\n"
+"                            ${object.invoice_user_id.signature | safe}\n"
+"                        % endif\n"
+"                    </p>\n"
+"                </div>\n"
+"            "
+msgstr ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"        Estimado/a\n"
+"        % if object.partner_id.parent_id:\n"
+"            ${object.partner_id.name} (${object.partner_id.parent_id.name}),\n"
+"        % else:\n"
+"            ${object.partner_id.name},\n"
+"        % endif\n"
+"        <br/><br/>\n"
+"        Aquí tienes tu\n"
+"        % if object.name:\n"
+"            factura <strong>${object.name}</strong>\n"
+"        % else:\n"
+"        factura\n"
+"        %endif\n"
+"        % if object.invoice_origin:\n"
+"            (con referencia: ${object.invoice_origin})\n"
+"        % endif\n"
+"        por un importe de <strong>${format_amount(object.amount_total, object.currency_id)}</"
+"strong>\n"
+"        de ${object.company_id.name}.\n"
+"        % if object.payment_state in ('paid', 'in_payment'):\n"
+"            Esta factura ya está pagada.\n"
+"        % else:\n"
+"            Por favor, realiza el pago lo antes posible.\n"
+"            % if object.payment_reference:\n"
+"                <br/><br/>\n"
+"                Por favor, utiliza la siguiente referencia para tu pago: <strong>${object."
+"payment_reference}</strong>.\n"
+"            % endif\n"
+"        % endif\n"
+"        <br/><br/>\n"
+"        No dudes en contactarnos si tienes alguna pregunta.\n"
+"        % if object.invoice_user_id.signature:\n"
+"            <br/>\n"
+"            ${object.invoice_user_id.signature | safe}\n"
+"        % endif\n"
+"    </p>\n"
+"</div>\n"
+"            "
+
+#. module: l10n_co_edi_jorels
+#: model:mail.template,body_html:l10n_co_edi_jorels.email_template_radian
+msgid ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"                        Dear ${object.move_id.partner_id.name}\n"
+"                        % if object.move_id.partner_id.parent_id:\n"
+"                            (${object.move_id.partner_id.parent_id.name})\n"
+"                        % endif\n"
+"                        <br/>\n"
+"                        <br/>\n"
+"                        Here is your\n"
+"                        Radian event\n"
+"                        <strong>${object.event_id.name}</strong>\n"
+"                        with number\n"
+"                        <strong>${object.edi_number}</strong>\n"
+"                        (with invoice: ${object.move_id.number_formatted})\n"
+"                        % if object.company_id.business_name:\n"
+"                            from ${object.company_id.business_name}.\n"
+"                        % else:\n"
+"                            from ${object.company_id.name}.\n"
+"                        % endif\n"
+"                        <br/>\n"
+"                        <br/>\n"
+"                        Do not hesitate to contact us if you have any question.\n"
 "                    </p>\n"
 "                </div>\n"
 "            "
 msgstr ""
 "<div style=\"margin: 0px; padding: 0px;\">\n"
 "                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
-"                        Querido\n"
-"                        <t t-if=\"object.partner_id.parent_id\">\n"
-"                            <t t-out=\"object.partner_id.name or ''\">Brandon Freeman</t> (<t t-"
-"out=\"object.partner_id.parent_id.name or ''\">Azure Interior</t>),\n"
-"                        </t>\n"
-"                        <t t-else=\"\">\n"
-"                            <t t-out=\"object.partner_id.name or ''\">Brandon Freeman</t>,\n"
-"                        </t>\n"
-"                        <br/><br/>\n"
+"                        Estimado/a ${object.move_id.partner_id.name}\n"
+"                        % if object.move_id.partner_id.parent_id:\n"
+"                            (${object.move_id.partner_id.parent_id.name})\n"
+"                        % endif\n"
+"                        <br/>\n"
+"                        <br/>\n"
 "                        Aquí está su\n"
-"                        <t t-if=\"object.name\">\n"
-"                            factura <strong t-out=\"object.name or ''\">INV/2021/05/0005</"
-"strong>\n"
-"                        </t>\n"
-"                        <t t-else=\"\">\n"
-"                            factura\n"
-"                        </t>\n"
-"                        <t t-if=\"object.invoice_origin\">\n"
-"                            (con referencia: <t t-out=\"object.invoice_origin or ''\">SUB003</"
-"t>)\n"
-"                        </t>\n"
-"                        por un valor de <strong t-out=\"format_amount(object.amount_total, "
-"object.currency_id) or ''\">$ 143,750.00</strong>\n"
-"                        de <t t-out=\"object.company_id.name or ''\">YourCompany</t>.\n"
-"                        <t t-if=\"object.payment_state in ('paid', 'in_payment')\">\n"
-"                            Esta factura ya se encuentra pagada.\n"
-"                        </t>\n"
-"                        <t t-else=\"\">\n"
-"                            Por favor remita su pago tan pronto como le sea posible.\n"
-"                            <t t-if=\"object.payment_reference\">\n"
-"                                <br/><br/>\n"
-"                                Por favor use la siguiente referencia al realizar su pago: "
-"<strong t-out=\"object.payment_reference or ''\">INV/2021/05/0005</strong>.\n"
-"                            </t>\n"
-"                        </t>\n"
-"                        <br/><br/>\n"
-"                        No dude en contactarnos si tiene alguna inquietud.\n"
-"                        <t t-if=\"object.invoice_user_id.signature\">\n"
-"                            <br/>\n"
-"                            <t t-out=\"object.invoice_user_id.signature or ''\">--<br/>Mitchell "
-"Admin</t>\n"
-"                        </t>\n"
+"                        evento Radián\n"
+"                        <strong>${object.event_id.name}</strong>\n"
+"                        con número\n"
+"                        <strong>${object.edi_number}</strong>\n"
+"                        (con factura: ${object.move_id.number_formatted})\n"
+"                        % if object.company_id.business_name:\n"
+"                            de ${object.company_id.business_name}.\n"
+"                        % else:\n"
+"                            de ${object.company_id.name}.\n"
+"                        % endif\n"
+"                        <br/>\n"
+"                        <br/>\n"
+"                        No dude en contactarnos si tiene alguna pregunta.\n"
 "                    </p>\n"
 "                </div>\n"
 "            "
@@ -359,11 +316,6 @@ msgstr ""
 "                        </span>"
 
 #. module: l10n_co_edi_jorels
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
-msgid "<span>#</span>"
-msgstr ""
-
-#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_form
 msgid "<span>Customer Event</span>"
@@ -441,41 +393,36 @@ msgid "<strong>Value in letters:</strong>"
 msgstr "<strong>Valor en letras:</strong>"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "A Edi number is required to check the document in Nimbus"
 msgstr "Se requiere un número EDI para verificar el documento en Nimbus"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "A Zip key or UUID is required to check the status of the document."
 msgstr "Se requiere una clave Zip o UUID para verificar el estado del documento."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "A currency type in Odoo does not correspond to any DIAN currency type"
 msgstr "Un tipo de moneda en Odoo no corresponde a algún tipo de moneda DIAN"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
+msgid "A number is required to verify the status of the document."
+msgstr "Un número es requerido para verificar el estado del documento."
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "A valid UUID was not obtained. Try again."
 msgstr "No fue obtenido un UUID valido. Intente nuevamente."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
@@ -483,24 +430,18 @@ msgid "A valid Zip key or UUID was not obtained. Try again."
 msgstr "No se obtuvo una llave zip o UUID válido. Intente otra vez."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "A valid Zip key was not obtained. Try again."
 msgstr "No se obtuvo una llave Zip válida. Intente otra vez."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "A waypoint doesn't have an associated id number"
 msgstr "Una remesa no tiene un número de identificación asociado"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "A zip key or UUID is required to check the status of the document."
@@ -513,8 +454,6 @@ msgid "AIU"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #, python-format
 msgid "API connection error!"
@@ -604,24 +543,18 @@ msgid "Algorithm"
 msgstr "Algoritmo"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "All products must be assigned a unit of measure (DIAN)"
 msgstr "Todos los productos deben tener asignada una unidad de medida DIAN"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "All products must have an internal reference assigned"
 msgstr "Todos los productos deben tener asignada una referencia interna"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "All taxes must be assigned a tax type (DIAN)."
@@ -681,9 +614,6 @@ msgid "Attachment Count"
 msgstr "Conteo de archivos adjuntos"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
@@ -815,8 +745,6 @@ msgid "Collection concept"
 msgstr "Concepto de cobro"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Commercial samples doesn't seem to be compatible with multi-currencies."
@@ -888,24 +816,18 @@ msgid "Correction concept"
 msgstr "Concepto de corrección"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #, python-format
 msgid "Could not delete record in API"
 msgstr "No se puede borrar el registro en la API"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #, python-format
 msgid "Could not save record to API"
 msgstr "No se puede guardar el registro en la API"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #, python-format
 msgid "Could not update record in API"
@@ -1116,9 +1038,6 @@ msgid "D.I.E.:"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
@@ -1226,6 +1145,12 @@ msgid "Discounts"
 msgstr "Descuentos"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_debit_note__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move_line__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move_reversal__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_tax__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_collection_concepts__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_correction_concepts__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_countries__display_name
@@ -1276,15 +1201,28 @@ msgstr "Descuentos"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_mail_template__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_product_template__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_partner__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_uom_uom__display_name
 msgid "Display Name"
 msgstr "Nombre mostrado"
 
 #. module: l10n_co_edi_jorels
-#: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_bank_statement_line__tax_totals_company
-#: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_move__tax_totals_company
-#: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_payment__tax_totals_company
-msgid "Display tax totals in company currency"
-msgstr "Mostrar totales de impuestos en moneda de la empresa"
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "Document sent to DIAN in habilitation."
+msgstr "Documento enviado a la DIAN en habilitación."
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "Document sent to DIAN in testing."
+msgstr "Documento enviado a la DIAN en pruebas."
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__account_move__ei_type_document__doc_support
@@ -1349,11 +1287,6 @@ msgid "Edi number"
 msgstr "Número EDI"
 
 #. module: l10n_co_edi_jorels
-#: model:mail.template,name:l10n_co_edi_jorels.email_template_edi
-msgid "Edi: Send by email"
-msgstr "Edi: Enviar por email"
-
-#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__api_key
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings__api_key
 msgid "Edipo api key"
@@ -1387,32 +1320,24 @@ msgid "Electronic invoicing"
 msgstr "Facturación electrónica"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Electronic invoicing does not yet support exchange"
 msgstr "La facturación electrónica aún no admite el intercambio"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Electronic invoicing does not yet support iva_free_day"
 msgstr "La facturación electrónica aún no admite día sin IVA"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Electronic invoicing does not yet support mandates"
 msgstr "La facturación electrónica aún no admite mandatos"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Electronic invoicing is not yet compatible with this tax type: %s"
@@ -1501,9 +1426,9 @@ msgstr "Evento"
 #. module: l10n_co_edi_jorels
 #: model:mail.template,subject:l10n_co_edi_jorels.email_template_radian
 msgid ""
-"Evento;{{object.move_id.number_formatted or ''}};{{object.company_id.vat_formatted or ''}};"
-"{{object.company_id.business_name or object.company_id.name or ''}};{{object.edi_number or ''}};"
-"{{object.event_id.code or ''}}"
+"Evento;${object.move_id.number_formatted or ''};${object.company_id.vat_formatted or ''};"
+"${object.company_id.business_name or object.company_id.name or ''};${object.edi_number or ''};"
+"${object.event_id.code or ''}"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
@@ -1545,17 +1470,18 @@ msgid "Express acceptance"
 msgstr "Aceptación expresa"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Failed to process the Nimbus request: %s: %s"
 msgstr "Error al procesar la solicitud de Nimbus: %s: %s"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
+msgid "Failed to process the request"
+msgstr "Fallo al procesar la solicitud"
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
@@ -1563,9 +1489,6 @@ msgid "Failed to process the request for document: %s: %s"
 msgstr "Error al procesar la solicitud para el documento: %s: %s"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
@@ -1582,6 +1505,11 @@ msgstr "Primer nombre"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_follower_ids
 msgid "Followers"
 msgstr "Seguidores"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_channel_ids
+msgid "Followers (Channels)"
+msgstr "Seguidores (Canales)"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_partner_ids
@@ -1639,17 +1567,18 @@ msgstr ""
 "                                    computador con software propio por"
 
 #. module: l10n_co_edi_jorels
-#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__has_message
-msgid "Has Message"
-msgstr "Tiene mensaje"
-
-#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__report_custom_text
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings__report_custom_text
 msgid "Header text"
 msgstr "Texto de encabezado"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_debit_note__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move_line__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move_reversal__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_tax__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_collection_concepts__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_correction_concepts__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_countries__id
@@ -1700,6 +1629,12 @@ msgstr "Texto de encabezado"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_mail_template__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_product_template__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_partner__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_uom_uom__id
 msgid "ID"
 msgstr "Identificación"
 
@@ -1725,6 +1660,7 @@ msgstr "Tipos de documento de identificación"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_needaction
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_unread
 msgid "If checked, new messages require your attention."
 msgstr "Si está marcado, hay nuevos mensajes que requieren su atención."
 
@@ -1780,13 +1716,6 @@ msgid "Invoice"
 msgstr "Factura"
 
 #. module: l10n_co_edi_jorels
-#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__tax_totals_company
-#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__tax_totals_company
-#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__tax_totals_company
-msgid "Invoice Totals in Company Currency"
-msgstr "Totales de Factura en Moneda de la Empresa"
-
-#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__resolution_invoice_id
 msgid "Invoice resolution"
 msgstr "Resolución de facturación"
@@ -1794,11 +1723,9 @@ msgstr "Resolución de facturación"
 #. module: l10n_co_edi_jorels
 #: model:mail.template,report_name:l10n_co_edi_jorels.email_template_edi
 msgid ""
-"Invoice_{{ (object.name or '').replace('/','_') }}{{ object.state == 'draft' and '_draft' or "
-"'' }}"
+"Invoice_${(object.name or '').replace('/','_')}${object.state == 'draft' and '_draft' or ''}"
 msgstr ""
-"Factura_{{ (object.name or '').replace('/','_') }}{{ object.state == 'draft' and '_borrador' or "
-"'' }}"
+"Factura_{(object.name or '').replace('/','_')}${object.state == 'draft' and '_borrador' or ''}"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -1890,6 +1817,12 @@ msgid "Languages"
 msgstr "Idiomas"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_debit_note____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move_line____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move_reversal____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_tax____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_collection_concepts____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_correction_concepts____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_countries____last_update
@@ -1940,6 +1873,12 @@ msgstr "Idiomas"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_mail_template____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_product_template____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_config_settings____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_partner____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_uom_uom____last_update
 msgid "Last Modified on"
 msgstr "Última modificación el"
 
@@ -2064,8 +2003,6 @@ msgid "Liability types"
 msgstr "Tipos de responsabilidad"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Log DIAN Electronic invoicing: A number is required to verify the status of the document."
@@ -2074,8 +2011,6 @@ msgstr ""
 "documento."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Log DIAN Electronic invoicing: Failed to process the request for document: %s: %s"
@@ -2083,24 +2018,18 @@ msgstr ""
 "Log de Facturación Electrónica DIAN: Error al procesar la solicitud para el documento: %s: %s"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Log DIAN Electronic invoicing: The document could not be consulted."
 msgstr "Log de Facturación Electrónica DIAN: No se pudo consultar el documento."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Log DIAN Electronic invoicing: The document has not been validated."
 msgstr "Log de Facturación Electrónica DIAN: El documento no ha sido validado."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Log DIAN Electronic invoicing: This type of document does not need to be sent to DIAN."
@@ -2108,8 +2037,6 @@ msgstr ""
 "Log de Facturación Electrónica DIAN: Este tipo de documento no necesita ser enviado a la DIAN."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Log DIAN Electronic invoicing: Validation in DIAN has been successful."
@@ -2259,8 +2186,6 @@ msgid "Neighborhood"
 msgstr "Barrio"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "New"
@@ -2293,17 +2218,12 @@ msgid "Nimbus api key"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "No logical response was obtained from the API"
 msgstr "No fue obtenida una respuesta lógica desde la API"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
@@ -2311,16 +2231,12 @@ msgid "No logical response was obtained from the API."
 msgstr "No se obtuvo ninguna respuesta lógica de la API."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "No logical response was obtained from the Nimbus API"
 msgstr "No se obtuvo una respuesta lógica de la API de Nimbus"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__account_move__ei_type_document__none
 #, python-format
@@ -2354,6 +2270,12 @@ msgid "Notes"
 msgstr "Notas"
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/config/res_config_settings.py:0
+#, python-format
+msgid "Now sync the resolutions"
+msgstr "Ahora sincronice las resoluciones"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__number
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__resolution_number
 msgid "Number"
@@ -2378,7 +2300,7 @@ msgstr "Número de errores"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_needaction_counter
-msgid "Number of messages requiring action"
+msgid "Number of messages which requires an action"
 msgstr "Número de mensajes que requieren una acción"
 
 #. module: l10n_co_edi_jorels
@@ -2387,14 +2309,14 @@ msgid "Number of messages with delivery error"
 msgstr "Número de mensajes con error de envío"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_unread_counter
+msgid "Number of unread messages"
+msgstr "Número de mensajes no leidos"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
 msgid "Once enabled in DIAN"
 msgstr "Una vez habilitado en la DIAN"
-
-#. module: l10n_co_edi_jorels
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_tree
-msgid "Open form"
-msgstr "Abrir formulario"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_operation
@@ -2501,8 +2423,6 @@ msgid "Percentage"
 msgstr "Porcentaje"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid ""
@@ -2573,8 +2493,8 @@ msgstr "Personalización de la impresión"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_product_template
-msgid "Product"
-msgstr "Producto"
+msgid "Product Template"
+msgstr "Plantilla de Producto"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_uom_uom
@@ -2588,16 +2508,12 @@ msgid "Production environment"
 msgstr "Entorno de producción"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Products on export invoices must have a brand name"
 msgstr "Los productos en las facturas de exportación deben tener una marca"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Products on export invoices must have a model name"
@@ -2652,13 +2568,6 @@ msgid "Radian"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
-#: model:mail.template,name:l10n_co_edi_jorels.email_template_radian
-msgid "Radian event: Send by email"
-msgstr "Evento del Radian: Enviar por email"
-
-#. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #: model:ir.actions.act_window,name:l10n_co_edi_jorels.action_l10n_co_edi_jorels_radian_customer
 #: model:ir.actions.act_window,name:l10n_co_edi_jorels.action_l10n_co_edi_jorels_radian_supplier
@@ -2746,8 +2655,6 @@ msgid "Resolution date"
 msgstr "Fecha de resolución"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/config/res_config_settings.py:0
 #: code:addons/l10n_co_edi_jorels/models/config/res_config_settings.py:0
 #: model:ir.actions.act_window,name:l10n_co_edi_jorels.action_l10n_co_edi_jorels_config_resolutions
 #: model:ir.ui.menu,name:l10n_co_edi_jorels.menu_l10n_co_edi_jorels_config_resolutions
@@ -2829,8 +2736,6 @@ msgid "Send Edi by Email"
 msgstr "Enviar Edi por Email"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "Send Radian Event by Email"
@@ -2885,7 +2790,6 @@ msgid "Start date"
 msgstr "Fecha de inicio"
 
 #. module: l10n_co_edi_jorels
-#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__state
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__state
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__state
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__state
@@ -2990,6 +2894,13 @@ msgid "Tax ID:"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__amount_by_group_company
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__amount_by_group_company
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__amount_by_group_company
+msgid "Tax amount by group in Company Currency"
+msgstr "Importe de impuestos por grupo en Moneda de la Empresa"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_tax_details
 msgid "Tax details"
 msgstr "Detalles de impuesto"
@@ -3037,16 +2948,12 @@ msgid "TestSetId"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The DIAN event sequence is wrong."
 msgstr "La secuencia de Eventos Dian está mal."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid ""
@@ -3059,32 +2966,24 @@ msgstr ""
 "%s"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The client does not have an associated identification document type."
 msgstr "El cliente no tiene asociado un tipo de documento de identificación."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The client does not have an identification document number."
 msgstr "El cliente no tiene asociado un número de documento de identificación."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The client must have an email where to send the invoice."
 msgstr "El cliente debe tener un email donde enviar la factura."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid ""
@@ -3100,16 +2999,12 @@ msgid "The configuration related to electronic invoicing is managed in"
 msgstr "La configuración relacionada con la factura electrónica es manejada en"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The credit note for document support cannot be a correction without reference"
 msgstr "La nota crédito para documento soporte no puede ser una corrección sin referencia"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid ""
@@ -3120,25 +3015,24 @@ msgstr ""
 "configuración de Diarios en Odoo."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The debit notes module has not been installed."
 msgstr "El modulo de notas débito no ha sido instalado."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The discount must always be greater than or equal to 0 and less than 100."
 msgstr "El descuento debe ser siempre mayor o igual a cero y menor que 100."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
+msgid "The document could not be consulted."
+msgstr "El documento no puede ser consultado."
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
@@ -3146,192 +3040,175 @@ msgid "The document could not be validated in DIAN."
 msgstr "No se pudo validar el documento ante la DIAN."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
+msgid "The document has not been validated."
+msgstr "El documento no ha sido validado."
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The document number (VAT) for user is required for DIAN events."
 msgstr "El número de documento (NIF) para el usuario es obligatorio para Eventos DIAN."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The document type for user is required for DIAN events."
 msgstr "El tipo de documento para el usuario es obligatorio para Eventos DIAN."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
+#: code:addons/l10n_co_edi_jorels/models/config/res_company.py:0
+#, python-format
+msgid "The environment has been updated. Sync the resolutions"
+msgstr "El entorno ha sido actualizado. Sincronice las resoluciones"
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The invoice UUID (CUFE) is required for DIAN events."
 msgstr "El UUID (CUFE) de la factura es obligatorio para Eventos DIAN."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The invoice must be a purchase invoice"
 msgstr "La factura debe ser una factura de compra"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The invoice must be a sales invoice"
 msgstr "La factura debe ser una factura de venta"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The invoice must first be validated in Odoo, before being sent to the DIAN."
 msgstr "La factura debe ser primero validada en Odoo, antes de ser enviada a la DIAN."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The issue date must be today's date"
 msgstr "La fecha de emisión debe ser la fecha de hoy"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The number and prefix are required for DIAN events"
 msgstr "El número y prefijo son obligatorios para Eventos DIAN"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The reference invoice has not yet been validated before the DIAN"
 msgstr "La factura de referencia no ha sido validada en la DIAN"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The rejection concept is required for the DIAN claim event."
 msgstr "El concepto de rechazo es obligatorio para eventos DIAN de Rechazo."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The support document does not support test submissions, only production."
 msgstr "El documento soporte no soporta envíos de prueba, solo producción."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The universal discount module doesn't seem to be compatible with multi-currencies."
 msgstr "El módulo de descuento universal no parece ser compatible con múltiples monedas."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The user and his/her job title (function) is required for DIAN events"
 msgstr "El usuario y el titulo de su trabajo (cargo) es obligatorio para Eventos DIAN"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The user first name is required for DIAN events"
 msgstr "El primer nombre del usuario es obligatorio para eventos DIAN"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The user surname is required for DIAN events"
 msgstr "El apellido del usuario es obligatorio para eventos DIAN"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#, python-format
+msgid "The validation at DIAN has been successful."
+msgstr "La validación en la DIAN ha sido exitosa."
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
+msgid "The validation process has been skipped."
+msgstr "Se ha saltado el proceso de validación."
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The waypoint %s doesn't have an total"
 msgstr "La remesa %s no tiene un total"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The waypoint %s doesn't have an weight"
 msgstr "La remesa %s no tiene un peso"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "There is no associated document in Nimbus"
 msgstr "No hay documento asociado en Nimbus"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "There is not debit note for electronic document support"
 msgstr "No hay nota débito para documento soporte electrónico"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "This is an export invoice but the client's country is Colombia"
 msgstr "Esta es una factura de exportación pero el país del cliente es Colombia"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "This type of document does not have a DIAN resolution assigned: %s"
 msgstr "Este tipo de documento no tiene una resolución DIAN asignada: %s"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "This type of document does not is a Nimbus compatible document"
 msgstr "Este tipo de documento no es un documento compatible con Nimbus"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
+msgid "This type of document does not need to be sent to DIAN."
+msgstr "Este tipo de documento no necesita ser enviado a la DIAN."
+
+#. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "This type of document does not need to be sent to the DIAN"
 msgstr "Este tipo de documento no necesita ser enviado a la DIAN"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "This type of tax ReteIVA is not supported"
@@ -3392,13 +3269,12 @@ msgid "Transport"
 msgstr "Transporte"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
-msgid "Transport compatibility is only available with Jorels SAS Freight Route Module"
+msgid "Transport compatibility is only available with Jorels SAS Freight Transport Module"
 msgstr ""
-"La compatibilidad de transporte solo está disponible con el Módulo de Ruta de Carga de Jorels SAS"
+"La compatibilidad de transporte solo está disponible con el módulo de transporte de carga Jorels "
+"SAS"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal__type
@@ -3528,9 +3404,6 @@ msgid "UUID"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/config/res_config_settings.py:0
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #: code:addons/l10n_co_edi_jorels/models/config/res_config_settings.py:0
 #: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #, python-format
@@ -3538,8 +3411,6 @@ msgid "Unable to authenticate with the API. Please check your API key and try ag
 msgstr "No puede autenticar con la API. Por favor revise su API key e intente nuevamente."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #, python-format
 msgid "Unable to communicate with the API"
@@ -3551,12 +3422,25 @@ msgid "Unit of measure (DIAN)"
 msgstr "Unidad de medida (DIAN)"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Unknown"
 msgstr "Desconocido"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_unread
+msgid "Unread Messages"
+msgstr "Mensajes por leer"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr "Contador de mensajes sin leer"
+
+#. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
+msgid "Untaxed Amount"
+msgstr "Monto Libre de Impuestos"
 
 #. module: l10n_co_edi_jorels
 #: model:res.groups,name:l10n_co_edi_jorels.l10n_co_edi_jorels_group_user
@@ -3598,6 +3482,12 @@ msgid "Validating DIAN"
 msgstr "Validando DIAN"
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
+msgid "Validation in DIAN has been successful."
+msgstr "La validación en la DIAN ha sido exitosa."
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__value_letters
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__value_letters
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_payment__value_letters
@@ -3625,8 +3515,6 @@ msgid "Vendor Electronic Credit Note"
 msgstr "Nota Crédito Electrónica de Proveedor"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Waypoint doesn't have an rndc ingress id: %s"
@@ -3707,8 +3595,6 @@ msgid "Xml name"
 msgstr "Nombre XML"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid ""
@@ -3720,17 +3606,12 @@ msgstr ""
 "confirmarlo."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "You cannot delete an event which is not draft or cancelled."
 msgstr "No puede eliminar un evento que no esté borrador o cancelado."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
@@ -3738,57 +3619,42 @@ msgid "You have not configured a 'TestSetId'."
 msgstr "No tiene configurado un 'TestSetId'."
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "You must assign the client a country"
 msgstr "Debe asignar al cliente un país"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "You must assign the client a municipality"
 msgstr "Debe asignar al cliente una municipalidad"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "You must assign the client a type of regimen"
 msgstr "Debe asignar al cliente un tipo de regimen"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "You must assign the client a valid country"
 msgstr "Debe asignar al cliente un país válido"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "You must assign the customer a type of liability"
 msgstr "Debe asignar al cliente un tipo de responsabilidad"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "You must configure a Nimbus token"
 msgstr "Debe configurar un token de Nimbus"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
@@ -3796,8 +3662,6 @@ msgid "You must configure a token"
 msgstr "Debe configurar un token"
 
 #. module: l10n_co_edi_jorels
-#. odoo-python
-#: code:addons/jorels-odoo-addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "You need to select a correction code first"
@@ -3854,6 +3718,11 @@ msgid "legal_monetary_totals json"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
+msgid "on"
+msgstr "en"
+
+#. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_form_resolution
 msgid "resolution"
 msgstr "resolución"
@@ -3867,12 +3736,3 @@ msgstr "la compañía principal"
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "to"
 msgstr "a"
-
-#. module: l10n_co_edi_jorels
-#: model:mail.template,subject:l10n_co_edi_jorels.email_template_edi
-msgid ""
-"{{object.company_id.vat_formatted or ''}};{{object.company_id.business_name or object.company_id."
-"name or ''}};{{object.number_formatted or ''}};{{object.ei_type_document_id.code or ''}};"
-"{{object.company_id.trade_name or object.company_id.business_name or object.company_id.name or "
-"''}};"
-msgstr ""
