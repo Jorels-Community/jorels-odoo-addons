@@ -2272,7 +2272,7 @@ msgstr "Enlace PDF"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__ei_payload
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__edi_payload
 msgid "Payload"
-msgstr "Pagado"
+msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__payment_form_id
