@@ -150,7 +150,7 @@
                     <span t-elif="not o.company_id.ei_enable and o.move_type == 'in_invoice'">
                         Vendor Bill
                     </span>
-                    <span t-if="o.name != '/'" t-field="o.name">INV/2023/0001</span>
+                    <span t-if="o.name != '/'" t-field="o.name"/>
                 </t>
             </xpath>
             <xpath expr="//div[@id='informations']" position="inside">
@@ -229,7 +229,7 @@
                 <td name="td_subtotal_company" class="text-end o_price_total"
                     t-if="o.company_id.ei_enable and o.is_multicurrency">
                     <span class="text-nowrap" t-esc="abs(line.balance)"
-                          t-options='{"widget": "monetary", "display_currency": o.company_currency_id}'>27.00
+                          t-options='{"widget": "monetary", "display_currency": o.company_currency_id}'>
                     </span>
                 </td>
             </xpath>
