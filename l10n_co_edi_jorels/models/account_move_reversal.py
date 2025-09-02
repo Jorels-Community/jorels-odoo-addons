@@ -44,13 +44,15 @@ class AccountMoveReversal(models.TransientModel):
                     rec.ei_type_document_id = 13
                 else:
                     rec.ei_type_document_id = None
-            else:
+            elif move_ids:
                 if move_ids[0].move_type == 'out_invoice':
                     rec.ei_type_document_id = 5
                 elif move_ids[0].move_type == 'in_invoice':
                     rec.ei_type_document_id = 13
                 else:
                     rec.ei_type_document_id = None
+            else:
+                rec.ei_type_document_id = None
 
     @api.onchange('ei_correction_concept_credit_id')
     def _onchange_ei_correction_concept_credit_id(self):
