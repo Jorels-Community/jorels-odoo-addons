@@ -20,6 +20,12 @@
 # email: info@jorels.com
 #
 
-from . import pos_config
-from . import pos_order
-from . import account_journal
+from odoo import fields, models
+
+
+class AccountJournal(models.Model):
+    _inherit = 'account.journal'
+
+    edi_pos_payment_method_id = fields.Many2one(string="POS payment method (DIAN)",
+                                            comodel_name='l10n_co_edi_jorels.payment_methods', required=False,
+                                            copy=False, domain=[('scope', '=', False)], ondelete='RESTRICT', default=1)

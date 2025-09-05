@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2022)
+# Jorels S.A.S. - Copyright (2025)
 #
 # This file is part of l10n_co_edi_jorels_pos.
 #
@@ -56,31 +56,29 @@ class PosOrder(models.Model):
         }
 
     def _prepare_invoice(self):
-        """
-        Prepare the dict of values to create the new invoice for a pos order.
-        """
-        # raise UserError("_prepare_invoice")
-        invoice_type = 'out_invoice' if self.amount_total >= 0 else 'out_refund'
-        # for rec in self:
+        vals = super(PosOrder, self)._prepare_invoice()
+
         if self.ei_is_dian_document:
             journal_id = self.session_id.config_id.electronic_invoice_journal_id.id
         else:
             journal_id = self.session_id.config_id.invoice_journal_id.id
-        return {
-            'name': self.name,
-            'origin': self.name,
-            'account_id': self.partner_id.property_account_receivable_id.id,
-            'journal_id': journal_id,
-            'company_id': self.company_id.id,
-            'type': invoice_type,
-            'reference': self.name,
-            'partner_id': self.partner_id.id,
-            'comment': self.note or '',
-            # considering partner's sale pricelist's currency
-            'currency_id': self.pricelist_id.currency_id.id,
-            'user_id': self.user_id.id,
-            'fiscal_position_id': self.fiscal_position_id.id,
-        }
+
+        vals['journal_id'] = journal_id
+
+        # Calculation of the Edi payment method reported to the DIAN
+        positive_payment_ids = self.statement_ids.filtered(lambda payment: payment.amount > 0)
+        quantity_positive_payments = len(positive_payment_ids)
+
+        # Report 1 for undefined instrument payment method
+        edi_pos_payment_method_id = 1
+        if quantity_positive_payments == 1:
+            pos_payment_method = positive_payment_ids[0].journal_id
+            if pos_payment_method.edi_pos_payment_method_id:
+                edi_pos_payment_method_id = pos_payment_method.edi_pos_payment_method_id.id
+
+        vals['payment_method_id'] = edi_pos_payment_method_id
+
+        return vals
 
     @api.model
     def create_from_ui(self, orders):
