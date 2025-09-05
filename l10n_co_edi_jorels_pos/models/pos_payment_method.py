@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2022)
+# Jorels S.A.S. - Copyright (2025)
 #
 # This file is part of l10n_co_edi_jorels_pos.
 #
@@ -20,6 +20,12 @@
 # email: info@jorels.com
 #
 
-from . import pos_config
-from . import pos_order
-from . import pos_payment_method
+from odoo import fields, models
+
+
+class PosPaymentMethod(models.Model):
+    _inherit = 'pos.payment.method'
+
+    edi_pos_payment_method_id = fields.Many2one(string="POS payment method (DIAN)",
+                                            comodel_name='l10n_co_edi_jorels.payment_methods', required=True,
+                                            copy=False, domain=[('scope', '=', False)], ondelete='RESTRICT', default=1)

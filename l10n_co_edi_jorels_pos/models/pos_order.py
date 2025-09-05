@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2022)
+# Jorels S.A.S. - Copyright (2025)
 #
 # This file is part of l10n_co_edi_jorels_pos.
 #
@@ -62,6 +62,19 @@ class PosOrder(models.Model):
             journal_id = self.session_id.config_id.invoice_journal_id.id
 
         vals['journal_id'] = journal_id
+
+        # Calculation of the Edi payment method reported to the DIAN
+        positive_payment_ids = self.payment_ids.filtered(lambda payment: payment.amount > 0)
+        quantity_positive_payments = len(positive_payment_ids)
+
+        # Report 1 for undefined instrument payment method
+        edi_pos_payment_method_id = 1
+        if quantity_positive_payments == 1:
+            pos_payment_method = positive_payment_ids[0].payment_method_id
+            if pos_payment_method.edi_pos_payment_method_id:
+                edi_pos_payment_method_id = pos_payment_method.edi_pos_payment_method_id.id
+
+        vals['payment_method_id'] = edi_pos_payment_method_id
 
         return vals
 
