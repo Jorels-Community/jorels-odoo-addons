@@ -27,7 +27,7 @@
     'author': 'Jorels SAS',
     'license': 'LGPL-3',
     'category': 'Point of Sale',
-    'version': '15.0.22.07.23.02.58',
+    'version': '15.0.25.09.041305',
     'website': 'https://www.jorels.com',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
@@ -39,6 +39,7 @@
     ],
     'data': [
         'views/pos_config_view.xml',
+        'views/pos_payment_method_views.xml',
     ],
     'assets': {
         'point_of_sale.assets': [
