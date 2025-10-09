@@ -47,6 +47,14 @@
                                 <field name="tax_resident_co"/>
                                 <field name="email_edi" widget="email"/>
                             </group>
+                            <group string="Dian acquirer">
+                                <button string="Get DIAN acquirer" name="get_dian_acquirer" icon="fa-cloud-download"
+                                        type="object"/>
+                                <button string="Acquirer replace" name="acquirer_replace" icon="fa-clipboard"
+                                        type="object"/>
+                                <field name="edi_dian_acquirer_email"/>
+                                <field name="edi_dian_acquirer_name"/>
+                            </group>
                         </group>
                     </page>
                     <page string="Electronic invoicing" name="electronic_invoicing_disabled"
@@ -71,6 +79,18 @@
                             <field name="second_surname" invisible="is_company"/>
                         </group>
                     </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Search view -->
+        <record id="view_res_partner_filter_inherit_l10n_co_edi_jorels" model="ir.ui.view">
+            <field name="name">res.partner.select.inherit.l10n_co_edi_jorels</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="edi_sanitize_vat"/>
                 </xpath>
             </field>
         </record>
