@@ -20,10 +20,13 @@
 # email: info@jorels.com
 #
 
+import json
 import logging
 import re
 
-from odoo import fields, models, api
+import requests
+from odoo import fields, models, api, _
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -62,6 +65,10 @@ class ResPartner(models.Model):
                                              string="Postal municipality", compute="_compute_postal_id", store=True)
 
     edi_sanitize_vat = fields.Char('Sanitized vat', compute='_compute_edi_sanitize_vat', store=True, readonly=True)
+
+    # DIAN Contact information
+    edi_dian_acquirer_email = fields.Char("Dian adquirer email", readonly=True)
+    edi_dian_acquirer_name = fields.Char("Dian adquirer name", readonly=True)
 
     @classmethod
     def _edi_sanitize_vat(cls, vat, type_document_identification_id):
@@ -181,3 +188,159 @@ class ResPartner(models.Model):
                             rec.other_names = split_name[1]
                             rec.surname = ' '.join(split_name[2:-1])
                             rec.second_surname = ' '.join(split_name[-1:])
+
+    def get_dian_acquirer(self):
+        for rec in self:
+            company = rec.company_id or self.env.company
+            if not company.ei_enable:
+                continue
+
+            if not rec.type_document_identification_id:
+                _logger.debug(_("An identification type is needed to query the contact in the DIAN"))
+                rec.message_post(body=_("An identification type is needed to query the contact in the DIAN"))
+                continue
+
+            if not rec.edi_sanitize_vat:
+                _logger.debug(_("An identification number is needed to query the contact in the DIAN"))
+                rec.message_post(body=_("An identification number is needed to query the contact in the DIAN"))
+                continue
+
+            if rec.edi_sanitize_vat == '222222222222':
+                continue
+            try:
+                id_code = str(rec.type_document_identification_id.id)
+                id_number = rec.edi_sanitize_vat
+
+                if company.api_key:
+                    token = company.api_key
+                else:
+                    raise UserError(_("You must configure a token"))
+
+                api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.edipo.api_url',
+                                                                           'https://edipo.jorels.com')
+                api_url = api_url + "/acquirer/" + id_code + "/" + id_number
+
+                params = {'token': token}
+                header = {
+                    "accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+
+                requests_data = {}
+                response = requests.post(api_url,
+                                         json.dumps(requests_data),
+                                         headers=header,
+                                         params=params).json()
+
+                _logger.debug('API Response: %s', response)
+
+                if 'detail' in response:
+                    raise UserError(response['detail'])
+                if 'message' in response and response['message'] is not None:
+                    if response['message'] == 'Unauthenticated.' or response['message'] == '':
+                        raise UserError(_("Authentication error with the API"))
+                    else:
+                        if 'errors' in response:
+                            raise UserError(response['message'] + '/ errors: ' + str(response['errors']))
+                        else:
+                            raise UserError(response['message'])
+                else:
+                    if response['email'] != 'sininformacion@correo.com':
+                        rec.edi_dian_acquirer_email = response['email']
+                    rec.edi_dian_acquirer_name = response['name'].title()
+            except Exception as e:
+                _logger.debug("Failed to process the DIAN request: %s", e)
+                rec.message_post(body=_("Failed to process the DIAN request: %s") % e)
+
+    @api.model
+    def format_colombian_name(self, name):
+        """
+        Formats a Colombian name assuming the first two words are last names
+        and the remaining words are first names.
+
+        Args:
+            name (str): Full name with last names first
+
+        Returns:
+            str: Formatted name as "Last Names, First Names"
+        """
+        words = name.strip().split()
+
+        if len(words) < 2:
+            return name
+
+        if len(words) == 2:
+            return "{}, {}".format(words[0], words[1])
+
+        last_names = " ".join(words[:2])
+        first_names = " ".join(words[2:])
+
+        return "{}, {}".format(last_names, first_names)
+
+    def acquirer_replace(self):
+        for rec in self:
+            company = rec.company_id or self.env.company
+            if not company.ei_enable:
+                continue
+
+            if rec.edi_dian_acquirer_name:
+                if rec.is_company:
+                    rec.name = rec.edi_dian_acquirer_name
+                else:
+                    rec.name = self.format_colombian_name(rec.edi_dian_acquirer_name)
+
+            if rec.edi_dian_acquirer_email:
+                rec.email_edi = rec.edi_dian_acquirer_email
+
+    @api.model
+    def default_get(self, fields_list):
+        defaults = super(ResPartner, self).default_get(fields_list)
+
+        company = self.env.company
+        country_co = self.env['res.country'].search([('code', '=', 'CO')], limit=1)
+
+        if company.ei_enable and company.ei_set_default_partner_data and company.country_id == country_co:
+            if 'name' in fields_list:
+                defaults['name'] = 'Consumidor Final'
+
+            if 'vat' in fields_list:
+                defaults['vat'] = '222222222222'
+
+            if 'l10n_latam_identification_type_id' in fields_list:
+                national_citizen_rec = self.env['l10n_latam.identification.type'].search(
+                    [('l10n_co_document_code', '=', 'national_citizen_id')], limit=1)
+                defaults['l10n_latam_identification_type_id'] = national_citizen_rec.id
+
+            if 'type_regime_id' in fields_list:
+                defaults['type_regime_id'] = 2
+
+            if 'type_liability_id' in fields_list:
+                defaults['type_liability_id'] = 29
+
+            if 'country_id' in fields_list and company.country_id:
+                defaults['country_id'] = company.country_id.id
+
+            if 'state_id' in fields_list and company.state_id:
+                defaults['state_id'] = company.state_id.id
+
+            if 'city' in fields_list and company.city:
+                defaults['city'] = company.city
+
+            if 'municipality_id' in fields_list and company.municipality_id:
+                defaults['municipality_id'] = company.municipality_id.id
+
+        return defaults
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        partners = super(ResPartner, self).create(vals_list)
+        for rec in partners:
+            company = rec.company_id or self.env.company
+            if not company.ei_enable:
+                continue
+
+            if rec.country_id and rec.country_id.code == 'CO' and rec.name.upper() == 'CONSUMIDOR FINAL':
+                rec.get_dian_acquirer()
+                rec.acquirer_replace()
+
+        return partners
