@@ -9,3 +9,4 @@
 launch.json
 **/CLAUDE.md
 **/.aignore
+/.run/odoo12.run.xml

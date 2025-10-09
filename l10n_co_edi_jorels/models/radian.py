@@ -435,12 +435,12 @@ class Radian(models.Model):
                 else:
                     raise UserError(_("No logical response was obtained from the API."))
             except Exception as e:
-                _logger.debug("Failed to process the request for document: %s: %s", (rec.name, e))
+                _logger.debug("Failed to process the DIAN request for document: %s: %s", (rec.name, e))
                 if not rec.company_id.ei_always_validate:
-                    raise UserError(_("Failed to process the request for document: %s: %s") % (rec.name, e))
+                    raise UserError(_("Failed to process the DIAN request for document: %s: %s") % (rec.name, e))
                 else:
                     rec.message_post(body=_("DIAN Electronic invoicing: "
-                                            "Failed to process the request for document: %s: %s") % (rec.name, e))
+                                            "Failed to process the DIAN request for document: %s: %s") % (rec.name, e))
 
     @api.multi
     def status_zip(self):
@@ -518,8 +518,8 @@ class Radian(models.Model):
                     raise UserError(_("A zip key or UUID is required to check the status of the document."))
 
             except Exception as e:
-                _logger.debug("Failed to process the request: %s", e)
-                raise UserError(_("Failed to process the request: %s") % e)
+                _logger.debug("Failed to process the DIAN request: %s", e)
+                raise UserError(_("Failed to process the DIAN request: %s") % e)
 
     @api.multi
     def button_open_form_current(self):
