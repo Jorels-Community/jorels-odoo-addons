@@ -141,6 +141,17 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane">
+                                    <field name="ei_set_default_partner_data"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label string="Default partner data to 'Consumidor Final'"
+                                           for="ei_set_default_partner_data"/>
+                                    <div class="text-muted">New partners will have 'Consumidor Final' as default data when electronic invoicing is enabled
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <h2>Print customization</h2>

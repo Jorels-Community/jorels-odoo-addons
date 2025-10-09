@@ -73,6 +73,12 @@ class ResConfigSettings(models.TransientModel):
         readonly=False
     )
 
+    ei_set_default_partner_data = fields.Boolean(
+        related="company_id.ei_set_default_partner_data",
+        string="Set default partner data to 'Consumidor Final'",
+        readonly=False
+    )
+
     # Update resolutions on Odoo database
     @api.model
     def action_update_resolutions(self):

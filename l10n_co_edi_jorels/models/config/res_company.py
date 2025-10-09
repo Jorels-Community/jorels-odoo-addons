@@ -96,9 +96,15 @@ class ResCompany(models.Model):
     nimbus_api_key = fields.Char(string="Nimbus api key")
 
     ei_allow_zero_total = fields.Boolean(
-        string="Allow zero total invoices", 
+        string="Allow zero total invoices",
         default=False,
         help="If enabled, allows validation of invoices with zero total amount"
+    )
+
+    ei_set_default_partner_data = fields.Boolean(
+        string="Set default partner data to 'Consumidor Final'",
+        default=True,
+        help="If enabled, new partners will have 'Consumidor Final' as default data when electronic invoicing is enabled"
     )
 
     def _compute_vat_formatted(self):
