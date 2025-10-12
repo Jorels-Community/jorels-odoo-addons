@@ -190,7 +190,8 @@ class ResPartner(models.Model):
     @api.multi
     def get_dian_acquirer(self):
         for rec in self:
-            if not rec.company_id.ei_enable:
+            company = rec.company_id or self.env.user.company_id
+            if not company.ei_enable:
                 continue
 
             if not rec.type_document_identification_id:
@@ -210,8 +211,8 @@ class ResPartner(models.Model):
                 id_code = str(rec.type_document_identification_id.id)
                 id_number = rec.edi_sanitize_vat
 
-                if rec.company_id.api_key:
-                    token = rec.company_id.api_key
+                if company.api_key:
+                    token = company.api_key
                 else:
                     raise UserError(_("You must configure a token"))
 
@@ -279,7 +280,8 @@ class ResPartner(models.Model):
     @api.multi
     def acquirer_replace(self):
         for rec in self:
-            if not rec.company_id.ei_enable:
+            company = rec.company_id or self.env.user.company_id
+            if not company.ei_enable:
                 continue
 
             if rec.edi_dian_acquirer_name:
@@ -332,7 +334,8 @@ class ResPartner(models.Model):
     def create(self, vals_list):
         partners = super(ResPartner, self).create(vals_list)
         for rec in partners:
-            if not rec.company_id.ei_enable:
+            company = rec.company_id or self.env.user.company_id
+            if not company.ei_enable:
                 continue
 
             if rec.country_id and rec.country_id.code == 'CO' and rec.name.upper() == 'CONSUMIDOR FINAL':
