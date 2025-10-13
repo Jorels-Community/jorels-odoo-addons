@@ -374,11 +374,11 @@ class Edi(models.Model):
                 else:
                     raise UserError(_("No logical response was obtained from the API."))
             except Exception as e:
-                _logger.debug("Failed to process the request: %s", e)
+                _logger.debug("Failed to process the DIAN request: %s", e)
                 if not rec.company_id.edi_payroll_always_validate:
-                    raise UserError(_("Failed to process the request: %s") % e)
+                    raise UserError(_("Failed to process the DIAN request: %s") % e)
                 else:
-                    rec.message_post(body=_("DIAN Electronic payroll: Failed to process the request: %s") % e)
+                    rec.message_post(body=_("DIAN Electronic payroll: Failed to process the DIAN request: %s") % e)
 
     def _status_zip(self, payload):
         for rec in self:
@@ -454,8 +454,8 @@ class Edi(models.Model):
                     raise UserError(_("A zip key or UUID is required to check the status of the document."))
 
             except Exception as e:
-                _logger.debug("Failed to process the request: %s", e)
-                raise UserError(_("Failed to process the request: %s") % e)
+                _logger.debug("Failed to process the DIAN request: %s", e)
+                raise UserError(_("Failed to process the DIAN request: %s") % e)
 
     def _status_document_log(self, payload):
         for rec in self:
@@ -525,8 +525,8 @@ class Edi(models.Model):
                     #     message=_("A number is required to verify the status of the document."))
                     _logger.debug("A number is required to verify the status of the document.")
             except Exception as e:
-                # self.env.user.notify_warning(message=_("Failed to process the request"))
-                _logger.debug("Failed to process the request: %s", e)
+                # self.env.user.notify_warning(message=_("Failed to process the DIAN request"))
+                _logger.debug("Failed to process the DIAN request: %s", e)
 
     @api.model
     def dict_root_sum(self, first, last, vals=[]):
