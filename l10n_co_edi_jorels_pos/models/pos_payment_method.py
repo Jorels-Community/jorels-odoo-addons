@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2025)
+# Jorels S.A.S. - Copyright (2025)
 #
 # This file is part of l10n_co_edi_jorels_pos.
 #
@@ -20,25 +20,13 @@
 # email: info@jorels.com
 #
 
-{
-    'name': 'Free POS electronic invoice for Colombia by Jorels',
-    'summary': 'Free POS electronic invoice for Colombia by Jorels',
-    'description': "Free POS electronic invoice for Colombia by Jorels",
-    'author': 'Jorels SAS',
-    'license': 'LGPL-3',
-    'category': 'Point of Sale',
-    'version': '18.0.25.09.041305',
-    'website': 'https://www.jorels.com',
-    'images': ['static/images/main_screenshot.png'],
-    'support': 'info@jorels.com',
-    'depends': [
-        'point_of_sale',
-        'l10n_co_edi_jorels',
-    ],
-    'data': [
-        'views/pos_config_views.xml',
-        'views/pos_payment_method_views.xml',
-    ],
-    'installable': True,
-    'auto_install': True,
-}
+from odoo import fields, models
+
+
+class PosPaymentMethod(models.Model):
+    _inherit = 'pos.payment.method'
+
+    edi_pos_payment_method_id = fields.Many2one(string="POS payment method (DIAN)",
+                                                comodel_name='l10n_co_edi_jorels.payment_methods', required=True,
+                                                copy=False, domain=[('scope', '=', False)], ondelete='RESTRICT',
+                                                default=1)
