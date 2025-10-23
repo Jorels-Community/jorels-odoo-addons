@@ -101,6 +101,36 @@
                            t-att-class="{'border-danger': missingFields.includes('email_edi')}"
                            placeholder="fe@example.com"/>
                 </div>
+                <!-- DIAN Acquirer Section -->
+                <div class='partner-detail' style="width: 100%; margin-top: 20px; border-top: 2px solid #ddd; padding-top: 15px;">
+                    <h4 style="margin-bottom: 10px;">DIAN Acquirer</h4>
+                    <div class="dian-acquirer" style="justify-content: center; margin-bottom: 10px;">
+                        <button type="button" class="button" t-on-click.prevent="getDianAcquirer">
+                            <i class="fa fa-cloud-download"/>
+                            <span> Get</span>
+                        </button>
+                        <button type="button" class="button" t-on-click.prevent="acquirerReplace">
+                            <i class="fa fa-clipboard"/>
+                            <span> Replace</span>
+                        </button>
+                        <button type="button" class="button" t-on-click.prevent="getDianAcquirerAndReplace">
+                            <i class="fa fa-magic"/>
+                            <span> Auto</span>
+                        </button>
+                    </div>
+                    <div class="row">
+                        <div class='partner-detail col-6'>
+                            <label class='form-label label' for='edi_dian_acquirer_name'>Nombre</label>
+                            <input class='detail client-dian-name form-control' name='edi_dian_acquirer_name' type='text' readonly="readonly"
+                                   t-model="changes.edi_dian_acquirer_name" placeholder="Nombre de la DIAN"/>
+                        </div>
+                        <div class='partner-detail col-6'>
+                            <label class='form-label label' for='edi_dian_acquirer_email'>E-mail</label>
+                            <input class='detail client-dian-email form-control' name='edi_dian_acquirer_email' type='email' readonly="readonly"
+                                   t-model="changes.edi_dian_acquirer_email" placeholder="Email de la DIAN"/>
+                        </div>
+                    </div>
+                </div>
             </t>
         </xpath>
     </t>

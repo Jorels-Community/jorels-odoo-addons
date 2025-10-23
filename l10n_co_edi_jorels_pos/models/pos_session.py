@@ -78,7 +78,9 @@ class PosSession(models.Model):
             'type_regime_id',
             'type_liability_id',
             'municipality_id',
-            'email_edi'
+            'email_edi',
+            'edi_dian_acquirer_email',
+            'edi_dian_acquirer_name'
         ])
 
         return result
@@ -88,6 +90,8 @@ class PosSession(models.Model):
 
         result['search_params']['fields'].append('municipality_id')
         result['search_params']['fields'].append('city')
+        result['search_params']['fields'].append('ei_enable')
+        result['search_params']['fields'].append('ei_set_default_partner_data')
 
         return result
 
