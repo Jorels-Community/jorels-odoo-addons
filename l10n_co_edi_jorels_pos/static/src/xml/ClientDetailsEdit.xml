@@ -89,5 +89,33 @@
                        t-att-value='props.partner.email_edi || ""' placeholder="fe@example.com"/>
             </div>
         </xpath>
+        <xpath expr="//div[@class='client-details-right']//div[last()]" position="after">
+            <h3>DIAN acquirer</h3>
+            <div class="dian-acquirer">
+                <button class="button" t-on-click="getDianAcquirer">
+                    <i class="fa fa-cloud-download"/>
+                    <span> Get</span>
+                </button>
+                <span> </span>
+                <button class="button" t-on-click="acquirerReplace">
+                    <i class="fa fa-clipboard"/>
+                    <span> Replace</span>
+                </button>
+                <button class="button" t-on-click="getDianAcquirerAndReplace">
+                    <i class="fa fa-magic"/>
+                    <span> Auto</span>
+                </button>
+            </div>
+            <div class='client-detail'>
+                <span class='label'>E-mail</span>
+                <input class='detail client-dian-email' name='edi_dian_acquirer_email' type='email' readonly="readonly"
+                       t-att-value='props.partner.edi_dian_acquirer_email || ""' placeholder="Email de la DIAN"/>
+            </div>
+            <div class='client-detail'>
+                <span class='label'>Name</span>
+                <input class='detail client-dian-name' name='edi_dian_acquirer_name' type='text' readonly="readonly"
+                       t-att-value='props.partner.edi_dian_acquirer_name || ""' placeholder="Nombre de la DIAN"/>
+            </div>
+        </xpath>
     </t>
 </templates>

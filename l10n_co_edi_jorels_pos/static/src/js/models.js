@@ -69,8 +69,10 @@ odoo.define('l10n_co_edi_jorels_pos.models', function(require) {
         'type_liability_id',
         'municipality_id',
         'email_edi',
+        'edi_dian_acquirer_email',
+        'edi_dian_acquirer_name',
     ]);
-    exports.load_fields('res.company', ['municipality_id', 'city']);
+    exports.load_fields('res.company', ['municipality_id', 'city', 'ei_enable', 'ei_set_default_partner_data']);
     exports.load_fields('pos.config', ['invoice_type']);
 
     exports.Order = exports.Order.extend({
