@@ -27,10 +27,12 @@ odoo.define('l10n_co_edi_jorels_pos.PartnerListScreen', function(require) {
 
     const JPartnerListScreen = (PartnerListScreen) =>
         class extends PartnerListScreen {
-            createPartner() {
-                super.createPartner(...arguments);
-                this.state.editModeProps.partner = Object.assign({}, this.state.editModeProps.partner,
-                    {
+            _getDefaultPartner() {
+                if (this.env.pos.company.ei_enable && this.env.pos.company.ei_set_default_partner_data) {
+                    return {
+                        name: 'Consumidor Final',
+                        country_id: this.env.pos.company.country_id,
+                        state_id: this.env.pos.company.state_id,
                         vat: '222222222222',
                         company_type: 'person',
                         city: this.env.pos.company.city,
@@ -38,8 +40,26 @@ odoo.define('l10n_co_edi_jorels_pos.PartnerListScreen', function(require) {
                         type_regime_id: [2],
                         type_liability_id: [29],
                         municipality_id: this.env.pos.company.municipality_id
-                    }
+                    };
+                }
+
+                return {};
+            }
+
+            createPartner() {
+                super.createPartner(...arguments);
+                this.state.editModeProps.partner = Object.assign({}, this.state.editModeProps.partner,
+                    this._getDefaultPartner()
                 );
+            }
+
+            deactivateEditMode() {
+                super.deactivateEditMode();
+                // Reset to default values when closing the editor
+                const defaultPartner = this._getDefaultPartner();
+                if (Object.keys(defaultPartner).length > 0) {
+                    this.state.editModeProps.partner = Object.assign({}, this.state.editModeProps.partner, defaultPartner);
+                }
             }
         };
     Registries.Component.extend(PartnerListScreen, JPartnerListScreen);
