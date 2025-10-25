@@ -26,6 +26,14 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button class="oe_stat_button" type="object" name="get_dian_acquirer_and_replace" icon="fa-magic">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text">Acquirer DIAN</span>
+                            <span class="o_stat_text">(Auto)</span>
+                        </div>
+                    </button>
+                </div>
                 <xpath expr="//field[@name='name' and @id='individual']" position="after">
                     <br/>
                     <field name="trade_name" placeholder="Trade name"/>
