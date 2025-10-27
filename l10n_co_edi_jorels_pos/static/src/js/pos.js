@@ -37,7 +37,9 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
         'type_regime_id',
         'type_liability_id',
         'municipality_id',
-        'email_edi'
+        'email_edi',
+        'edi_dian_acquirer_email',
+        'edi_dian_acquirer_name'
     ];
 
     models.push(
@@ -92,34 +94,190 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
                     old_loaded(self, partners);
                 }
             }
+            if(models[i].model == 'res.company') {
+                var model = models[i];
+                model.fields.push('municipality_id', 'city', 'ei_enable', 'ei_set_default_partner_data');
+            }
         }
     }
 
     set_fields_to_model(partner_fields, models);
 
     screens.ClientListScreenWidget.include({
-        show: function() {
+        _get_default_partner: function() {
             var self = this;
-            this._super();
-
-            rpc.query({
-                model: 'res.partner',
-                method: 'search_read',
-                args: [[['id','=',self.pos.company['id']]],['municipality_id']]
-            })
-            .then(function(partner_read){
-                self.$('.new-customer').click(function(){
-                    self.display_client_details('edit',{
+            if (self.pos.company.ei_enable && self.pos.company.ei_set_default_partner_data) {
+                return rpc.query({
+                    model: 'res.partner',
+                    method: 'search_read',
+                    args: [[['id','=',self.pos.company['id']]],['municipality_id']]
+                })
+                .then(function(partner_read){
+                    return {
+                        'name': 'Consumidor Final',
                         'country_id': self.pos.company.country_id,
                         'state_id': self.pos.company.state_id,
                         'vat': '222222222222',
                         'company_type': 'person',
+                        'city': self.pos.company.city,
                         'l10n_co_document_type': 'national_citizen_id',
                         'type_regime_id': [2],
                         'type_liability_id': [29],
-                        'municipality_id': [partner_read[0]['municipality_id'][0]]
-                    });
+                        'municipality_id': partner_read[0]['municipality_id']
+                    };
                 });
+            }
+            return Promise.resolve({});
+        },
+
+        show: function() {
+            var self = this;
+            this._super();
+
+            this._get_default_partner().then(function(default_partner){
+                self.$('.new-customer').click(function(){
+                    self.display_client_details('edit', default_partner);
+                });
+            });
+        },
+
+        formatColombianName: function(name) {
+            /**
+             * Formats a Colombian name assuming the first two words are last names
+             * and the remaining words are first names.
+             */
+            var words = name.trim().split(/\s+/);
+
+            if (words.length < 2) {
+                return name;
+            }
+
+            if (words.length === 2) {
+                return words[0] + ', ' + words[1];
+            }
+
+            var lastNames = words.slice(0, 2).join(' ');
+            var firstNames = words.slice(2).join(' ');
+
+            return lastNames + ', ' + firstNames;
+        },
+
+        getDianAcquirer: function() {
+            var self = this;
+            var partner = this.new_client || this.old_client || {};
+            var vat = this.$('input[name="vat"]').val() || this.$('.detail.client-vat').val() || partner.vat;
+            var l10n_co_document_type = this.$('select[name="l10n_co_document_type"]').val() || this.$('.client-edi-l10n_co_document_type').val() || partner.l10n_co_document_type;
+
+            return rpc.query({
+                model: 'res.partner',
+                method: 'fetch_dian_acquirer_data_l10n_co_document_type',
+                args: [l10n_co_document_type, vat],
+            }).then(function(result) {
+                if (result) {
+                    self.$('.client-dian-email').val(result.email || '');
+                    self.$('.client-dian-name').val(result.name || '');
+                    // Store in new_client
+                    if (self.new_client) {
+                        self.new_client.edi_dian_acquirer_email = result.email || '';
+                        self.new_client.edi_dian_acquirer_name = result.name || '';
+                    }
+                    return result;
+                } else {
+                    self.gui.show_popup('error',{
+                        'title': 'Sin datos en consulta DIAN',
+                        'body': 'No se obtuvieron datos al consultar en la DIAN.',
+                    });
+                    return null;
+                }
+            }).catch(function(error) {
+                var errorMessage = 'Error al consultar los datos en la DIAN.';
+                if (error.message && error.message.data && error.message.data.message) {
+                    errorMessage = error.message.data.message;
+                } else if (error.data && error.data.message) {
+                    errorMessage = error.data.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                self.gui.show_popup('error',{
+                    'title': 'Error en consulta DIAN',
+                    'body': errorMessage,
+                });
+                return null;
+            });
+        },
+
+        acquirerReplace: function() {
+            var self = this;
+            var partner = this.new_client || this.old_client || {};
+            var edi_dian_acquirer_name = this.$('.client-dian-name').val();
+            var edi_dian_acquirer_email = this.$('.client-dian-email').val();
+
+            if (edi_dian_acquirer_name && edi_dian_acquirer_email) {
+                var company_type = this.$('.client-edi-company_type').val() || partner.company_type;
+
+                // Update name
+                var formattedName;
+                if (company_type === 'company') {
+                    formattedName = edi_dian_acquirer_name;
+                } else {
+                    formattedName = this.formatColombianName(edi_dian_acquirer_name);
+                }
+                this.$('.client-name').val(formattedName);
+
+                // Update Edi email
+                this.$('.client-edi-email').val(edi_dian_acquirer_email);
+
+                // Only update email if it's empty
+                var currentEmail = this.$('.client-email').val();
+                if (!currentEmail) {
+                    this.$('.client-email').val(edi_dian_acquirer_email);
+                }
+
+                // Update new_client
+                if (this.new_client) {
+                    this.new_client.name = formattedName;
+                    this.new_client.email_edi = edi_dian_acquirer_email;
+                    if (!currentEmail) {
+                        this.new_client.email = edi_dian_acquirer_email;
+                    }
+                }
+            }
+        },
+
+        getDianAcquirerAndReplace: function() {
+            var self = this;
+            this.getDianAcquirer().then(function(result) {
+                if (result) {
+                    self.acquirerReplace();
+                }
+            });
+        },
+
+        display_client_details: function(visibility, partner, clickpos) {
+            var self = this;
+            this._super(visibility, partner, clickpos);
+
+            if (visibility === 'edit') {
+                // Setup event handlers for DIAN buttons
+                this.$('.button-get-dian-acquirer').click(function(){
+                    self.getDianAcquirer();
+                });
+                this.$('.button-acquirer-replace').click(function(){
+                    self.acquirerReplace();
+                });
+                this.$('.button-get-dian-acquirer-and-replace').click(function(){
+                    self.getDianAcquirerAndReplace();
+                });
+            }
+        },
+
+        close: function() {
+            var self = this;
+            this._super();
+            // Restore default values when closing
+            this._get_default_partner().then(function(default_partner){
+                // Store default partner for next time
+                self.default_partner = default_partner;
             });
         },
     });
