@@ -37,7 +37,9 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
         'type_regime_id',
         'type_liability_id',
         'municipality_id',
-        'email_edi'
+        'email_edi',
+        'edi_dian_acquirer_email',
+        'edi_dian_acquirer_name'
     ];
 
     models.push(
@@ -97,6 +99,15 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
                     old_loaded(self, partners);
                 }
             }
+            if(models[i].model == 'res.company') {
+                var company_fields = ['municipality_id', 'city', 'ei_enable'];
+                var model = models[i];
+                for(var j = 0; j < company_fields.length; j++){
+                    if (model.fields.indexOf(company_fields[j]) === -1) {
+                        model.fields.push(company_fields[j]);
+                    }
+                }
+            }
         }
     }
 
@@ -111,6 +122,209 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
             var country_select = $('.client-address-country');
             country_select.val("49");
             country_select.attr('disabled', true);
+
+            // Bind DIAN acquirer buttons
+            var self = this;
+            this.$('.button-get-dian-acquirer').click(function(){
+                self.get_dian_acquirer();
+            });
+            this.$('.button-acquirer-replace').click(function(){
+                self.acquirer_replace();
+            });
+            this.$('.button-get-dian-acquirer-and-replace').click(function(){
+                self.get_dian_acquirer_and_replace();
+            });
+
+            // Pre-fill default partner data when creating new partner
+            if (visibility === 'edit' && (!partner || partner.id === undefined) && this.pos.company.ei_enable) {
+                this.set_default_partner_data();
+            }
+        },
+
+        formatColombianName: function(name) {
+            /**
+             * Formats a Colombian name assuming the first two words are last names
+             * and the remaining words are first names.
+             *
+             * @param {string} name - Full name with last names first
+             * @returns {string} Formatted name as "Last Names, First Names"
+             */
+            const words = name.trim().split(/\s+/);
+
+            if (words.length < 2) {
+                return name;
+            }
+
+            if (words.length === 2) {
+                return `${words[0]}, ${words[1]}`;
+            }
+
+            const lastNames = words.slice(0, 2).join(' ');
+            const firstNames = words.slice(2).join(' ');
+
+            return `${lastNames}, ${firstNames}`;
+        },
+
+        updateFieldValue: function(fieldName, value) {
+            // Update the DOM input/select element
+            var fieldElement = this.$('.client-' + fieldName);
+            if (fieldElement.length === 0) {
+                fieldElement = this.$('[name="' + fieldName + '"]');
+            }
+            if (fieldElement.length > 0) {
+                fieldElement.val(value);
+                // Trigger change event
+                fieldElement.trigger('change');
+            }
+        },
+
+        get_dian_acquirer: function() {
+            var self = this;
+            var vat = this.$('[name="vat"]').val();
+            var l10nCoDocumentType = this.$('[name="l10n_co_document_type"]').val();
+
+            if (!vat || !l10nCoDocumentType) {
+                this.gui.show_popup('error',{
+                    'title': _t('Error'),
+                    'body':  _t('Se requiere tipo de documento y número de identificación.'),
+                });
+                return;
+            }
+
+            rpc.query({
+                model: 'res.partner',
+                method: 'fetch_dian_acquirer_data_co_type',
+                args: [l10nCoDocumentType, vat],
+            }).then(function(result) {
+                if (result) {
+                    self.updateFieldValue('edi_dian_acquirer_email', result.email || '');
+                    self.updateFieldValue('edi_dian_acquirer_name', result.name || '');
+                } else {
+                    self.gui.show_popup('error',{
+                        'title': _t('Sin datos en consulta DIAN'),
+                        'body':  _t('No se obtuvieron datos al consultar en la DIAN.'),
+                    });
+                }
+            }).fail(function(error) {
+                // Extract the error message from Odoo's error structure
+                var errorMessage = _t('Error al consultar los datos en la DIAN.');
+
+                if (error.message && error.message.data && error.message.data.message) {
+                    errorMessage = error.message.data.message;
+                } else if (error.data && error.data.message) {
+                    errorMessage = error.data.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+
+                self.gui.show_popup('error',{
+                    'title': _t('Error en consulta DIAN'),
+                    'body':  errorMessage,
+                });
+            });
+        },
+
+        acquirer_replace: function() {
+            // Transfer DIAN data to form fields
+            var acquirerEmail = this.$('[name="edi_dian_acquirer_email"]').val();
+            var acquirerName = this.$('[name="edi_dian_acquirer_name"]').val();
+
+            if (acquirerName && acquirerEmail) {
+                var companyType = this.$('[name="company_type"]').val();
+
+                // Update name
+                var formattedName;
+                if (companyType === 'company') {
+                    formattedName = acquirerName;
+                } else {
+                    formattedName = this.formatColombianName(acquirerName);
+                }
+                this.updateFieldValue('name', formattedName);
+
+                // Update Edi email
+                this.updateFieldValue('email_edi', acquirerEmail);
+
+                // Only update email if it's empty
+                var currentEmail = this.$('[name="email"]').val();
+                if (!currentEmail) {
+                    this.updateFieldValue('email', acquirerEmail);
+                }
+            }
+        },
+
+        get_dian_acquirer_and_replace: function() {
+            var self = this;
+            var vat = this.$('[name="vat"]').val();
+            var l10nCoDocumentType = this.$('[name="l10n_co_document_type"]').val();
+
+            if (!vat || !l10nCoDocumentType) {
+                this.gui.show_popup('error',{
+                    'title': _t('Error'),
+                    'body':  _t('Se requiere tipo de documento y número de identificación.'),
+                });
+                return;
+            }
+
+            rpc.query({
+                model: 'res.partner',
+                method: 'fetch_dian_acquirer_data_co_type',
+                args: [l10nCoDocumentType, vat],
+            }).then(function(result) {
+                if (result) {
+                    self.updateFieldValue('edi_dian_acquirer_email', result.email || '');
+                    self.updateFieldValue('edi_dian_acquirer_name', result.name || '');
+
+                    // Auto-replace
+                    setTimeout(function() {
+                        self.acquirer_replace();
+                    }, 100);
+                } else {
+                    self.gui.show_popup('error',{
+                        'title': _t('Sin datos en consulta DIAN'),
+                        'body':  _t('No se obtuvieron datos al consultar en la DIAN.'),
+                    });
+                }
+            }).fail(function(error) {
+                var errorMessage = _t('Error al consultar los datos en la DIAN.');
+
+                if (error.message && error.message.data && error.message.data.message) {
+                    errorMessage = error.message.data.message;
+                } else if (error.data && error.data.message) {
+                    errorMessage = error.data.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+
+                self.gui.show_popup('error',{
+                    'title': _t('Error en consulta DIAN'),
+                    'body':  errorMessage,
+                });
+            });
+        },
+
+        set_default_partner_data: function() {
+            // Set default values for "Consumidor Final"
+            if (this.pos.company.ei_enable) {
+                this.updateFieldValue('name', 'Consumidor Final');
+                this.updateFieldValue('vat', '222222222222');
+                this.updateFieldValue('company_type', 'person');
+                this.updateFieldValue('l10n_co_document_type', 'national_citizen_id');
+                this.updateFieldValue('type_regime_id', 2);
+                this.updateFieldValue('type_liability_id', 29);
+
+                if (this.pos.company.country_id) {
+                    this.updateFieldValue('country_id', this.pos.company.country_id[0]);
+                }
+                if (this.pos.company.state_id) {
+                    this.updateFieldValue('state_id', this.pos.company.state_id[0]);
+                }
+                if (this.pos.company.city) {
+                    this.updateFieldValue('city', this.pos.company.city);
+                }
+                if (this.pos.company.municipality_id) {
+                    this.updateFieldValue('municipality_id', this.pos.company.municipality_id[0]);
+                }
+            }
         },
     });
 
