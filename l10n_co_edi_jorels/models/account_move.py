@@ -900,8 +900,29 @@ class AccountMove(models.Model):
                         invoice_temps.update({'sector_code': 1})
 
                 # Mandates compatibility
-                if self.ei_operation == 'mandates':
-                    raise UserError(_("Electronic invoicing does not yet support mandates"))
+                elif self.ei_operation == 'mandates':
+                    if invoice_line_id.ei_provider_party_id:
+                        provider_partner = invoice_line_id.ei_provider_party_id
+
+                        if not provider_partner.type_document_identification_id:
+                            raise UserError(_("The principal (mandante) '%s' must have an identification document type")
+                                           % provider_partner.name)
+                        if not provider_partner.edi_sanitize_vat:
+                            raise UserError(_("The principal (mandante) '%s' must have an valid identification number")
+                                           % provider_partner.name)
+
+                        # For now, the identification type is assumed to always be Colombian
+                        invoice_temps.update({
+                            'provider_party': {
+                                'id_number': provider_partner.edi_sanitize_vat,
+                                'id_code': provider_partner.type_document_identification_id.id
+                            }
+                        })
+                        # B/S Ingresos Recibidos para Terceros
+                        invoice_temps.update({'sector_code': 4})
+                    else:
+                        # B/S ingreso propio
+                        invoice_temps.update({'sector_code': 3})
 
                 # Exchange compatibility
                 if self.ei_operation == 'exchange':
