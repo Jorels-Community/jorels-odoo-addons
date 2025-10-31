@@ -22,7 +22,9 @@
 
 import logging
 
-from odoo import fields, models
+from odoo import api, fields, models
+from odoo.exceptions import ValidationError
+from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
@@ -31,3 +33,15 @@ class AccountInvoiceLine(models.Model):
     _inherit = "account.invoice.line"
 
     ei_notes = fields.Char(string="Notes")
+    ei_provider_party_id = fields.Many2one(comodel_name='res.partner', string="Mandator", copy=True,
+                                           help="Principal third party information. Mandatory for mandate invoices.")
+
+    @api.constrains('ei_provider_party_id', 'invoice_id')
+    def _check_mandate_consistency(self):
+        """Validate that mandate field is only used when operation type is 'mandates'"""
+        for line in self:
+            if line.ei_provider_party_id and line.invoice_id and line.invoice_id.ei_operation != 'mandates':
+                raise ValidationError(
+                    _("The 'Principal (Mandante)' field can only be used when the Operation Type is 'Mandates'. "
+                      "Please remove the mandate or change the operation type to 'Mandates'.")
+                )
