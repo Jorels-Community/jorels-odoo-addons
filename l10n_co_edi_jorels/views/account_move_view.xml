@@ -240,6 +240,9 @@
                 <!-- Invoice lines -->
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
                     <field name="ei_notes"/>
+                    <field name="ei_provider_party_id"
+                           optional="hide"
+                           groups="l10n_co_edi_jorels.group_invoice_mandate_enable"/>
                 </xpath>
                 <xpath expr="//field[@name='line_ids']/tree/field[@name='name']" position="after">
                     <field name="ei_notes" invisible="1"/>
