@@ -82,6 +82,12 @@ class ResConfigSettings(models.TransientModel):
         readonly=False
     )
 
+    ei_enable_automatic_discount_transformation = fields.Boolean(
+        related="company_id.ei_enable_automatic_discount_transformation",
+        string="Enable automatic transformation of promotional lines",
+        readonly=False
+    )
+
     # Update resolutions on Odoo database
     @api.model
     def action_update_resolutions(self):

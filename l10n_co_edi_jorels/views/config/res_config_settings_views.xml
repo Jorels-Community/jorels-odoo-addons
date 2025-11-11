@@ -152,6 +152,26 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane">
+                                    <field name="ei_enable_automatic_discount_transformation"/>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label string="Automatic transformation of promotional lines"
+                                           for="ei_enable_automatic_discount_transformation"/>
+                                    <div class="text-muted">
+                                        Automatically transform promotional/coupon reward lines into DIAN-compliant discount structures.
+                                        <br/><br/>
+                                        <strong>When enabled:</strong>
+                                        <ul>
+                                            <li>Gifts (≥99% discount): Maintains commercial price, VAT on full value (Art. 421 DIAN)</li>
+                                            <li>Promotional discounts (&lt;99%): Reduces taxable base (Art. 454 DIAN)</li>
+                                            <li>Negative reward lines are consolidated into product lines</li>
+                                        </ul>
+                                        <strong>When disabled:</strong> Reward lines remain as separate negative lines (standard Odoo behavior)
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <h2>Print customization</h2>

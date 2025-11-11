@@ -109,6 +109,17 @@ class ResCompany(models.Model):
         help="If enabled, new partners will have 'Consumidor Final' as default data when electronic invoicing is enabled"
     )
 
+    ei_enable_automatic_discount_transformation = fields.Boolean(
+        string="Enable automatic transformation of promotional lines",
+        default=False,
+        help="If enabled, promotional/coupon reward lines will be automatically transformed into "
+             "DIAN-compliant discount structures when creating invoices.\n\n"
+             "This applies Art. 421 and 454 DIAN regulations:\n"
+             "- Gifts (≥99% discount): Maintains commercial price, VAT on full value\n"
+             "- Promotional discounts (<99%): Reduces taxable base\n\n"
+             "When disabled, reward lines remain as separate negative lines (standard Odoo behavior)."
+    )
+
     def _compute_vat_formatted(self):
         for rec in self:
             type_document_identification_id = self.get_type_document_identification_id()

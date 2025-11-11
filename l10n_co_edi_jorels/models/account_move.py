@@ -228,6 +228,207 @@ class AccountMove(models.Model):
         readonly=False,
         help='Edit Tax amounts if you encounter rounding issues (Company currency).')
 
+    # Colombian DIAN Compliance: Transform promotional/coupon lines to discounts
+    # Art. 454: Discounts (<99%) reduce taxable base
+    # Art. 421: Gifts (≥99%) taxed on commercial value
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Transform reward lines to DIAN-compliant discounts before creation."""
+        transformed_vals_list = []
+
+        for vals in vals_list:
+            if self._should_transform_reward_lines(vals):
+                vals = self._co_transform_reward_lines_vals(vals)
+
+            transformed_vals_list.append(vals)
+
+        return super(AccountMove, self).create(transformed_vals_list)
+
+    def write(self, vals):
+        """Transform reward lines to DIAN-compliant discounts on write."""
+        if 'invoice_line_ids' in vals:
+            for rec in self:
+                temp_vals = {
+                    'move_type': rec.move_type,
+                    'company_id': rec.company_id.id,
+                    'invoice_line_ids': vals['invoice_line_ids']
+                }
+
+                if rec._should_transform_reward_lines(temp_vals):
+                    transformed_vals = rec._co_transform_reward_lines_vals(temp_vals)
+                    vals['invoice_line_ids'] = transformed_vals['invoice_line_ids']
+
+        return super(AccountMove, self).write(vals)
+
+    def _should_transform_reward_lines(self, vals):
+        """Determine if invoice should have reward lines transformed (Colombian DIAN compliance)."""
+        move_type = vals.get('move_type')
+        if move_type not in ('out_invoice', 'out_refund'):
+            return False
+
+        company_id = vals.get('company_id') or self.env.company.id
+        company = self.env['res.company'].browse(company_id)
+
+        if company.country_id.code != 'CO':
+            return False
+
+        if not company.ei_enable_automatic_discount_transformation:
+            return False
+
+        invoice_lines = vals.get('invoice_line_ids', [])
+        for line_tuple in invoice_lines:
+            if line_tuple[0] == 0:
+                line_vals = line_tuple[2]
+                price_unit = line_vals.get('price_unit', 0)
+                is_reward = line_vals.get('is_reward_line', False)
+                is_program = line_vals.get('is_program_reward', False)
+
+                if (price_unit < 0 or is_reward or is_program):
+                    return True
+
+        return False
+
+    def _co_transform_reward_lines_vals(self, vals):
+        """Transform reward lines into DIAN-compliant discount structures."""
+        invoice_lines = vals.get('invoice_line_ids', [])
+        if not invoice_lines:
+            return vals
+
+        product_lines = []
+        reward_lines = []
+        other_lines = []
+
+        for line_tuple in invoice_lines:
+            if line_tuple[0] != 0:
+                other_lines.append(line_tuple)
+                continue
+
+            line_vals = line_tuple[2]
+            price_unit = line_vals.get('price_unit', 0)
+            is_reward = (price_unit < 0 or line_vals.get('is_reward_line', False) or
+                        line_vals.get('is_program_reward', False))
+
+            if is_reward:
+                reward_lines.append(line_vals)
+            else:
+                product_lines.append(line_vals)
+
+        if not reward_lines:
+            return vals
+
+        reward_lines_to_remove = []
+
+        for reward_vals in reward_lines:
+            reward_product_id = reward_vals.get('product_id')
+            reward_qty = abs(reward_vals.get('quantity', 1))
+            reward_tax_ids = self._extract_tax_ids_from_vals(reward_vals)
+
+            reward_code = None
+            if reward_product_id:
+                reward_product = self.env['product.product'].browse(reward_product_id)
+                reward_code = reward_product.default_code
+
+            matched_product = None
+
+            # Match product by priority: product_id > code > name > taxes
+            if reward_product_id:
+                for product_vals in product_lines:
+                    if product_vals.get('_reward_processed'):
+                        continue
+                    if product_vals.get('product_id') == reward_product_id:
+                        matched_product = product_vals
+                        break
+
+            if not matched_product and reward_code:
+                for product_vals in product_lines:
+                    if product_vals.get('_reward_processed') or not product_vals.get('product_id'):
+                        continue
+                    product = self.env['product.product'].browse(product_vals['product_id'])
+                    if product.default_code == reward_code:
+                        matched_product = product_vals
+                        break
+
+            if not matched_product:
+                reward_name = reward_vals.get('name', '')
+                for product_vals in product_lines:
+                    if product_vals.get('_reward_processed') or not product_vals.get('product_id'):
+                        continue
+                    product = self.env['product.product'].browse(product_vals['product_id'])
+                    if product.name and product.name.lower() in reward_name.lower():
+                        matched_product = product_vals
+                        break
+
+            if not matched_product:
+                for product_vals in product_lines:
+                    if product_vals.get('_reward_processed'):
+                        continue
+                    if self._extract_tax_ids_from_vals(product_vals) == reward_tax_ids:
+                        matched_product = product_vals
+                        _logger.warning("Match by TAXES (ambiguous): %s", product_vals.get('name', 'Unknown'))
+                        break
+
+            # No match: Transform to different product gift
+            if not matched_product:
+                commercial_price = abs(reward_vals.get('price_unit', 0))
+                reward_vals['price_unit'] = commercial_price
+                reward_vals['discount'] = 100.0
+                continue
+
+            # Calculate discount
+            product_qty = matched_product.get('quantity', 1)
+            discount_amount = abs(reward_vals.get('price_unit', 0)) * reward_qty
+            product_amount = abs(matched_product.get('price_unit', 0)) * product_qty
+
+            if product_amount == 0:
+                _logger.warning("Product amount is zero")
+                continue
+
+            discount_percent = (discount_amount / product_amount) * 100
+
+            # Handle partial discounts
+            if reward_qty != product_qty:
+                if reward_qty < product_qty:
+                    discount_percent = discount_percent * (reward_qty / product_qty)
+                elif reward_qty > product_qty:
+                    _logger.warning("More rewards than products - using 100%%")
+                    discount_percent = 100.0
+
+            # Apply discount
+            if discount_percent >= 99.0:
+                matched_product['discount'] = 100.0
+            else:
+                matched_product['discount'] = discount_percent
+
+            matched_product['_reward_processed'] = True
+            reward_lines_to_remove.append(reward_vals)
+
+        # Rebuild lines
+        new_invoice_lines = []
+        for product_vals in product_lines:
+            product_vals.pop('_reward_processed', None)
+            new_invoice_lines.append((0, 0, product_vals))
+
+        for reward_vals in reward_lines:
+            if reward_vals not in reward_lines_to_remove:
+                new_invoice_lines.append((0, 0, reward_vals))
+
+        new_invoice_lines.extend(other_lines)
+        vals['invoice_line_ids'] = new_invoice_lines
+
+        return vals
+
+    def _extract_tax_ids_from_vals(self, line_vals):
+        """Extract tax IDs from line vals (handles Odoo command formats)."""
+        tax_ids = set()
+        for tax_tuple in line_vals.get('tax_ids', []):
+            command = tax_tuple[0]
+            if command == 6:
+                tax_ids.update(tax_tuple[2])
+            elif command == 4:
+                tax_ids.add(tax_tuple[1])
+        return tax_ids
+
     def _auto_init(self):
         # Edi type document
         if not column_exists(self.env.cr, "account_move", "ei_type_document_id"):
@@ -607,6 +808,28 @@ class AccountMove(models.Model):
 
         charge_total_amount = 0.0
         payable_amount = self.ei_amount_total_no_withholding_company
+
+        # GIFT (discount >= 99%): Art. 421 DIAN
+        # Add VAT calculated on commercial value for gifts (only when balance is $0)
+        gift_tax_amount = 0.0
+        for invoice_line_id in self.invoice_line_ids:
+            if invoice_line_id.account_id and abs(invoice_line_id.balance) == 0 and invoice_line_id.discount:
+                # Calculate VAT on commercial value (price_unit), not on $0
+                taxable_amount = invoice_line_id.price_unit * invoice_line_id.quantity
+                for invoice_line_tax_id in invoice_line_id.tax_ids:
+                    if invoice_line_tax_id.edi_tax_id.id:
+                        edi_tax_name = invoice_line_tax_id.edi_tax_id.name
+                        tax_name = invoice_line_tax_id.name
+                        dian_report_tax_base = invoice_line_tax_id.dian_report_tax_base or 'auto'
+                        # Only add non-withholding taxes
+                        if edi_tax_name[:4] != 'Rete' \
+                                and not tax_name.startswith(('IVA Excluido', 'IVA Compra Excluido')) \
+                                and not (edi_tax_name == 'IVA' and dian_report_tax_base == 'no_report'):
+                            if invoice_line_tax_id.amount_type in ('percent', 'code'):
+                                tax_amount = taxable_amount * invoice_line_tax_id.amount / 100.0
+                                gift_tax_amount += tax_amount
+
+        payable_amount += gift_tax_amount
         tax_inclusive_amount = payable_amount - charge_total_amount + allowance_total_amount
 
         return {
@@ -744,11 +967,15 @@ class AccountMove(models.Model):
         round_curr = self.company_currency_id.round
         for invoice_line_id in self.invoice_line_ids:
             if invoice_line_id.account_id:
-                if not (0 <= invoice_line_id.discount < 100):
-                    raise UserError(_("The discount must always be greater than or equal to 0 and less than 100."))
+                if not (0 <= invoice_line_id.discount <= 100):
+                    raise UserError(_("The discount must always be greater than or equal to 0 and less than or equal to 100."))
 
-                price_unit = 100.0 * abs(invoice_line_id.balance) / (invoice_line_id.quantity * (
-                        100.0 - invoice_line_id.discount))
+                # For gifts (100% discount), use price_unit directly since balance is $0
+                if invoice_line_id.discount >= 100:
+                    price_unit = abs(invoice_line_id.price_unit)
+                else:
+                    price_unit = 100.0 * abs(invoice_line_id.balance) / (invoice_line_id.quantity * (
+                            100.0 - invoice_line_id.discount))
                 # The temporary dictionary of elements that belong to the specific line
                 invoice_temps = {}
                 products = {}
@@ -794,9 +1021,16 @@ class AccountMove(models.Model):
                 if invoice_line_id.discount:
                     discount = True
                     allowance_charges.update({'indicator': False})
-                    amount = abs(invoice_line_id.balance) * invoice_line_id.discount / (
-                            100.0 - invoice_line_id.discount)
-                    base_amount = abs(invoice_line_id.balance) + amount
+
+                    # For gifts (100% discount), calculate from price_unit instead of balance
+                    if invoice_line_id.discount >= 100:
+                        amount = price_unit * invoice_line_id.quantity
+                        base_amount = amount
+                    else:
+                        amount = abs(invoice_line_id.balance) * invoice_line_id.discount / (
+                                100.0 - invoice_line_id.discount)
+                        base_amount = abs(invoice_line_id.balance) + amount
+
                     allowance_charge_reason = "Descuento"
                 else:
                     discount = False
@@ -807,26 +1041,19 @@ class AccountMove(models.Model):
 
                 taxable_amount_company = abs(invoice_line_id.balance)
 
-                # If it is a commercial sample the taxable amount is zero and not discount but have lst_price
+                # GIFT (discount >= 99%): Art. 421 DIAN
+                # VAT calculated on commercial value, not amount paid ($0)
+                is_gift = discount and invoice_line_id.discount >= 99.0
+                if is_gift:
+                    taxable_amount_company = price_unit * invoice_line_id.quantity
+
+                # Commercial sample handling
                 commercial_sample = False
                 if not taxable_amount_company and not discount and invoice_line_id.product_id.lst_price:
                     if self.currency_id and self.company_id and self.currency_id != self.company_id.currency_id:
-                        raise UserError(
-                            _("Commercial samples doesn't seem to be compatible with multi-currencies."))
-
-                    # Use the following code, as an example, to configure the tax for a commercial sample.
-                    # For this you must install the account_tax_python module and
-                    # select the "Tax computation" field as "Python code" in the tax form.
-                    #
-                    # In the "Python code" field, in the tax form; for 19% tax:
-                    #
-                    # if price_unit:
-                    #     result = price_unit * quantity * 0.19
-                    # else:
-                    #     result = product.lst_price * quantity * 0.19
-                    #
+                        raise UserError(_("Commercial samples doesn't seem to be compatible with multi-currencies."))
                     commercial_sample = True
-                    products.update({'price_code': 1})  # Commercial value ('01')
+                    products.update({'price_code': 1})
                     taxable_amount_company = invoice_line_id.product_id.lst_price * invoice_line_id.quantity
                     products.update({'price_value': invoice_line_id.product_id.lst_price})
 
