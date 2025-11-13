@@ -94,47 +94,55 @@ class ResPartner(models.Model):
             rec.edi_sanitize_vat = rec._edi_sanitize_vat(rec.vat, rec.type_document_identification_id.id)
 
     @api.model
-    def _get_type_document_identification_id(self, l10n_co_document_type):
+    def _get_type_document_identification_id(self, l10n_latam_identification_type_id):
         """
-        Get type document identification ID from l10n_co_document_type
+        Get type document identification ID from l10n_latam_identification_type_id
 
         Args:
-            l10n_co_document_type: L10n co document type (string)
+            l10n_latam_identification_type_id: L10n latam identification type ID (integer or recordset)
 
         Returns:
             type_document_identification_id: Type document identification
         """
         DOCUMENT_TYPE_MAPPING = {
+            'rut': 6,
+            'national_citizen_id': 3,
             'civil_registration': 1,
             'id_card': 2,
-            'id_document': 3,
-            'national_citizen_id': 3,
             'foreign_colombian_card': 4,
             'foreign_resident_card': 5,
-            'rut': 6,
             'passport': 7,
+            'PEP': 24,
             'foreign_id_card': 8,
             'external_id': 9,
             'niup_id': 10,
-            'residence_document': 24,  # PEP
+            'id_document': 3,
+            'PPT': 38,
         }
 
-        if not l10n_co_document_type:
+        # Ensure we have a recordset
+        if not isinstance(l10n_latam_identification_type_id, type(self.env['l10n_latam.identification.type'])):
+            l10n_latam_identification_type_id = self.env['l10n_latam.identification.type'].browse(
+                int(l10n_latam_identification_type_id)
+            )
+
+        if not l10n_latam_identification_type_id:
             return None
 
-        type_document_identification_id = DOCUMENT_TYPE_MAPPING.get(l10n_co_document_type)
+        type_document_identification_id = DOCUMENT_TYPE_MAPPING.get(
+            l10n_latam_identification_type_id.l10n_co_document_code
+        )
 
         return self.env['l10n_co_edi_jorels.type_document_identifications'].browse(type_document_identification_id)
 
-    @api.depends('l10n_latam_identification_type_id', 'l10n_latam_identification_type_id.l10n_co_document_code')
+    @api.depends('l10n_latam_identification_type_id')
     def _compute_type_document_identification_id(self):
         if not self.env['l10n_co_edi_jorels.type_document_identifications'].search_count([]):
             self.env['res.company'].init_csv_data('l10n_co_edi_jorels.l10n_co_edi_jorels.type_document_identifications')
 
         for partner in self:
-            l10n_co_document_type = partner.l10n_latam_identification_type_id.l10n_co_document_code if partner.l10n_latam_identification_type_id else None
             partner.type_document_identification_id = self._get_type_document_identification_id(
-                l10n_co_document_type
+                partner.l10n_latam_identification_type_id
             )
 
     @api.depends('zip', 'country_id')
@@ -319,37 +327,10 @@ class ResPartner(models.Model):
             raise UserError(_("Failed to process the DIAN request: %s") % e)
 
     @api.model
-    def fetch_dian_acquirer_data_l10n_co_type(self, l10n_co_document_type, vat):
-        type_document_identification_id = self._get_type_document_identification_id(l10n_co_document_type)
-        return self.fetch_dian_acquirer_data(type_document_identification_id, vat)
-
-    @api.model
     def fetch_dian_acquirer_data_latam_type(self, l10n_latam_identification_type_id, vat):
-        """
-        Fetch DIAN acquirer data using l10n_latam_identification_type_id
-
-        Args:
-            l10n_latam_identification_type_id: ID of l10n_latam.identification.type record
-            vat: VAT/identification number (string)
-
-        Returns:
-            dict: Dictionary with 'email' and 'name' keys, or None if query fails
-        """
-        if not l10n_latam_identification_type_id:
-            return None
-
-        # Get the l10n_latam.identification.type record
-        latam_type = self.env['l10n_latam.identification.type'].browse(l10n_latam_identification_type_id)
-
-        if not latam_type.exists():
-            return None
-
-        # Get the document code and use existing method
-        l10n_co_document_code = latam_type.l10n_co_document_code
-        type_document_identification_id = self._get_type_document_identification_id(l10n_co_document_code)
+        type_document_identification_id = self._get_type_document_identification_id(l10n_latam_identification_type_id)
         return self.fetch_dian_acquirer_data(type_document_identification_id, vat)
 
-    # @api.multi (removed in v13+)
     def get_dian_acquirer(self):
         for rec in self:
             company = rec.company_id or self.env.company
@@ -397,7 +378,6 @@ class ResPartner(models.Model):
 
         return "{}, {}".format(last_names, first_names)
 
-    # @api.multi (removed in v13+)
     def acquirer_replace(self):
         for rec in self:
             company = rec.company_id or self.env.company
@@ -424,7 +404,6 @@ class ResPartner(models.Model):
             partner.get_dian_acquirer()
             partner.acquirer_replace()
 
-    # @api.multi (removed in v13+)
     def get_dian_acquirer_and_replace(self):
         for rec in self:
             self._get_dian_acquirer_and_replace(rec)
@@ -444,12 +423,9 @@ class ResPartner(models.Model):
                 defaults['vat'] = '222222222222'
 
             if 'l10n_latam_identification_type_id' in fields_list:
-                # Set default to "Cédula de Ciudadanía" (national_citizen_id)
-                national_id = self.env['l10n_latam.identification.type'].search([
-                    ('l10n_co_document_code', '=', 'national_citizen_id')
-                ], limit=1)
-                if national_id:
-                    defaults['l10n_latam_identification_type_id'] = national_id.id
+                national_citizen_rec = self.env['l10n_latam.identification.type'].search(
+                    [('l10n_co_document_code', '=', 'national_citizen_id')], limit=1)
+                defaults['l10n_latam_identification_type_id'] = national_citizen_rec.id
 
             if 'type_regime_id' in fields_list:
                 defaults['type_regime_id'] = 2
