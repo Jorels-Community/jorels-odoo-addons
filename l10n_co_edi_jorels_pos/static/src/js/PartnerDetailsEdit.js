@@ -43,9 +43,10 @@ odoo.define('l10n_co_edi_jorels_pos.PartnerDetailsEdit', function(require) {
                     type_regime_id: partner.type_regime_id && partner.type_regime_id[0],
                     type_liability_id: partner.type_liability_id && partner.type_liability_id[0],
                     municipality_id: partner.municipality_id && partner.municipality_id[0],
+                    email: partner.email || "",
                     email_edi: partner.email_edi || "",
-                    edi_dian_acquirer_email: partner.edi_dian_acquirer_email,
-                    edi_dian_acquirer_name: partner.edi_dian_acquirer_name,
+                    edi_dian_acquirer_email: partner.edi_dian_acquirer_email || "",
+                    edi_dian_acquirer_name: partner.edi_dian_acquirer_name || "",
                 });
             }
 
@@ -148,11 +149,8 @@ odoo.define('l10n_co_edi_jorels_pos.PartnerDetailsEdit', function(require) {
                     // Update Edi email
                     this.updateFieldValue('email_edi', this.changes.edi_dian_acquirer_email);
 
-                    // Only update email if it's empty
-                    const currentEmail = this.changes.email || this.props.partner.email;
-                    if (!currentEmail) {
-                        this.updateFieldValue('email', this.changes.edi_dian_acquirer_email);
-                    }
+                    // Update email - always replace when user clicks Replace button
+                    this.updateFieldValue('email', this.changes.edi_dian_acquirer_email);
                 }
             }
 

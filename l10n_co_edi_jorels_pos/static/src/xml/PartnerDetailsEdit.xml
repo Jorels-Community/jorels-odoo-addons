@@ -107,12 +107,12 @@
             <div class='partner-detail'>
                 <span class='label'>E-mail</span>
                 <input class='detail partner-dian-email' name='edi_dian_acquirer_email' type='email' readonly="readonly"
-                       t-att-value='props.partner.edi_dian_acquirer_email || ""' placeholder="Email de la DIAN"/>
+                       t-model="changes.edi_dian_acquirer_email" placeholder="Email de la DIAN"/>
             </div>
             <div class='partner-detail'>
                 <span class='label'>Name</span>
                 <input class='detail partner-dian-name' name='edi_dian_acquirer_name' type='text' readonly="readonly"
-                       t-att-value='props.partner.edi_dian_acquirer_name || ""' placeholder="Nombre de la DIAN"/>
+                       t-model="changes.edi_dian_acquirer_name" placeholder="Nombre de la DIAN"/>
             </div>
         </xpath>
     </t>
