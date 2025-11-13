@@ -100,7 +100,7 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
                 }
             }
             if(models[i].model == 'res.company') {
-                var company_fields = ['municipality_id', 'city', 'ei_enable'];
+                var company_fields = ['municipality_id', 'city', 'country_id', 'state_id', 'ei_enable', 'ei_set_default_partner_data'];
                 var model = models[i];
                 for(var j = 0; j < company_fields.length; j++){
                     if (model.fields.indexOf(company_fields[j]) === -1) {
@@ -117,6 +117,21 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
         display_client_details: function(visibility,partner,clickpos) {
             this._super(visibility,partner,clickpos);
 
+            // Initialize changes object to track form state (similar to Odoo 15)
+            var self = this;
+            this.changes = {};
+
+            // Capture initial values from partner or form
+            var self = this;
+            this.$('.client-details-contents .detail').each(function(idx,el){
+                self.changes[el.name] = el.value || '';
+            });
+
+            // Track changes when fields are modified
+            this.$('.client-details-contents .detail').on('change', function(){
+                self.changes[this.name] = this.value;
+            });
+
             // Por ahora solo se permiten contactos de Colombia
             // TODO: Dar soporte para otros paises
             var country_select = $('.client-address-country');
@@ -124,7 +139,6 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
             country_select.attr('disabled', true);
 
             // Bind DIAN acquirer buttons
-            var self = this;
             this.$('.button-get-dian-acquirer').click(function(){
                 self.get_dian_acquirer();
             });
@@ -136,7 +150,7 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
             });
 
             // Pre-fill default partner data when creating new partner
-            if (visibility === 'edit' && (!partner || partner.id === undefined) && this.pos.company.ei_enable) {
+            if (visibility === 'edit' && (!partner || partner.id === undefined) && this.pos.company.ei_enable && this.pos.company.ei_set_default_partner_data) {
                 this.set_default_partner_data();
             }
         },
@@ -180,13 +194,13 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
 
         get_dian_acquirer: function() {
             var self = this;
-            var vat = this.$('[name="vat"]').val();
-            var l10nCoDocumentType = this.$('[name="l10n_co_document_type"]').val();
+            var vat = this.changes.vat;
+            var l10nCoDocumentType = this.changes.l10n_co_document_type;
 
             if (!vat || !l10nCoDocumentType) {
                 this.gui.show_popup('error',{
-                    'title': _t('Error'),
-                    'body':  _t('Se requiere tipo de documento y número de identificación.'),
+                    'title': 'Error',
+                    'body':  'Se requiere tipo de documento y número de identificación.',
                 });
                 return;
             }
@@ -201,13 +215,13 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
                     self.updateFieldValue('edi_dian_acquirer_name', result.name || '');
                 } else {
                     self.gui.show_popup('error',{
-                        'title': _t('Sin datos en consulta DIAN'),
-                        'body':  _t('No se obtuvieron datos al consultar en la DIAN.'),
+                        'title': 'Sin datos en consulta DIAN',
+                        'body':  'No se obtuvieron datos al consultar en la DIAN.',
                     });
                 }
             }).fail(function(error) {
                 // Extract the error message from Odoo's error structure
-                var errorMessage = _t('Error al consultar los datos en la DIAN.');
+                var errorMessage = 'Error al consultar los datos en la DIAN.';
 
                 if (error.message && error.message.data && error.message.data.message) {
                     errorMessage = error.message.data.message;
@@ -218,7 +232,7 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
                 }
 
                 self.gui.show_popup('error',{
-                    'title': _t('Error en consulta DIAN'),
+                    'title': 'Error en consulta DIAN',
                     'body':  errorMessage,
                 });
             });
@@ -226,11 +240,11 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
 
         acquirer_replace: function() {
             // Transfer DIAN data to form fields
-            var acquirerEmail = this.$('[name="edi_dian_acquirer_email"]').val();
-            var acquirerName = this.$('[name="edi_dian_acquirer_name"]').val();
+            var acquirerEmail = this.changes.edi_dian_acquirer_email;
+            var acquirerName = this.changes.edi_dian_acquirer_name;
 
             if (acquirerName && acquirerEmail) {
-                var companyType = this.$('[name="company_type"]').val();
+                var companyType = this.changes.company_type;
 
                 // Update name
                 var formattedName;
@@ -245,7 +259,7 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
                 this.updateFieldValue('email_edi', acquirerEmail);
 
                 // Only update email if it's empty
-                var currentEmail = this.$('[name="email"]').val();
+                var currentEmail = this.changes.email;
                 if (!currentEmail) {
                     this.updateFieldValue('email', acquirerEmail);
                 }
@@ -254,13 +268,13 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
 
         get_dian_acquirer_and_replace: function() {
             var self = this;
-            var vat = this.$('[name="vat"]').val();
-            var l10nCoDocumentType = this.$('[name="l10n_co_document_type"]').val();
+            var vat = this.changes.vat;
+            var l10nCoDocumentType = this.changes.l10n_co_document_type;
 
             if (!vat || !l10nCoDocumentType) {
                 this.gui.show_popup('error',{
-                    'title': _t('Error'),
-                    'body':  _t('Se requiere tipo de documento y número de identificación.'),
+                    'title': 'Error',
+                    'body':  'Se requiere tipo de documento y número de identificación.',
                 });
                 return;
             }
@@ -280,12 +294,12 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
                     }, 100);
                 } else {
                     self.gui.show_popup('error',{
-                        'title': _t('Sin datos en consulta DIAN'),
-                        'body':  _t('No se obtuvieron datos al consultar en la DIAN.'),
+                        'title': 'Sin datos en consulta DIAN',
+                        'body':  'No se obtuvieron datos al consultar en la DIAN.',
                     });
                 }
             }).fail(function(error) {
-                var errorMessage = _t('Error al consultar los datos en la DIAN.');
+                var errorMessage = 'Error al consultar los datos en la DIAN.';
 
                 if (error.message && error.message.data && error.message.data.message) {
                     errorMessage = error.message.data.message;
@@ -296,7 +310,7 @@ odoo.define('l10n_co_edi_jorels_pos', function(require) {
                 }
 
                 self.gui.show_popup('error',{
-                    'title': _t('Error en consulta DIAN'),
+                    'title': 'Error en consulta DIAN',
                     'body':  errorMessage,
                 });
             });
