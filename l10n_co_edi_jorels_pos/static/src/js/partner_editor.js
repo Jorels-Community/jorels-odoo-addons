@@ -39,6 +39,7 @@ patch(PartnerDetailsEdit.prototype, {
             this.changes.type_regime_id = partner.type_regime_id && partner.type_regime_id[0]
             this.changes.type_liability_id = partner.type_liability_id && partner.type_liability_id[0]
             this.changes.municipality_id = partner.municipality_id && partner.municipality_id[0]
+            this.changes.email = partner.email || ""
             this.changes.email_edi = partner.email_edi || ""
             this.changes.edi_dian_acquirer_email = partner.edi_dian_acquirer_email || ""
             this.changes.edi_dian_acquirer_name = partner.edi_dian_acquirer_name || ""
@@ -137,11 +138,8 @@ patch(PartnerDetailsEdit.prototype, {
             // Update Edi email
             this.updateFieldValue('email_edi', this.changes.edi_dian_acquirer_email);
 
-            // Only update email if it's empty
-            const currentEmail = this.changes.email || this.props.partner.email;
-            if (!currentEmail) {
-                this.updateFieldValue('email', this.changes.edi_dian_acquirer_email);
-            }
+            // Update email - always replace when user clicks Replace button
+            this.updateFieldValue('email', this.changes.edi_dian_acquirer_email);
         }
     },
 
