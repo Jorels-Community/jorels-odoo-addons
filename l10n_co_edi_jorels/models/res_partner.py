@@ -322,6 +322,7 @@ class ResPartner(models.Model):
         type_document_identification_id = self._get_type_document_identification_id(l10n_co_document_type)
         return self.fetch_dian_acquirer_data(type_document_identification_id, vat)
 
+    @api.multi
     def get_dian_acquirer(self):
         for rec in self:
             company = rec.company_id or self.env.user.company_id
@@ -369,6 +370,7 @@ class ResPartner(models.Model):
 
         return "{}, {}".format(last_names, first_names)
 
+    @api.multi
     def acquirer_replace(self):
         for rec in self:
             company = rec.company_id or self.env.user.company_id
@@ -395,6 +397,7 @@ class ResPartner(models.Model):
             partner.get_dian_acquirer()
             partner.acquirer_replace()
 
+    @api.multi
     def get_dian_acquirer_and_replace(self):
         for rec in self:
             self._get_dian_acquirer_and_replace(rec)
@@ -406,9 +409,7 @@ class ResPartner(models.Model):
         company = self.env.user.company_id
         country_co = self.env['res.country'].search([('code', '=', 'CO')], limit=1)
 
-        # Note: ei_set_default_partner_data field does not exist in Odoo 12
-        # Only apply defaults if electronic invoicing is enabled and company is in Colombia
-        if company.ei_enable and company.country_id == country_co:
+        if company.ei_enable and company.ei_set_default_partner_data and company.country_id == country_co:
             if 'name' in fields_list:
                 defaults['name'] = 'Consumidor Final'
 
