@@ -20,14 +20,62 @@
 # email: info@jorels.com
 #
 
-from odoo import fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError, UserError
 
 
 class PosConfig(models.Model):
     _inherit = 'pos.config'
+
+    def _default_electronic_invoice_journal(self):
+        return self.env['account.journal'].search([
+            *self.env['account.journal']._check_company_domain(self.env.company),
+            ('type', '=', 'sale'),
+        ], limit=1)
+
+    electronic_invoice_journal_id = fields.Many2one(
+        'account.journal', string='Electronic Invoice Journal',
+        check_company=True,
+        domain=[('type', '=', 'sale')],
+        help="Accounting journal used to create electronic invoices.",
+        default=_default_electronic_invoice_journal)
+
+    invoice_type = fields.Selection([
+        ('normal', 'Normal invoice'),
+        ('electronic', 'Electronic invoice'),
+        ('both', 'Both (normal and electronic)')
+    ], string='Invoice type', default='both', required=True,
+        help="Normal: Only normal invoices\n"
+             "Electronic: Only electronic invoices\n"
+             "Both: Allowed both normal and electronic invoices")
 
     disable_auto_email_invoice = fields.Boolean(
         string='Disable Auto Email on Invoice',
         default=False,
         help='When enabled, prevents automatic email sending when creating invoices from POS orders'
     )
+
+    @api.constrains('pricelist_id', 'use_pricelist', 'available_pricelist_ids', 'journal_id', 'invoice_journal_id',
+                    'electronic_invoice_journal_id', 'payment_method_ids')
+    def _check_currencies(self):
+        super(PosConfig, self)._check_currencies()
+
+        for config in self:
+            if config.electronic_invoice_journal_id.currency_id and config.electronic_invoice_journal_id.currency_id != config.currency_id:
+                raise ValidationError(
+                    _("The electronic invoice journal must be in the same currency as the Sales Journal or the company currency if that is not set."))
+
+    def setup_defaults(self, company):
+        super(PosConfig, self).setup_defaults(company)
+
+        self.setup_electronic_invoice_journal(company)
+
+    def setup_electronic_invoice_journal(self, company):
+        for pos_config in self:
+            electronic_invoice_journal_id = (pos_config.electronic_invoice_journal_id or
+                                             self.env['account.journal'].search([
+                                                 *self.env['account.journal']._check_company_domain(company),
+                                                 ('type', '=', 'sale'),
+                                             ], limit=1))
+            if electronic_invoice_journal_id:
+                pos_config.write({'electronic_invoice_journal_id': electronic_invoice_journal_id.id})

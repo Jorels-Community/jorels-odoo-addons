@@ -1,0 +1,64 @@
+.hidden {
+    display: none;
+}
+
+.dian-acquirer {
+    height: 64px;
+    border-bottom: dashed 1px rgb(215,215,215);
+    text-align: center;
+    display: flex;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.dian-acquirer .button {
+    line-height: 32px;
+    padding: 3px 13px;
+    font-size: 20px;
+    background: rgb(230, 230, 230);
+    margin-top: 12px;
+    margin-bottom: 12px;
+    margin-left: 6px;
+    margin-right: 6px;
+    border-radius: 3px;
+    border: solid 1px rgb(209, 209, 209);
+    cursor: pointer;
+    transition: all 150ms linear;
+}
+.dian-acquirer .button:hover {
+    background: #efefef;
+}
+.dian-acquirer .button:active {
+    background: black;
+    border-color: black;
+    color: white;
+}
+.dian-acquirer .button.highlight {
+    background: rgb(110,200,155);
+    color: white;
+    border: solid 1px rgb(110,200,155);
+}
+.dian-acquirer .button.highlight:hover {
+    background: rgb(120,210,165);
+}
+
+/* Hide button text on small screens */
+@media (max-width: 768px) {
+    .dian-acquirer .button span {
+        display: none;
+    }
+
+    .dian-acquirer .button {
+        padding: 3px 10px;
+        min-width: 40px;
+    }
+}
+
+/* For even smaller screens (mobile phones) */
+@media (max-width: 480px) {
+    .dian-acquirer .button {
+        padding: 3px 8px;
+        margin-left: 3px;
+        margin-right: 3px;
+    }
+}

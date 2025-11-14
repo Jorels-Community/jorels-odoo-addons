@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Jorels S.A.S. - Copyright (2019-2024)-->
+
+<!--This file is part of l10n_co_edi_jorels_pos.-->
+
+<!--l10n_co_edi_jorels_pos is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--l10n_co_edi_jorels_pos is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with l10n_co_edi_jorels_pos.  If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<templates id="template" xml:space="preserve">
+    <t t-name="l10n_co_edi_jorels_pos.ReceiptHeader" t-inherit="point_of_sale.ReceiptHeader" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('pos-receipt-contact')]" position="after">
+            <t t-set="partner" t-value="props.data.partner"/>
+            <t t-if="partner and props.data.company?.country?.code == 'CO'">
+                <div class="pos-receipt-left-align">
+                    <div t-if="partner.name">Nombre: <t t-esc="partner.name"/></div>
+                    <div t-if="partner.vat">Documento: <t t-esc="partner.vat"/></div>
+                    <div t-if="partner.mobile or partner.phone">Teléfono: <t t-esc="partner.mobile or partner.phone"/></div>
+                    <br/>
+                </div>
+            </t>
+            <t t-set="invoice" t-value="props.data.invoice"/>
+            <div t-if="invoice and props.data.company?.country?.code == 'CO'">
+                <div t-esc="invoice.ei_qr_data" id="ei_qr_data" class="hidden"/>
+                <div id="qr_data" align="center"/>
+                <br/>
+                <script type="text/javascript">
+                    var ei_qr_data = document.getElementById('ei_qr_data').innerText;
+                    document.getElementById('qr_data').innerHTML = '';
+                    if(ei_qr_data &amp;&amp; ei_qr_data != 'false'){
+                        var qrcode = new QRCode(document.getElementById('qr_data') , {
+                            text: String(ei_qr_data),
+                        });
+                    }
+                </script>
+                <div t-if="invoice.ei_is_valid">
+                    <span>Factura electrónica de venta: </span>
+                    <t t-esc="invoice.number"/>
+                    <br/>
+                    <div style="word-wrap: break-word;">
+                        <t t-esc="'CUFE:' + invoice.ei_uuid"/>
+                    </div>
+                    <br/>
+                    <span>Resolución: </span>
+                    <t t-esc="invoice.resolution_resolution"/>
+                    <span> De: </span>
+                    <t t-esc="invoice.resolution_resolution_date"/>
+                    <br/>
+                    <span>Numeración desde: </span>
+                    <t t-esc="invoice.resolution_prefix"/>
+                    <t t-esc="invoice.resolution_from"/>
+                    <span> Hasta: </span>
+                    <t t-esc="invoice.resolution_prefix"/>
+                    <t t-esc="invoice.resolution_to"/>
+                    <br/>
+                    <span>Fecha desde: </span>
+                    <t t-esc="invoice.resolution_date_from"/>
+                    <span> Hasta: </span>
+                    <t t-esc="invoice.resolution_date_to"/>
+                </div>
+                <div t-else="">
+                    <span>Factura de venta: </span>
+                    <t t-esc="invoice.number"/>
+                    <br/>
+                    <span t-if="invoice.resolution_resolution">Resolución: </span>
+                    <t t-if="invoice.resolution_resolution"
+                       t-esc="invoice.resolution_resolution"/>
+                    <span t-if="invoice.resolution_resolution_date"> De: </span>
+                    <t t-if="invoice.resolution_resolution_date"
+                       t-esc="invoice.resolution_resolution_date"/>
+                    <br/>
+                    <span t-if="invoice.resolution_prefix and invoice.resolution_from">Numeración desde: </span>
+                    <t t-if="invoice.resolution_prefix and invoice.resolution_from"
+                       t-esc="invoice.resolution_prefix"/>
+                    <t t-if="invoice.resolution_prefix and invoice.resolution_from"
+                       t-esc="invoice.resolution_from"/>
+                    <span t-if="invoice.resolution_prefix and invoice.resolution_to"> Hasta: </span>
+                    <t t-if="invoice.resolution_prefix and invoice.resolution_to"
+                       t-esc="invoice.resolution_prefix"/>
+                    <t t-if="invoice.resolution_prefix and invoice.resolution_to"
+                       t-esc="invoice.resolution_to"/>
+                    <br/>
+                    <span t-if="invoice.resolution_date_from">Fecha desde: </span>
+                    <t t-if="invoice.resolution_date_from" t-esc="invoice.resolution_date_from"/>
+                    <span t-if="invoice.resolution_date_to"> Hasta: </span>
+                    <t t-if="invoice.resolution_date_to" t-esc="invoice.resolution_date_to"/>
+                </div>
+            </div>
+        </xpath>
+    </t>
+</templates>

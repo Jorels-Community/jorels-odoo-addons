@@ -31,6 +31,8 @@
     'website': 'https://www.jorels.com',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',
+
+    # Odoo and Jorels dependencies
     'depends': [
         'point_of_sale',
         'l10n_co_edi_jorels',
@@ -39,6 +41,23 @@
         'views/pos_config_views.xml',
         'views/pos_payment_method_views.xml',
     ],
+    'assets': {
+        'point_of_sale._assets_pos': [
+            'l10n_co_edi_jorels_pos/static/src/css/**/*',
+            # 'l10n_co_edi_jorels_pos/static/src/js/**/*',
+            'l10n_co_edi_jorels_pos/static/src/js/models.js',
+            'l10n_co_edi_jorels_pos/static/src/js/pos_store.js',
+            'l10n_co_edi_jorels_pos/static/src/js/partner_editor.js',
+            'l10n_co_edi_jorels_pos/static/src/js/partner_list.js',
+            'l10n_co_edi_jorels_pos/static/src/js/payment_screen.js',
+            # 'l10n_co_edi_jorels_pos/static/src/xml/**/*',
+            'l10n_co_edi_jorels_pos/static/src/xml/partner_editor.xml',
+            'l10n_co_edi_jorels_pos/static/src/xml/receipt_header.xml',
+            'l10n_co_edi_jorels_pos/static/src/xml/order_receipt.xml',
+            'l10n_co_edi_jorels_pos/static/src/xml/payment_screen.xml',
+            'l10n_co_edi_jorels_pos/static/lib/js/qrcode/qrcode.js',
+        ],
+    },
     'installable': True,
     'auto_install': True,
 }
