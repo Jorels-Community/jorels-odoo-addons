@@ -56,10 +56,15 @@
                                 <field name="email_edi" widget="email"/>
                             </group>
                             <group string="Dian acquirer">
-                                <button string="Get DIAN acquirer" name="get_dian_acquirer" icon="fa-cloud-download"
-                                        type="object"/>
-                                <button string="Acquirer replace" name="acquirer_replace" icon="fa-clipboard"
-                                        type="object"/>
+                                <div class="o_row">
+                                    <button string="Get acquirer" name="get_dian_acquirer" icon="fa-cloud-download"
+                                            type="object"/>
+                                    <button string="Replace" name="acquirer_replace" icon="fa-clipboard"
+                                            type="object"/>
+                                    <button string="Auto" name="get_dian_acquirer_and_replace" icon="fa-magic"
+                                            type="object"/>
+                                </div>
+                                <separator/>
                                 <field name="edi_dian_acquirer_email"/>
                                 <field name="edi_dian_acquirer_name"/>
                             </group>
