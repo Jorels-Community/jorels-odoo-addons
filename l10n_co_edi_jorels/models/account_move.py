@@ -317,6 +317,24 @@ class AccountMove(models.Model):
         if not reward_lines:
             return vals
 
+        # OPTIMIZATION: Pre-load all products to avoid N+1 queries
+        all_product_ids = set()
+        for reward_vals in reward_lines:
+            reward_product_id = reward_vals.get('product_id')
+            if reward_product_id:
+                all_product_ids.add(reward_product_id)
+
+        for product_vals in product_lines:
+            product_id = product_vals.get('product_id')
+            if product_id:
+                all_product_ids.add(product_id)
+
+        # Single browse call for all products
+        products_cache = {}
+        if all_product_ids:
+            products = self.env['product.product'].browse(list(all_product_ids))
+            products_cache = {p.id: p for p in products}
+
         reward_lines_to_remove = []
 
         for reward_vals in reward_lines:
@@ -326,8 +344,9 @@ class AccountMove(models.Model):
 
             reward_code = None
             if reward_product_id:
-                reward_product = self.env['product.product'].browse(reward_product_id)
-                reward_code = reward_product.default_code
+                reward_product = products_cache.get(reward_product_id)
+                if reward_product:
+                    reward_code = reward_product.default_code
 
             matched_product = None
 
@@ -344,8 +363,8 @@ class AccountMove(models.Model):
                 for product_vals in product_lines:
                     if product_vals.get('_reward_processed') or not product_vals.get('product_id'):
                         continue
-                    product = self.env['product.product'].browse(product_vals['product_id'])
-                    if product.default_code == reward_code:
+                    product = products_cache.get(product_vals['product_id'])
+                    if product and product.default_code == reward_code:
                         matched_product = product_vals
                         break
 
@@ -354,9 +373,13 @@ class AccountMove(models.Model):
                 for product_vals in product_lines:
                     if product_vals.get('_reward_processed') or not product_vals.get('product_id'):
                         continue
-                    product = self.env['product.product'].browse(product_vals['product_id'])
-                    if product.name and product.name.lower() in reward_name.lower():
+                    product = products_cache.get(product_vals['product_id'])
+                    # Match by name: Check if reward name contains product name (more strict)
+                    # Warning: This can still produce false positives in complex promotions
+                    if product and product.name and reward_name and reward_name.lower().strip() in product.name.lower().strip():
                         matched_product = product_vals
+                        _logger.warning("Match by NAME (potentially ambiguous): Product '%s' matched with reward '%s'",
+                                      product.name, reward_name)
                         break
 
             if not matched_product:
@@ -970,8 +993,8 @@ class AccountMove(models.Model):
                 if not (0 <= invoice_line_id.discount <= 100):
                     raise UserError(_("The discount must always be greater than or equal to 0 and less than or equal to 100."))
 
-                # For gifts (100% discount), use price_unit directly since balance is $0
-                if invoice_line_id.discount >= 100:
+                # For gifts (discount >= 99%): Art. 421 DIAN - use price_unit directly since balance is ~$0
+                if invoice_line_id.discount >= 99.0:
                     price_unit = abs(invoice_line_id.price_unit)
                 else:
                     price_unit = 100.0 * abs(invoice_line_id.balance) / (invoice_line_id.quantity * (
@@ -1022,8 +1045,8 @@ class AccountMove(models.Model):
                     discount = True
                     allowance_charges.update({'indicator': False})
 
-                    # For gifts (100% discount), calculate from price_unit instead of balance
-                    if invoice_line_id.discount >= 100:
+                    # For gifts (discount >= 99%): Art. 421 DIAN - calculate from price_unit instead of balance
+                    if invoice_line_id.discount >= 99.0:
                         amount = price_unit * invoice_line_id.quantity
                         base_amount = amount
                     else:
