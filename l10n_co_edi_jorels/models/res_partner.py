@@ -395,8 +395,9 @@ class ResPartner(models.Model):
                 # Update Edi mail
                 rec.email_edi = rec.edi_dian_acquirer_email
 
-                # Update email - always replace when user clicks Replace button
-                rec.email = rec.edi_dian_acquirer_email
+                # Only update email if it's empty
+                if not rec.email:
+                    rec.email = rec.edi_dian_acquirer_email
 
     @api.model
     def _get_dian_acquirer_and_replace(self, partner):
