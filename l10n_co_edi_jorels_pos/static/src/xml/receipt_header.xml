@@ -22,17 +22,30 @@
 <templates id="template" xml:space="preserve">
     <t t-name="l10n_co_edi_jorels_pos.ReceiptHeader" t-inherit="point_of_sale.ReceiptHeader" t-inherit-mode="extension">
         <xpath expr="//div[hasclass('pos-receipt-contact')]" position="after">
+            <!-- DEBUG: Always show this to verify template is loading -->
+            <div class="pos-receipt-left-align" style="color: red;">
+                DEBUG: Colombian module loaded
+            </div>
+
             <t t-set="partner" t-value="props.data.partner"/>
-            <t t-if="partner and props.data.company?.country?.code == 'CO'">
+            <t t-set="companyCountry" t-value="props.data.company?.country?.code"/>
+
+            <!-- DEBUG: Show what we have -->
+            <div class="pos-receipt-left-align" style="color: blue;">
+                DEBUG Partner: <t t-esc="partner ? 'EXISTS' : 'NULL'"/>
+                DEBUG Country: <t t-esc="companyCountry"/>
+            </div>
+
+            <t t-if="partner and companyCountry == 'CO'">
                 <div class="pos-receipt-left-align">
-                    <div t-if="partner.name">Nombre: <t t-esc="partner.name"/></div>
-                    <div t-if="partner.vat">Documento: <t t-esc="partner.vat"/></div>
-                    <div t-if="partner.mobile or partner.phone">Teléfono: <t t-esc="partner.mobile or partner.phone"/></div>
+                    <div>Nombre: <t t-esc="partner.name"/></div>
+                    <div>Documento: <t t-esc="partner.vat"/></div>
+                    <div>Teléfono: <t t-esc="partner.mobile or partner.phone"/></div>
                     <br/>
                 </div>
             </t>
             <t t-set="invoice" t-value="props.data.invoice"/>
-            <div t-if="invoice and props.data.company?.country?.code == 'CO'">
+            <div t-if="invoice and companyCountry == 'CO'">
                 <div t-esc="invoice.ei_qr_data" id="ei_qr_data" class="hidden"/>
                 <div id="qr_data" align="center"/>
                 <br/>

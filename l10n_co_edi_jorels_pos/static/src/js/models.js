@@ -1,6 +1,6 @@
 /** @odoo-module */
 
-// Jorels S.A.S. - Copyright (2019-2024)
+// Jorels S.A.S. - Copyright (2019-2025)
 //
 // This file is part of l10n_co_edi_jorels_pos.
 //
@@ -20,50 +20,39 @@
 // email: info@jorels.com
 //
 
-import { Order } from "@point_of_sale/app/store/models";
+import { PosOrder } from "@point_of_sale/app/models/pos_order";
 import { patch } from "@web/core/utils/patch";
 
-patch(Order.prototype, {
-    setup() {
-        super.setup(...arguments);
-        const invoiceType = this.pos.config.invoice_type;
-        this.to_electronic_invoice = invoiceType === 'electronic' ? true : false;
-    },
+patch(PosOrder.prototype, {
     init_from_JSON(json) {
         super.init_from_JSON(json);
-        this.to_electronic_invoice = false;
-        if (this.account_move){
-            this.invoice = this.get_invoice();
-            this.invoice.then(invoice => this.invoice = invoice);
-        }
+        this.to_electronic_invoice = json.to_electronic_invoice || false;
+        this.invoice = json.invoice || null;
     },
     export_as_JSON() {
-        var json = super.export_as_JSON(...arguments);
-        json.to_electronic_invoice = this.to_electronic_invoice ? this.to_electronic_invoice : false;
+        const json = super.export_as_JSON(...arguments);
+        json.to_electronic_invoice = this.to_electronic_invoice || false;
         return json;
     },
     export_for_printing() {
-        var receipt = super.export_for_printing(...arguments);
-        if (this.invoice){
+        const receipt = super.export_for_printing(...arguments);
+        if (this.invoice) {
             receipt.invoice = this.invoice;
         }
         return receipt;
     },
-    set_invoice(invoice){
+    set_invoice(invoice) {
         this.invoice = invoice;
-    },
-    get_invoice(){
-        self = this;
-        const result = this.env.services.orm.call(
-            "pos.order",
-            "get_invoice",
-            [self.backendId]
-        );
-        return result;
     },
     set_to_electronic_invoice(to_electronic_invoice) {
         this.assert_editable();
-        const invoiceType = this.pos.config.invoice_type;
+        const invoiceType = this.config?.invoice_type || 'both';
+
+        // Initialize if undefined
+        if (this.to_electronic_invoice === undefined) {
+            this.to_electronic_invoice = invoiceType === 'electronic';
+        }
+
         if (!this.is_to_invoice()) {
             this.to_electronic_invoice = false;
             return;
@@ -79,7 +68,7 @@ patch(Order.prototype, {
         }
     },
     is_to_electronic_invoice(){
-        const invoiceType = this.pos.config.invoice_type;
+        const invoiceType = this.config?.invoice_type;
         if (!this.is_to_invoice()) return false;
         if (invoiceType === 'normal') return false;
         if (invoiceType === 'electronic') return true;

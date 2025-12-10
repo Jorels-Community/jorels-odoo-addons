@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2025)
+# Jorels S.A.S. - Copyright (2025)
 #
 # This file is part of l10n_co_edi_jorels_pos.
 #
@@ -20,14 +20,24 @@
 # email: info@jorels.com
 #
 
-from . import pos_config
-from . import pos_order
-from . import pos_session
-from . import res_config_settings
-from . import pos_payment_method
-from . import type_regimes
-from . import type_liabilities
-from . import municipalities
-from . import l10n_latam_identification_type
-from . import res_partner
-from . import res_company
+
+import logging
+
+from odoo import api, models
+
+_logger = logging.getLogger(__name__)
+
+
+class ResCompany(models.Model):
+    _inherit = 'res.company'
+
+    @api.model
+    def _load_pos_data_fields(self, config_id):
+        fields = super()._load_pos_data_fields(config_id)
+        fields.extend([
+            'municipality_id',
+            'city',
+            'ei_enable',
+            'ei_set_default_partner_data'
+        ])
+        return fields

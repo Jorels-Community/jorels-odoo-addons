@@ -1,6 +1,6 @@
 /** @odoo-module */
 
-// Jorels S.A.S. - Copyright (2019-2024)
+// Jorels S.A.S. - Copyright (2019-2025)
 //
 // This file is part of l10n_co_edi_jorels_pos.
 //
@@ -20,39 +20,39 @@
 // email: info@jorels.com
 //
 
-import { PartnerListScreen } from "@point_of_sale/app/screens/partner_list/partner_list";
+import { PosStore } from "@point_of_sale/app/store/pos_store";
 import { patch } from "@web/core/utils/patch";
 
-patch(PartnerListScreen.prototype, {
-    _getDefaultPartner() {
-        if (this.pos.is_colombian_country() && this.pos.company.ei_enable && this.pos.company.ei_set_default_partner_data) {
+patch(PosStore.prototype, {
+    /**
+     * Override editPartnerContext to provide default values for Colombian partners.
+     * In Odoo 18, this method returns additional context for the partner form.
+     * We use the 'default_' prefix to set default values for new partners.
+     */
+    editPartnerContext(partner) {
+        const context = super.editPartnerContext(...arguments);
+
+        // Only apply defaults for new partners (when partner is falsy)
+        if (!partner && this.is_colombian_country() && this.company.ei_enable && this.company.ei_set_default_partner_data) {
+            const identType = this.l10n_latam_identification_types?.find(
+                o => o.l10n_co_document_code === 'national_citizen_id'
+            );
+
             return {
-                name: 'Consumidor Final',
-                country_id: this.pos.company.country_id,
-                state_id: this.pos.company.state_id,
-                vat: '222222222222',
-                company_type: 'person',
-                city: this.pos.company.city,
-                l10n_latam_identification_type_id: [this.pos.l10n_latam_identification_types.find(o => o.l10n_co_document_code=='national_citizen_id')['id']],
-                type_regime_id: [2],
-                type_liability_id: [29],
-                municipality_id: this.pos.company.municipality_id
+                ...context,
+                default_name: 'Consumidor Final',
+                default_country_id: this.company.country_id?.[0],
+                default_state_id: this.company.state_id?.[0],
+                default_vat: '222222222222',
+                default_company_type: 'person',
+                default_city: this.company.city,
+                default_l10n_latam_identification_type_id: identType?.id,
+                default_type_regime_id: 2,
+                default_type_liability_id: 29,
+                default_municipality_id: this.company.municipality_id?.[0],
             };
         }
-        return {};
-    },
 
-    createPartner() {
-        super.createPartner(...arguments);
-        if (this.pos.is_colombian_country()) {
-            this.state.editModeProps.partner = Object.assign({}, this.state.editModeProps.partner, this._getDefaultPartner());
-        }
-    },
-
-    deactivateEditMode() {
-        super.deactivateEditMode(...arguments);
-        if (this.pos.is_colombian_country()) {
-            this.state.editModeProps.partner = Object.assign({}, this.state.editModeProps.partner, this._getDefaultPartner());
-        }
+        return context;
     },
 });

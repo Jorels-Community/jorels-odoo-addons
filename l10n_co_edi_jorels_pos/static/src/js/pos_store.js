@@ -24,6 +24,11 @@ import { PosStore } from "@point_of_sale/app/store/pos_store";
 import { patch } from "@web/core/utils/patch";
 
 patch(PosStore.prototype, {
+    // Check if current company is Colombian
+    is_colombian_country() {
+        return this.company?.country?.code === "CO";
+    },
+
     // @Override
     async _processData(loadedData) {
         await super._processData(...arguments);
@@ -34,11 +39,25 @@ patch(PosStore.prototype, {
             this.l10n_latam_identification_types = loadedData['l10n_latam.identification.type'];
         }
     },
+
     getReceiptHeaderData(order) {
         const result = super.getReceiptHeaderData(...arguments);
-        if (order && this.company?.country?.code === "CO") {
-            result.partner = order.get_partner();
+        if (order && this.is_colombian_country()) {
+            // Convert Proxy to plain object for template compatibility
+            const partner = order.partner_id;
+            result.partner = partner ? {
+                name: partner.name,
+                vat: partner.vat,
+                mobile: partner.mobile,
+                phone: partner.phone,
+            } : null;
             result.invoice = order.invoice;
+
+            console.log('=== RECEIPT HEADER DEBUG ===');
+            console.log('Company country:', this.company?.country?.code);
+            console.log('Partner object:', result.partner);
+            console.log('Invoice object:', result.invoice);
+            console.log('Full result:', result);
         }
         return result;
     },
