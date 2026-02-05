@@ -33,18 +33,11 @@
             </t>
             <t t-set="invoice" t-value="props.data.invoice"/>
             <div t-if="invoice and props.data.company?.country?.code == 'CO'">
-                <div t-esc="invoice.ei_qr_data" id="ei_qr_data" class="hidden"/>
-                <div id="qr_data" align="center"/>
+                <div t-if="invoice.ei_qr_data" align="center">
+                    <img t-att-src="'/report/barcode/?barcode_type=QR&amp;value=' + invoice.ei_qr_data + '&amp;width=256&amp;height=256'" 
+                         style="width: 100%; height: auto; max-width: 256px;"/>
+                </div>
                 <br/>
-                <script type="text/javascript">
-                    var ei_qr_data = document.getElementById('ei_qr_data').innerText;
-                    document.getElementById('qr_data').innerHTML = '';
-                    if(ei_qr_data &amp;&amp; ei_qr_data != 'false'){
-                        var qrcode = new QRCode(document.getElementById('qr_data') , {
-                            text: String(ei_qr_data),
-                        });
-                    }
-                </script>
                 <div t-if="invoice.ei_is_valid">
                     <span>Factura electrónica de venta: </span>
                     <t t-esc="invoice.number"/>
