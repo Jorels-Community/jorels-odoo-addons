@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Jorels S.A.S. - Copyright (2026)-->
+
+<!--This file is part of l10n_co_edi_jorels_pos.-->
+
+<!--l10n_co_edi_jorels_pos is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--l10n_co_edi_jorels_pos is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with l10n_co_edi_jorels_pos.  If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<templates id="template" xml:space="preserve">
+    <t t-name="l10n_co_edi_jorels_pos.ReceiptHeader" t-inherit="point_of_sale.ReceiptHeader" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('pos-receipt-contact')]" position="after">
+            <!-- Customer Data -->
+            <t t-set="partner" t-value="props.data.partner"/>
+            <t t-if="partner and props.data.company?.country?.code == 'CO'">
+                <div class="pos-receipt-left-align">
+                    <div style="border-bottom: 1px dashed #000; margin-bottom: 5px; padding-bottom: 3px; font-weight: bold;">
+                        CUSTOMER DATA
+                    </div>
+                    <div t-if="partner.name" style="margin-bottom: 2px;">
+                        Name: <t t-esc="partner.name"/>
+                    </div>
+                    <div t-if="partner.vat" style="margin-bottom: 2px;">
+                        Document: <t t-esc="partner.vat"/>
+                    </div>
+                    <div t-if="partner.mobile or partner.phone" style="margin-bottom: 2px;">
+                        Phone: <t t-esc="partner.mobile or partner.phone"/>
+                    </div>
+                    <br/>
+                </div>
+            </t>
+
+            <!-- Invoice Data -->
+            <t t-set="invoice" t-value="props.data.invoice"/>
+            <div t-if="invoice and props.data.company?.country?.code == 'CO'">
+                <!-- QR Code -->
+                <div t-if="invoice.ei_qr_data" align="center" style="margin: 10px 0;">
+                    <img t-att-src="'/report/barcode/?barcode_type=QR&amp;value=' + invoice.ei_qr_data + '&amp;width=256&amp;height=256'"
+                         style="width: 180px; height: 180px;"/>
+                </div>
+
+                <!-- Invoice Information -->
+                <div class="pos-receipt-left-align">
+                    <div style="border-bottom: 1px dashed #000; margin-bottom: 5px; padding-bottom: 3px; font-weight: bold; text-align: center;">
+                        <t t-if="invoice.ei_is_valid">ELECTRONIC SALES INVOICE</t>
+                        <t t-else="">SALES INVOICE</t>
+                    </div>
+
+                    <div style="margin-bottom: 3px;">
+                        <strong>Invoice No.:</strong>
+                        <t t-esc="invoice.number"/>
+                    </div>
+
+                    <div t-if="invoice.ei_uuid"
+                         style="margin-bottom: 5px; word-break: break-all; font-size: 9px; line-height: 1.2;">
+                        <strong>CUFE:</strong>
+                        <br/>
+                        <t t-esc="invoice.ei_uuid"/>
+                    </div>
+
+                    <div t-if="invoice.resolution_resolution" style="margin-top: 5px; margin-bottom: 2px;">
+                        <strong>Resolution:</strong>
+                        <t t-esc="invoice.resolution_resolution"/>
+                    </div>
+
+                    <div t-if="invoice.resolution_resolution_date" style="margin-bottom: 2px; font-size: 10px;">
+                        Resolution Date: <t t-esc="invoice.resolution_resolution_date"/>
+                    </div>
+
+                    <div t-if="invoice.resolution_prefix" style="margin-bottom: 2px;">
+                        <strong>Prefix:</strong>
+                        <t t-esc="invoice.resolution_prefix"/>
+                    </div>
+
+                    <div t-if="invoice.resolution_from and invoice.resolution_to" style="margin-bottom: 2px;">
+                        Authorized numbering from <t t-esc="invoice.resolution_from"/>
+                        to
+                        <t t-esc="invoice.resolution_to"/>
+                    </div>
+
+                    <div t-if="invoice.resolution_date_from and invoice.resolution_date_to"
+                         style="margin-bottom: 2px; font-size: 10px;">
+                        Validity: <t t-esc="invoice.resolution_date_from"/>
+                        to
+                        <t t-esc="invoice.resolution_date_to"/>
+                    </div>
+                </div>
+                <br/>
+            </div>
+        </xpath>
+    </t>
+</templates>
