@@ -44,7 +44,6 @@
             "l10n_co_edi_jorels_pos/static/src/app/models/pos_order.js",
             "l10n_co_edi_jorels_pos/static/src/app/screens/payment_screen/payment_screen.js",
             "l10n_co_edi_jorels_pos/static/src/app/screens/ticket_screen/invoice_button/invoice_button.js",
-            "l10n_co_edi_jorels_pos/static/src/app/screens/receipt_screen/receipt_screen.js",
             "l10n_co_edi_jorels_pos/static/src/app/store/pos_store.js",
             "l10n_co_edi_jorels_pos/static/src/app/screens/receipt_screen/receipt/order_receipt.xml",
             "l10n_co_edi_jorels_pos/static/src/app/screens/receipt_screen/receipt/receipt_header/receipt_header.xml",

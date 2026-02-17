@@ -43,6 +43,7 @@ patch(PosOrder.prototype, {
      */
     set_invoice(invoice){
         this.invoice = invoice;
+        this._invoice_loading = false;  // Reset loading flag when data is stored
     },
     /**
      * Returns the locally stored invoice data.
@@ -52,5 +53,18 @@ patch(PosOrder.prototype, {
         // Return locally stored data (synchronous)
         // Data is loaded in payment_screen.js at the time of invoicing
         return this.invoice || null;
+    },
+    /**
+     * Checks if invoice data is currently being loaded.
+     * Prevents multiple simultaneous server calls.
+     */
+    is_invoice_loading(){
+        return this._invoice_loading || false;
+    },
+    /**
+     * Sets the loading flag to prevent duplicate server calls.
+     */
+    set_invoice_loading(loading){
+        this._invoice_loading = loading;
     },
 });

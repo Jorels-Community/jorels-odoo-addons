@@ -30,9 +30,10 @@ patch(PaymentScreen.prototype, {
         this.orm = useService("orm");
     },
     async _postPushOrderResolve(order, order_server_ids) {
-        if (order.is_to_invoice() && order_server_ids && order_server_ids.length > 0) {
+        if (order.is_to_invoice() && order_server_ids && order_server_ids.length > 0 && !order.is_invoice_loading()) {
             // Get the first ID from the array (corresponds to the current order)
             const orderId = order_server_ids[0];
+            order.set_invoice_loading(true);
 
             try {
                 const result = await this.orm.call(

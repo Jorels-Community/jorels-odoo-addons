@@ -30,18 +30,19 @@ patch(InvoiceButton.prototype, {
 
         // After invoicing, load the invoice data
         const order = this.props.order;
-        if (order && order.raw?.account_move) {
+        if (order && order.raw?.account_move && !order.is_invoice_loading() && !order.get_invoice()) {
+            order.set_invoice_loading(true);
             try {
                 const invoiceData = await this.pos.data.orm.call(
                     "pos.order",
                     "get_invoice",
                     [order.id]
                 );
-                // Store data locally in the order for synchronous use
-                order.invoice_data = invoiceData || null;
+                // Store data using the proper method
+                order.set_invoice(invoiceData || null);
             } catch (error) {
-                console.warn("Could not load invoice data:", error);
-                order.invoice_data = null;
+                console.warn("[l10n_co_edi_jorels_pos] Could not load invoice data:", error);
+                order.set_invoice(null);
             }
         }
     },

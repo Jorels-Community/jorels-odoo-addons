@@ -27,13 +27,16 @@ patch(PosStore.prototype, {
     /**
      * Overrides printReceipt to load invoice data if not available
      * This works for both ReceiptScreen and TicketScreen printing
+     * Uses loading flags to prevent duplicate server calls
      */
     async printReceipt({ order = this.get_order(), basic = false, printBillActionTriggered = false } = {}) {
         // If the order has an invoice (account_move) but we don't have the data loaded, load it
         const hasInvoice = order.raw && order.raw.account_move;
         const hasInvoiceData = order.get_invoice();
+        const isLoading = order.is_invoice_loading();
 
-        if (hasInvoice && !hasInvoiceData) {
+        if (hasInvoice && !hasInvoiceData && !isLoading) {
+            order.set_invoice_loading(true);
             try {
                 // Ensure order.id is a valid number
                 const orderId = typeof order.id === 'number' ? order.id : order.backendId;
@@ -47,6 +50,7 @@ patch(PosStore.prototype, {
                 }
             } catch (error) {
                 console.error("[l10n_co_edi_jorels_pos] Error loading invoice data:", error);
+                order.set_invoice_loading(false);
             }
         }
 
