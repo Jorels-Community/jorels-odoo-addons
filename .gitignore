@@ -9,3 +9,5 @@
 launch.json
 **/CLAUDE.md
 **/.aignore
+/l10n_co_edi_jorels_pos/i18n/es_CO.mo
+/l10n_co_edi_jorels_pos/i18n/es.mo
