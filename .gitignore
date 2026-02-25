@@ -9,3 +9,6 @@
 launch.json
 **/CLAUDE.md
 **/.aignore
+/.run/odoo17.run.xml
+/l10n_co_edi_jorels_pos/i18n/es.mo
+/l10n_co_edi_jorels_pos/i18n/es_CO.mo
