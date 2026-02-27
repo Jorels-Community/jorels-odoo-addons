@@ -76,14 +76,14 @@ class ResCompany(models.Model):
 
                     # Execute query
                     # _logger.debug(query)
-                    self._cr.execute(query)
+                    self.env.cr.execute(query)
 
                     # Count
                     line_count += 1
 
-                self._cr.execute("select max(id) from " + table_name)
-                max_id = self._cr.dictfetchall()[0]['max']
-                self._cr.execute(f"SELECT setval('{table_name}_id_seq',{str(max_id + 1)}, true)")
+                self.env.cr.execute("select max(id) from " + table_name)
+                max_id = self.env.cr.dictfetchall()[0]['max']
+                self.env.cr.execute(f"SELECT setval('{table_name}_id_seq',{str(max_id + 1)}, true)")
                 _logger.debug(f'Processed {line_count} records on table {table_name}')
         except Exception as e:
             _logger.debug("init_csv_data %s", e)
