@@ -27,9 +27,9 @@ patch(PosOrder.prototype, {
     export_for_printing() {
         const result = super.export_for_printing(...arguments);
         // Add partner (already available synchronously in the model)
-        result.partner = this.get_partner();
+        result.partner = this.getPartner();
         // Use locally stored invoice data (previously loaded asynchronously)
-        result.invoice = this.get_invoice();
+        result.invoice = this.getInvoice();
         // Ensure headerData also has the fields for ReceiptHeader
         if (result.headerData) {
             result.headerData.partner = result.partner;
@@ -49,7 +49,7 @@ patch(PosOrder.prototype, {
      * Returns the locally stored invoice data.
      * Returns null if there is no invoice or if the data has not been loaded yet.
      */
-    get_invoice(){
+    getInvoice(){
         // Return locally stored data (synchronous)
         // Data is loaded in payment_screen.js at the time of invoicing
         return this.invoice || null;

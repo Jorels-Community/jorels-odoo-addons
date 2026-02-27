@@ -30,7 +30,7 @@ patch(InvoiceButton.prototype, {
 
         // After invoicing, load the invoice data
         const order = this.props.order;
-        if (order && order.raw?.account_move && !order.is_invoice_loading() && !order.get_invoice()) {
+        if (order && order.raw?.account_move && !order.is_invoice_loading() && !order.getInvoice()) {
             order.set_invoice_loading(true);
             try {
                 const invoiceData = await this.pos.data.orm.call(

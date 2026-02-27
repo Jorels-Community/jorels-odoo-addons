@@ -20,7 +20,7 @@
 // email: info@jorels.com
 //
 
-import { PosStore } from "@point_of_sale/app/store/pos_store";
+import { PosStore } from "@point_of_sale/app/services/pos_store";
 import { patch } from "@web/core/utils/patch";
 
 patch(PosStore.prototype, {
@@ -29,10 +29,10 @@ patch(PosStore.prototype, {
      * This works for both ReceiptScreen and TicketScreen printing
      * Uses loading flags to prevent duplicate server calls
      */
-    async printReceipt({ order = this.get_order(), basic = false, printBillActionTriggered = false } = {}) {
+    async printReceipt({ order = this.getOrder(), basic = false, printBillActionTriggered = false } = {}) {
         // If the order has an invoice (account_move) but we don't have the data loaded, load it
         const hasInvoice = order.raw && order.raw.account_move;
-        const hasInvoiceData = order.get_invoice();
+        const hasInvoiceData = order.getInvoice();
         const isLoading = order.is_invoice_loading();
 
         if (hasInvoice && !hasInvoiceData && !isLoading) {
@@ -60,8 +60,8 @@ patch(PosStore.prototype, {
 
     getReceiptHeaderData(order) {
         const result = super.getReceiptHeaderData(...arguments);
-        result.partner = order.get_partner();
-        result.invoice = order.get_invoice();
+        result.partner = order.getPartner();
+        result.invoice = order.getInvoice();
         // Ensure country is available in the correct format (using country as in Odoo 17)
         if (this.company.country_id) {
             result.company.country = {
