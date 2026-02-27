@@ -23,7 +23,7 @@
 from odoo import fields, models
 
 
-class ProductUom(models.Model):
+class UomUom(models.Model):
     _inherit = "uom.uom"
 
     edi_unit_measure_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.unit_measures',

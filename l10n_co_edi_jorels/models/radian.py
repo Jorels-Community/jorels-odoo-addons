@@ -111,7 +111,7 @@ class Radian(models.Model):
         ('customer', 'Customer Event'),
         ('supplier', 'Supplier Event'),
     ], readonly=True, index=True, change_default=True,
-        default=lambda self: self._context.get('type', 'customer'), tracking=True)
+        default=lambda self: self.env.context.get('type', 'customer'), tracking=True)
 
     def dian_preview(self):
         for rec in self:

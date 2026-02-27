@@ -144,7 +144,7 @@ class ResConfigSettings(models.TransientModel):
                     # TO DO: Update with UPDATE if it already exists
                     # If it is not already in the database then add it
                     if not resolution_search:
-                        self._cr.execute(
+                        self.env.cr.execute(
                             "INSERT INTO l10n_co_edi_jorels_resolution (" \
                             "resolution_api_sync," \
                             "resolution_type_document_id," \

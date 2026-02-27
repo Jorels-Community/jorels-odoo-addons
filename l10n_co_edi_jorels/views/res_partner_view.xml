@@ -34,7 +34,7 @@
                         </div>
                     </button>
                 </div>
-                <xpath expr="//field[@name='name' and @id='individual']" position="after">
+                <xpath expr="//h1" position="after">
                     <br/>
                     <field name="trade_name" placeholder="Trade name"/>
                 </xpath>

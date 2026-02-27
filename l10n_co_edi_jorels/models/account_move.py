@@ -944,8 +944,8 @@ class AccountMove(models.Model):
             currency = rec.currency_id
             company = rec.company_id or self.env.company
             rate_date = rec.date or rec.invoice_date or fields.Date.context_today(self)
-            rate = rec.currency_id.with_context(dict(rec._context or {}, date=rate_date)).rate
-            inverse_rate = rec.currency_id.with_context(dict(rec._context or {}, date=rec.invoice_date)).inverse_rate
+            rate = rec.currency_id.with_context(dict(rec.env.context or {}, date=rate_date)).rate
+            inverse_rate = rec.currency_id.with_context(dict(rec.env.context or {}, date=rec.invoice_date)).inverse_rate
             for invoice_line_id in rec.invoice_line_ids:
                 if invoice_line_id.account_id:
                     taxable_amount = invoice_line_id.price_subtotal
@@ -1447,7 +1447,7 @@ class AccountMove(models.Model):
             # have a match in the code in type_currencies of the DIAN
             if company_currency_search and invoice_currency_search:
                 rate_date = self.date or self.invoice_date or fields.Date.context_today(self)
-                rate = self.currency_id.with_context(dict(self._context or {}, date=self.invoice_date)).rate
+                rate = self.currency_id.with_context(dict(self.env.context or {}, date=self.invoice_date)).rate
 
                 json_request['currency_code'] = company_currency_search.id
                 json_request['exchange_rate'] = {
