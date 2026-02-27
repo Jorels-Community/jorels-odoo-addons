@@ -39,8 +39,7 @@ class Edi(models.Model):
     # They allow storing synchronous and production modes
     edi_sync = fields.Boolean(string="Sync", default=False, copy=False, readonly=True)
     edi_is_not_test = fields.Boolean(string="In production", copy=False, readonly=True,
-                                     default=lambda self: self.env[
-                                         'res.company']._company_default_get().edi_payroll_is_not_test)
+                                     default=lambda self: self.env.company.edi_payroll_is_not_test)
 
     # Edi fields
     payment_form_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payment_forms", string="Payment form", default=1,
@@ -88,7 +87,7 @@ class Edi(models.Model):
     edi_payload_html = fields.Html("Html payload", copy=False, compute="_compute_edi_payload_html", store=True)
 
     def _default_edi_type_environment(self):
-        return 1 if self.env['res.company']._company_default_get().edi_payroll_is_not_test else 2
+        return 1 if self.env.company.edi_payroll_is_not_test else 2
 
     def _compute_currency(self):
         for rec in self:

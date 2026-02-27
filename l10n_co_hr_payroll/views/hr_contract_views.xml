@@ -20,10 +20,10 @@
  -->
 <odoo>
     <record id="hr_contract_view_form_l10n_co_hr_payroll" model="ir.ui.view">
-        <field name="name">hr.contract.form.l10n_co_hr_payroll.inherit</field>
-        <field name="model">hr.contract</field>
+        <field name="name">hr.version.form.l10n_co_hr_payroll.inherit</field>
+        <field name="model">hr.version</field>
         <field name="priority">20</field>
-        <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+        <field name="inherit_id" ref="hr_payroll_community.hr_contract_template_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='struct_id']" position="after">
                 <field name="type_worker_id"/>

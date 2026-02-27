@@ -40,7 +40,7 @@ class HrPayslipEdi(models.Model):
     _description = "Payslip Edi"
 
     note = fields.Text(string='Internal Note', readonly=True)
-    contract_id = fields.Many2one('hr.contract', string='Contract', readonly=True)
+    contract_id = fields.Many2one('hr.version', string='Contract', readonly=True)
     credit_note = fields.Boolean(string='Adjustment note', readonly=True,
                                  help="Indicates this edi payslip has a refund of another")
     origin_payslip_id = fields.Many2one(comodel_name="hr.payslip.edi", string="Origin Edi payslip", readonly=True,
