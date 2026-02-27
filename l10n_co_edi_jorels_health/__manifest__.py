@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2025)
+# Jorels S.A.S. - Copyright (2026)
 #
 # This file is part of l10n_co_edi_jorels_health.
 #
@@ -27,7 +27,7 @@
     'author': 'Jorels SAS',
     'license': 'LGPL-3',
     'category': 'Invoicing & Payments',
-    'version': '18.0.25.04.151513',
+    'version': '19.0.25.04.151513',
     'website': 'https://www.jorels.com',
     'images': ['static/images/main_screenshot.png'],
     'support': 'info@jorels.com',

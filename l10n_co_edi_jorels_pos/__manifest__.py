@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2025)
+# Jorels S.A.S. - Copyright (2019-2026)
 #
 # This file is part of l10n_co_edi_jorels_pos.
 #
@@ -27,7 +27,7 @@
     "author": "Jorels SAS",
     "license": "LGPL-3",
     "category": "Point of Sale",
-    "version": "18.0.26.02.162225",
+    "version": "19.0.26.02.162225",
     "website": "https://www.jorels.com",
     "images": ["static/images/main_screenshot.png"],
     "support": "info@jorels.com",

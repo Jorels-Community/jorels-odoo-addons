@@ -1,5 +1,5 @@
 ![Jorels](https://www.jorels.com/web/image/res.company/1/logo)
-### Jorels SAS - Copyright (2024)
+### Jorels SAS - Copyright (2026)
 
 # Update from CSV
 

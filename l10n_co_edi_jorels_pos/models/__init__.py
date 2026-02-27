@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Jorels S.A.S. - Copyright (2019-2025)
+# Jorels S.A.S. - Copyright (2019-2026)
 #
 # This file is part of l10n_co_edi_jorels_pos.
 #
