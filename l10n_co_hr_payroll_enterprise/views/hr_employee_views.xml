@@ -29,8 +29,8 @@
                 <field name="private_postal_department_id" invisible="1"/>
                 <field name="private_postal_municipality_id"/>
             </xpath>
-            <xpath expr="//sheet/group/group" position="before">
-                <group>
+            <xpath expr="//page[@name='personal_information']//group[1]" position="inside">
+                <group string="Colombia EDI">
                     <field name="private_first_name" readonly="0"/>
                     <field name="private_other_names" readonly="0"/>
                     <field name="private_surname" readonly="0"/>
