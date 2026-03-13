@@ -338,4 +338,4 @@ msgstr "Vr. Total"
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/ClientDetailsEdit.xml:0
 #, python-format
 msgid "fe@example.com"
-msgstr "fe@ejemplo.com"
+msgstr "fe@example.com"
