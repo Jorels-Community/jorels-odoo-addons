@@ -25,12 +25,14 @@
         <field name="priority">20</field>
         <field name="inherit_id" ref="hr_payroll_community.hr_contract_template_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='struct_id']" position="after">
-                <field name="type_worker_id"/>
-                <field name="subtype_worker_id"/>
-                <field name="high_risk_pension"/>
-                <field name="integral_salary"/>
-                <field name="type_contract_id"/>
+            <xpath expr="//group[@name='salary_info']/group[last()]" position="after">
+                <group string="Edi Dian" name="edi_dian">
+                    <field name="type_worker_id"/>
+                    <field name="subtype_worker_id"/>
+                    <field name="high_risk_pension"/>
+                    <field name="integral_salary"/>
+                    <field name="type_contract_id"/>
+                </group>
             </xpath>
         </field>
     </record>

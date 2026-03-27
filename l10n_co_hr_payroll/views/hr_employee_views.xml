@@ -30,7 +30,7 @@
                 <field name="private_postal_municipality_id"/>
             </xpath>
             <xpath expr="//page[@name='personal_information']//group[1]" position="inside">
-                <group string="Colombia EDI">
+                <group string="Edi DIAN">
                     <field name="private_first_name" readonly="0"/>
                     <field name="private_other_names" readonly="0"/>
                     <field name="private_surname" readonly="0"/>
