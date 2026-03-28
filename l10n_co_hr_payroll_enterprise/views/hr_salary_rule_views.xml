@@ -57,7 +57,7 @@
                     <field colspan="4" name="edi_percent_python_compute" invisible="edi_percent_select != 'code'"
                            required="edi_percent_select == 'code'"/>
                 </xpath>
-                <xpath expr="//page[@name='description']" position="before">
+                <xpath expr="//page[@name='display']" position="before">
                     <page name="inputs" string="Inputs">
                         <field name="input_ids" mode="list">
                             <list string="Input Data" editable="bottom">

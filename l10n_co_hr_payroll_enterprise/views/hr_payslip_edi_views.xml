@@ -86,7 +86,7 @@
                                             ('month', '=', month),
                                             ('year', '=', year),
                                             ('credit_note', '=', False),
-                                            ('contract_id', '=', contract_id)]"/>
+                                            ('version_id', '=', contract_id)]"/>
                             <group>
                                 <field name="accrued_total_amount" widget="monetary" readonly="True"/>
                                 <field name="deductions_total_amount" widget="monetary" readonly="True"/>

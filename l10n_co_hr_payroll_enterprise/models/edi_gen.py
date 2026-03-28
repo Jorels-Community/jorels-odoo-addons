@@ -120,7 +120,7 @@ class EdiGen(models.TransientModel):
             for valid_payslip_employee in valid_payslips_employee:
                 existing_edi_payslip_rec.write({
                     'payslip_ids': [(4, valid_payslip_employee.id)],
-                    'contract_id': valid_payslip_employee.contract_id.id
+                    'contract_id': valid_payslip_employee.version_id.id
                 })
 
         # To update or redirect to the Edi Payslip view

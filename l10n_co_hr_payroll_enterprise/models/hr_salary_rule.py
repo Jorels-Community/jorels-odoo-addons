@@ -169,7 +169,7 @@ class HrSalaryRule(models.Model):
         for input_line in payslip.input_line_ids:
             inputs_dict[input_line.code] = input_line
         inputs = BrowsableObject(inputs_dict, self.env)
-        contract = payslip.contract_id
+        contract = payslip.version_id
         employee = contract.employee_id
 
         local_dict = {'payslip': payslip, 'inputs': inputs, 'employee': employee, 'contract': contract, 'result': None}
@@ -199,7 +199,7 @@ class HrSalaryRule(models.Model):
         for input_line in payslip.input_line_ids:
             inputs_dict[input_line.code] = input_line
         inputs = BrowsableObject(inputs_dict, self.env)
-        contract = payslip.contract_id
+        contract = payslip.version_id
         employee = contract.employee_id
 
         local_dict = {'payslip': payslip, 'inputs': inputs, 'employee': employee, 'contract': contract, 'result': None}

@@ -172,7 +172,7 @@ class HrPayslip(models.Model):
                     'payslip_id': rec.id,
                     'sequence': res_item['sequence'],
                     'amount': abs(total),
-                    'contract_id': rec.contract_id.id
+                    'version_id': rec.version_id.id
                 }))
 
                 # Search or create work entry type for code
@@ -225,7 +225,7 @@ class HrPayslip(models.Model):
                         'sequence': res_item['sequence'],
                         'number_of_days': abs(quantity),
                         'number_of_hours': 0,
-                        'contract_id': rec.contract_id.id
+                        'version_id': rec.version_id.id
                     }))
                 elif res_item['category'] in (
                         'daily_overtime',
@@ -243,7 +243,7 @@ class HrPayslip(models.Model):
                         'sequence': res_item['sequence'],
                         'number_of_days': 0,
                         'number_of_hours': abs(quantity),
-                        'contract_id': rec.contract_id.id
+                        'version_id': rec.version_id.id
                     }))
 
             # Prepare deduction input lines
@@ -260,7 +260,7 @@ class HrPayslip(models.Model):
                     'payslip_id': rec.id,
                     'sequence': res_item['sequence'],
                     'amount': -abs(amount),
-                    'contract_id': rec.contract_id.id
+                    'version_id': rec.version_id.id
                 }))
 
             # Add lines
@@ -328,11 +328,11 @@ class HrPayslip(models.Model):
     def get_json_request(self):
         for rec in self:
             # Force compute edi payroll period
-            rec.contract_id._compute_payroll_period_id()
+            rec.version_id._compute_payroll_period_id()
 
             if not rec.number:
                 raise UserError(_("The payroll must have a consecutive number, 'Reference' field"))
-            if not rec.contract_id.payroll_period_id:
+            if not rec.version_id.payroll_period_id:
                 raise UserError(_("The contract must have the 'Scheduled Pay' field configured"))
             if not rec.company_id.name:
                 raise UserError(_("Your company does not have a name"))
@@ -344,9 +344,9 @@ class HrPayslip(models.Model):
                 raise UserError(_("Your company does not have a postal municipality"))
             if not rec.company_id.street:
                 raise UserError(_("Your company does not have an address"))
-            if not rec.contract_id.type_worker_id:
+            if not rec.version_id.type_worker_id:
                 raise UserError(_("The contract must have the 'Type worker' field configured"))
-            if not rec.contract_id.subtype_worker_id:
+            if not rec.version_id.subtype_worker_id:
                 raise UserError(_("The contract must have the 'Subtype worker' field configured"))
             if not rec.employee_id.private_first_name:
                 raise UserError(_("Employee does not have a first name"))
@@ -362,13 +362,13 @@ class HrPayslip(models.Model):
                 raise UserError(_("Employee does not have a postal municipality"))
             if not rec.employee_id.private_street:
                 raise UserError(_("Employee does not have an address."))
-            if not rec.contract_id.name:
+            if not rec.version_id.name:
                 raise UserError(_("Contract does not have a name"))
-            if rec.contract_id.wage <= 0:
+            if rec.version_id.wage <= 0:
                 raise UserError(_("The contract must have the 'Wage' field configured"))
-            if not rec.contract_id.type_contract_id:
+            if not rec.version_id.type_contract_id:
                 raise UserError(_("The contract must have the 'Type contract' field configured"))
-            if not rec.contract_id.date_start:
+            if not rec.version_id.date_start:
                 raise UserError(_("The contract must have the 'Start Date' field configured"))
             if not rec.date_from:
                 raise UserError(_("The payroll must have a period"))
@@ -397,7 +397,7 @@ class HrPayslip(models.Model):
                     raise UserError(_("The sequence must have a prefix"))
 
             information = {
-                "payroll_period_code": rec.contract_id.payroll_period_id.id,
+                "payroll_period_code": rec.version_id.payroll_period_id.id,
                 "currency_code": 35,
                 # "trm": 1
             }
@@ -423,9 +423,9 @@ class HrPayslip(models.Model):
             }
 
             employee = {
-                "type_worker_code": rec.contract_id.type_worker_id.id,
-                "subtype_worker_code": rec.contract_id.subtype_worker_id.id,
-                "high_risk_pension": rec.contract_id.high_risk_pension,
+                "type_worker_code": rec.version_id.type_worker_id.id,
+                "subtype_worker_code": rec.version_id.subtype_worker_id.id,
+                "high_risk_pension": rec.version_id.high_risk_pension,
                 "id_code": rec.employee_id.private_type_document_identification_id.id,
                 "id_number": ''.join([i for i in rec.employee_id.private_vat if i.isdigit()]),
                 "surname": rec.employee_id.private_surname,
@@ -433,9 +433,9 @@ class HrPayslip(models.Model):
                 "country_code": 46,
                 "municipality_code": rec.employee_id.private_postal_municipality_id.id,
                 "address": rec.employee_id.private_street,
-                "integral_salary": rec.contract_id.integral_salary,
-                "contract_code": rec.contract_id.type_contract_id.id,
-                "salary": abs(rec.contract_id.wage),
+                "integral_salary": rec.version_id.integral_salary,
+                "contract_code": rec.version_id.type_contract_id.id,
+                "salary": abs(rec.version_id.wage),
                 # "worker_code": "string"
             }
             if rec.employee_id.private_other_names:
@@ -443,22 +443,22 @@ class HrPayslip(models.Model):
             if rec.employee_id.private_second_surname:
                 employee['second_surname'] = rec.employee_id.private_second_surname
 
-            if rec.contract_id.date_end:
-                amount_time = self.calculate_time_worked(rec.contract_id.date_start, rec.contract_id.date_end)
+            if rec.version_id.date_end:
+                amount_time = self.calculate_time_worked(rec.version_id.date_start, rec.version_id.date_end)
             else:
-                amount_time = self.calculate_time_worked(rec.contract_id.date_start, rec.date_to)
+                amount_time = self.calculate_time_worked(rec.version_id.date_start, rec.date_to)
 
             rec.date = fields.Date.context_today(rec)
 
             period = {
-                "admission_date": fields.Date.to_string(rec.contract_id.date_start),
+                "admission_date": fields.Date.to_string(rec.version_id.date_start),
                 "settlement_start_date": fields.Date.to_string(rec.date_from),
                 "settlement_end_date": fields.Date.to_string(rec.date_to),
                 "amount_time": amount_time,
                 "date_issue": fields.Date.to_string(rec.date)
             }
-            if rec.contract_id.date_end:
-                period['withdrawal_date'] = fields.Date.to_string(rec.contract_id.date_end)
+            if rec.version_id.date_end:
+                period['withdrawal_date'] = fields.Date.to_string(rec.version_id.date_end)
 
             payment = {
                 "code": rec.payment_form_id.id,

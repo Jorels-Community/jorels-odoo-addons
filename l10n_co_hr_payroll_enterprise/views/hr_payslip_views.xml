@@ -48,7 +48,7 @@
                     <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
                             invisible="state in ('draft', 'verify')"/>
                 </xpath>
-                <xpath expr="//field[@name='contract_id']" position="before">
+                <xpath expr="//field[@name='version_id']" position="before">
                     <field name="date" readonly="state != 'draft'"/>
                     <field name="payment_date" readonly="state != 'draft'"/>
                     <field name="payment_form_id" readonly="state != 'draft'"/>
