@@ -21,14 +21,6 @@
 <odoo>
     <data noupdate="1">
 
-        <record id="seq_salary_slip_note" model="ir.sequence">
-            <field name="name">Salary Slip Note</field>
-            <field name="code">salary.slip.note</field>
-            <field name="implementation">no_gap</field>
-            <field name="prefix">SSAN</field>
-            <field name="padding">1</field>
-        </record>
-
         <record id="seq_salary_slip_edi" model="ir.sequence">
             <field name="name">Edi payslip</field>
             <field name="code">salary.slip.edi</field>

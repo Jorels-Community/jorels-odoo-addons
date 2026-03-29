@@ -359,7 +359,7 @@ class HrPayslipEdi(models.Model):
         if refund_payslip is not None:
             domain = "[('id', 'in', %s)]" % refund_payslip.ids
         else:
-            domain = "[(credit_note, '=', True)]"
+            domain = "[('credit_note', '=', True)]"
 
         return {
             'name': ("Refund Edi Payslip"),
