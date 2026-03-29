@@ -26,28 +26,6 @@
         <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
         <field name="arch" type="xml">
             <data>
-                <xpath expr="//div[@name='button_box']" position="inside">
-                    <button name="dian_preview" type="object" class="oe_stat_button" icon="fa-globe icon"
-                            invisible="not edi_uuid">
-                        <div class="o_field_widget o_stat_info">
-                            <span class="o_stat_text">DIAN</span>
-                            <span class="o_stat_text">Web View</span>
-                        </div>
-                    </button>
-                    <button name="dian_pdf_view" type="object" class="oe_stat_button" icon="fa-file-pdf-o icon"
-                            invisible="not edi_uuid">
-                        <div class="o_field_widget o_stat_info">
-                            <span class="o_stat_text">DIAN</span>
-                            <span class="o_stat_text">Pdf View</span>
-                        </div>
-                    </button>
-                </xpath>
-                <xpath expr="//button[@name='action_payslip_done']" position="after">
-                    <button name="validate_dian" type="object" string="Validate DIAN"
-                            class="oe_highlight o_payslip_validate" invisible="edi_is_valid or state in ('draft', 'verify')"/>
-                    <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
-                            invisible="state in ('draft', 'verify')"/>
-                </xpath>
                 <xpath expr="//field[@name='version_id']" position="before">
                     <field name="date" readonly="state != 'draft'"/>
                     <field name="payment_date" readonly="state != 'draft'"/>
@@ -312,11 +290,5 @@
         </field>
     </record>
 
-    <record id="action_status_document_log" model="ir.actions.server">
-        <field name="name">Replace with log DIAN</field>
-        <field name="model_id" ref="hr_payroll.model_hr_payslip"/>
-        <field name="binding_model_id" ref="hr_payroll.model_hr_payslip"/>
-        <field name="state">code</field>
-        <field name="code">records.status_document_log()</field>
-    </record>
+
 </odoo>

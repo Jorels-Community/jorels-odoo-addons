@@ -80,7 +80,7 @@
                                 <div class="col-auto mw-100 mb-2">
                                     <div>
                                         <strong>Electronic payslip:</strong>
-                                        <span t-field="o.number"/>
+                                        <span t-field="o.name"/>
                                     </div>
                                     <div>
                                         <span t-field="o.employee_id.name"/>

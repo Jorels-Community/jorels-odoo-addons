@@ -41,8 +41,6 @@ class HrPayslip(models.Model):
         'l10n_co_hr_payroll.edi'
     ]
 
-    origin_payslip_id = fields.Many2one(comodel_name="hr.payslip", string="Origin payslip", readonly=True, copy=False)
-
     # Edi fields
     date = fields.Date('Date Account', readonly=True,
                        help="Keep empty to use the period of the validation(Payslip) date.")
@@ -267,10 +265,6 @@ class HrPayslip(models.Model):
             rec.update({'input_line_ids': input_line_list})
             rec.update({'worked_days_line_ids': worked_days_line_list})
 
-            # Sequences
-            if not rec.number:
-                rec.number = _('New')
-
         res = super(HrPayslip, self).compute_sheet()
         self.compute_totals()
 
@@ -330,8 +324,6 @@ class HrPayslip(models.Model):
             # Force compute edi payroll period
             rec.version_id._compute_payroll_period_id()
 
-            if not rec.number:
-                raise UserError(_("The payroll must have a consecutive number, 'Reference' field"))
             if not rec.version_id.payroll_period_id:
                 raise UserError(_("The contract must have the 'Scheduled Pay' field configured"))
             if not rec.company_id.name:
@@ -382,19 +374,6 @@ class HrPayslip(models.Model):
                 raise UserError(_("The payroll must have a payment date"))
 
             rec.edi_sync = rec.company_id.edi_payroll_is_not_test
-
-            sequence = {}
-            if rec.number and rec.number not in ('New', _('New')):
-                sequence_number = ''.join([i for i in rec.number if i.isdigit()])
-                sequence_prefix = rec.number.split(sequence_number)
-                if sequence_prefix:
-                    sequence = {
-                        # "worker_code": "string",
-                        "prefix": sequence_prefix[0],
-                        "number": int(sequence_number)
-                    }
-                else:
-                    raise UserError(_("The sequence must have a prefix"))
 
             information = {
                 "payroll_period_code": rec.version_id.payroll_period_id.id,
@@ -1299,8 +1278,6 @@ class HrPayslip(models.Model):
             json_request['accrued_total'] = rec.accrued_total_amount
             json_request['deductions_total'] = rec.deductions_total_amount
             json_request['total'] = rec.total_amount
-            if sequence:
-                json_request['sequence'] = sequence
             json_request['information'] = information
             # json_request["novelty"] = novelty
             # json_request["provider"] = provider
@@ -1321,98 +1298,4 @@ class HrPayslip(models.Model):
                 }]
                 json_request['notes'] = notes
 
-            # Credit note
-            if rec.credit_note:
-                if rec.origin_payslip_id:
-                    if rec.origin_payslip_id.edi_is_valid:
-                        json_request['payroll_reference'] = {
-                            'number': rec.origin_payslip_id.edi_number,
-                            'uuid': rec.origin_payslip_id.edi_uuid,
-                            'issue_date': str(rec.origin_payslip_id.edi_issue_date)
-                        }
-                    else:
-                        json_request['payroll_reference'] = {
-                            'number': rec.origin_payslip_id.number,
-                            'issue_date': str(rec.origin_payslip_id.date)
-                        }
-                else:
-                    raise UserError(_("The Origin payslip is required for adjusment notes."))
-
-                json_request = rec.get_json_delete_request(json_request)
-
             return json_request
-
-    def validate_dian_generic(self):
-        for rec in self:
-            if not rec.company_id.edi_payroll_enable or rec.company_id.edi_payroll_consolidated_enable:
-                continue
-
-            requests_data = rec.get_json_request()
-            rec._validate_dian_generic(requests_data)
-
-    def validate_dian(self):
-        for rec in self:
-            rec.validate_dian_generic()
-
-    def action_payslip_done(self):
-        for rec in self:
-            if not rec.number or rec.number in ('New', _('New')):
-                if rec.credit_note:
-                    rec.number = self.env['ir.sequence'].next_by_code('salary.slip.note')
-                    if not rec.number:
-                        raise UserError(
-                            _("You must create a sequence for adjusment notes with code 'salary.slip.note'"))
-                else:
-                    rec.number = self.env['ir.sequence'].next_by_code('salary.slip')
-
-        res = super(HrPayslip, self).action_payslip_done()
-
-        for rec in self:
-            if rec.company_id.edi_payroll_enable \
-                    and not rec.company_id.edi_payroll_consolidated_enable \
-                    and not rec.company_id.edi_payroll_enable_validate_state:
-                rec.validate_dian_generic()
-
-        return res
-
-    def status_zip(self):
-        for rec in self:
-            if not rec.company_id.edi_payroll_enable or rec.company_id.edi_payroll_consolidated_enable:
-                continue
-
-            # This line ensures that the electronic fields of the payroll are updated in Odoo, before the request
-            payload = json.dumps(rec.get_json_request(), indent=2, sort_keys=False)
-            rec._status_zip(payload)
-
-    def refund_sheet(self):
-        self.ensure_one()
-        res = super(HrPayslip, self).refund_sheet()
-
-        for payslip in self:
-            if payslip.credit_note:
-                raise UserError(_("A adjustment note should not be made to a adjustment note"))
-
-            # Only compatible with one record (one payslip), with ensure_one()
-            copied_payslips_ids = res['domain'][0][2]
-            copied_payslip = self.env['hr.payslip'].search([('id', 'in', copied_payslips_ids)])[0]
-
-            copied_payslip.write({
-                'origin_payslip_id': payslip.id,
-                'number': _('New'),
-            })
-
-            if payslip.edi_payload and not copied_payslip.edi_payload:
-                payload = copied_payslip.get_json_request()
-                copied_payslip.write({'edi_payload': json.dumps(payload, indent=2, sort_keys=False)})
-
-        return res
-
-    def status_document_log(self):
-        for rec in self:
-            if not rec.company_id.edi_payroll_enable or rec.company_id.edi_payroll_consolidated_enable:
-                continue
-
-            # This line ensures that the electronic fields of the payroll are updated in Odoo,
-            # before the request
-            payload = rec.get_json_request()
-            rec._status_document_log(payload)

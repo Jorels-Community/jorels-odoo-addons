@@ -81,7 +81,7 @@
                     <notebook>
                         <page name="payslips" string="Payslips">
                             <field name="payslip_ids" readonly="state != 'draft'"
-                                   domain="[('state', 'in', ('done', 'paid')),
+                                   domain="[('state', 'in', ('validated', 'paid')),
                                             ('employee_id', '=', employee_id),
                                             ('month', '=', month),
                                             ('year', '=', year),
