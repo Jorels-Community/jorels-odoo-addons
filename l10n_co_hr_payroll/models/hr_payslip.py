@@ -1374,7 +1374,7 @@ class HrPayslip(models.Model):
         if copied_payslip is not None:
             domain = "[('id', 'in', %s)]" % copied_payslip.ids
         else:
-            domain = "[(credit_note, '=', True)]"
+            domain = "[('credit_note', '=', True)]"
 
         return {
             'name': _("Refund Payslip"),

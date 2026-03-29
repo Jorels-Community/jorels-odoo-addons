@@ -32,7 +32,7 @@
                             invisible="edi_is_valid or state == 'draft'"/>
                     <button name="status_zip" type="object" string="Consult DIAN" groups="base.group_no_one"
                             invisible="state == 'draft'"/>
-                    <button string="Refund" name="refund_sheet" invisible="state not in ('confirm', 'done')"
+                    <button string="Refund" name="refund_sheet" invisible="state != 'done'"
                             type='object'/>
                     <button string="Set to Draft" name="action_payslip_draft" type="object"
                             invisible="state != 'cancel'"/>
