@@ -41,6 +41,15 @@
                 <field name="private_vat" placeholder="Identification Number"/>
                 <field name="private_type_document_identification_id" placeholder="Type document identification"/>
             </xpath>
+            <xpath expr="//group[@name='payroll_group']/group[last()]" position="after">
+                <group string="Edi Dian" name="edi_dian">
+                    <field name="type_worker_id"/>
+                    <field name="subtype_worker_id"/>
+                    <field name="high_risk_pension"/>
+                    <field name="integral_salary"/>
+                    <field name="type_contract_id"/>
+                </group>
+            </xpath>
         </field>
     </record>
 </odoo>
