@@ -48,6 +48,21 @@ class Employee(models.Model):
         comodel_name="l10n_co_edi_jorels.type_document_identifications", string="Type document identification",
         copy=False, domain=[('scope', '=', False)], groups="hr.group_hr_user", default=3)
 
+    # All version fields needing a specific group to be accessible should also have `inherited=True` set on its
+    # definition to make sure those fields are linked to `_inherits` on `hr.version`
+    type_worker_id = fields.Many2one(readonly=False, related="version_id.type_worker_id", inherited=True,
+                                     groups="hr.group_hr_manager")
+    subtype_worker_id = fields.Many2one(readonly=False, related="version_id.subtype_worker_id", inherited=True,
+                                        groups="hr.group_hr_manager")
+    high_risk_pension = fields.Boolean(readonly=False, related="version_id.high_risk_pension", inherited=True,
+                                       groups="hr.group_hr_manager")
+    integral_salary = fields.Boolean(readonly=False, related="version_id.integral_salary", inherited=True,
+                                     groups="hr.group_hr_manager")
+    type_contract_id = fields.Many2one(readonly=False, related="version_id.type_contract_id", inherited=True,
+                                       groups="hr.group_hr_manager")
+    payroll_period_id = fields.Many2one(readonly=False, related="version_id.payroll_period_id", inherited=True,
+                                        groups="hr.group_hr_manager")
+
     @api.onchange('private_surname', 'private_second_surname', 'private_first_name', 'private_other_names')
     def _inverse_names(self):
         for rec in self:
