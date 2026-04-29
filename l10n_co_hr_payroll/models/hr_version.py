@@ -40,6 +40,12 @@ class HrVersion(models.Model):
                                         compute="_compute_payroll_period_id", store=True, tracking=True,
                                         groups="hr.group_hr_manager")
 
+    def get_all_structures(self):
+        structures = self.mapped('struct_id')
+        if structures:
+            return list(set(structures._get_parent_structure().ids))
+        return super().get_all_structures()
+
     @api.depends('schedule_pay')
     def _compute_payroll_period_id(self):
         for rec in self:
