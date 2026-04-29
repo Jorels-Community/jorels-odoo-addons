@@ -189,8 +189,8 @@ class HrPayslipEdi(models.Model):
                 raise UserError(_("Employee does not have a postal municipality"))
             if not rec.employee_id.private_street:
                 raise UserError(_("Employee does not have an address."))
-            if not rec.contract_id.name:
-                raise UserError(_("Contract does not have a name"))
+            # if not rec.contract_id.name:
+            #     raise UserError(_("Contract does not have a name"))
             if rec.contract_id.wage <= 0:
                 raise UserError(_("The contract must have the 'Wage' field configured"))
             if not rec.contract_id.type_contract_id:

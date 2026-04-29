@@ -24,25 +24,31 @@
 from odoo import fields, models, api
 
 
-class HrContract(models.Model):
+class HrVersion(models.Model):
     _inherit = "hr.version"
 
-    type_worker_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_workers", string="Type worker")
-    subtype_worker_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.subtype_workers", string="Subtype worker")
-    high_risk_pension = fields.Boolean(string="High risk pension", default=False)
-    integral_salary = fields.Boolean(string="Integral salary", default=False)
-    type_contract_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_contracts", string="Type contract")
+    type_worker_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_workers", string="Type worker",
+                                     tracking=True, groups="hr.group_hr_manager")
+    subtype_worker_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.subtype_workers", string="Subtype worker",
+                                        tracking=True, groups="hr.group_hr_manager")
+    high_risk_pension = fields.Boolean(string="High risk pension", default=False, tracking=True,
+                                       groups="hr.group_hr_manager")
+    integral_salary = fields.Boolean(string="Integral salary", default=False, tracking=True,
+                                     groups="hr.group_hr_manager")
+    type_contract_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_contracts", string="Type contract",
+                                       tracking=True, groups="hr.group_hr_manager")
     payroll_period_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.payroll_periods", string="Payroll period",
-                                        compute="_compute_payroll_period_id", store=True)
+                                        compute="_compute_payroll_period_id", store=True, tracking=True,
+                                        groups="hr.group_hr_manager")
 
     @api.depends('schedule_pay')
     def _compute_payroll_period_id(self):
         for rec in self:
             values = {
-                'weekly': 1,      # Weekly
-                'bi-weekly': 3,   # Bi-weekly
+                'weekly': 1,  # Weekly
+                'bi-weekly': 3,  # Bi-weekly
                 'semi-monthly': 4,  # Semi-monthly
-                'monthly': 5,     # Monthly
+                'monthly': 5,  # Monthly
             }
             # Default to 'Other' (6) if not found in the mapping
             rec.payroll_period_id = values.get(rec.schedule_pay, 6)
