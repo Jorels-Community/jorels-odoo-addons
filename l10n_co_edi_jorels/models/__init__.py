@@ -31,3 +31,4 @@ from . import account_invoice_line
 from . import account_invoice_refund
 from . import mail_template
 from . import radian
+from . import nimbus_webhook_log

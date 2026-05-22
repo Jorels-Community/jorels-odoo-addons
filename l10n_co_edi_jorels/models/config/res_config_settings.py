@@ -70,6 +70,13 @@ class ResConfigSettings(models.TransientModel):
     # Api key
     nimbus_api_key = fields.Char(related="company_id.nimbus_api_key", string="Nimbus api key", readonly=False)
 
+    # Nimbus webhook secret
+    nimbus_webhook_secret = fields.Char(
+        related="company_id.nimbus_webhook_secret",
+        string="Nimbus webhook secret",
+        readonly=False,
+    )
+
     ei_allow_zero_total = fields.Boolean(
         related="company_id.ei_allow_zero_total",
         string="Allow zero total invoices",

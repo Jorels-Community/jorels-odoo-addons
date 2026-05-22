@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Jorels S.A.S. - Copyright (2019-2022)-->
+
+<!--This file is part of l10n_co_edi_jorels.-->
+
+<!--l10n_co_edi_jorels is free software: you can redistribute it and/or modify-->
+<!--it under the terms of the GNU Lesser General Public License as published by-->
+<!--the Free Software Foundation, either version 3 of the License, or-->
+<!--(at your option) any later version.-->
+
+<!--l10n_co_edi_jorels is distributed in the hope that it will be useful,-->
+<!--but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--GNU Lesser General Public License for more details.-->
+
+<!--You should have received a copy of the GNU Lesser General Public License-->
+<!--along with l10n_co_edi_jorels.  If not, see <https://www.gnu.org/licenses/>.-->
+
+<!--email: info@jorels.com-->
+
+<odoo>
+    <data>
+        <!-- Tree view -->
+        <record id="view_nimbus_webhook_log_tree" model="ir.ui.view">
+            <field name="name">l10n_co_edi_jorels.nimbus_webhook_log.tree</field>
+            <field name="model">l10n_co_edi_jorels.nimbus_webhook_log</field>
+            <field name="arch" type="xml">
+                <tree string="Logs de NIMBUS">
+                    <field name="create_date"/>
+                    <field name="company_id"/>
+                    <field name="delivery_id"/>
+                    <field name="event_type"/>
+                    <field name="edi_id"/>
+                    <field name="state"/>
+                    <field name="invoice_id"/>
+                    <field name="event_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form view -->
+        <record id="view_nimbus_webhook_log_form" model="ir.ui.view">
+            <field name="name">l10n_co_edi_jorels.nimbus_webhook_log.form</field>
+            <field name="model">l10n_co_edi_jorels.nimbus_webhook_log</field>
+            <field name="arch" type="xml">
+                <form string="Log de NIMBUS">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="company_id"/>
+                                <field name="delivery_id"/>
+                                <field name="event_type"/>
+                                <field name="edi_id"/>
+                                <field name="timestamp"/>
+                                <field name="state"/>
+                            </group>
+                            <group>
+                                <field name="invoice_id"/>
+                                <field name="event_id"/>
+                                <field name="create_date"/>
+                            </group>
+                        </group>
+                        <group string="Payload">
+                            <field name="payload" nolabel="1"/>
+                        </group>
+                        <group string="Error">
+                            <field name="error_message" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search view -->
+        <record id="view_nimbus_webhook_log_search" model="ir.ui.view">
+            <field name="name">l10n_co_edi_jorels.nimbus_webhook_log.search</field>
+            <field name="model">l10n_co_edi_jorels.nimbus_webhook_log</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Logs de NIMBUS">
+                    <field name="company_id"/>
+                    <field name="delivery_id"/>
+                    <field name="event_type"/>
+                    <field name="edi_id"/>
+                    <field name="invoice_id"/>
+                    <filter string="Procesados" name="done" domain="[('state', '=', 'done')]"/>
+                    <filter string="Con error" name="error" domain="[('state', '=', 'error')]"/>
+                    <filter string="Pendientes" name="pending" domain="[('state', '=', 'pending')]"/>
+                    <group expand="0" string="Agrupar por">
+                        <filter string="Compañía" name="group_by_company" context="{'group_by': 'company_id'}"/>
+                        <filter string="Estado" name="group_by_state" context="{'group_by': 'state'}"/>
+                        <filter string="Tipo de evento" name="group_by_event_type" context="{'group_by': 'event_type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_nimbus_webhook_log" model="ir.actions.act_window">
+            <field name="name">Logs de NIMBUS</field>
+            <field name="res_model">l10n_co_edi_jorels.nimbus_webhook_log</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_nimbus_webhook_log_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay logs de NIMBUS registrados.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu -->
+        <menuitem id="menu_nimbus_webhook_log"
+                  name="Logs de NIMBUS"
+                  action="action_nimbus_webhook_log"
+                  parent="menu_l10n_co_edi_jorels_root"
+                  groups="l10n_co_edi_jorels.l10n_co_edi_jorels_group_manager"
+                  sequence="50"/>
+    </data>
+</odoo>

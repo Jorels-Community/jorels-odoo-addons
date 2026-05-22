@@ -2127,7 +2127,7 @@ class AccountInvoice(models.Model):
                             raise UserError(_("You must configure a Nimbus token"))
 
                         api_url = self.env['ir.config_parameter'].sudo().get_param('jorels.nimbus.api_url',
-                                                                                   'https://nimbus.jorels.com')
+                                                                                   'https://nimbus.jorels.com/api')
 
                         header = {
                             "accept": "application/json",
