@@ -67,6 +67,20 @@
                                 </div>
                             </div>
                             <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane"/>
+                                <div class="o_setting_right_pane">
+                                    <span class="o_form_label">Nimbus webhook secret</span>
+                                    <div class="text-muted">Secret used to validate webhooks received from Nimbus.
+                                    </div>
+                                    <div class="content-group">
+                                        <div class="row mt16">
+                                            <label for="nimbus_webhook_secret" class="col-lg-3 o_light_label"/>
+                                            <field name="nimbus_webhook_secret" password="True"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 o_setting_box">
                                 <div class="o_setting_left_pane">
                                     <field name="ei_enable"/>
                                 </div>

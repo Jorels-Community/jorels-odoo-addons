@@ -66,4 +66,11 @@
         <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
     </record>
 
+    <record id="nimbus_webhook_log_comp_rule" model="ir.rule">
+        <field name="name">NIMBUS webhook log multi-company</field>
+        <field name="model_id" ref="model_l10n_co_edi_jorels_nimbus_webhook_log"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+    </record>
+
 </odoo>

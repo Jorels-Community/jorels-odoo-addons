@@ -96,6 +96,9 @@ class ResCompany(models.Model):
     # Nimbus api key
     nimbus_api_key = fields.Char(string="Nimbus api key")
 
+    # Nimbus webhook secret
+    nimbus_webhook_secret = fields.Char(string="Nimbus webhook secret")
+
     ei_allow_zero_total = fields.Boolean(
         string="Allow zero total invoices",
         default=False,
