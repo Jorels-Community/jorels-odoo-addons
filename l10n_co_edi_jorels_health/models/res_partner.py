@@ -32,4 +32,4 @@ class ResPartner(models.Model):
 
     edi_health_type_document_id = fields.Many2one(string="Health type document",
                                                   comodel_name='l10n_co_edi_jorels.type_document_identifications',
-                                                  domain=[('scope', '=', 'health')], ondelete='RESTRICT')
+                                                  domain=[('scope', '=', 'health')], ondelete='restrict')

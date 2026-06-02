@@ -42,12 +42,12 @@ class AccountMove(models.Model):
                                               "Proveedores de Tecnologías en Salud y demás casos de excepción.)")
     ei_health_payment_method_id = fields.Many2one(string="Health payment method",
                                                   comodel_name='l10n_co_edi_jorels.payment_methods',
-                                                  domain=[('scope', '=', 'health')], ondelete='RESTRICT',
+                                                  domain=[('scope', '=', 'health')], ondelete='restrict',
                                                   help="Modalidades de pago (Debe registrarse la modalidad de pago "
                                                        "pactada objeto de facturación)")
     ei_health_type_coverage_id = fields.Many2one(string="Coverage type",
                                                  comodel_name='l10n_co_edi_jorels.type_coverages',
-                                                 domain=[('scope', '=', 'health')], ondelete='RESTRICT',
+                                                 domain=[('scope', '=', 'health')], ondelete='restrict',
                                                  help="Cobertura o plan de beneficios (Se registra la entidad "
                                                       "responsable de financiar la cobertura o plan de beneficios, y "
                                                       "de pagar la prestación de los servicios y tecnologías de salud "
@@ -60,7 +60,7 @@ class AccountMove(models.Model):
                                         "póliza de planes voluntarios de salud)")
 
     ei_health_partner_id = fields.Many2one(string="Health service user", comodel_name='res.partner',
-                                           ondelete='RESTRICT')
+                                           ondelete='restrict')
 
     ei_operation = fields.Selection(selection_add=[
         ('ss_cufe', 'SS-CUFE'),
