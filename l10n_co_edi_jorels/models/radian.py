@@ -46,7 +46,7 @@ class Radian(models.Model):
     ], string='Status', required=True, readonly=True, copy=False, tracking=True, default='draft')
     date = fields.Date("Date", required=True, readonly=True, default=fields.Date.context_today, copy=False)
     event_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.events", string="Event", required=True,
-                               tracking=True, ondelete='RESTRICT',
+                               tracking=True, ondelete='restrict',
                                domain=[('code', 'in', ('030', '031', '032', '033', '034'))])
     name = fields.Char(string="Reference", compute="_compute_name", store=True, copy=False, readonly=True,
                        default=lambda self: _("New"))
@@ -55,7 +55,7 @@ class Radian(models.Model):
     note = fields.Text(string="Note")
     rejection_concept_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.rejection_concepts",
                                            string="Rejection concept", required=False,
-                                           ondelete='RESTRICT', tracking=True, copy=False)
+                                           ondelete='restrict', tracking=True, copy=False)
     company_id = fields.Many2one('res.company', string='Company', copy=False,
                                  default=lambda self: self.env.company)
     move_id = fields.Many2one(comodel_name="account.move", string="Invoice", required=True, copy=True,

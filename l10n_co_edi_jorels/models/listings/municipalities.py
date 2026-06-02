@@ -34,5 +34,5 @@ class Municipalities(models.Model):
     _rec_name = "description"
 
     department_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.departments', string="Department", required=True,
-                                    readonly=True, index=True, ondelete='RESTRICT')
+                                    readonly=True, index=True, ondelete='restrict')
     description = fields.Char('Description', readonly=True, index=True)

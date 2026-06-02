@@ -50,7 +50,7 @@ class AccountMove(models.Model):
                                    copy=False)
 
     ei_type_document_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_documents', string="Edi Document type",
-                                          copy=False, ondelete='RESTRICT',
+                                          copy=False, ondelete='restrict',
                                           compute='_compute_ei_type_document_id', store=True)
     ei_type_document = fields.Selection(selection=[
         ('none', 'None'),
@@ -152,14 +152,14 @@ class AccountMove(models.Model):
     ei_correction_concept_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
                                                string="Correction concept", copy=False, readonly=True,
                                                compute="compute_ei_correction_concept_id", store=True,
-                                               ondelete='RESTRICT')
+                                               ondelete='restrict')
     ei_correction_concept_credit_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
                                                       string="Credit correction concept", copy=False,
                                                       domain=[('type_document_id', 'in', (5, 13))],
-                                                      ondelete='RESTRICT')
+                                                      ondelete='restrict')
     ei_correction_concept_debit_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.correction_concepts',
                                                      string="Debit correction concept", copy=False,
-                                                     domain=[('type_document_id', '=', '6')], ondelete='RESTRICT')
+                                                     domain=[('type_document_id', '=', '6')], ondelete='restrict')
     ei_is_correction_without_reference = fields.Boolean("Is it a correction without reference?", default=False)
 
     value_letters = fields.Char("Value in letters", compute="_compute_amount", store=True)
@@ -191,14 +191,14 @@ class AccountMove(models.Model):
     # Payment form
     payment_form_id = fields.Many2one(string="Payment form", comodel_name='l10n_co_edi_jorels.payment_forms',
                                       copy=True, store=True, compute="_compute_payment_form_id",
-                                      readonly=True, ondelete='RESTRICT')
+                                      readonly=True, ondelete='restrict')
     payment_method_id = fields.Many2one(string="Payment method", comodel_name='l10n_co_edi_jorels.payment_methods',
                                         default=lambda self: self._default_payment_method_id(), copy=True,
-                                        domain=[('scope', '=', False)], ondelete='RESTRICT')
+                                        domain=[('scope', '=', False)], ondelete='restrict')
 
     # Store resolution
     resolution_id = fields.Many2one(string="Resolution", comodel_name='l10n_co_edi_jorels.resolution', copy=False,
-                                    store=True, compute="_compute_resolution_id", ondelete='RESTRICT')
+                                    store=True, compute="_compute_resolution_id", ondelete='restrict')
 
     radian_ids = fields.One2many(comodel_name='l10n_co_edi_jorels.radian', inverse_name='move_id')
 

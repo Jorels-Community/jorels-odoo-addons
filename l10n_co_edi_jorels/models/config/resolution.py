@@ -42,7 +42,7 @@ class Resolution(models.Model):
     # Range Resolution DIAN
     resolution_type_document_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_documents",
                                                   string='Document type',
-                                                  required=True, ondelete='RESTRICT')
+                                                  required=True, ondelete='restrict')
     resolution_prefix = fields.Char(string="Prefix", required=True)
     resolution_resolution = fields.Char(string="Resolution")
     resolution_resolution_date = fields.Date(string="Resolution date")

@@ -26,7 +26,7 @@ from odoo import fields, models
 class AccountTax(models.Model):
     _inherit = "account.tax"
 
-    edi_tax_id = fields.Many2one('l10n_co_edi_jorels.taxes', string="Tax type (DIAN)", ondelete='RESTRICT', copy=True)
+    edi_tax_id = fields.Many2one('l10n_co_edi_jorels.taxes', string="Tax type (DIAN)", ondelete='restrict', copy=True)
 
     dian_report_tax_base = fields.Selection([
         ('auto', 'Auto'),

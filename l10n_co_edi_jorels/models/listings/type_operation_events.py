@@ -34,4 +34,4 @@ class TypeOperationEvents(models.Model):
     _order = "name"
 
     event_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.events', string="Event", required=True,
-                               readonly=True, index=True, ondelete='RESTRICT')
+                               readonly=True, index=True, ondelete='restrict')

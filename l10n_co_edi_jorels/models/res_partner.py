@@ -35,12 +35,12 @@ class ResPartner(models.Model):
     _inherit = "res.partner"
 
     type_regime_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_regimes', string="Regime type",
-                                     ondelete='RESTRICT')
+                                     ondelete='restrict')
     type_liability_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.type_liabilities',
-                                        string="Liability type", ondelete='RESTRICT')
+                                        string="Liability type", ondelete='restrict')
     merchant_registration = fields.Char(string="Merchant registration")
     municipality_id = fields.Many2one(comodel_name='l10n_co_edi_jorels.municipalities', string="Municipality",
-                                      ondelete='RESTRICT')
+                                      ondelete='restrict')
     tax_resident_co = fields.Boolean(string="Tax resident in Colombia?", default=True)
     email_edi = fields.Char("Email for invoicing")
 
@@ -49,7 +49,7 @@ class ResPartner(models.Model):
     type_document_identification_id = fields.Many2one(comodel_name="l10n_co_edi_jorels.type_document_identifications",
                                                       string="Type document identification", readonly=True,
                                                       compute='_compute_type_document_identification_id', store=True,
-                                                      copy=False, ondelete='RESTRICT')
+                                                      copy=False, ondelete='restrict')
     # surname, second_surname, first_name, other_names
     surname = fields.Char("Surname", compute="_compute_names", store=True)
     second_surname = fields.Char("Second surname", compute="_compute_names", store=True)
