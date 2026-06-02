@@ -28,5 +28,5 @@ class PosPaymentMethod(models.Model):
 
     edi_pos_payment_method_id = fields.Many2one(string="POS payment method (DIAN)",
                                                 comodel_name='l10n_co_edi_jorels.payment_methods', required=True,
-                                                copy=False, domain=[('scope', '=', False)], ondelete='RESTRICT',
+                                                copy=False, domain=[('scope', '=', False)], ondelete='restrict',
                                                 default=1)
