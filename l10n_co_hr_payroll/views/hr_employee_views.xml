@@ -50,6 +50,9 @@
                     <field name="type_contract_id"/>
                 </group>
             </xpath>
+            <xpath expr="//field[@name='structure_type_id']" position="after">
+                <field name="struct_id" readonly="1"/>
+            </xpath>
         </field>
     </record>
 </odoo>

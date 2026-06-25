@@ -62,3 +62,19 @@ class HrVersion(models.Model):
                 rec.payroll_period_id = values[rec.schedule_pay]
             else:
                 rec.payroll_period_id = None
+
+    @api.model
+    def _get_whitelist_fields_from_template(self):
+        res = super()._get_whitelist_fields_from_template()
+        new_fields = [
+            'struct_id',
+            'type_worker_id',
+            'subtype_worker_id',
+            'high_risk_pension',
+            'integral_salary',
+            'type_contract_id',
+            'payroll_period_id',
+        ]
+        # Only add those that are not already present
+        res.extend([f for f in new_fields if f not in res])
+        return res
