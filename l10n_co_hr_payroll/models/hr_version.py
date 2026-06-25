@@ -68,6 +68,7 @@ class HrVersion(models.Model):
         res = super()._get_whitelist_fields_from_template()
         new_fields = [
             'struct_id',
+            'journal_id',
             'type_worker_id',
             'subtype_worker_id',
             'high_risk_pension',
