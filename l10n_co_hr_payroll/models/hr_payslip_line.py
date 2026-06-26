@@ -44,10 +44,7 @@ class HrPayslipLine(models.Model):
     def compute_edi_quantity(self):
         for rec in self:
             if rec.salary_rule_id.type_concept == 'earn' and rec.salary_rule_id.edi_quantity_select == 'auto':
-                worked_days_line = rec.env['hr.payslip.worked_days'].search([
-                    ('payslip_id', '=', rec.slip_id.id),
-                    ('code', '=', rec.code)
-                ])
+                worked_days_line = rec.slip_id.worked_days_line_ids.filtered(lambda x: x.code == rec.code)
                 if rec.salary_rule_id.earn_category in (
                         'vacation_common',
                         'vacation_compensated',
