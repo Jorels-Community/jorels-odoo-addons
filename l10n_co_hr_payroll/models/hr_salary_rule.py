@@ -162,8 +162,19 @@ class HrSalaryRule(models.Model):
             return self.edi_percent_fix
         else:
             try:
-                safe_eval(self.edi_percent_python_compute, local_dict, mode='exec', nocopy=True)
+                safe_eval(self.edi_percent_python_compute, local_dict, mode='exec')
                 return float(local_dict['result'])
             except Exception as e:
                 raise UserError(
                     _('Wrong percent python code defined for salary rule %s (%s). %s') % (self.name, self.code, e))
+
+    def _satisfy_condition(self, localdict):
+        self.ensure_one()
+        if self.condition_select != 'python':
+            return super()._satisfy_condition(localdict)
+
+        try:
+            safe_eval(self.condition_python, localdict, mode='exec')
+            return 'result' in localdict and localdict['result'] or False
+        except:
+            raise UserError(_('Wrong python condition defined for salary rule %s (%s).') % (self.name, self.code))
