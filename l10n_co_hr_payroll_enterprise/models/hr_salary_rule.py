@@ -176,7 +176,7 @@ class HrSalaryRule(models.Model):
 
         if self.co_partner_select == 'code':
             try:
-                safe_eval(self.co_partner_python_compute, local_dict, mode='exec', nocopy=True)
+                safe_eval(self.co_partner_python_compute, local_dict, mode='exec')
                 return int(local_dict['result'])
             except Exception as e:
                 raise UserError(
@@ -213,7 +213,7 @@ class HrSalaryRule(models.Model):
             return self.edi_percent_fix
         else:
             try:
-                safe_eval(self.edi_percent_python_compute, local_dict, mode='exec', nocopy=True)
+                safe_eval(self.edi_percent_python_compute, local_dict, mode='exec')
                 return float(local_dict['result'])
             except Exception as e:
                 raise UserError(
