@@ -251,6 +251,11 @@
                 name="init_csv_data"
                 eval="[0,'l10n_co_edi_jorels.l10n_co_edi_jorels.due_diligences']"
         />
+        <function
+                model="res.company"
+                name="init_csv_data"
+                eval="[0,'l10n_co_edi_jorels.l10n_co_edi_jorels.type_without_contracts']"
+        />
 
         <!-- Postal tables -->
         <function
