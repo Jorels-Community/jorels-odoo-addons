@@ -35,6 +35,7 @@
                                 <field name="ei_health_type_coverage_id"/>
                                 <field name="ei_health_contract"/>
                                 <field name="ei_health_policy"/>
+                                <field name="ei_health_type_without_contract_id"/>
                             </group>
                             <group string="Health service user">
                                 <field name="ei_health_partner_id" widget="res_partner_many2one"
@@ -62,6 +63,7 @@
                                 <field name="ei_health_type_coverage_id"/>
                                 <field name="ei_health_contract"/>
                                 <field name="ei_health_policy"/>
+                                <field name="ei_health_type_without_contract_id"/>
                             </group>
                             <group string="Health service user">
                                 <field name="ei_health_partner_id" widget="res_partner_many2one"
