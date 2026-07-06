@@ -46,7 +46,11 @@ class AccountMove(models.Model):
                                                   readonly=True, states={'draft': [('readonly', False)]},
                                                   domain=[('scope', '=', 'health')], ondelete='RESTRICT',
                                                   help="Modalidades de pago (Debe registrarse la modalidad de pago "
-                                                       "pactada objeto de facturación)")
+                                                       "pactada objeto de facturación. Debe registrarse la modalidad "
+                                                       "de pago acordada, de acuerdo con la definición contenida en el "
+                                                       "artículo 2.5.3.4.2.3 del Decreto 780 de 2016. En caso de "
+                                                       "facturas multiusuario, todos deben pertenecer a la misma "
+                                                       "modalidad de pago y a la misma cobertura o plan de beneficios)")
     ei_health_type_coverage_id = fields.Many2one(string="Coverage type",
                                                  comodel_name='l10n_co_edi_jorels.type_coverages',
                                                  readonly=True, states={'draft': [('readonly', False)]},
@@ -54,13 +58,26 @@ class AccountMove(models.Model):
                                                  help="Cobertura o plan de beneficios (Se registra la entidad "
                                                       "responsable de financiar la cobertura o plan de beneficios, y "
                                                       "de pagar la prestación de los servicios y tecnologías de salud "
-                                                      "incluidas en la factura de venta.)")
+                                                      "incluidas en la factura de venta)")
     ei_health_contract = fields.Char(string="Contract number", readonly=True, states={'draft': [('readonly', False)]},
                                      help="Número de Contrato (Se debe registrar el número del contrato objeto de "
-                                          "facturación)")
+                                          "facturación. Obligatorio cuando exista contrato o en caso contrario irá "
+                                          "vacío. Se reporta solo si se ha suscrito contrato que cubra los ítems "
+                                          "facturados. Las entidades obligadas a registrarse en el portal del Registro "
+                                          "de Contratación de Servicios y Tecnologías de Salud (Artículo 4, Ley 1966 "
+                                          "de 2019), deberán diligenciar el código del número de contrato (CUCON) que "
+                                          "les expida esta plataforma una vez esté disponible)")
     ei_health_policy = fields.Char(string="Policy number", readonly=True, states={'draft': [('readonly', False)]},
                                    help="Número de póliza (Se debe registrar el número de póliza SOAT o del número de "
-                                        "póliza de planes voluntarios de salud)")
+                                        "póliza de planes voluntarios de salud. Obligatorio cuando se trate de "
+                                        "atenciones SOAT o de planes voluntarios de salud. Se diligencia cuando se "
+                                        "trata de atenciones por accidente de tránsito o por atención como particular "
+                                        "por una póliza de salud. En los demás casos, no debe diligenciarse (vacío))")
+    ei_health_type_without_contract_id = fields.Char(string="Type without contract", readonly=True,
+                                                     states={'draft': [('readonly', False)]},
+                                                     help="Factura sin contrato (Se debe registrar por parte de los "
+                                                          "prestadores de servicios de salud y los proveedores de "
+                                                          "tecnologías en salud que prestan servicio sin contrato)")
 
     ei_health_partner_id = fields.Many2one(string="Health service user",
                                            comodel_name='res.partner',
@@ -125,7 +142,8 @@ class AccountMove(models.Model):
                 'payment_method_code': self.ei_health_payment_method_id.id or None,
                 'type_coverage_code': self.ei_health_type_coverage_id.id or None,
                 'contract': self.ei_health_contract or None,
-                'policy': self.ei_health_policy or None
+                'policy': self.ei_health_policy or None,
+                'type_without_contract_code': self.ei_health_type_without_contract_id or None,
             }
 
             health_data['collections'] = [collection]
