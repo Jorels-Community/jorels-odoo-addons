@@ -139,7 +139,7 @@ class AccountInvoice(models.Model):
                 'type_coverage_code': self.ei_health_type_coverage_id.id or None,
                 'contract': self.ei_health_contract or None,
                 'policy': self.ei_health_policy or None,
-                'type_without_contract_code': self.ei_health_type_without_contract_id or None,
+                'type_without_contract_code': self.ei_health_type_without_contract_id.id or None,
             }
 
             health_data['collections'] = [collection]
