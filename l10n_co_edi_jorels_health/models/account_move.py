@@ -73,11 +73,13 @@ class AccountMove(models.Model):
                                         "atenciones SOAT o de planes voluntarios de salud. Se diligencia cuando se "
                                         "trata de atenciones por accidente de tránsito o por atención como particular "
                                         "por una póliza de salud. En los demás casos, no debe diligenciarse (vacío))")
-    ei_health_type_without_contract_id = fields.Char(string="Type without contract", readonly=True,
-                                                     states={'draft': [('readonly', False)]},
-                                                     help="Factura sin contrato (Se debe registrar por parte de los "
-                                                          "prestadores de servicios de salud y los proveedores de "
-                                                          "tecnologías en salud que prestan servicio sin contrato)")
+    ei_health_type_without_contract_id = fields.Many2one(string="Type without contract",
+                                                         comodel_name='l10n_co_edi_jorels.type_without_contracts',
+                                                         readonly=True, states={'draft': [('readonly', False)]},
+                                                         domain=[('scope', '=', 'health')], ondelete='restrict',
+                                                         help="Factura sin contrato (Se debe registrar por parte de los "
+                                                              "prestadores de servicios de salud y los proveedores de "
+                                                              "tecnologías en salud que prestan servicio sin contrato)")
 
     ei_health_partner_id = fields.Many2one(string="Health service user",
                                            comodel_name='res.partner',
