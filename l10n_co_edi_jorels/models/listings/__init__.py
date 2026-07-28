@@ -47,6 +47,7 @@ from . import type_regimes
 from . import type_workers
 from . import subtype_workers
 from . import type_contracts
+from . import type_without_contracts
 from . import unit_measures
 from . import type_coverages
 from . import type_users
