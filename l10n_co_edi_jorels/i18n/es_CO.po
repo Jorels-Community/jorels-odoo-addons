@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0-20211006\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-28 00:13+0000\n"
-"PO-Revision-Date: 2026-07-28 00:13+0000\n"
+"POT-Creation-Date: 2026-07-30 21:49+0000\n"
+"PO-Revision-Date: 2026-07-30 16:49\n"
 "Last-Translator: <>\n"
 "Language-Team: Jorels SAS\n"
 "Language: es_CO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Jorels PO Edit\n"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_invoice__state
@@ -489,7 +489,7 @@ msgstr "Acuse de recibo"
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_needaction
 msgid "Action Needed"
-msgstr "Acción Necesaria"
+msgstr "Acción requerida"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_ids
@@ -984,7 +984,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__create_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__create_date
 msgid "Created on"
-msgstr "Creado"
+msgstr "Creado el"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_account_invoice_refund
@@ -1223,7 +1223,7 @@ msgstr "Descuentos"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__display_name
 msgid "Display Name"
-msgstr "Nombre Público"
+msgstr "Nombre a mostrar"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1719
@@ -1655,12 +1655,12 @@ msgstr "Tipos de documento de identificación"
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_unread
 msgid "If checked new messages require your attention."
-msgstr "Si está marcado, hay nuevos mensajes que requieren su atención."
+msgstr "Si está marcado, hay nuevos mensajes que requieren su atención"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_needaction
 msgid "If checked, new messages require your attention."
-msgstr "Si está marcado, hay nuevos mensajes que requieren su atención."
+msgstr "Si está marcado hay nuevos mensajes que requieren su atención."
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_has_error
@@ -1874,7 +1874,7 @@ msgstr "Idiomas"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures____last_update
 msgid "Last Modified on"
-msgstr "Última Modificación el"
+msgstr "Última modificación en"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_collection_concepts__write_uid
@@ -1929,7 +1929,7 @@ msgstr "Última Modificación el"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__write_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__write_uid
 msgid "Last Updated by"
-msgstr "Actualizado por"
+msgstr "Última actualización por"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_collection_concepts__write_date
@@ -1984,7 +1984,7 @@ msgstr "Actualizado por"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__write_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__write_date
 msgid "Last Updated on"
-msgstr "Actualizado"
+msgstr "Última actualización el"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_res_company__type_liability_id
@@ -2051,11 +2051,6 @@ msgstr ""
 "exitosa."
 
 #. module: l10n_co_edi_jorels
-#: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_nimbus_webhook_log
-msgid "Log de webhooks recibidos de NIMBUS"
-msgstr "Log de webhooks recibidos de NIMBUS"
-
-#. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_main_attachment_id
 msgid "Main Attachment"
 msgstr "Adjuntos principales"
@@ -2063,7 +2058,7 @@ msgstr "Adjuntos principales"
 #. module: l10n_co_edi_jorels
 #: model:res.groups,name:l10n_co_edi_jorels.l10n_co_edi_jorels_group_manager
 msgid "Manager"
-msgstr "Gerente/Director"
+msgstr "Responsable"
 
 #. module: l10n_co_edi_jorels
 #: selection:account.invoice,ei_operation:0
@@ -2445,7 +2440,7 @@ msgstr "Periodos de nómina"
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_invoice__ei_pdf_base64_bytes
 msgid "Pdf document"
-msgstr "Documento PDF"
+msgstr "Documento Pdf"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_times__percentage
@@ -2715,6 +2710,48 @@ msgstr ""
 #: model:ir.actions.server,name:l10n_co_edi_jorels.action_is_attached_document_matched
 msgid "Review attached document"
 msgstr "Revisar documento adjunto"
+
+#. module: l10n_co_edi_jorels
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-CUDE"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-CUFE"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-POS"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-Recaudo"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-Reporte"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-SNum"
+msgstr ""
+
+#. module: l10n_co_edi_jorels
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-SinAporte"
+msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -3314,7 +3351,7 @@ msgstr "Este tipo de impuesto ReteIVA no está soportado"
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__resolution_to
 msgid "To"
-msgstr "Hasta"
+msgstr "Para"
 
 #. module: l10n_co_edi_jorels
 #: selection:l10n_co_edi_jorels.radian,activity_state:0
@@ -3805,7 +3842,7 @@ msgstr "resolución"
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_partner_form_view_inherit_l10n_co_edi_jorels
 msgid "the parent company"
-msgstr "la compañía principal"
+msgstr "la compañia matriz"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -3815,4 +3852,4 @@ msgstr "a"
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_invoice__amount_by_group_company
 msgid "type: [(name, amount, base, formated amount, formated base)]"
-msgstr "tipo: [(nombre, importe, base, importe formateado, base formateada)]"
+msgstr "Tipo: [(nombre, importe, base, importe formateado, base formateada)]"
