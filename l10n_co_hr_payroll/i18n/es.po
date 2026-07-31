@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0-20211006\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-28 00:30+0000\n"
-"PO-Revision-Date: 2026-07-28 00:30+0000\n"
+"POT-Creation-Date: 2026-07-31 04:47+0000\n"
+"PO-Revision-Date: 2026-07-30 23:47\n"
 "Last-Translator: <>\n"
 "Language-Team: Jorels SAS\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Jorels PO Edit\n"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_config_settings__daily_overtime
@@ -270,7 +270,7 @@ msgstr "Total de devengados"
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_payslip_edi__message_needaction
 msgid "Action Needed"
-msgstr "Acción Necesaria"
+msgstr "Acción requerida"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_payslip_edi__activity_ids
@@ -640,8 +640,7 @@ msgstr "Moneda"
 #: code:addons/l10n_co_hr_payroll/models/edi.py:388
 #, python-format
 msgid "DIAN Electronic payroll: Failed to process the DIAN request: %s"
-msgstr ""
-"Nómina electrónica DIAN: Error al procesar la solicitud DIAN: %s"
+msgstr "Nómina electrónica DIAN: Error al procesar la solicitud DIAN: %s"
 
 #. module: l10n_co_hr_payroll
 #: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll.res_config_settings_view_form
@@ -765,7 +764,7 @@ msgstr "Descripción"
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_l10n_co_hr_payroll_edi__display_name
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_l10n_co_hr_payroll_edi_gen__display_name
 msgid "Display Name"
-msgstr "Nombre mostrado"
+msgstr "Nombre a mostrar"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/edi.py:648
@@ -1148,7 +1147,7 @@ msgstr "Si está marcado, hay nuevos mensajes que requieren su atención"
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,help:l10n_co_hr_payroll.field_hr_payslip_edi__message_needaction
 msgid "If checked, new messages require your attention."
-msgstr "Si está marcado, hay nuevos mensajes que requieren su atención."
+msgstr "Si está marcado hay nuevos mensajes que requieren su atención."
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,help:l10n_co_hr_payroll.field_hr_payslip_edi__message_has_error
@@ -1299,7 +1298,7 @@ msgstr "Deje vacío para usar el periodo de la fecha de validación (Nómina)."
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_l10n_co_hr_payroll_edi____last_update
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_l10n_co_hr_payroll_edi_gen____last_update
 msgid "Last Modified on"
-msgstr "Última Modificación el"
+msgstr "Última modificación en"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_payslip_edi__write_uid
@@ -1308,7 +1307,7 @@ msgstr "Última Modificación el"
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_l10n_co_hr_payroll_edi__write_uid
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_l10n_co_hr_payroll_edi_gen__write_uid
 msgid "Last Updated by"
-msgstr "Actualizado por"
+msgstr "Última actualización por"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_payslip_edi__write_date
