@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0-20231106\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-25 04:24+0000\n"
-"PO-Revision-Date: 2026-02-25 00:32-0500\n"
+"POT-Creation-Date: 2026-07-31 06:07+0000\n"
+"PO-Revision-Date: 2026-07-31 01:07\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Jorels PO Edit\n"
 
 #. module: l10n_co_edi_jorels_pos
 #: model:ir.model.fields,help:l10n_co_edi_jorels_pos.field_pos_config__electronic_invoice_journal_id
@@ -51,6 +51,7 @@ msgstr "Adquiriente DIAN"
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/OrderReceipt.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/OrderReceipt.xml:0
 #, python-format
 msgid "De:"
 msgstr "De:"
@@ -74,7 +75,7 @@ msgstr "Nombre mostrado"
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/ClientDetailsEdit.xml:0
 #, python-format
 msgid "E-mail"
-msgstr "E-mail"
+msgstr "Correo electrónico"
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
@@ -125,6 +126,7 @@ msgstr "Factura electrónica de venta:"
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/OrderReceipt.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/OrderReceipt.xml:0
 #, python-format
 msgid "Fecha desde:"
 msgstr "Fecha desde:"
@@ -139,6 +141,9 @@ msgstr "Obtener"
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/OrderReceipt.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/OrderReceipt.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/OrderReceipt.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/OrderReceipt.xml:0
 #, python-format
 msgid "Hasta:"
 msgstr "Hasta:"
@@ -148,7 +153,7 @@ msgstr "Hasta:"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels_pos.field_pos_order__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels_pos.field_pos_payment_method__id
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: l10n_co_edi_jorels_pos
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels_pos.field_pos_config__invoice_type
@@ -204,16 +209,17 @@ msgstr "Factura normal"
 #. module: l10n_co_edi_jorels_pos
 #: model:ir.model.fields,help:l10n_co_edi_jorels_pos.field_pos_config__invoice_type
 msgid ""
-"Normal: Only normal invoices (No electronic)\n"
+"Normal: Only normal invoices\n"
 "Electronic: Only electronic invoices\n"
 "Both: Allowed both normal and electronic invoices"
 msgstr ""
-"Normal: Solo facturas normales (No electrónicas)\n"
+"Normal: Solo facturas normales\n"
 "Electrónica: Solo facturas electrónicas\n"
 "Ambos: Permite facturas normales y electrónicas"
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/OrderReceipt.xml:0
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/OrderReceipt.xml:0
 #, python-format
 msgid "Numeración desde:"
@@ -270,6 +276,7 @@ msgstr "Reemplazar"
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/OrderReceipt.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/OrderReceipt.xml:0
 #, python-format
 msgid "Resolución:"
 msgstr "Resolución:"
@@ -305,14 +312,14 @@ msgstr ""
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/ClientDetailsEdit.xml:0
 #, python-format
 msgid "Tipo doc."
-msgstr "Tipo doc."
+msgstr ""
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/ClientDetailsEdit.xml:0
 #, python-format
 msgid "Tipo per."
-msgstr "Tipo per."
+msgstr ""
 
 #. module: l10n_co_edi_jorels_pos
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels_pos.field_pos_order__to_electronic_invoice
@@ -338,4 +345,4 @@ msgstr "Vr. Total"
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/ClientDetailsEdit.xml:0
 #, python-format
 msgid "fe@example.com"
-msgstr "fe@example.com"
+msgstr ""
