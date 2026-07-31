@@ -1,0 +1,274 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * l10n_co_edi_jorels_health
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0-20211006\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-31 05:39+0000\n"
+"PO-Revision-Date: 2026-07-31 00:39\n"
+"Last-Translator: <>\n"
+"Language-Team: Jorels SAS\n"
+"Language: es_CO\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Jorels PO Edit\n"
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "AIU"
+msgstr "AIU"
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,help:l10n_co_edi_jorels_health.field_account_invoice__ei_health_type_coverage_id
+msgid ""
+"Cobertura o plan de beneficios (Se registra la entidad responsable de "
+"financiar la cobertura o plan de beneficios, y de pagar la prestación de los"
+" servicios y tecnologías de salud incluidas en la factura de venta)"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model,name:l10n_co_edi_jorels_health.model_res_company
+msgid "Companies"
+msgstr "Compañías"
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model,name:l10n_co_edi_jorels_health.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_health.field_account_invoice__ei_health_contract
+msgid "Contract number"
+msgstr "Número de contrato"
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_health.field_account_invoice__ei_health_type_coverage_id
+msgid "Coverage type"
+msgstr "Tipo de cobertura"
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,help:l10n_co_edi_jorels_health.field_account_invoice__ei_health_provider_ref
+msgid ""
+"Código prestador de servicios de salud (Debe registrarse el código asignado "
+"en el Sistema General de Seguridad Social en Salud (SGSSS) a los prestadores"
+" de servicios de salud que estén en el Registro Especial de Prestadores de "
+"Servicios de Salud (REPS), o el código asignado por el Ministerio de Salud y"
+" Protección Social para los para los Proveedores de Tecnologías en Salud y "
+"demás casos de excepción.)"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels_health.account_invoice_supplier_view_form_inherit_l10n_co_edi_jorels_health
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels_health.account_invoice_view_form_inherit_l10n_co_edi_jorels_health
+msgid "DIAN - Health"
+msgstr "DIAN - Salud"
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+msgid "Día Sin IVA (No activo)"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model,name:l10n_co_edi_jorels_health.model_account_invoice
+msgid "Electronic invoicing"
+msgstr "Facturación electrónica"
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "Exchange"
+msgstr "Cambiario"
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,help:l10n_co_edi_jorels_health.field_account_invoice__ei_health_type_without_contract_id
+msgid ""
+"Factura sin contrato (Se debe registrar por parte de los prestadores de "
+"servicios de salud y los proveedores de tecnologías en salud que prestan "
+"servicio sin contrato)"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_health.field_account_invoice__ei_health_payment_method_id
+msgid "Health payment method"
+msgstr "Método de pago de salud"
+
+#. module: l10n_co_edi_jorels_health
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels_health.account_invoice_supplier_view_form_inherit_l10n_co_edi_jorels_health
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels_health.account_invoice_view_form_inherit_l10n_co_edi_jorels_health
+msgid "Health required info"
+msgstr "Información requerida de salud"
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_health.field_account_invoice__ei_health_partner_id
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels_health.account_invoice_supplier_view_form_inherit_l10n_co_edi_jorels_health
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels_health.account_invoice_view_form_inherit_l10n_co_edi_jorels_health
+msgid "Health service user"
+msgstr "Usuario de servicios de salud"
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_health.field_res_partner__edi_health_type_document_id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_health.field_res_users__edi_health_type_document_id
+msgid "Health type document"
+msgstr "Tipo de documento de salud"
+
+#. module: l10n_co_edi_jorels_health
+#: code:addons/l10n_co_edi_jorels_health/models/account_invoice.py:157
+#, python-format
+msgid "Invalid country assigned to the health service user"
+msgstr "País invalido asignado al usuario de servicios de salud"
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "Mandates"
+msgstr "Mandatos"
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,help:l10n_co_edi_jorels_health.field_account_invoice__ei_health_payment_method_id
+msgid ""
+"Modalidades de pago (Debe registrarse la modalidad de pago pactada objeto de"
+" facturación. Debe registrarse la modalidad de pago acordada, de acuerdo con"
+" la definición contenida en el artículo 2.5.3.4.2.3 del Decreto 780 de 2016."
+" En caso de facturas multiusuario, todos deben pertenecer a la misma "
+"modalidad de pago y a la misma cobertura o plan de beneficios)"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,help:l10n_co_edi_jorels_health.field_account_invoice__ei_health_contract
+msgid ""
+"Número de Contrato (Se debe registrar el número del contrato objeto de "
+"facturación. Obligatorio cuando exista contrato o en caso contrario irá "
+"vacío. Se reporta solo si se ha suscrito contrato que cubra los ítems "
+"facturados. Las entidades obligadas a registrarse en el portal del Registro "
+"de Contratación de Servicios y Tecnologías de Salud (Artículo 4, Ley 1966 de"
+" 2019), deberán diligenciar el código del número de contrato (CUCON) que les"
+" expida esta plataforma una vez esté disponible)"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,help:l10n_co_edi_jorels_health.field_account_invoice__ei_health_policy
+msgid ""
+"Número de póliza (Se debe registrar el número de póliza SOAT o del número de"
+" póliza de planes voluntarios de salud. Obligatorio cuando se trate de "
+"atenciones SOAT o de planes voluntarios de salud. Se diligencia cuando se "
+"trata de atenciones por accidente de tránsito o por atención como particular"
+" por una póliza de salud. En los demás casos, no debe diligenciarse (vacío))"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_health.field_account_invoice__ei_operation
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_health.field_res_company__ei_operation
+msgid "Operation type"
+msgstr "Tipo de operación"
+
+#. module: l10n_co_edi_jorels_health
+#: code:addons/l10n_co_edi_jorels_health/models/account_invoice.py:133
+#, python-format
+msgid "Please provide either health contract or police number, not both."
+msgstr "Proporcione el contrato de salud o el número de póliza, no ambos."
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_health.field_account_invoice__ei_health_policy
+msgid "Policy number"
+msgstr "Número de póliza"
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-CUDE"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-CUFE"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-POS"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-Recaudo"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-Reporte"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-SNum"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "SS-SinAporte"
+msgstr ""
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_health.field_account_invoice__ei_health_provider_ref
+msgid "Service provider code"
+msgstr "Código de prestador de servicios"
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "Standard"
+msgstr "Estandar"
+
+#. module: l10n_co_edi_jorels_health
+#: code:addons/l10n_co_edi_jorels_health/models/account_invoice.py:131
+#, python-format
+msgid "The health coverage type is mandatory."
+msgstr "El tipo de cobertura de salud es obligatorio."
+
+#. module: l10n_co_edi_jorels_health
+#: code:addons/l10n_co_edi_jorels_health/models/account_invoice.py:129
+#, python-format
+msgid "The health payment method is mandatory."
+msgstr "El método de pago de salud es obligatorio."
+
+#. module: l10n_co_edi_jorels_health
+#: code:addons/l10n_co_edi_jorels_health/models/account_invoice.py:127
+#, python-format
+msgid "The health service provider code is mandatory."
+msgstr "El código de prestador de servicios de salud es obligatorio."
+
+#. module: l10n_co_edi_jorels_health
+#: selection:account.invoice,ei_operation:0
+#: selection:res.company,ei_operation:0
+msgid "Transport"
+msgstr "Transporte"
+
+#. module: l10n_co_edi_jorels_health
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_health.field_account_invoice__ei_health_type_without_contract_id
+msgid "Type without contract"
+msgstr "Tipo sin contrato"
+
+#. module: l10n_co_edi_jorels_health
+#: code:addons/l10n_co_edi_jorels_health/models/account_invoice.py:153
+#, python-format
+msgid "You must assign a country to the health service user"
+msgstr "Debe asignar un país al usuario de servicios de salud"
+
+#. module: l10n_co_edi_jorels_health
+#: code:addons/l10n_co_edi_jorels_health/models/account_invoice.py:167
+#, python-format
+msgid ""
+"You must assign a valid municipality to the Colombian health service user"
+msgstr ""
+"Debe asignar un municipio válido al usuario de servicios de salud colombiano"
