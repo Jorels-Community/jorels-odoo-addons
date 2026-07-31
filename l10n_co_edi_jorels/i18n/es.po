@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0-20231106\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-24 15:42+0000\n"
-"PO-Revision-Date: 2025-11-24 11:05-0500\n"
+"POT-Creation-Date: 2026-07-31 06:07+0000\n"
+"PO-Revision-Date: 2026-07-31 01:07\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Jorels PO Edit\n"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/config/res_company.py:0
@@ -26,9 +26,10 @@ msgstr " - Facturación electrónica"
 #. module: l10n_co_edi_jorels
 #: model:mail.template,subject:l10n_co_edi_jorels.email_template_edi
 msgid ""
-"${object.company_id.vat_formatted or ''};${object.company_id.business_name or object.company_id."
-"name or ''};${object.number_formatted or ''};${object.ei_type_document_id.code or ''};${object."
-"company_id.trade_name or object.company_id.business_name or object.company_id.name or ''};"
+"${object.company_id.vat_formatted or ''};${object.company_id.business_name "
+"or object.company_id.name or ''};${object.number_formatted or "
+"''};${object.ei_type_document_id.code or ''};${object.company_id.trade_name "
+"or object.company_id.business_name or object.company_id.name or ''};"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
@@ -93,8 +94,7 @@ msgid ""
 "                        % if object.invoice_origin:\n"
 "                            (with reference: ${object.invoice_origin})\n"
 "                        % endif\n"
-"                        amounting in <strong>${format_amount(object.amount_total, object."
-"currency_id)}</strong>\n"
+"                        amounting in <strong>${format_amount(object.amount_total, object.currency_id)}</strong>\n"
 "                        from ${object.company_id.name}.\n"
 "                        % if object.payment_state in ('paid', 'in_payment'):\n"
 "                            This invoice is already paid.\n"
@@ -102,8 +102,7 @@ msgid ""
 "                            Please remit payment at your earliest convenience.\n"
 "                            % if object.payment_reference:\n"
 "                                <br/><br/>\n"
-"                                Please use the following communication for your payment: "
-"<strong>${object.payment_reference}</strong>.\n"
+"                                Please use the following communication for your payment: <strong>${object.payment_reference}</strong>.\n"
 "                            % endif\n"
 "                        % endif\n"
 "                        <br/><br/>\n"
@@ -134,8 +133,7 @@ msgstr ""
 "        % if object.invoice_origin:\n"
 "            (con referencia: ${object.invoice_origin})\n"
 "        % endif\n"
-"        por un importe de <strong>${format_amount(object.amount_total, object.currency_id)}</"
-"strong>\n"
+"        por un importe de <strong>${format_amount(object.amount_total, object.currency_id)}</strong>\n"
 "        de ${object.company_id.name}.\n"
 "        % if object.payment_state in ('paid', 'in_payment'):\n"
 "            Esta factura ya está pagada.\n"
@@ -143,8 +141,7 @@ msgstr ""
 "            Por favor, realiza el pago lo antes posible.\n"
 "            % if object.payment_reference:\n"
 "                <br/><br/>\n"
-"                Por favor, utiliza la siguiente referencia para tu pago: <strong>${object."
-"payment_reference}</strong>.\n"
+"                Por favor, utiliza la siguiente referencia para tu pago: <strong>${object.payment_reference}</strong>.\n"
 "            % endif\n"
 "        % endif\n"
 "        <br/><br/>\n"
@@ -288,40 +285,20 @@ msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
-msgid "<span groups=\"account.group_show_line_subtotals_tax_excluded\">Amount</span>"
-msgstr "<span groups=\"account.group_show_line_subtotals_tax_excluded\">Importe</span>"
+msgid ""
+"<span "
+"groups=\"account.group_show_line_subtotals_tax_excluded\">Amount</span>"
+msgstr ""
+"<span "
+"groups=\"account.group_show_line_subtotals_tax_excluded\">Importe</span>"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.account_move_view_form_inherit_l10n_co_edi_jorels
 msgid ""
-"<span style=\"                             position: fixed;                             top: "
-"58px;                             left: -85px;                             width: "
-"380px;                             height: 60px;                             background-color: "
-"#cc3c2c;                             color: #ffffff;                             font-size: "
-"38px;                             font-weight: bold;                             text-align: "
-"center;                             line-height: 60px;                             letter-"
-"spacing: 2px;                             text-transform: uppercase;                             "
-"transform: rotate(-45deg);                             transform-origin: "
-"center;                             opacity: 0.5;                             z-index: "
-"10000;                             pointer-events: none;                             box-shadow: "
-"0 2px 8px rgba(0, 0, 0, 0.25);                             border: 2px solid rgba(255, 255, 255, "
-"0.1);                             font-family: 'Arial', sans-serif;                         "
-"\">Invalid\n"
+"<span style=\"                             position: fixed;                             top: 58px;                             left: -85px;                             width: 380px;                             height: 60px;                             background-color: #cc3c2c;                             color: #ffffff;                             font-size: 38px;                             font-weight: bold;                             text-align: center;                             line-height: 60px;                             letter-spacing: 2px;                             text-transform: uppercase;                             transform: rotate(-45deg);                             transform-origin: center;                             opacity: 0.5;                             z-index: 10000;                             pointer-events: none;                             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);                             border: 2px solid rgba(255, 255, 255, 0.1);                             font-family: 'Arial', sans-serif;                         \">Invalid\n"
 "                        </span>"
 msgstr ""
-"<span style=\"                             position: fixed;                             top: "
-"58px;                             left: -85px;                             width: "
-"380px;                             height: 60px;                             background-color: "
-"#cc3c2c;                             color: #ffffff;                             font-size: "
-"38px;                             font-weight: bold;                             text-align: "
-"center;                             line-height: 60px;                             letter-"
-"spacing: 2px;                             text-transform: uppercase;                             "
-"transform: rotate(-45deg);                             transform-origin: "
-"center;                             opacity: 0.5;                             z-index: "
-"10000;                             pointer-events: none;                             box-shadow: "
-"0 2px 8px rgba(0, 0, 0, 0.25);                             border: 2px solid rgba(255, 255, 255, "
-"0.1);                             font-family: 'Arial', sans-serif;                         "
-"\">Invalido\n"
+"<span style=\"                             position: fixed;                             top: 58px;                             left: -85px;                             width: 380px;                             height: 60px;                             background-color: #cc3c2c;                             color: #ffffff;                             font-size: 38px;                             font-weight: bold;                             text-align: center;                             line-height: 60px;                             letter-spacing: 2px;                             text-transform: uppercase;                             transform: rotate(-45deg);                             transform-origin: center;                             opacity: 0.5;                             z-index: 10000;                             pointer-events: none;                             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);                             border: 2px solid rgba(255, 255, 255, 0.1);                             font-family: 'Arial', sans-serif;                         \">Invalido\n"
 "                        </span>"
 
 #. module: l10n_co_edi_jorels
@@ -403,6 +380,7 @@ msgstr "<strong>Valor en letras:</strong>"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "A Edi number is required to check the document in Nimbus"
 msgstr "Se requiere un número EDI para verificar el documento en Nimbus"
@@ -411,7 +389,8 @@ msgstr "Se requiere un número EDI para verificar el documento en Nimbus"
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "A Zip key or UUID is required to check the status of the document."
-msgstr "Se requiere una clave Zip o UUID para verificar el estado del documento."
+msgstr ""
+"Se requiere una clave Zip o UUID para verificar el estado del documento."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
@@ -454,7 +433,8 @@ msgstr "Una remesa no tiene un número de identificación asociado"
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "A zip key or UUID is required to check the status of the document."
-msgstr "Se requiere una llave Zip o UUID para verificar el estado del documento."
+msgstr ""
+"Se requiere una llave Zip o UUID para verificar el estado del documento."
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields.selection,name:l10n_co_edi_jorels.selection__account_move__ei_operation__aiu
@@ -464,6 +444,8 @@ msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
+#: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
+#: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #, python-format
 msgid "API connection error!"
 msgstr "¡Error de conexión con la API!"
@@ -472,6 +454,11 @@ msgstr "¡Error de conexión con la API!"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__access_warning
 msgid "Access warning"
 msgstr "Alerta de acceso"
+
+#. module: l10n_co_edi_jorels
+#: model:ir.model,name:l10n_co_edi_jorels.model_account_journal
+msgid "Account Journal"
+msgstr ""
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_account_move_reversal
@@ -531,7 +518,8 @@ msgstr "Documentos adicionales para adjuntar al correo de factura electrónica"
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_move__ei_additional_documents
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_payment__ei_additional_documents
 msgid "Additional documents to be attached to the electronic invoicing email"
-msgstr "Documentos adicionales para adjuntar al correo de facturación electrónica"
+msgstr ""
+"Documentos adicionales para adjuntar al correo de facturación electrónica"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
@@ -592,13 +580,16 @@ msgstr "Siempre validar facturas"
 #: code:addons/l10n_co_edi_jorels/models/res_partner.py:0
 #, python-format
 msgid "An identification number is needed to query the contact in the DIAN"
-msgstr "Se necesita un número de identificación para consultar el contacto en la DIAN"
+msgstr ""
+"Se necesita un número de identificación para consultar el contacto en la "
+"DIAN"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/res_partner.py:0
 #, python-format
 msgid "An identification type is needed to query the contact in the DIAN"
-msgstr "Se necesita un tipo de identificación para consultar el contacto en la DIAN"
+msgstr ""
+"Se necesita un tipo de identificación para consultar el contacto en la DIAN"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__resolution_id
@@ -636,6 +627,10 @@ msgstr "Conteo de archivos adjuntos"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/res_partner.py:0
 #, python-format
@@ -757,6 +752,7 @@ msgstr "Clase"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_scope_mandates__code
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_times__code
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users__code
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_without_contracts__code
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__code
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__code
 msgid "Code"
@@ -770,8 +766,10 @@ msgstr "Concepto de cobro"
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
-msgid "Commercial samples doesn't seem to be compatible with multi-currencies."
-msgstr "Las muestras comerciales no parecen ser compatibles con múltiples monedas."
+msgid ""
+"Commercial samples doesn't seem to be compatible with multi-currencies."
+msgstr ""
+"Las muestras comerciales no parecen ser compatibles con múltiples monedas."
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_res_company
@@ -799,7 +797,7 @@ msgstr "Nombre de la compañía para facturar"
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_res_config_settings
 msgid "Config Settings"
-msgstr "Opciones de configuración"
+msgstr "Opciones de Configuración"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.actions.server,name:l10n_co_edi_jorels.action_radian_post
@@ -936,6 +934,7 @@ msgstr "¡Cree su primera resolución!"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_scope_mandates__create_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_times__create_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users__create_uid
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_without_contracts__create_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__create_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__create_uid
 msgid "Created by"
@@ -990,6 +989,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_scope_mandates__create_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_times__create_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users__create_date
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_without_contracts__create_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__create_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__create_date
 msgid "Created on"
@@ -1015,12 +1015,14 @@ msgstr "Nota crédito"
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid ""
-"Credit note of electronic support document in acquisitions made to those not obliged to invoice"
+"Credit note of electronic support document in acquisitions made to those not"
+" obliged to invoice"
 msgstr ""
-"Nota crédito de documento soporte electrónico en adquisiciones realizadas a no obligados a "
-"facturar"
+"Nota crédito de documento soporte electrónico en adquisiciones realizadas a "
+"no obligados a facturar"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_import_journal_creation__resolution_credit_note_id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__resolution_credit_note_id
 msgid "Credit note resolution"
 msgstr "Resolución de nota crédito"
@@ -1064,9 +1066,12 @@ msgstr ""
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
-msgid "DIAN Electronic invoicing: Failed to process the DIAN request for document: %s: %s"
+msgid ""
+"DIAN Electronic invoicing: Failed to process the DIAN request for document: "
+"%s: %s"
 msgstr ""
-"Facturación electrónica DIAN: Error al procesar la solicitud a la DIAN para el documento: %s: %s"
+"Facturación electrónica DIAN: Error al procesar la solicitud a la DIAN para "
+"el documento: %s: %s"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.view_l10n_co_edi_jorels_radian_tree
@@ -1132,6 +1137,7 @@ msgid "Debit note"
 msgstr "Nota débito"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_import_journal_creation__resolution_debit_note_id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__resolution_debit_note_id
 msgid "Debit note resolution"
 msgstr "Resolución de nota débito"
@@ -1245,6 +1251,7 @@ msgstr "Descuentos"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_scope_mandates__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_times__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users__display_name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_without_contracts__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__display_name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_mail_template__display_name
@@ -1379,14 +1386,21 @@ msgstr "La facturación electrónica aún no admite día sin IVA"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Electronic invoicing is not yet compatible with this tax type: %s"
-msgstr "La facturación electrónica aún no es compatible con este tipo de impuesto: %s"
+msgstr ""
+"La facturación electrónica aún no es compatible con este tipo de impuesto: "
+"%s"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
-msgid "Electronic support document in acquisitions made to those not obliged to invoice"
-msgstr "Documento soporte electrónico en adquisiciones realizadas a no obligados a facturar"
+msgid ""
+"Electronic support document in acquisitions made to those not obliged to "
+"invoice"
+msgstr ""
+"Documento soporte electrónico en adquisiciones realizadas a no obligados a "
+"facturar"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_mail_template
@@ -1471,9 +1485,10 @@ msgstr "Evento"
 #. module: l10n_co_edi_jorels
 #: model:mail.template,subject:l10n_co_edi_jorels.email_template_radian
 msgid ""
-"Evento;${object.move_id.number_formatted or ''};${object.company_id.vat_formatted or ''};"
-"${object.company_id.business_name or object.company_id.name or ''};${object.edi_number or ''};"
-"${object.event_id.code or ''}"
+"Evento;${object.move_id.number_formatted or "
+"''};${object.company_id.vat_formatted or "
+"''};${object.company_id.business_name or object.company_id.name or "
+"''};${object.edi_number or ''};${object.event_id.code or ''}"
 msgstr ""
 
 #. module: l10n_co_edi_jorels
@@ -1684,6 +1699,7 @@ msgstr "Texto de encabezado"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_scope_mandates__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_times__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users__id
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_without_contracts__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_mail_template__id
@@ -1731,17 +1747,18 @@ msgstr "Si se encuentra marcado, algunos mensajes tienen error de envío."
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_res_company__ei_allow_zero_total
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_res_config_settings__ei_allow_zero_total
 msgid "If enabled, allows validation of invoices with zero total amount"
-msgstr "Si está activado, permite la validación de facturas con monto total cero"
+msgstr ""
+"Si está activado, permite la validación de facturas con monto total cero"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_res_company__ei_set_default_partner_data
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_res_config_settings__ei_set_default_partner_data
 msgid ""
-"If enabled, new partners will have 'Consumidor Final' as default data when electronic invoicing "
-"is enabled"
+"If enabled, new partners will have 'Consumidor Final' as default data when "
+"electronic invoicing is enabled"
 msgstr ""
-"Si se activa, los nuevos contactos tendrán 'Consumidor Final' como datos por defecto cuando la "
-"facturación electrónica esté habilitada"
+"Si se activa, los nuevos contactos tendrán 'Consumidor Final' como datos por"
+" defecto cuando la facturación electrónica esté habilitada"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
@@ -1783,6 +1800,7 @@ msgid "Invoice"
 msgstr "Factura"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_import_journal_creation__resolution_invoice_id
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__resolution_invoice_id
 msgid "Invoice resolution"
 msgstr "Resolución de facturación"
@@ -1790,9 +1808,11 @@ msgstr "Resolución de facturación"
 #. module: l10n_co_edi_jorels
 #: model:mail.template,report_name:l10n_co_edi_jorels.email_template_edi
 msgid ""
-"Invoice_${(object.name or '').replace('/','_')}${object.state == 'draft' and '_draft' or ''}"
+"Invoice_${(object.name or '').replace('/','_')}${object.state == 'draft' and"
+" '_draft' or ''}"
 msgstr ""
-"Factura_{(object.name or '').replace('/','_')}${object.state == 'draft' and '_borrador' or ''}"
+"Factura_{(object.name or '').replace('/','_')}${object.state == 'draft' and "
+"'_borrador' or ''}"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -1819,6 +1839,7 @@ msgid "Is it a correction without reference?"
 msgstr "¿Es una corrección sin referencia?"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_import_journal_creation__is_out_country
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__is_out_country
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_journal__is_out_country
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_move__is_out_country
@@ -1867,11 +1888,6 @@ msgstr "Fecha y hora de emisión"
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_payment__is_edi_mail_sent
 msgid "It indicates that the edi document has been sent."
 msgstr "Esto indica que el documento edi ha sido enviado."
-
-#. module: l10n_co_edi_jorels
-#: model:ir.model,name:l10n_co_edi_jorels.model_account_journal
-msgid "Journal"
-msgstr "Diario"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_account_move_line
@@ -1938,6 +1954,7 @@ msgstr "Idiomas"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_scope_mandates____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_times____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users____last_update
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_without_contracts____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures____last_update
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_mail_template____last_update
@@ -1998,6 +2015,7 @@ msgstr "Última modificación el"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_scope_mandates__write_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_times__write_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users__write_uid
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_without_contracts__write_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__write_uid
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__write_uid
 msgid "Last Updated by"
@@ -2052,6 +2070,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_scope_mandates__write_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_times__write_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users__write_date
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_without_contracts__write_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__write_date
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__write_date
 msgid "Last Updated on"
@@ -2072,43 +2091,54 @@ msgstr "Tipos de responsabilidad"
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
-msgid "Log DIAN Electronic invoicing: A number is required to verify the status of the document."
+msgid ""
+"Log DIAN Electronic invoicing: A number is required to verify the status of "
+"the document."
 msgstr ""
-"Log de Facturación Electrónica DIAN: Se requiere un número para verificar el estado del "
-"documento."
+"Log de Facturación Electrónica DIAN: Se requiere un número para verificar el"
+" estado del documento."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
-msgid "Log DIAN Electronic invoicing: Failed to process the DIAN request for document: %s: %s"
+msgid ""
+"Log DIAN Electronic invoicing: Failed to process the DIAN request for "
+"document: %s: %s"
 msgstr ""
-"Log Facturación electrónica DIAN: Error al procesar la solicitud a la DIAN para el documento: "
-"%s: %s"
+"Log Facturación electrónica DIAN: Error al procesar la solicitud a la DIAN "
+"para el documento: %s: %s"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Log DIAN Electronic invoicing: The document could not be consulted."
-msgstr "Log de Facturación Electrónica DIAN: No se pudo consultar el documento."
+msgstr ""
+"Log de Facturación Electrónica DIAN: No se pudo consultar el documento."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Log DIAN Electronic invoicing: The document has not been validated."
-msgstr "Log de Facturación Electrónica DIAN: El documento no ha sido validado."
+msgstr ""
+"Log de Facturación Electrónica DIAN: El documento no ha sido validado."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
-msgid "Log DIAN Electronic invoicing: This type of document does not need to be sent to DIAN."
+msgid ""
+"Log DIAN Electronic invoicing: This type of document does not need to be "
+"sent to DIAN."
 msgstr ""
-"Log de Facturación Electrónica DIAN: Este tipo de documento no necesita ser enviado a la DIAN."
+"Log de Facturación Electrónica DIAN: Este tipo de documento no necesita ser "
+"enviado a la DIAN."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Log DIAN Electronic invoicing: Validation in DIAN has been successful."
-msgstr "Log de Facturación Electrónica DIAN: La validación en la DIAN ha sido exitosa."
+msgstr ""
+"Log de Facturación Electrónica DIAN: La validación en la DIAN ha sido "
+"exitosa."
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_main_attachment_id
@@ -2248,6 +2278,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_scope_mandates__name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_times__name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users__name
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_without_contracts__name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_workers__name
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_unit_measures__name
 msgid "Name"
@@ -2260,6 +2291,10 @@ msgstr "Barrio"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "New"
 msgstr "Nuevo"
@@ -2267,10 +2302,11 @@ msgstr "Nuevo"
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
 msgid ""
-"New partners will have 'Consumidor Final' as default data when electronic invoicing is enabled"
+"New partners will have 'Consumidor Final' as default data when electronic "
+"invoicing is enabled"
 msgstr ""
-"Los nuevos contactos tendrán 'Consumidor Final' como datos por defecto cuando la facturación "
-"electrónica esté habilitada"
+"Los nuevos contactos tendrán 'Consumidor Final' como datos por defecto "
+"cuando la facturación electrónica esté habilitada"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__activity_date_deadline
@@ -2307,11 +2343,13 @@ msgstr "No fue obtenida una respuesta lógica desde la API"
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "No logical response was obtained from the API."
 msgstr "No se obtuvo ninguna respuesta lógica de la API."
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "No logical response was obtained from the Nimbus API"
@@ -2513,11 +2551,12 @@ msgstr "Porcentaje"
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid ""
-"Please check your invoice again. Are you really billing something? To allow zero total invoices, "
-"enable the option in Electronic Invoicing settings."
+"Please check your invoice again. Are you really billing something? To allow "
+"zero total invoices, enable the option in Electronic Invoicing settings."
 msgstr ""
-"Por favor revise su factura nuevamente. ¿Está realmente facturando algo? Para permitir facturas "
-"con total cero, active la opción en la configuración de Facturación Electrónica."
+"Por favor revise su factura nuevamente. ¿Está realmente facturando algo? "
+"Para permitir facturas con total cero, active la opción en la configuración "
+"de Facturación Electrónica."
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__access_url
@@ -2609,7 +2648,8 @@ msgstr "Los productos en las facturas de exportación deben tener una marca"
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Products on export invoices must have a model name"
-msgstr "Los productos en las facturas de exportación deben tener un nombre de modelo"
+msgstr ""
+"Los productos en las facturas de exportación deben tener un nombre de modelo"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_account_bank_statement_line__ei_qr_code
@@ -2753,6 +2793,7 @@ msgstr "Fecha de resolución"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/config/res_config_settings.py:0
+#: code:addons/l10n_co_edi_jorels/models/config/res_config_settings.py:0
 #: model:ir.actions.act_window,name:l10n_co_edi_jorels.action_l10n_co_edi_jorels_config_resolutions
 #: model:ir.ui.menu,name:l10n_co_edi_jorels.menu_l10n_co_edi_jorels_config_resolutions
 #, python-format
@@ -2799,6 +2840,7 @@ msgstr "NIF Saneado"
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_item_sector_identifications__scope
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_operations__scope
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_users__scope
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_type_without_contracts__scope
 msgid "Scope"
 msgstr ""
 
@@ -3054,11 +3096,13 @@ msgstr ""
 #: code:addons/l10n_co_edi_jorels/models/account_move_line.py:0
 #, python-format
 msgid ""
-"The 'Principal (Mandante)' field can only be used when the Operation Type is 'Mandates'. Please "
-"remove the mandate or change the operation type to 'Mandates'."
+"The 'Principal (Mandante)' field can only be used when the Operation Type is"
+" 'Mandates'. Please remove the mandate or change the operation type to "
+"'Mandates'."
 msgstr ""
-"El campo 'Principal (Mandante)' solo puede usarse cuando el Tipo de Operación es 'Mandatos'. Por "
-"favor, elimine el mandante o cambie el tipo de operación a 'Mandatos'."
+"El campo 'Principal (Mandante)' solo puede usarse cuando el Tipo de "
+"Operación es 'Mandatos'. Por favor, elimine el mandante o cambie el tipo de "
+"operación a 'Mandatos'."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
@@ -3088,9 +3132,11 @@ msgstr "El cliente no tiene asociado un tipo de documento de identificación."
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The client does not have an identification document number."
-msgstr "El cliente no tiene asociado un número de documento de identificación."
+msgstr ""
+"El cliente no tiene asociado un número de documento de identificación."
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The client must have an email where to send the invoice."
@@ -3100,32 +3146,37 @@ msgstr "El cliente debe tener un email donde enviar la factura."
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid ""
-"The company currency must be COP to report bills to DIAN. Set it up in the Companies "
-"configuration view in Odoo."
+"The company currency must be COP to report bills to DIAN. Set it up in the "
+"Companies configuration view in Odoo."
 msgstr ""
-"La moneda de la empresa debe ser COP para reportar facturas a la DIAN. Configúrela en la vista "
-"de configuración de Empresas en Odoo."
+"La moneda de la empresa debe ser COP para reportar facturas a la DIAN. "
+"Configúrela en la vista de configuración de Empresas en Odoo."
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_partner_form_view_inherit_l10n_co_edi_jorels
 msgid "The configuration related to electronic invoicing is managed in"
-msgstr "La configuración relacionada con la factura electrónica es manejada en"
-
-#. module: l10n_co_edi_jorels
-#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
-#, python-format
-msgid "The credit note for document support cannot be a correction without reference"
-msgstr "La nota crédito para documento soporte no puede ser una corrección sin referencia"
+msgstr ""
+"La configuración relacionada con la factura electrónica es manejada en"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid ""
-"The currency of their journal must be COP to report bills to DIAN. Set it up in the Journals "
-"configuration view in Odoo."
+"The credit note for document support cannot be a correction without "
+"reference"
 msgstr ""
-"La moneda de su diario debe ser COP para reportar facturas a la DIAN. Configúrela en la vista de "
-"configuración de Diarios en Odoo."
+"La nota crédito para documento soporte no puede ser una corrección sin "
+"referencia"
+
+#. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#, python-format
+msgid ""
+"The currency of their journal must be COP to report bills to DIAN. Set it up"
+" in the Journals configuration view in Odoo."
+msgstr ""
+"La moneda de su diario debe ser COP para reportar facturas a la DIAN. "
+"Configúrela en la vista de configuración de Diarios en Odoo."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
@@ -3136,7 +3187,8 @@ msgstr "El modulo de notas débito no ha sido instalado."
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
-msgid "The discount must always be greater than or equal to 0 and less than 100."
+msgid ""
+"The discount must always be greater than or equal to 0 and less than 100."
 msgstr "El descuento debe ser siempre mayor o igual a cero y menor que 100."
 
 #. module: l10n_co_edi_jorels
@@ -3147,6 +3199,8 @@ msgstr "El documento no puede ser consultado."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The document could not be validated in DIAN."
@@ -3162,13 +3216,16 @@ msgstr "El documento no ha sido validado."
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The document number (VAT) for user is required for DIAN events."
-msgstr "El número de documento (NIF) para el usuario es obligatorio para Eventos DIAN."
+msgstr ""
+"El número de documento (NIF) para el usuario es obligatorio para Eventos "
+"DIAN."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The document type for user is required for DIAN events."
-msgstr "El tipo de documento para el usuario es obligatorio para Eventos DIAN."
+msgstr ""
+"El tipo de documento para el usuario es obligatorio para Eventos DIAN."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/config/res_company.py:0
@@ -3197,10 +3254,14 @@ msgstr "La factura debe ser una factura de venta"
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
-msgid "The invoice must first be validated in Odoo, before being sent to the DIAN."
-msgstr "La factura debe ser primero validada en Odoo, antes de ser enviada a la DIAN."
+msgid ""
+"The invoice must first be validated in Odoo, before being sent to the DIAN."
+msgstr ""
+"La factura debe ser primero validada en Odoo, antes de ser enviada a la "
+"DIAN."
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The issue date must be today's date"
@@ -3215,14 +3276,18 @@ msgstr "El número y prefijo son obligatorios para Eventos DIAN"
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
-msgid "The principal (mandante) '%s' must have an identification document type"
-msgstr "El principal (mandante) '%s' debe tener un tipo de documento de identificación"
+msgid ""
+"The principal (mandante) '%s' must have an identification document type"
+msgstr ""
+"El principal (mandante) '%s' debe tener un tipo de documento de "
+"identificación"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The principal (mandante) '%s' must have an valid identification number"
-msgstr "El principal (mandante) '%s' debe tener un número de identificación válido"
+msgstr ""
+"El principal (mandante) '%s' debe tener un número de identificación válido"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
@@ -3239,20 +3304,28 @@ msgstr "El concepto de rechazo es obligatorio para eventos DIAN de Rechazo."
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
-msgid "The support document does not support test submissions, only production."
+msgid ""
+"The support document does not support test submissions, only production."
 msgstr "El documento soporte no soporta envíos de prueba, solo producción."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
-msgid "The universal discount module doesn't seem to be compatible with multi-currencies."
-msgstr "El módulo de descuento universal no parece ser compatible con múltiples monedas."
+msgid ""
+"The universal discount module doesn't seem to be compatible with multi-"
+"currencies."
+msgstr ""
+"El módulo de descuento universal no parece ser compatible con múltiples "
+"monedas."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The user and his/her job title (function) is required for DIAN events"
-msgstr "El usuario y el titulo de su trabajo (cargo) es obligatorio para Eventos DIAN"
+msgstr ""
+"El usuario y el titulo de su trabajo (cargo) es obligatorio para Eventos "
+"DIAN"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
@@ -3268,6 +3341,7 @@ msgstr "El apellido del usuario es obligatorio para eventos DIAN"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid "The validation at DIAN has been successful."
@@ -3293,6 +3367,7 @@ msgstr "La remesa %s no tiene un peso"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "There is no associated document in Nimbus"
 msgstr "No hay documento asociado en Nimbus"
@@ -3307,7 +3382,8 @@ msgstr "No hay nota débito para documento soporte electrónico"
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "This is an export invoice but the client's country is Colombia"
-msgstr "Esta es una factura de exportación pero el país del cliente es Colombia"
+msgstr ""
+"Esta es una factura de exportación pero el país del cliente es Colombia"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
@@ -3316,6 +3392,8 @@ msgid "This type of document does not have a DIAN resolution assigned: %s"
 msgstr "Este tipo de documento no tiene una resolución DIAN asignada: %s"
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "This type of document does not is a Nimbus compatible document"
@@ -3396,10 +3474,12 @@ msgstr "Transporte"
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
-msgid "Transport compatibility is only available with Jorels SAS Freight Transport Module"
+msgid ""
+"Transport compatibility is only available with Jorels SAS Freight Transport "
+"Module"
 msgstr ""
-"La compatibilidad de transporte solo está disponible con el módulo de transporte de carga Jorels "
-"SAS"
+"La compatibilidad de transporte solo está disponible con el módulo de "
+"transporte de carga Jorels SAS"
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_postal__type
@@ -3492,6 +3572,11 @@ msgid "Type times"
 msgstr "Tipo de tiempos"
 
 #. module: l10n_co_edi_jorels
+#: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_type_without_contracts
+msgid "Type without contracts"
+msgstr "Tipo sin contratos"
+
+#. module: l10n_co_edi_jorels
 #: model:ir.model,name:l10n_co_edi_jorels.model_l10n_co_edi_jorels_type_item_identifications
 msgid "Types of item identifications"
 msgstr "Tipos de identificación de los items"
@@ -3531,11 +3616,19 @@ msgstr ""
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/config/res_config_settings.py:0
 #: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
+#: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
+#: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #, python-format
-msgid "Unable to authenticate with the API. Please check your API key and try again."
-msgstr "No puede autenticar con la API. Por favor revise su API key e intente nuevamente."
+msgid ""
+"Unable to authenticate with the API. Please check your API key and try "
+"again."
+msgstr ""
+"No puede autenticar con la API. Por favor revise su API key e intente "
+"nuevamente."
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
+#: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #: code:addons/l10n_co_edi_jorels/models/config/resolution.py:0
 #, python-format
 msgid "Unable to communicate with the API"
@@ -3607,6 +3700,7 @@ msgid "Validating DIAN"
 msgstr "Validando DIAN"
 
 #. module: l10n_co_edi_jorels
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "Validation in DIAN has been successful."
@@ -3723,12 +3817,13 @@ msgstr "Nombre XML"
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #, python-format
 msgid ""
-"You cannot delete an event after it has been posted (and received a number). You can set it back "
-"to \"Draft\" state and modify its content, then re-confirm it."
+"You cannot delete an event after it has been posted (and received a number)."
+" You can set it back to \"Draft\" state and modify its content, then re-"
+"confirm it."
 msgstr ""
-"No puede eliminar un evento después de que se haya publicado (y recibido un número). Puede "
-"volver a establecerlo en el estado \"Borrador\" y modificar su contenido, luego volver a "
-"confirmarlo."
+"No puede eliminar un evento después de que se haya publicado (y recibido un "
+"número). Puede volver a establecerlo en el estado \"Borrador\" y modificar "
+"su contenido, luego volver a confirmarlo."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
@@ -3781,6 +3876,9 @@ msgstr "Debe configurar un token de Nimbus"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/account_move.py:0
+#: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/radian.py:0
 #: code:addons/l10n_co_edi_jorels/models/res_partner.py:0
 #, python-format
