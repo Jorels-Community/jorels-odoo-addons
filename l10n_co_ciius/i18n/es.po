@@ -1,0 +1,139 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* l10n_co_ciius
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0-20231106\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-31 06:07+0000\n"
+"PO-Revision-Date: 2026-07-31 01:07\n"
+"Last-Translator: \n"
+"Language-Team: Jorels SAS\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Jorels PO Edit\n"
+
+#. module: l10n_co_ciius
+#: model:ir.model,name:l10n_co_ciius.model_l10n_co_ciius_ciiu
+msgid "CIIU"
+msgstr ""
+
+#. module: l10n_co_ciius
+#: model:ir.model,name:l10n_co_ciius.model_l10n_co_ciius_ciiu_division
+msgid "CIIU Division"
+msgstr "División CIIU"
+
+#. module: l10n_co_ciius
+#: model:ir.model,name:l10n_co_ciius.model_l10n_co_ciius_ciiu_section
+msgid "CIIU Section"
+msgstr "Sección CIIU"
+
+#. module: l10n_co_ciius
+#: model:ir.model,name:l10n_co_ciius.model_l10n_co_ciius_ciiu_subdivision
+msgid "CIIU Subdivision"
+msgstr "Subdivisión CIIU"
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_res_partner__ciiu_ids
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_res_users__ciiu_ids
+msgid "CIIU's"
+msgstr ""
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu__code
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_division__code
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_section__code
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_subdivision__code
+msgid "Code"
+msgstr "Código"
+
+#. module: l10n_co_ciius
+#: model:ir.model,name:l10n_co_ciius.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu__create_uid
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_division__create_uid
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_section__create_uid
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_subdivision__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu__create_date
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_division__create_date
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_section__create_date
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_subdivision__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu__display_name
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_division__display_name
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_section__display_name
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_subdivision__display_name
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu__division_id
+msgid "Division"
+msgstr "División"
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu__id
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_division__id
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_section__id
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_subdivision__id
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_res_partner__id
+msgid "ID"
+msgstr ""
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu____last_update
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_division____last_update
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_section____last_update
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_subdivision____last_update
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_res_partner____last_update
+msgid "Last Modified on"
+msgstr "Última modificación el"
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu__write_uid
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_division__write_uid
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_section__write_uid
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_subdivision__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu__write_date
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_division__write_date
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_section__write_date
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_subdivision__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu__name
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_division__name
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_section__name
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu_subdivision__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu__section_id
+msgid "Section"
+msgstr "Sección"
+
+#. module: l10n_co_ciius
+#: model:ir.model.fields,field_description:l10n_co_ciius.field_l10n_co_ciius_ciiu__subdivision_id
+msgid "Subdivision"
+msgstr "Subdivisión"
