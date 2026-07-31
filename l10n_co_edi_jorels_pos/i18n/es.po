@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 13.0-20221005\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-18 22:48+0000\n"
-"PO-Revision-Date: 2026-02-18 18:25-0500\n"
+"POT-Creation-Date: 2026-07-31 05:48+0000\n"
+"PO-Revision-Date: 2026-07-31 00:48\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Jorels PO Edit\n"
 
 #. module: l10n_co_edi_jorels_pos
 #: model:ir.model.fields,help:l10n_co_edi_jorels_pos.field_pos_config__electronic_invoice_journal_id
@@ -35,6 +35,13 @@ msgstr "Auto"
 #, python-format
 msgid "CUFE:"
 msgstr "CUFE:"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#, python-format
+msgid "Customer:"
+msgstr "Cliente:"
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
@@ -67,6 +74,7 @@ msgstr "Adquiriente DIAN"
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "De:"
 msgstr "De:"
@@ -83,7 +91,20 @@ msgstr "Descripción"
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "E-mail"
-msgstr "E-mail"
+msgstr "Correo electrónico"
+
+#. module: l10n_co_edi_jorels_pos
+#: model:ir.model.fields,field_description:l10n_co_edi_jorels_pos.field_pos_config__electronic_invoice_journal_id
+#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels_pos.pos_config_view_form_l10n_co_edi_jorels_pos
+msgid "Electronic Invoice Journal"
+msgstr "Diario de facturación electrónica"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#, python-format
+msgid "Electronic invoice"
+msgstr "Factura electrónica"
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
@@ -94,6 +115,7 @@ msgstr "Email de la DIAN"
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "Email fact."
@@ -116,6 +138,7 @@ msgstr "Factura electrónica de venta:"
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "Fecha desde:"
 msgstr "Fecha desde:"
@@ -129,6 +152,9 @@ msgstr "Obtener"
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "Hasta:"
@@ -153,14 +179,14 @@ msgstr "INACTIVO - Cédula"
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "Lugar"
-msgstr "Lugar"
+msgstr ""
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "Municipal."
-msgstr "Municipal."
+msgstr ""
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
@@ -172,16 +198,20 @@ msgstr "Municipali."
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "N/A"
-msgstr "N/A"
+msgstr ""
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "NIT"
-msgstr "NIT"
+msgstr ""
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
@@ -189,6 +219,13 @@ msgstr "NIT"
 #, python-format
 msgid "NIUP"
 msgstr "NIUP"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#, python-format
+msgid "Name"
+msgstr "Nombre"
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
@@ -208,8 +245,23 @@ msgstr "Nombre de la DIAN"
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
+msgid "None"
+msgstr "Ninguno"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#, python-format
 msgid "Numeración desde:"
 msgstr "Numeración desde:"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/js/pos.js:0
+#, python-format
+msgid "Order %s"
+msgstr "Orden %s"
 
 #. module: l10n_co_edi_jorels_pos
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels_pos.field_pos_payment_method__edi_pos_payment_method_id
@@ -238,7 +290,23 @@ msgid "Persona Natural"
 msgstr "Persona Natural"
 
 #. module: l10n_co_edi_jorels_pos
+#: model:ir.model,name:l10n_co_edi_jorels_pos.model_pos_config
+msgid "Point of Sale Configuration"
+msgstr "Configuración del Punto de Venta"
+
+#. module: l10n_co_edi_jorels_pos
+#: model:ir.model,name:l10n_co_edi_jorels_pos.model_pos_order
+msgid "Point of Sale Orders"
+msgstr "Órdenes del Punto de Venta"
+
+#. module: l10n_co_edi_jorels_pos
+#: model:ir.model,name:l10n_co_edi_jorels_pos.model_pos_payment_method
+msgid "Point of Sale Payment Methods"
+msgstr "Métodos de pago en el punto de venta"
+
+#. module: l10n_co_edi_jorels_pos
 #. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "Regimen"
@@ -261,12 +329,14 @@ msgstr "Reemplazar"
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "Resolución:"
 msgstr "Resolución:"
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "Responsab."
@@ -304,18 +374,27 @@ msgstr ""
 "Diario de Ventas o la moneda de la compañía si no está establecida."
 
 #. module: l10n_co_edi_jorels_pos
+#: code:addons/l10n_co_edi_jorels_pos/models/pos_config.py:0
+#, python-format
+msgid ""
+"The invoice journal and the point of sale must belong to the same company."
+msgstr ""
+"El diario de ventas y el punto de venta deben pertenecer a la misma "
+"compañía."
+
+#. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "Tipo doc."
-msgstr "Tipo doc."
+msgstr ""
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
 msgid "Tipo per."
-msgstr "Tipo per."
+msgstr ""
 
 #. module: l10n_co_edi_jorels_pos
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels_pos.field_pos_order__to_electronic_invoice
@@ -326,79 +405,15 @@ msgstr "A factura electrónica"
 #. openerp-web
 #: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
 #, python-format
-msgid "Vr. Total"
-msgstr "Vr. Total"
-
-#. module: l10n_co_edi_jorels_pos
-#. openerp-web
-#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
-#, python-format
-msgid "Customer:"
-msgstr "Cliente:"
-
-#. module: l10n_co_edi_jorels_pos
-#: model:ir.model.fields,field_description:l10n_co_edi_jorels_pos.field_pos_config__electronic_invoice_journal_id
-#: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels_pos.pos_config_view_form_l10n_co_edi_jorels_pos
-msgid "Electronic Invoice Journal"
-msgstr "Diario de facturación electrónica"
-
-#. module: l10n_co_edi_jorels_pos
-#. openerp-web
-#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
-#, python-format
-msgid "Electronic invoice"
-msgstr "Factura electrónica"
-
-#. module: l10n_co_edi_jorels_pos
-#. openerp-web
-#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
-#, python-format
-msgid "Name"
-msgstr "Nombre"
-
-#. module: l10n_co_edi_jorels_pos
-#. openerp-web
-#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
-#, python-format
-msgid "None"
-msgstr "Ninguno"
-
-#. module: l10n_co_edi_jorels_pos
-#. openerp-web
-#: code:addons/l10n_co_edi_jorels_pos/static/src/js/pos.js:0
-#, python-format
-msgid "Order %s"
-msgstr "Orden %s"
-
-#. module: l10n_co_edi_jorels_pos
-#: model:ir.model,name:l10n_co_edi_jorels_pos.model_pos_config
-msgid "Point of Sale Configuration"
-msgstr "Configuración del Punto de Venta"
-
-#. module: l10n_co_edi_jorels_pos
-#: model:ir.model,name:l10n_co_edi_jorels_pos.model_pos_order
-msgid "Point of Sale Orders"
-msgstr "Órdenes del Punto de Venta"
-
-#. module: l10n_co_edi_jorels_pos
-#: model:ir.model,name:l10n_co_edi_jorels_pos.model_pos_payment_method
-msgid "Point of Sale Payment Methods"
-msgstr "Métodos de pago en el punto de venta"
-
-#. module: l10n_co_edi_jorels_pos
-#: code:addons/l10n_co_edi_jorels_pos/models/pos_config.py:0
-#, python-format
-msgid ""
-"The invoice journal and the point of sale must belong to the same company."
-msgstr ""
-"El diario de ventas y el punto de venta deben pertenecer a la misma compañía."
-
-#. module: l10n_co_edi_jorels_pos
-#. openerp-web
-#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
-#, python-format
 msgid "VAT:"
 msgstr "NIF:"
+
+#. module: l10n_co_edi_jorels_pos
+#. openerp-web
+#: code:addons/l10n_co_edi_jorels_pos/static/src/xml/pos.xml:0
+#, python-format
+msgid "Vr. Total"
+msgstr "Vr. Total"
 
 #. module: l10n_co_edi_jorels_pos
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels_pos.field_pos_order__ei_is_dian_document
