@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0-20231106\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-31 06:07+0000\n"
-"PO-Revision-Date: 2026-07-31 01:07\n"
+"POT-Creation-Date: 2026-08-01 00:43+0000\n"
+"PO-Revision-Date: 2026-07-31 19:43\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "Language: es_CO\n"
@@ -402,7 +402,7 @@ msgstr "Un tipo de moneda en Odoo no corresponde a algún tipo de moneda DIAN"
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "A number is required to verify the status of the document."
-msgstr "Un número es requerido para verificar el estado del documento."
+msgstr "Se requiere un número para verificar el estado del documento."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
@@ -3195,7 +3195,7 @@ msgstr "El descuento debe ser siempre mayor o igual a cero y menor que 100."
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
 #, python-format
 msgid "The document could not be consulted."
-msgstr "El documento no puede ser consultado."
+msgstr "El documento no pudo ser consultado."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_move.py:0
