@@ -2240,7 +2240,7 @@ msgstr ""
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1887
 #, python-format
 msgid "No logical response was obtained from the API"
-msgstr "No fue obtenida una respuesta lógica desde la API"
+msgstr "No se obtuvo una respuesta lógica de la API"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1729
@@ -2248,7 +2248,7 @@ msgstr "No fue obtenida una respuesta lógica desde la API"
 #: code:addons/l10n_co_edi_jorels/models/radian.py:516
 #, python-format
 msgid "No logical response was obtained from the API."
-msgstr "No se obtuvo ninguna respuesta lógica de la API."
+msgstr "No se obtuvo una respuesta lógica de la API."
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:2163
@@ -3639,7 +3639,7 @@ msgstr "Factura de proveedor"
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
 msgid "Vendor Credit Note"
-msgstr "Factura rectificativa de proveedor"
+msgstr "Nota Crédito de Proveedor"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.report_invoice_document_custom
@@ -3852,4 +3852,4 @@ msgstr "a"
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_account_invoice__amount_by_group_company
 msgid "type: [(name, amount, base, formated amount, formated base)]"
-msgstr "Tipo: [(nombre, importe, base, importe formateado, base formateada)]"
+msgstr "tipo: [(nombre, importe, base, importe formateado, base formateada)]"
