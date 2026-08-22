@@ -1029,7 +1029,7 @@ msgstr "Evento de Cliente"
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__access_url
 msgid "Customer Portal URL"
-msgstr "URL para portal"
+msgstr "URL Portal de Cliente"
 
 #. module: l10n_co_edi_jorels
 #: model_terms:ir.ui.view,arch_db:l10n_co_edi_jorels.res_config_settings_view_form
@@ -1481,7 +1481,7 @@ msgstr "Aceptación expresa"
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:2027
 #, python-format
 msgid "Failed to process the DIAN request"
-msgstr "Error al procesar la solicitud de la DIAN"
+msgstr "Error al procesar la solicitud DIAN"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:1737
@@ -1496,7 +1496,7 @@ msgstr "Error al procesar la solicitud DIAN para el documento: %s: %s"
 #: code:addons/l10n_co_edi_jorels/models/res_partner.py:318
 #, python-format
 msgid "Failed to process the DIAN request: %s"
-msgstr "Error al procesar la solicitud de la DIAN: %s"
+msgstr "Error al procesar la solicitud DIAN: %s"
 
 #. module: l10n_co_edi_jorels
 #: code:addons/l10n_co_edi_jorels/models/account_invoice.py:2172
@@ -1660,7 +1660,7 @@ msgstr "Si está marcado, hay nuevos mensajes que requieren su atención"
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_needaction
 msgid "If checked, new messages require your attention."
-msgstr "Si está marcado hay nuevos mensajes que requieren su atención."
+msgstr "Si está marcado, hay nuevos mensajes que requieren su atención."
 
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,help:l10n_co_edi_jorels.field_l10n_co_edi_jorels_radian__message_has_error
@@ -3351,7 +3351,7 @@ msgstr "Este tipo de impuesto ReteIVA no está soportado"
 #. module: l10n_co_edi_jorels
 #: model:ir.model.fields,field_description:l10n_co_edi_jorels.field_l10n_co_edi_jorels_resolution__resolution_to
 msgid "To"
-msgstr "Para"
+msgstr "Hasta"
 
 #. module: l10n_co_edi_jorels
 #: selection:l10n_co_edi_jorels.radian,activity_state:0
