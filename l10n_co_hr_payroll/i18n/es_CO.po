@@ -130,7 +130,7 @@ msgid ""
 "company</span>"
 msgstr ""
 "<span class=\"o_form_label\">Habilitar nómina electrónica para esta "
-"compañia</span>"
+"compañía</span>"
 
 #. module: l10n_co_hr_payroll
 #: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll.res_config_settings_view_form
@@ -514,7 +514,7 @@ msgstr "Bonificación de retiro"
 #: selection:l10n_co_hr_payroll.earn.line,category:0
 #, python-format
 msgid "Compensation"
-msgstr "Compensación"
+msgstr "Indemnización"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/edi.py:693
@@ -602,7 +602,7 @@ msgstr "Cooperativa"
 #: code:addons/l10n_co_hr_payroll/models/edi.py:649
 #, python-format
 msgid "Country"
-msgstr "Pais"
+msgstr "País"
 
 #. module: l10n_co_hr_payroll
 #: model_terms:ir.actions.act_window,help:l10n_co_hr_payroll.action_view_hr_payslip_edi
@@ -1039,14 +1039,14 @@ msgstr "Extraordinario"
 #: code:addons/l10n_co_hr_payroll/models/edi.py:535
 #, python-format
 msgid "Failed to process the DIAN request"
-msgstr "Error al procesar la solicitud de la DIAN"
+msgstr "Error al procesar la solicitud DIAN"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/edi.py:386
 #: code:addons/l10n_co_hr_payroll/models/edi.py:464
 #, python-format
 msgid "Failed to process the DIAN request: %s"
-msgstr "Error al procesar la solicitud de la DIAN: %s"
+msgstr "Error al procesar la solicitud DIAN: %s"
 
 #. module: l10n_co_hr_payroll
 #: selection:hr.payslip,month:0 selection:hr.payslip.edi,month:0
@@ -1070,7 +1070,7 @@ msgstr "Porcentaje Fijo"
 #: selection:hr.payslip.line,edi_percent_select:0
 #: selection:hr.salary.rule,edi_percent_select:0
 msgid "Fixed percent"
-msgstr "Porcentaje fijo"
+msgstr "Porcentaje Fijo"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_payslip_edi__message_follower_ids
@@ -1147,7 +1147,7 @@ msgstr "Si está marcado, hay nuevos mensajes que requieren su atención"
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,help:l10n_co_hr_payroll.field_hr_payslip_edi__message_needaction
 msgid "If checked, new messages require your attention."
-msgstr "Si está marcado hay nuevos mensajes que requieren su atención."
+msgstr "Si está marcado, hay nuevos mensajes que requieren su atención."
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,help:l10n_co_hr_payroll.field_hr_payslip_edi__message_has_error
@@ -2001,7 +2001,7 @@ msgstr "Regla Salarial"
 #: code:addons/l10n_co_hr_payroll/models/hr_payslip_edi.py:103
 #, python-format
 msgid "Salary Slip of %s for %s"
-msgstr "Nómina salarial de %s por %s"
+msgstr "Nómina salarial de %s para %s"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/edi.py:717
