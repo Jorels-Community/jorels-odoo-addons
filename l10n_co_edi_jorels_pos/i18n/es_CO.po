@@ -307,12 +307,12 @@ msgstr "Teléfono:"
 #. module: l10n_co_edi_jorels_pos
 #: model:ir.model,name:l10n_co_edi_jorels_pos.model_pos_config
 msgid "Point of Sale Configuration"
-msgstr "Configuración del TPV"
+msgstr "Configuración del Punto de Venta"
 
 #. module: l10n_co_edi_jorels_pos
 #: model:ir.model,name:l10n_co_edi_jorels_pos.model_pos_order
 msgid "Point of Sale Orders"
-msgstr "Pedidos del TPV"
+msgstr "Órdenes del Punto de Venta"
 
 #. module: l10n_co_edi_jorels_pos
 #. openerp-web
