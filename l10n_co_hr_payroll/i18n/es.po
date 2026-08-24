@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 13.0-20221005\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-31 05:48+0000\n"
-"PO-Revision-Date: 2026-07-31 00:48\n"
+"POT-Creation-Date: 2026-08-22 02:36+0000\n"
+"PO-Revision-Date: 2026-08-21 21:36\n"
 "Last-Translator: \n"
 "Language-Team: Jorels SAS\n"
 "Language: es\n"
@@ -109,10 +109,10 @@ msgid ""
 "specific.\" aria-label=\"Values set here are company-specific.\" "
 "groups=\"base.group_multi_company\" role=\"img\"/>"
 msgstr ""
-"<span class=\\\"fa fa-lg fa-building-o\\\" title=\\\"Los valores "
-"establecidos aquí son específicos de la empresa.\\\" aria-label=\\\"Los "
-"valores establecidos aquí son específicos de la empresa.\\\" "
-"groups=\\\"base.group_multi_company\\\" role=\\\"img\\\"/>"
+"<span class=\"fa fa-lg fa-building-o\" title=\"Los valores establecidos aquí"
+" son específicos de la empresa.\" aria-label=\"Los valores establecidos aquí"
+" son específicos de la empresa.\" groups=\"base.group_multi_company\" "
+"role=\"img\"/>"
 
 #. module: l10n_co_hr_payroll
 #: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll.res_config_settings_view_form_l10n_co_hr_payroll
@@ -129,18 +129,18 @@ msgid ""
 "<span class=\"o_form_label\">Enable electronic payroll for this "
 "company</span>"
 msgstr ""
-"<span class=\\\"o_form_label\\\">Habilitar la nómina electrónica para esta "
-"empresa</span>"
+"<span class=\"o_form_label\">Habilitar nómina electrónica para esta "
+"compañía</span>"
 
 #. module: l10n_co_hr_payroll
 #: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll.res_config_settings_view_form_l10n_co_hr_payroll
 msgid "<span class=\"o_form_label\">Legal parameters</span>"
-msgstr "<span class=\\\"o_form_label\\\">Parámetros legales</span>"
+msgstr "<span class=\"o_form_label\">Parámetros legales</span>"
 
 #. module: l10n_co_hr_payroll
 #: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll.res_config_settings_view_form_l10n_co_hr_payroll
 msgid "<span class=\"o_form_label\">Overtime percentages</span>"
-msgstr "<span class=\\\"o_form_label\\\">Porcentajes de horas extras</span>"
+msgstr "<span class=\"o_form_label\">Porcentajes de horas extras</span>"
 
 #. module: l10n_co_hr_payroll
 #: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll.res_config_settings_view_form_l10n_co_hr_payroll
@@ -155,7 +155,7 @@ msgstr ""
 #. module: l10n_co_hr_payroll
 #: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll.res_config_settings_view_form_l10n_co_hr_payroll
 msgid "<span class=\"o_form_label\">Surcharge percentages</span>"
-msgstr "<span class=\\\"o_form_label\\\">Porcentajes de recargo</span>"
+msgstr "<span class=\"o_form_label\">Porcentajes de recargo</span>"
 
 #. module: l10n_co_hr_payroll
 #: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll.res_config_settings_view_form_l10n_co_hr_payroll
@@ -221,7 +221,7 @@ msgstr "Una nota de ajuste no puede ser hecha a una nota de ajuste"
 #: code:addons/l10n_co_hr_payroll/models/edi.py:0
 #, python-format
 msgid "A number is required to verify the status of the document."
-msgstr "Un número es requerido para verificar el estado del documento."
+msgstr "Se requiere un número para verificar el estado del documento."
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/edi.py:0
@@ -614,7 +614,7 @@ msgstr "País"
 #. module: l10n_co_hr_payroll
 #: model_terms:ir.actions.act_window,help:l10n_co_hr_payroll.action_view_hr_payslip_edi
 msgid "Create your first Edi Payslip!"
-msgstr "¡Crea tu primer Edi Payslip!"
+msgstr "Cree su primera nómina electrónica"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_payslip_edi__create_uid
@@ -632,7 +632,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_l10n_co_hr_payroll_edi__create_date
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_l10n_co_hr_payroll_edi_gen__create_date
 msgid "Created on"
-msgstr "Creado"
+msgstr "Creado el"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/edi.py:0
@@ -671,7 +671,7 @@ msgstr "Horas extras diurnas"
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_salary_rule__earn_category__daily_surcharge_hours_sundays_holidays
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__l10n_co_hr_payroll_earn_line__category__daily_surcharge_hours_sundays_holidays
 msgid "Daily surcharge hours on sundays and holidays"
-msgstr "Horas recargo diarias dominicales y festivas"
+msgstr "Horas recargo diurnas dominicales y festivas"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/edi.py:0
@@ -772,7 +772,7 @@ msgstr "Descripción"
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_l10n_co_hr_payroll_edi__display_name
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_l10n_co_hr_payroll_edi_gen__display_name
 msgid "Display Name"
-msgstr "Nombre mostrado"
+msgstr "Nombre a mostrar"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/edi.py:0
@@ -981,7 +981,7 @@ msgstr "Habilitar nómina electrónica consolidada para esta compañía"
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_config_settings__edi_payroll_enable
 #: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll.res_config_settings_view_form_l10n_co_hr_payroll
 msgid "Enable electronic payroll for this company"
-msgstr "Habilitar la nómina electrónica para esta empresa"
+msgstr "Habilitar nómina electrónica para esta empresa"
 
 #. module: l10n_co_hr_payroll
 #: model_terms:ir.ui.view,arch_db:l10n_co_hr_payroll.res_config_settings_view_form_l10n_co_hr_payroll
@@ -1162,7 +1162,7 @@ msgstr ""
 #: model:ir.model.fields,help:l10n_co_hr_payroll.field_hr_payslip_edi__message_needaction
 #: model:ir.model.fields,help:l10n_co_hr_payroll.field_hr_payslip_edi__message_unread
 msgid "If checked, new messages require your attention."
-msgstr "Si está marcado hay nuevos mensajes que requieren su atención."
+msgstr "Si está marcado, hay nuevos mensajes que requieren su atención."
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,help:l10n_co_hr_payroll.field_hr_payslip_edi__message_has_error
@@ -1308,8 +1308,7 @@ msgstr "Junio"
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,help:l10n_co_hr_payroll.field_hr_payslip__date
 msgid "Keep empty to use the period of the validation(Payslip) date."
-msgstr ""
-"Deje en blanco para usar el período de la fecha de validación de la nómina"
+msgstr "Deje vacío para usar el periodo de la fecha de validación (Nómina)."
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_payslip_edi____last_update
@@ -1499,7 +1498,7 @@ msgstr "Siguiente tipo de actividad"
 #: code:addons/l10n_co_hr_payroll/models/edi.py:0
 #, python-format
 msgid "No logical response was obtained from the API."
-msgstr "No se obtuvo ninguna respuesta lógica de la API."
+msgstr "No se obtuvo una respuesta lógica de la API."
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_payslip_line__earn_category__assistances_non_salary
@@ -1643,7 +1642,7 @@ msgstr "Otro"
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__l10n_co_hr_payroll_earn_line__category__other_concepts
 #, python-format
 msgid "Other concepts"
-msgstr "Otro"
+msgstr "Otros conceptos"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/edi.py:0
@@ -2014,7 +2013,7 @@ msgstr "Salario"
 #. module: l10n_co_hr_payroll
 #: model:ir.model,name:l10n_co_hr_payroll.model_hr_salary_rule
 msgid "Salary Rule"
-msgstr "Regla de Salario"
+msgstr "Regla Salarial"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/hr_payslip_edi.py:0
@@ -2178,7 +2177,7 @@ msgstr "Subtipo de trabajador"
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_salary_rule__earn_category__sunday_holiday_daily_overtime
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__l10n_co_hr_payroll_earn_line__category__sunday_holiday_daily_overtime
 msgid "Sunday and Holiday daily overtime"
-msgstr "Horas extras diarias dominicales y festivas"
+msgstr "Horas extras diurnas dominicales y festivas"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_payslip_line__earn_category__sunday_holidays_night_surcharge_hours
@@ -2222,7 +2221,7 @@ msgstr "Apoyo a Sostenimiento"
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_l10n_co_hr_payroll_edi__edi_sync
 #, python-format
 msgid "Sync"
-msgstr "Sincronizar"
+msgstr "Sincrono"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/edi.py:0
@@ -2314,14 +2313,14 @@ msgstr "El contrato debe tener configurado el campo 'Fecha de inicio'"
 #: code:addons/l10n_co_hr_payroll/models/hr_payslip_edi.py:0
 #, python-format
 msgid "The contract must have the 'Subtype worker' field configured"
-msgstr "El contrato debe tener configurado el campo 'Sontipo de trabajador'"
+msgstr "El contrato debe tener configurado el campo 'Subtipo de trabajador'"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/hr_payslip.py:0
 #: code:addons/l10n_co_hr_payroll/models/hr_payslip_edi.py:0
 #, python-format
 msgid "The contract must have the 'Type contract' field configured"
-msgstr "El contrato debe tener configurado el campo 'Tipo de contrato"
+msgstr "El contrato debe tener configurado el campo 'Tipo de contrato'"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/hr_payslip.py:0
@@ -2347,7 +2346,7 @@ msgstr "La cantidad de deducciones debe ser siempre mayor que 0 para: %s"
 #: code:addons/l10n_co_hr_payroll/models/edi.py:0
 #, python-format
 msgid "The document could not be consulted."
-msgstr "El documento no puede ser consultado."
+msgstr "El documento no pudo ser consultado."
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/edi.py:0
@@ -2511,7 +2510,7 @@ msgstr "Sindicatos"
 #: code:addons/l10n_co_hr_payroll/models/edi.py:0
 #, python-format
 msgid "Transports"
-msgstr "Transporte"
+msgstr "Transportes"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields.selection,name:l10n_co_hr_payroll.selection__hr_payslip_line__earn_category__transports_assistance
