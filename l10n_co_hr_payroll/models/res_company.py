@@ -31,16 +31,16 @@ class ResCompany(models.Model):
     stm_value = fields.Monetary("Monthly transportation allowance", currency_field='currency_id', readonly=False)
 
     # times
-    daily_overtime = fields.Float("% Daily overtime", readonly=False, default=25.0)
-    overtime_night_hours = fields.Float("% Overtime night hours", readonly=False, default=75.0)
-    hours_night_surcharge = fields.Float("% Hours night surcharge", readonly=False, default=35.0)
-    sunday_holiday_daily_overtime = fields.Float("% Sunday and Holiday daily overtime", readonly=False,
+    daily_overtime = fields.Float("% Daytime overtime hours", readonly=False, default=25.0)
+    overtime_night_hours = fields.Float("% Night overtime hours", readonly=False, default=75.0)
+    hours_night_surcharge = fields.Float("% Night surcharge", readonly=False, default=35.0)
+    sunday_holiday_daily_overtime = fields.Float("% Sunday and holiday daytime overtime hours", readonly=False,
                                                  default=100.0)
-    daily_surcharge_hours_sundays_holidays = fields.Float("% Daily surcharge hours on sundays and holidays",
+    daily_surcharge_hours_sundays_holidays = fields.Float("% Sunday and holiday daytime surcharge",
                                                           readonly=False, default=75.0)
-    sunday_night_overtime_holidays = fields.Float("% Sunday night overtime and holidays", readonly=False,
+    sunday_night_overtime_holidays = fields.Float("% Sunday and holiday night overtime hours", readonly=False,
                                                   default=150.0)
-    sunday_holidays_night_surcharge_hours = fields.Float("% Sunday and holidays night surcharge hours",
+    sunday_holidays_night_surcharge_hours = fields.Float("% Sunday and holiday night surcharge",
                                                          readonly=False, default=110.0)
 
     # Test

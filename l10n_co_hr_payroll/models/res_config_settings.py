@@ -39,37 +39,37 @@ class ResConfigSettings(models.TransientModel):
     # times
     daily_overtime = fields.Float(
         related="company_id.daily_overtime",
-        string="% Daily",
+        string="% Daytime overtime hours",
         readonly=False
     )
     overtime_night_hours = fields.Float(
         related="company_id.overtime_night_hours",
-        string="% Night hours",
+        string="% Night overtime hours",
         readonly=False
     )
     hours_night_surcharge = fields.Float(
         related="company_id.hours_night_surcharge",
-        string="% Night hours",
+        string="% Night surcharge",
         readonly=False
     )
     sunday_holiday_daily_overtime = fields.Float(
         related="company_id.sunday_holiday_daily_overtime",
-        string="% Sunday and Holiday daily",
+        string="% Sunday and holiday daytime overtime hours",
         readonly=False
     )
     daily_surcharge_hours_sundays_holidays = fields.Float(
         related="company_id.daily_surcharge_hours_sundays_holidays",
-        string="% Daily hours on sundays and holidays",
+        string="% Sunday and holiday daytime surcharge",
         readonly=False
     )
     sunday_night_overtime_holidays = fields.Float(
         related="company_id.sunday_night_overtime_holidays",
-        string="% Sunday night and holidays",
+        string="% Sunday and holiday night overtime hours",
         readonly=False
     )
     sunday_holidays_night_surcharge_hours = fields.Float(
         related="company_id.sunday_holidays_night_surcharge_hours",
-        string="% Sunday and holidays night hours",
+        string="% Sunday and holiday night surcharge",
         readonly=False
     )
 

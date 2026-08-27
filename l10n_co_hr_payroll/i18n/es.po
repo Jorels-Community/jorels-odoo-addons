@@ -19,69 +19,46 @@ msgstr ""
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_config_settings__daily_overtime
-msgid "% Daily"
-msgstr "% Diario"
-
-#. module: l10n_co_hr_payroll
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_config_settings__daily_surcharge_hours_sundays_holidays
-msgid "% Daily hours on sundays and holidays"
-msgstr "% Horas diarias en domingos y festivos"
-
-#. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_company__daily_overtime
-msgid "% Daily overtime"
-msgstr "% Horas extra diarias"
+msgid "% Daytime overtime hours"
+msgstr "% Horas extra diurnas"
 
 #. module: l10n_co_hr_payroll
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_company__daily_surcharge_hours_sundays_holidays
-msgid "% Daily surcharge hours on sundays and holidays"
-msgstr "% Recargo diario horas en domingos y festivos"
-
-#. module: l10n_co_hr_payroll
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_company__hours_night_surcharge
-msgid "% Hours night surcharge"
-msgstr "% Recargo horas nocturna"
-
-#. module: l10n_co_hr_payroll
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_config_settings__hours_night_surcharge
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_config_settings__overtime_night_hours
-msgid "% Night hours"
-msgstr "% Horas nocturnas"
-
-#. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_company__overtime_night_hours
-msgid "% Overtime night hours"
+msgid "% Night overtime hours"
 msgstr "% Horas extra nocturnas"
 
 #. module: l10n_co_hr_payroll
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_config_settings__hours_night_surcharge
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_company__hours_night_surcharge
+msgid "% Night surcharge"
+msgstr "% Recargo nocturno"
+
+#. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_config_settings__sunday_holiday_daily_overtime
-msgid "% Sunday and Holiday daily"
-msgstr "% Domingo y festivo diario"
-
-#. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_company__sunday_holiday_daily_overtime
-msgid "% Sunday and Holiday daily overtime"
-msgstr "% Domingos y festivos horas extras diarias"
+msgid "% Sunday and holiday daytime overtime hours"
+msgstr "% Horas extra diurnas dominicales y festivas"
 
 #. module: l10n_co_hr_payroll
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_config_settings__sunday_holidays_night_surcharge_hours
-msgid "% Sunday and holidays night hours"
-msgstr "% Domingos y festivos horas nocturnas"
-
-#. module: l10n_co_hr_payroll
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_company__sunday_holidays_night_surcharge_hours
-msgid "% Sunday and holidays night surcharge hours"
-msgstr "% Domingos y festivos recargo horas nocturnas"
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_config_settings__daily_surcharge_hours_sundays_holidays
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_company__daily_surcharge_hours_sundays_holidays
+msgid "% Sunday and holiday daytime surcharge"
+msgstr "% Recargo diurno dominicales y festivos"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_config_settings__sunday_night_overtime_holidays
-msgid "% Sunday night and holidays"
-msgstr "% Noche de domingo y festivos"
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_company__sunday_night_overtime_holidays
+msgid "% Sunday and holiday night overtime hours"
+msgstr "% Horas extra nocturnas dominicales y festivas"
 
 #. module: l10n_co_hr_payroll
-#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_company__sunday_night_overtime_holidays
-msgid "% Sunday night overtime and holidays"
-msgstr "% Horas extra noche de domingo y festivos"
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_config_settings__sunday_holidays_night_surcharge_hours
+#: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_res_company__sunday_holidays_night_surcharge_hours
+msgid "% Sunday and holiday night surcharge"
+msgstr "% Recargo nocturno dominicales y festivos"
+
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,help:l10n_co_hr_payroll.field_hr_payslip_edi__state
@@ -656,15 +633,15 @@ msgstr "Ajustes DIAN"
 #: selection:hr.payslip.line,earn_category:0
 #: selection:hr.salary.rule,earn_category:0
 #: selection:l10n_co_hr_payroll.earn.line,category:0
-msgid "Daily overtime"
+msgid "Daytime overtime hours"
 msgstr "Horas extras diurnas"
 
 #. module: l10n_co_hr_payroll
 #: selection:hr.payslip.line,earn_category:0
 #: selection:hr.salary.rule,earn_category:0
 #: selection:l10n_co_hr_payroll.earn.line,category:0
-msgid "Daily surcharge hours on sundays and holidays"
-msgstr "Horas recargo diurnas dominicales y festivas"
+msgid "Sunday and holiday daytime surcharge"
+msgstr "Recargo diurno dominicales y festivos"
 
 #. module: l10n_co_hr_payroll
 #: code:addons/l10n_co_hr_payroll/models/edi.py:701
@@ -1120,8 +1097,8 @@ msgstr "Alto riesgo de pensión"
 #: selection:hr.payslip.line,earn_category:0
 #: selection:hr.salary.rule,earn_category:0
 #: selection:l10n_co_hr_payroll.earn.line,category:0
-msgid "Hours night surcharge"
-msgstr "Horas recargo nocturno"
+msgid "Night surcharge"
+msgstr "Recargo nocturno"
 
 #. module: l10n_co_hr_payroll
 #: model:ir.model.fields,field_description:l10n_co_hr_payroll.field_hr_payslip__edi_payload_html
@@ -1656,7 +1633,7 @@ msgstr "Tipo de horas extra y/o recargos"
 #: selection:hr.payslip.line,earn_category:0
 #: selection:hr.salary.rule,earn_category:0
 #: selection:l10n_co_hr_payroll.earn.line,category:0
-msgid "Overtime night hours"
+msgid "Night overtime hours"
 msgstr "Horas extras nocturnas"
 
 #. module: l10n_co_hr_payroll
@@ -2157,21 +2134,21 @@ msgstr "Subtipo de trabajador"
 #: selection:hr.payslip.line,earn_category:0
 #: selection:hr.salary.rule,earn_category:0
 #: selection:l10n_co_hr_payroll.earn.line,category:0
-msgid "Sunday and Holiday daily overtime"
+msgid "Sunday and holiday daytime overtime hours"
 msgstr "Horas extras diurnas dominicales y festivas"
 
 #. module: l10n_co_hr_payroll
 #: selection:hr.payslip.line,earn_category:0
 #: selection:hr.salary.rule,earn_category:0
 #: selection:l10n_co_hr_payroll.earn.line,category:0
-msgid "Sunday and holidays night surcharge hours"
-msgstr "Horas recargo nocturno dominicales y festivas"
+msgid "Sunday and holiday night surcharge"
+msgstr "Recargo nocturno dominicales y festivos"
 
 #. module: l10n_co_hr_payroll
 #: selection:hr.payslip.line,earn_category:0
 #: selection:hr.salary.rule,earn_category:0
 #: selection:l10n_co_hr_payroll.earn.line,category:0
-msgid "Sunday night overtime and holidays"
+msgid "Sunday and holiday night overtime hours"
 msgstr "Horas extras nocturnas dominicales y festivas"
 
 #. module: l10n_co_hr_payroll
